@@ -9,7 +9,7 @@ class CastCrewNullBooleanSelect(forms.widgets.NullBooleanSelect):
         super(forms.widgets.NullBooleanSelect, self).__init__(attrs, choices)
 
 class ProductionEditForm(forms.ModelForm):
-	last_modified = forms.DateTimeField(widget=forms.HiddenInput())
+	last_modified = forms.DateTimeField(widget=forms.HiddenInput(), required=False)
 	press_date = PrettyDateField()
 
 	class Meta:
@@ -21,14 +21,14 @@ class ProductionEditForm(forms.ModelForm):
 		kwargs['initial'] = { 'last_modified': last_modified }
 		super(ProductionEditForm, self).__init__(*args, **kwargs)
 
-#	def clean(self):
-#		super(PersonEditForm, self).clean()
-#
-#		# Not clean_last_modified, as I want it as a generic error
-#		last_mod = self.cleaned_data.get('last_modified')
-#		if last_mod < self.db_last_modified:
-#			raise forms.ValidationError('I am afraid that this person has been edited since you started editing.')
-#
+	def clean(self):
+		super(ProductionEditForm, self).clean()
+
+		# Not clean_last_modified, as I want it as a generic error
+		last_mod = self.cleaned_data.get('last_modified')
+		if last_mod < self.db_last_modified:
+			raise forms.ValidationError('I am afraid that this production has been edited since you started editing.')
+
 #		dob = self.cleaned_data.get('dob')
 #		bio = self.cleaned_data.get('bio')
 #		imdb = self.cleaned_data.get('imdb')
@@ -36,7 +36,7 @@ class ProductionEditForm(forms.ModelForm):
 #		web = self.cleaned_data.get('web')
 #		if not dob and not bio and not imdb and not wikipedia and not web:
 #			raise forms.ValidationError('Please specify at least one item of data')
-#		return self.cleaned_data
+		return self.cleaned_data
 #
 #	def save_with_log(self, request):
 #		new_object = self.save(commit=True)
