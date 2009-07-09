@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block fulltitle %}Theatricalia{% endblock %}
+
+{% block extra_body %} id="home"{% endblock %}
+
+{% block content %}
+
+<p style="float: left; width: 30%; margin-top:0">Hello and welcome to Theatricalia, a <strong>database</strong> of past
+and future <strong>theatre productions</strong>.
+
+<div style="float: right; width: 68%;">
+<p style="margin-top:0; font-size: 87.5%; line-height: 1.715;">
+<em>Please be aware that no photography or recording equipment is allowed,
+and no food or drink is to be consumed, within the theatre.
+Please turn off all mobile telephones and other devices that may sound,
+as these distract not only the audience, but also the performers.</em>
+Thank you.</p>
+</div>
+
+<div style="float: left; clear:both; width: 30%; margin-right: 2%">
+<h2 style="margin-top:0">Example</h2>
+<p style="margin-top:0"><a href="/person/david-tennant">David Tennant</a>
+played the title role in the
+<a href="/play/hamlet/production/2yd">RSC&rsquo;s production</a>
+of <a href="/play/hamlet">Hamlet</a> by
+<a href="/person/william-shakespeare">William Shakespeare</a>
+at the <a href="/place/courtyard-theatre-stratford-upon-avon">Courtyard Theatre</a>.
+
+<p align="center"><img src="/static/i/hamlet.jpg" alt=""></p>
+
+</div>
+
+<div style="float: left; width: 30%;">
+
+<h2 style="margin-top:0">Features</h2>
+
+<ul>
+<li>Each place, person, and play has an RSS feed so you can keep up
+to date with what something is doing
+<li>Saerch for a person, play, or venue
+<li><s>Search for a location to find things near you</s>
+<li><s>Your production not on here? <a href="" title="Add a production">Add it!</a></s>
+</ul>
+
+</div>
+
+<div class="secondary">
+<h2>Most recent addition</h2>
+<p style="margin:0">
+<a href="/play/the-comedy-of-errors/production/2yz">The Comedy of Errors</a>
+is playing
+at the <a href="/place/courtyard-theatre-stratford-upon-avon">Courtyard Theatre</a>,
+25<sup>th</sup> June 2009 (press night) – 15<sup>th</sup> August 2009.
+</p>
+
+<p style="margin-bottom:0">Theatricalia knows about
+<strong>{{ people|prettify_num }}</strong> people being cast and crew in
+<strong>{{ parts|prettify_num }}</strong> r&ocirc;les, in
+<strong>{{ productions|prettify_num }}</strong> productions of
+<strong>{{ plays|prettify_num }}</strong> plays at
+<strong>{{ places|prettify_num }}</strong> places.
+</p>
+
+<h2 style="margin-top:0">Site news</h2>
+
+<p style="margin-top:0">
+The site is launched! Still lots to do, but I thought an archive of
+all RSC productions, and all Birmingham Rep productions from its launch
+to 1971, might be of interest &#9786;
+</p>
+
+</div>
+
+{% endblock %}

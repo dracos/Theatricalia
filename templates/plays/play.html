@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block title %}{{ play|prettify }}{% endblock %}
+
+{% block extra_head %}
+<link href="{{ play.get_feed_url }}" type="application/rss+xml" rel="alternate">
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ play|prettify }}</h1>
+
+<div id="primary">
+
+{% if future.object_list %}
+<h2>Current &amp; Upcoming productions</h2>
+<ul class="production_list">
+{% for production in future.object_list %}
+<li><a href="{{ production.get_absolute_url }}">{% if production.title %}{{ production.title|prettify }}, {% endif %}
+{{ production.place_summary }}</a>
+<span>{{ production.date_summary|prettify }}.</span>
+{% endfor %}
+</ul>
+{% if future.has_other_pages %}
+<p align="right"><a href="{% url play-productions-future play.slug %}?page=2">More &rarr;</a></p>
+{% endif %}
+{% endif %}
+
+{% if past.object_list %}
+<h2>Past productions</h2>
+<ul class="production_list">
+{% for production in past.object_list %}
+<li><a href="{{ production.get_absolute_url }}">{% if production.title %}{{ production.title|prettify }}, {% endif %}
+{{ production.place_summary }}</a>
+<span>{{ production.date_summary|prettify }}.</span>
+{% endfor %}
+</ul>
+{% if past.has_other_pages %}
+<p align="right"><a href="{% url play-productions-past play.slug %}?page=2">More &rarr;</a></p>
+{% endif %}
+{% endif %}
+
+</div>
+
+<div class="secondary">
+
+<p>A play by {{ play.authors_str }}</p>
+
+<ul>
+{% if play.url %}<li><a href="{{ play.url }}">Website</a>{% endif %}
+{% if play.wikipedia %}<li><a href="{{ play.wikipedia }}">Wikipedia</a>{% endif %}
+</ul>
+
+{% if play.description %}
+{{ play.description|prettify|linebreaks }}
+<p align="right"><a href="{% url play-edit play.slug %}">Edit &rarr;</a></p>
+{% else %}
+<p>This play doesn&rsquo;t appear to have a description yet.
+Why not <a href="{% url play-edit play.slug %}">add one</a>?
+{% endif %}
+
+</div>
+
+{% endblock %}

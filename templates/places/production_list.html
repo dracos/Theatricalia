@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block title %}{{ object.name|prettify }}{% endblock %}
+
+{% block content %}
+
+<h1>{{ object.name|prettify }}</h1>
+
+<div id="primary">
+
+<h2>{{ type }}</h2>
+
+{% if page_obj.object_list %}
+<ul class="production_list">
+{% for production in page_obj.object_list %}
+<li><a href="{{ production.get_absolute_url }}">{{ production.play }}</a>, {{ production.title|prettify }}
+<span>{{ production.date_summary|prettify }}.</span>
+{% endfor %}
+</ul>
+{% else %}
+<p>There are no results to display.</p>
+{% endif %}
+
+{% include "pagination.html" %}
+
+</div>
+
+<div class="secondary">
+<p>{{ type }} at <a href="{% url place object.slug %}">{{ object.name|prettify }}</a>.</p>
+{% include "pagination.html" %}
+</div>
+
+{% endblock %}

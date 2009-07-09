@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block title %}{{ letter }} | All Plays{% endblock %}
+
+{% block content %}
+
+<ul id="atoz">
+{% for l in letters %}
+<li>{% ifequal l letter %}
+<strong>{{ l|upper }}</strong>
+{% else %}
+<a href="{% url plays l|lower %}">{{ l }}</a>
+{% endifequal %}
+{% endfor %}
+<li>{% ifequal "0-9" letter %}
+<strong>0&ndash;9</strong>
+{% else %}
+<a href="{% url plays "0" %}">0&ndash;9</a>
+{% endifequal %}
+<!--
+<li>{% ifequal "Symbols" letter %}
+<strong>Symbols</strong>
+{% else %}
+<a href="{% url plays "*" %}">Symbols</a>
+{% endifequal %}
+-->
+</ul>
+
+<h1>Plays &ndash; {{ letter }}</h1>
+
+<ul id="play_list">
+{% for play in object_list %}
+<li><a href="{% url play play.slug %}">{{ play|prettify }}</a>, by {{ play.authors_str }}</li>
+{% empty %}
+<p>No results.</p>
+{% endfor %}
+</ul>
+
+{% endblock %}

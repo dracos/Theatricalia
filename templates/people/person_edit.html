@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block title %}Editing {{ person.name }}{% endblock %}
+
+{% block extra_head %}
+<link href="{{ person.get_absolute_url }}/feed" type="application/rss+xml" rel="alternate">
+{% endblock %}
+
+{% block content %}
+
+<h1>Editing {{ person.name }}</h1>
+
+<div id="primary">
+
+<form method="post">
+<table>
+{{ form }}
+<tr><td colspan="2" style="text-align:right"><input type="submit" value="Update"></td></tr>
+</table>
+</form>
+
+</div>
+
+<div class="secondary">
+
+<p>A person&rsquo;s biography should be a short summary of their life and career to date.</p>
+
+<p>Date of birth may simply be month and year, or just year, if that is all that is known.</p>
+
+<p><a href="{{ person.get_absolute_url }}">Cancel</a></p>
+
+</div>
+
+{% endblock %}

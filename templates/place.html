@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block title %}{{ place.name|prettify }}{% endblock %}
+
+{% block extra_head %}
+<link href="{{ place.get_feed_url }}" type="application/rss+xml" rel="alternate">
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ place.name|prettify }}</h1>
+
+<div id="primary">
+
+{% if future.object_list %}
+<h2>Current &amp; Upcoming productions</h2>
+<ul class="production_list">
+{% for production in future.object_list %}
+<li><a href="{{ production.get_absolute_url }}">{{ production.play|prettify }}</a>, {{ production.title|prettify }}
+<span>{{ production.date_summary|prettify }}.</span>
+{% endfor %}
+</ul>
+{% if future.has_other_pages %}
+<p align="right"><a href="{% url place-productions-future place.slug %}?page=2">More &rarr;</a></p>
+{% endif %}
+{% endif %}
+
+{% if past.object_list %}
+<h2>Past productions</h2>
+<ul class="production_list">
+{% for production in past.object_list %}
+<li><a href="{{ production.get_absolute_url }}">{{ production.play|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
+<span>{{ production.date_summary|prettify }}.</span>
+{% endfor %}
+</ul>
+{% if past.has_other_pages %}
+<p align="right"><a href="{% url place-productions-past place.slug %}?page=2">More &rarr;</a></p>
+{% endif %}
+{% endif %}
+
+</div>
+
+<div class="secondary">
+
+{% if place.description %}
+{{ place.description|prettify|linebreaks }}
+{% endif %}
+
+{% if place.latitude and place.longitude %}
+<div id="map">
+<iframe src="http://www.dracos.co.uk/temp/osm-embed.html?bbox=-1.71154,52.18415,-1.70154,52.19415&layer=mapnik&marker={{ place.latitude }},{{ place.longitude }}">
+Gah, an iframe to show a map? WTF?
+</iframe>
+</div>
+{% endif %}
+
+{% if place.photos.all %}
+<div id="photographs">
+
+<ul>
+{% for photo in place.photos.all %}
+<li><a href="{{ photo.get_absolute_url }}">{{ photo.photo.thumbnail_tag }}</a>
+{% endfor %}
+</ul>
+
+</div>
+{% endif %}
+
+{% if user.is_authenticated %}
+<p style="margin-bottom:0" class="clear">If you have a photograph or picture of this place, and you
+have permission to do so, please upload it here.</p>
+
+<form method="post" action="{% url take-photo %}" enctype="multipart/form-data">
+{{ photo_form.content_type }}{{ photo_form.object_id }}
+<input type="hidden" name="next" value="{{ request.path }}#photographs">
+<table>
+<tr><th><label for="id_title">{{ photo_form.title.label }}:</label></th><td>{{ photo_form.title }}</td></tr>
+<tr><th><label for="id_photo">{{ photo_form.photo.label }}:</label></th><td>{{ photo_form.photo }}</td></tr>
+</table>
+<p style="margin-top:0em;"><input type="submit" value="Add"></p>
+</form>
+{% else %}
+<p class="clear">If you have a photograph or picture of this place you wish
+to upload, please <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
+
+{% endif %}
+
+<ul>
+{% if type %}<li>{{ type }}{% endif %}
+{% if size %}<li>{{ size }}{% endif %}
+{% if opening_date %}<li>{{ opening_date }}{% endif %}
+{% if url %}<li>{{ url }}{% endif %}
+{% if wikipedia %}<li><a href="{{ wikipedia }}">Wikipedia</a>{% endif %}
+</ul>
+
+<p><a href="">Edit this place&rsquo;s information</a></p>
+
+<p><a href="">Add a production here</a></p>
+</div>
+
+{% endblock %}

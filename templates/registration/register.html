@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Box Office{% endblock %}
+
+{% block content %}
+
+<h1>Box Office</h1>
+
+{% if form.errors %}
+Show error
+{% endif %}
+
+<form method="post">
+<table>
+{{ form }}
+</table>
+<input type="submit" value="Sign up">
+</form>
+
+{% endblock %}

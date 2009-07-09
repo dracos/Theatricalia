@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load prettify %}{% load comments %}
+
+{% block title %}Production of {{ production.play|prettify }}{% endblock %}
+
+{% block content %}
+
+<h1>{{ production.play|prettify }}</h1>
+
+<div id="primary">
+
+<h2 class="no-descenders">Cast &amp; Crew</h2>
+
+{% if cast %}
+<h3 class="hide">Cast</h3>
+{% endif %}
+
+{% if cast or crew %}
+<table class="parts">
+{% endif %}
+
+{% for part in cast %}
+<tr><th>{{ part.role_or_unknown }}</th>
+<td><a href="{{ part.person.get_absolute_url }}">{{ part.person }}</a></td></tr>
+{% endfor %}
+
+{% if crew %}
+<tr><th colspan="2"><h3>Crew</h3></th></tr>
+{% endif %}
+
+{% for part in crew %}
+<tr><th>{{ part.role_or_unknown }}</th>
+<td><a href="{{ part.person.get_absolute_url }}">{{ part.person }}</a></td></tr>
+{% endfor %}
+
+{% if cast or crew %}
+</table>
+{% else %}
+<p>Currently unknown; if you can provide some information about this production, please
+<a href="{{ production.get_edit_url }}">do add it to the site</a>.</p>
+{% endif %}
+
+<h2 id="observations" class="no-descenders"><!-- Anecdotes &amp; -->Observations</h2>
+
+{% get_comment_count for production as comment_count %}
+{% get_comment_list for production as observations %}
+{% if observations %}
+<ol id="observation_list">
+{% for observation in observations %}
+<li id="o{{ observation.id }}">
+<p class="posted-by">
+<span class="meta">On {{ observation.submit_date|date:"jS F Y"|prettify }} at <a title="Permanent link to this observation" href="{{ request.path }}#o{{ observation.id }}">{{ observation.submit_date|date:"g:i a" }}</a>, {{ observation.user_name|title }} noted:</p>
+<blockquote>{{ observation.comment|prettify|linebreaks }}</blockquote>
+</li>
+{% endfor %}
+</ol>
+{% endif %}
+
+{% if user.is_authenticated %}
+{% get_comment_form for production as form %}
+<form action="{% comment_form_target %}" method="post">
+        {{ form.comment.errors }} 
+        <p><label for="id_comment">If you have an interesting observation or anecdote about this production
+that you think others may be interested in, please feel free to record it here:</label></p>
+        <p>{{ form.comment }}</p>
+    <div class="hide">
+        {{ form.honeypot.errors }}
+        {{ form.honeypot.label_tag }} {{ form.honeypot }}
+    </div>
+    <div>
+        {{ form.content_type }}
+        {{ form.object_pk }}
+        {{ form.timestamp }}
+        {{ form.security_hash }}
+        <input type="hidden" name="next" value="{{ request.path }}#observations">
+        <input type="submit" value="Store">
+    </div>
+</form>
+{% else %}
+<p>If you have an interesting observation or anecdote about this production
+that you think others may be interested in, please
+<a href="{% url login %}?next={{ request.path }}%23observations">sign in</a> in order to record it here.</p>
+{% endif %}
+        
+</div>
+
+<div id="sidebar_tulip" class="secondary"><div id="sidebar_tulip_r">
+
+<p>This is a production of the play
+<a href="{{ production.play.get_absolute_url }}">{{ production.play|prettify }}</a>,
+{{ production.date_summary|prettify }}, 
+
+{% ifequal production.places.count 1 %}
+at the <a href="{% url place production.places.all.0.slug %}">{{ production.places.all.0|prettify }}</a>.</p>
+{% else %}
+<ul>
+{% for place in production.places.all %}
+<li>{{ place|prettify }}
+{% endfor %}
+</ul>
+{% endifequal %}
+
+{% if production.press_date and production.start_date %}
+<p>Press night was {{ production.press_date|date:"jS F Y"|prettify }}.</p>
+{% endif %}
+
+</div></div>
+
+<div class="secondary">
+
+<ul>
+<li><a href="#observations">{% if comment_count %}Observations ({{ comment_count }}){% else %}Add observation{% endif %}</a>
+<li><a href="{{ production.get_edit_url }}">Edit this production</a>
+</ul>
+
+<div id="photographs">
+<h2>Photographs</h2>
+
+<ul>
+{% for photo in production.photos.all %}
+<li><a href="{{ photo.photo.extra_thumbnails.larger }}">{{ photo.photo.thumbnail_tag }}</a>
+{% endfor %}
+</ul>
+
+</div>
+
+{% if user.is_authenticated %}
+<p style="margin-bottom:0" class="clear">If you have a photograph or picture that illustrates this production and you
+have permission to do so, please upload it here.</p>
+
+<form method="post" action="{% url take-photo %}" enctype="multipart/form-data">
+{{ photo_form.content_type }}{{ photo_form.object_id }}
+<input type="hidden" name="next" value="{{ request.path }}#photographs">
+<table>
+<tr><th><label for="id_title">{{ photo_form.title.label }}:</label></th><td>{{ photo_form.title }}</td></tr>
+<tr><th><label for="id_photo">{{ photo_form.photo.label }}:</label></th><td>{{ photo_form.photo }}</td></tr>
+</table>
+<p style="margin-top:0.75em; margin-bottom:0.75em"><input type="submit" value="Add"></p>
+</form>
+{% else %}
+<p class="clear">If you have a photograph of this person you wish
+to upload, please <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
+{% endif %}
+
+<h2 style="margin-top:0">Performances</h2>
+
+<p>Add?</p>
+
+</div>
+
+{% endblock %}

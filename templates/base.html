@@ -1,0 +1,148 @@
+{% load prettify %}{% load humanize %}<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>{% block fulltitle %}{% block title %}{% endblock %} | Theatricalia{% endblock %}</title>
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/js/global.js"></script>
+    <link rel="stylesheet" href="/static/css/site.css" type="text/css">
+    <!--[if IE]>
+    <link rel="stylesheet" type="text/css" href="/static/css/ie.css">
+    <![endif]-->
+    {% block extra_head %}{% endblock %}
+</head>
+<body{% block extra_body %}{% endblock %}>
+
+{% if request.GET.lines %}
+<div style="position:absolute; top:0; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:24px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:48px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:72px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:96px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:120px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:144px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:168px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:192px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:216px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:240px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:264px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:288px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:312px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:336px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:360px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:384px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:408px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:432px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:456px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:480px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:504px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:528px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:552px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:576px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:600px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:624px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:648px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:672px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:696px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:720px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:744px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:768px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:792px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:816px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:840px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:864px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:888px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:912px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:936px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:960px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:984px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1008px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1032px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1056px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1080px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1104px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1128px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1152px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1176px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1200px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1224px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1248px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1272px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1296px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1320px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1344px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1368px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1392px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1416px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1440px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1464px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1488px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1512px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1536px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1560px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1584px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1608px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1632px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1656px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1680px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1704px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1728px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1752px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+<div style="position:absolute; top:1776px; left:0; height: 23px; border-bottom: solid 1px #ffcccc; z-index:-1; width:100%"></div>
+{% endif %}
+
+<div id="header">
+	<div><a href="/">Theatricalia</a></div>
+	<form action="/search" method="GET" accept-charset="utf-8">
+		<label for="search_term">Search:</label>
+		<input type="search" name="q" id="search_term" value="{{ request.GET.q }}">
+		<input type="submit" value="Search">
+	</form>
+	<ul id="navigation">
+<!--
+		<li id="nav-plays"><a href="{% url plays_all %}"><img src="/static/i/plays.png" alt="Plays" border="0"></a></li>
+		<li id="nav-people"><a href="{% url people_all %}"><img src="/static/i/people.png" alt="People" border="0"></a></li>
+		<li id="nav-places"><a href="{% url places_all %}"><img src="/static/i/places.png" alt="Places" border="0"></a></li>
+-->
+		<li id="nav-plays"><a href="{% url plays_all %}">Plays</a></li>
+		<li id="nav-people"><a href="{% url people_all %}">People</a></li>
+		<li id="nav-places"><a href="{% url places_all %}">Places</a></li>
+	</ul>
+</div>
+
+<div id="main" style="position: relative">
+{% if request.GET.lines %}
+<div style="position:absolute; top:0; right:0; height: 1000px; border-left: solid 1px #ffcccc; border-right: solid 1px #ffcccc; z-index:-1; width:35%"></div>
+<div style="position:absolute; top:0; left:32%; height: 1000px; border-left: solid 1px #ffcccc; border-right: solid 1px #ffcccc; z-index:-1; width:30%"></div>
+<div style="position:absolute; top:0; left:0; height: 1000px; border-left: solid 1px #ffcccc; border-right: solid 1px #ffcccc; z-index:-1; width:30%"></div>
+{% endif %}
+
+{% block content %}
+{% endblock %}
+</div>
+
+<div id="footer">
+	<p>A Matthew Somerville production &mdash; <a href="{% url colophon %}">Colophon &amp; Acknowledgements</a></p>
+<p><a href="{% url about %}">About</a>
+| <a href="{% url help %}">Help</a>
+| <a href="{% url criticism %}">Critique</a>
+| {% if user.is_authenticated %}
+<a href="{% url logout %}">Sign out</a>
+{% else %}
+<a href="{% url login %}?next={{ request.path }}">Sign in</a>
+{% endif %}
+</p>
+<p><img src="/static/i/mouse.png" alt="" height="48">
+</div>
+
+<p><a href="#" onclick="$('#queries').toggle(); return false;">Show/hide database queries</a></p>
+<div class="hide" id="queries">
+<table style="font-size:75%">
+{% for q in connection.queries %}
+<tr valign="top"><td>{{ q.time }}</td><td>{{ q.sql }}</td></tr>
+{% endfor %}
+</table>
+</div>
+
+</body>
+</html>

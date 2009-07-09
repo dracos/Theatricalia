@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load prettify %}{% load thumbnail %}
+
+{% block title %}{{ photo }}{% endblock %}
+
+{% block content %}
+
+<h1>{{ photo.content_object.name|prettify }}</h1>
+
+<div id="primary">
+
+<h2>{{ photo.title|prettify }}</h2>
+
+<p style="text-align:center; margin-top:0"><img src="{% thumbnail photo.photo 720x720 %}" alt="{{ photo.title }}"></p>
+
+</div>
+
+<div class="secondary">
+
+<p>A photo of <a href="{{ photo.content_object.get_absolute_url }}">{{ photo.content_object }}</a>.</p>
+
+<p class="pagination">
+{% if previous_photo %}
+<a href="{{ previous_photo.get_absolute_url }}">&larr; Previous</a>
+{% else %}
+<span class="greyed">&larr; Previous</span>
+{% endif %}
+|
+{% if next_photo %}
+<a href="{{ next_photo.get_absolute_url }}">Next &rarr;</a>
+{% else %}
+<span class="greyed">Next &rarr;</span>
+{% endif %}
+</p>
+
+</div>
+
+{% endblock %}

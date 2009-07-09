@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block title %}Editing {{ production.company }} production of {{ production.play|prettify }}{% endblock %}
+
+{% block content %}
+
+<h1>Editing production</h1>
+
+<div id="primary">
+
+<p>Thanks for taking the time to add or correct some information on this site.
+</p>
+
+<form method="post">
+<table>
+{{ form }}
+</table>
+<input type="submit" value="Submit basics">
+
+<h2>Cast &amp; Crew</h2>
+
+{{ parts.management_form }}
+{{ parts.non_form_errors }}
+
+<table class="production_edit">
+	<thead><tr>{{ somehow_display_the_column_headings }}</tr></thead>
+
+{% for form in parts.forms %}
+	{% if form.non_field_errors %}
+	<tr><td colspan="{{ form.field_count }}">{{ form.non_field_errors }}</td></tr>
+	{% endif %}
+	<tr class="{% cycle row1,row2 %}">
+	{% for field in form %}
+		{% if field.is_hidden %}
+			{{ field }}
+		{% else %}
+			<td class="{{ field.name }}"> {{ field.errors.as_ul }} {{ field }} </td>
+		{% endif %}
+	{% endfor %}
+	</tr>
+{% endfor %}
+   
+{{ new_parts.management_form }}
+{{ new_parts.non_form_errors }}
+
+{% for form in new_parts.forms %}
+	{% if form.non_field_errors %}
+	<tr><td colspan="{{ form.field_count }}">{{ form.non_field_errors }}</td></tr>
+	{% endif %}
+	<tr class="{% cycle row1,row2 %}">
+        {% for field in form %}
+		{% if field.is_hidden %}
+			{{ field }}
+		{% else %}
+			<td class="{{ field.name }}"> {{ field.errors.as_ul }} {{ field }} </td>
+		{% endif %}
+	{% endfor %}
+	</tr>
+{% endfor %}
+
+</table>
+
+<input type="submit" value="Submit part changes">
+</form>
+ 
+</div>
+
+<div id="sidebar_tulip" class="secondary"><div id="sidebar_tulip_r">
+
+<p>This is a production of the play
+<a href="{{ production.play.get_absolute_url }}">{{ production.play|prettify }}</a>,
+{{ production.date_summary|prettify }}, 
+
+{% ifequal production.places.count 1 %}
+at <a href="{% url place production.places.all.0.slug %}">{{ production.places.all.0|prettify }}</a>.</p>
+{% else %}
+<ul>
+{% for place in production.places.all %}
+<li>{{ place|prettify }}
+{% endfor %}
+</ul>
+{% endifequal %}
+
+{% if production.press_date and production.start_date %}
+<p>Press night was {{ production.press_date|date:"jS F Y"|prettify }}.</p>
+{% endif %}
+
+</div></div>
+
+{% endblock %}

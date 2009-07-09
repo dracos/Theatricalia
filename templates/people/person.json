@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block title %}{{ person.name }}{% endblock %}
+
+{% block extra_head %}
+<link href="{{ person.get_absolute_url }}/feed" type="application/rss+xml" rel="alternate">
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ person.name }}</h1>
+
+<div id="primary">
+
+{% if person.bio %}
+{{ person.bio|prettify|linebreaks }}
+{% else %}
+<p>This person doesn&rsquo;t appear to have a biography yet.
+Why not <a href="{% url person-edit person.slug %}">add one</a>?
+{% endif %}
+
+{% if plays %}
+<h2>Plays authored</h2>
+<ul>
+{% for play in plays %}
+<li><a href="{{ play.get_absolute_url }}">{{ play|prettify }}</a>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if future.object_list %}
+<h2>Current &amp; Upcoming productions</h2>
+<ul class="production_list">
+{% for production in future.object_list %}
+<li><a href="{{ production.get_absolute_url }}">{{ production.play|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
+<span>{{ production.date_summary|prettify }},
+{{ production.place_summary }}.</span>
+{% endfor %}
+</ul>
+{% if future.has_other_pages %}
+<p align="right"><a href="{% url person-productions-future person.slug %}?page=2">More &rarr;</a></p>
+{% endif %}
+{% endif %}
+
+{% if past.object_list %}
+<h2>Past productions</h2>
+<ul class="production_list">
+{% for production in past.object_list %}
+<li>
+{% if production.part__role__concatenate %}
+{{ production.part__role__concatenate }}, {% endif %}
+<a href="{{ production.get_absolute_url }}">{{ production.play|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
+<span>{{ production.date_summary|prettify }},
+{{ production.place_summary }}.</span>
+{% endfor %}
+</ul>
+{% if past.has_other_pages %}
+<p align="right"><a href="{% url person-productions-past person.slug %}?page=2">More &rarr;</a></p>
+{% endif %}
+{% endif %}
+
+</div>
+
+<div class="secondary">
+
+{% if messages %}
+<ul id="messages">
+{% for message in messages %}
+<li>{{ message }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if person.dob or person.web or person.imdb or person.wikipedia %}
+<ul>
+{% if person.dob %} <li>Date of birth: {{ person.dob }} {% endif %}
+{% if person.web %} <li><a href="{{ person.web }}">Website</a> {% endif %}
+{% if person.imdb %} <li><a href="{{ person.imdb }}">IMDb</a> {% endif %}
+{% if person.wikipedia %} <li><a href="{{ person.wikipedia }}">Wikipedia</a> {% endif %}
+</ul>
+{% endif %}
+
+<h2>Photographs</h2>
+
+<div id="photographs">
+
+<ul>
+{% for photo in person.photos.all %}
+<li><a href="{{ photo.photo.extra_thumbnails.larger }}">{{ photo.photo.thumbnail_tag }}</a>
+{% endfor %}
+</ul>
+
+</div>
+
+{% if user.is_authenticated %}
+<p style="margin-bottom:0" class="clear">If you have a photograph of this person, and you
+have permission to do so, please upload it here.</p>
+
+<form method="post" action="{% url take-photo %}" enctype="multipart/form-data">
+{{ photo_form.content_type }}{{ photo_form.object_id }}
+<input type="hidden" name="next" value="{{ request.path }}#photographs">
+<table>
+<tr><th><label for="id_title">{{ photo_form.title.label }}:</label></th><td>{{ photo_form.title }}</td></tr>
+<tr><th><label for="id_photo">{{ photo_form.photo.label }}:</label></th><td>{{ photo_form.photo }}</td></tr>
+</table>
+<p style="margin-top:0em;"><input type="submit" value="Add"></p>
+</form>
+{% else %}
+<p class="clear">If you have a photograph of this person you wish
+to upload, please <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
+
+{% endif %}
+
+<p align="right"><a href="{% url person-edit person.slug %}">Edit this person</a></p>
+
+</div>
+
+{% endblock %}

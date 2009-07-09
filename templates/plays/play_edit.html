@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block title %}Editing {{ play }}{% endblock %}
+
+{% block content %}
+
+<h1>Editing {{ play }}</h1>
+
+<div id="primary">
+
+<form method="post">
+<table>
+{{ form }}
+
+{{ formset }}
+
+<tr><td colspan="2" style="text-align:right"><input type="submit" value="Update"></td></tr>
+</table>
+</form>
+
+</div>
+
+<div class="secondary">
+
+<p>Help text here. What sort of thing to put in the bio; how to do non-accurate <abbr>DOB</abbr>, etc.</p>
+
+</div>
+
+{% endblock %}

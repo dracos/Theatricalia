@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Search: &ldquo;{{ search }}&rdquo;{% endblock %}
+
+{% block content %}
+
+<h1>Search for {% ifequal sounds_people 2 %}similar to {% endifequal %}
+&ldquo;{{ search }}&rdquo;</h1>
+
+{% if plays %}
+<h2>Plays</h2>
+<ul id="person_list">
+{% for play in plays %}
+<li><a href="{% url play play.slug %}">{{ play }}</a>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if places %}
+<h2>Places</h2>
+<ul id="person_list">
+{% for place in places %}
+<li><a href="{% url place place.slug %}">{{ place }}</a>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if people %}
+<h2>People</h2>
+{% ifequal sounds_people 1 %}
+<p>We couldn&rsquo;t find any results for &ldquo;{{ search }}&rdquo;. Here are some results that are, or sound, similar:
+{% endifequal %}
+{% ifequal sounds_people 2 %}
+<p>Here are results that are, or sound, similar to &ldquo;{{ search }}&rdquo;:
+{% endifequal %}
+<ul id="person_list">
+{% for person in people %}
+<li><a href="{% url person person.slug %}">{{ person }}</a>
+{% endfor %}
+</ul>
+{% if not request.GET.similar and not sounds_people %}
+<p>If none of these is who you&rsquo;re looking for, <a href="{% url search %}?q={{ search }};similar=1">see if we have any similar sounding results</a>.
+{% endif %}
+{% else %}
+<p>I&rsquo;m afraid we couldn&rsquo;t find any results. If you&rsquo;re searching for someone, try
+just their first or last name.
+{% endif %}
+
+{% endblock %}
