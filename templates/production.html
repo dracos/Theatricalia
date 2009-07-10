@@ -7,6 +7,14 @@
 
 <h1>{{ production.play|prettify }}</h1>
 
+{% if messages %}
+<ul id="messages">
+{% for message in messages %}
+<li>{{ message }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
 <div id="primary">
 
 <h2 class="no-descenders">Cast &amp; Crew</h2>
@@ -93,11 +101,7 @@ that you think others may be interested in, please
 {% ifequal production.places.count 1 %}
 at the <a href="{% url place production.places.all.0.slug %}">{{ production.places.all.0|prettify }}</a>.</p>
 {% else %}
-<ul>
-{% for place in production.places.all %}
-<li>{{ place|prettify }}
-{% endfor %}
-</ul>
+at {{ production.place_list|prettify_list }}
 {% endifequal %}
 
 {% if production.press_date and production.start_date %}

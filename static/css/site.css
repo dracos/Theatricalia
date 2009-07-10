@@ -378,6 +378,10 @@ th {
 th h3 {
 	text-align: left;
 }
+.production_edit th {
+    text-align: center;
+    font-weight: bold;
+}
 
 table.parts {
 	width: 100%;
@@ -474,3 +478,4 @@ table.production_edit td {
 #id_production-play {
     max-width: 60%;
 }
+

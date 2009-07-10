@@ -98,6 +98,17 @@ class Production(TrackedModel):
 			place = 'Unknown location'
 		return place
 		
+	def place_list(self):
+		if self.places.count()>1:
+			place = []
+			for p in self.places.all():
+				place.append(str(p))
+		elif self.places.count()==1:
+			place = self.places.all()[0]
+		else:
+			place = 'Unknown location'
+		return place
+		
 	def title(self):
 		return self.company or ''
 
@@ -120,6 +131,7 @@ class Part(TrackedModel):
 	order = models.IntegerField(blank=True, null=True)
 	start_date = models.DateField(blank=True, null=True)
 	end_date = models.DateField(blank=True, null=True)
+	visible = models.BooleanField(default=True)
 
 	def role_or_unknown(self):
 		return self.role or 'Unknown'

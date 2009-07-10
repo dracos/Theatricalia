@@ -12,19 +12,24 @@
 <p>Thanks for taking the time to add or correct some information on this site.
 </p>
 
+<h2><a name="basics"></a>Basics</h2>
+
 <form method="post">
 <table>
 {{ form }}
 </table>
 <input type="submit" value="Submit basics">
 
-<h2>Cast &amp; Crew</h2>
+<h2><a name="castandcrew"></a>Cast &amp; Crew</h2>
 
 {{ parts.management_form }}
 {{ parts.non_form_errors }}
 
 <table class="production_edit">
-	<thead><tr>{{ somehow_display_the_column_headings }}</tr></thead>
+	<thead><tr>
+    <th>Name</th><th>R&ocirc;le</th><th>Type</th><th>Order</th><th>Start date</th><th>End date</th>
+    <th>Action</th>
+    </tr></thead>
 
 {% for form in parts.forms %}
 	{% if form.non_field_errors %}
@@ -40,7 +45,9 @@
 	{% endfor %}
 	</tr>
 {% endfor %}
-   
+
+    <tr><td colspan="{{ form.field_count }}">New r&ocirc;le</td></tr>
+
 {{ new_parts.management_form }}
 {{ new_parts.non_form_errors }}
 
@@ -68,7 +75,7 @@
 
 <div id="sidebar_tulip" class="secondary"><div id="sidebar_tulip_r">
 
-<p>This is a production of the play
+<p>This is a <a href="{{ production.get_absolute_url }}">production</a> of the play
 <a href="{{ production.play.get_absolute_url }}">{{ production.play|prettify }}</a>,
 {{ production.date_summary|prettify }}, 
 
