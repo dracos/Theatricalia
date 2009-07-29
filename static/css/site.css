@@ -94,7 +94,7 @@ textarea {
 	line-height: 1.5;
 	font-size: inherit;
 	max-width: 25em;
-	dheight: 14.675em;
+	/* height: 14.675em; */
 	/* border-top-width: 0.1em;
 	border-bottom-width: 0.1em; */
 }
@@ -314,6 +314,9 @@ li#nav-plays a {
 #primary select {
     max-width: 80%;
 }
+.secondary select {
+    max-width: 70%;
+}
 
 .secondary {
 	float: right;
@@ -426,6 +429,8 @@ table.parts td {
 
 #edit-form {
     display: none;
+    text-align: center;
+    margin-bottom: 1.5em;
 }
 .editable:hover {
     background-color: #ffffcc;
@@ -534,11 +539,16 @@ td {
     content: ')';
 }
 
-#production_edit label {
+#production_edit_inline_basic {
+    text-align: left;
+    display: none;
+    margin: 1.5em 0;
+}
+#production_edit label, #production_edit_inline_basic label {
     float: left;
     width: 6em;
 }
-#production_edit p {
+#production_edit p, #production_edit_inline_basic p {
     margin: 0;
 }
 #production_edit p:last-child {

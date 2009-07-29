@@ -82,9 +82,13 @@ def production(request, play, production_id):
     play = get_object_or_404(Play, slug=play)
     if play != production.play:
         raise Http404()
+
     photo_form = PhotoForm(production)
+    production_form = ProductionEditForm(instance=production, last_modified=production.last_modified)
+
     return render(request, 'production.html', {
         'production': production,
+        'production_form': production_form,
         'cast': production.part_set.filter(cast=True).order_by('order', 'role'),
         'crew': production.part_set.filter(cast=False).order_by('order', 'role'),
         'photo_form': photo_form,

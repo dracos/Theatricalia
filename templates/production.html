@@ -100,8 +100,17 @@ that you think others may be interested in, please
         
 </div>
 
+<form id="production_edit_inline">
+
+<div id="edit-form">
+<input type="submit" id="edit-form-submit" value="Record changes" disabled>
+or
+<input type="submit" id="edit-form-cancel" value="Disregard">
+</div>
+
 <div id="sidebar_tulip" class="secondary"><div id="sidebar_tulip_r">
 
+<div id="production_meta">
 <p>This is a production of the play
 <a href="{{ production.play.get_absolute_url }}">{{ production.play|prettify }}</a>{% if production.company %}
 by the <a href="{{ production.company.get_absolute_url }}">{{ production.company|prettify }}</a>{% endif %},
@@ -116,6 +125,11 @@ at {{ production.place_list|prettify_list|safe }}.
 {% if production.press_date and production.start_date %}
 <p>Press night was {{ production.press_date|date:"jS F Y"|prettify }}.</p>
 {% endif %}
+</div>
+
+<div id="production_edit_inline_basic">
+{{ production_form.as_p }}
+</div>
 
 </div></div>
 
@@ -124,12 +138,6 @@ at {{ production.place_list|prettify_list|safe }}.
 <ul>
 <li><a href="#observations">{% if comment_count %}Observations ({{ comment_count }}){% else %}Add observation{% endif %}</a>
 <li id="edit-link"><a href="{{ production.get_edit_url }}">Edit this production</a>
-<li id="edit-form">
-<form>
-<input type="submit" id="edit-form-submit" value="Record changes" disabled>
-or
-<input type="submit" id="edit-form-cancel" value="Disregard">
-</form>
 </ul>
 
 <div id="photographs">
