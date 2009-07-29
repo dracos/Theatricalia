@@ -14,6 +14,7 @@ class CastCrewNullBooleanSelect(forms.widgets.NullBooleanSelect):
 class ProductionEditForm(forms.ModelForm):
     last_modified = forms.DateTimeField(widget=forms.HiddenInput(), required=False)
     press_date = PrettyDateField()
+    description = forms.CharField(widget=forms.Textarea(attrs={'rows':5}))
 
     class Meta:
         model = Production
@@ -36,9 +37,6 @@ class ProductionEditForm(forms.ModelForm):
 #       if not dob and not bio and not imdb and not wikipedia and not web:
 #           raise forms.ValidationError('Please specify at least one item of data')
         return self.cleaned_data
-#
-#   def save_with_log(self, request):
-#       new_object = self.save(commit=True)
 
 class PartAddForm(forms.ModelForm):
     person = forms.CharField()

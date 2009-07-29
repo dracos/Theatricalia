@@ -3,12 +3,16 @@
 <html>
 <head>
     <title>{% block fulltitle %}{% block title %}{% endblock %} | Theatricalia{% endblock %}</title>
-    <script type="text/javascript" src="/static/js/jquery.js"></script>
-    <script type="text/javascript" src="/static/js/global.js"></script>
     <link rel="stylesheet" href="/static/css/site.css" type="text/css">
     <!--[if IE]>
     <link rel="stylesheet" type="text/css" href="/static/css/ie.css">
     <![endif]-->
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.tablednd_0_5.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.color.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.asmselect.js"></script>
+    <script type="text/javascript" src="/static/js/global.js"></script>
+    {% block extrascript %}{% endblock %}
     {% block extra_head %}{% endblock %}
 </head>
 <body{% block extra_body %}{% endblock %}>

@@ -3,11 +3,11 @@
  * 
  * We're working to a vertical rhythm of 1.5 whatever the user has set as their
  * default font size. People may say this is large, I say that is up to the
- * user and I quite like not going blind any time soon.
+ * user and I quite like not going blind any time soon. I am right.
  *
  * Heading sizes are large, again deliberately. Zapfino means the line height
  * on headings has to be at least 3.41, which means e.g. 3.75 on a 2em font size
- * to take up five lines in total.
+ * to take up five lines in total. Fear the whitespace. Actually, love the whitespace.
  *
  * Copyright Matthew Somerville 2009
  *
@@ -67,7 +67,26 @@ sup {
 	line-height: 1px;
 }
 
-input {
+input[type="submit"] {
+    background-color: #666666;
+    color: #ffffff;
+    font-weight: bold;
+    -moz-border-radius: 4px;
+    padding: 4px 6px;
+    border: none;
+    cursor: pointer;
+}
+input[type="submit"]:hover {
+    background-color: #333333;
+}
+#edit-form-submit {
+    background-color: #cc3333;
+}
+#edit-form-submit:hover {
+    background-color: #990000;
+}
+#edit-form-submit[disabled], #edit-form-submit[disabled]:hover {
+    background-color: #cccccc;
 }
 
 textarea {
@@ -75,7 +94,7 @@ textarea {
 	line-height: 1.5;
 	font-size: inherit;
 	max-width: 25em;
-	height: 14.675em;
+	dheight: 14.675em;
 	/* border-top-width: 0.1em;
 	border-bottom-width: 0.1em; */
 }
@@ -105,6 +124,7 @@ abbr[title], acronym[title] {
 
 label {
 	cursor: pointer;
+    vertical-align: top;
 }
 
 img {
@@ -291,6 +311,9 @@ li#nav-plays a {
 	float: left;
 	width: 62%;
 }
+#primary select {
+    max-width: 80%;
+}
 
 .secondary {
 	float: right;
@@ -378,11 +401,8 @@ th {
 th h3 {
 	text-align: left;
 }
-.production_edit th {
-    text-align: center;
-    font-weight: bold;
-}
 
+/* Table of cast & crew */
 table.parts {
 	width: 100%;
 }
@@ -390,10 +410,28 @@ table.parts td:before {
 	content: "\b7"; /* Possible alternatives are \2013 \2026 and ~ */
 	padding-right: 0.5em;
 }
+table.parts.order {
+	cursor: move;
+}
+table.parts.order td:before {
+	content: "\2195";
+}
 table.parts td {
 	width: 50%;
 }
 
+.parts-drag-highlight {
+    background-color: #ccccff;
+}
+
+#edit-form {
+    display: none;
+}
+.editable:hover {
+    background-color: #ffffcc;
+}
+
+/*
 tr.remove td {
 	color: #cc0000;
 	text-decoration: line-through;
@@ -402,6 +440,7 @@ tr.remove td.edit_status {
 	color: #000000;
 	text-decoration: none;
 }
+*/
 
 td {
 	text-align: left;
@@ -435,10 +474,6 @@ td {
 	margin-bottom: 0.66667em;
 	border: solid 0.083333em #999999;
 	padding: 0.25em;
-}
-
-table.production_edit td {
-	padding-right: 0.25em;
 }
 
 /* Other */
@@ -475,7 +510,38 @@ table.production_edit td {
 	height: 214px;
 }
 
-#id_production-play {
-    max-width: 60%;
+/* select multiples */
+
+.asmContainer {
+    display: inline;
+}
+.asmOptionDisabled {
+	color: #999; 
+}
+.asmList {
+	margin-top: 0.25em;
+}
+.asmListItem {
+	margin: 0;
+}
+.asmListItemRemove {
+    padding-left: 1em;
+}
+.asmListItemRemove:before {
+    content: '(';
+}
+.asmListItemRemove:after {
+    content: ')';
+}
+
+#production_edit label {
+    float: left;
+    width: 6em;
+}
+#production_edit p {
+    margin: 0;
+}
+#production_edit p:last-child {
+    margin-top: 1.5em;
 }
 

@@ -101,70 +101,16 @@ def production_edit(request, play, production_id):
     if play != production.play:
         raise Http404()
 
-    production_form = ProductionEditForm(data=request.POST or None, instance=production, prefix='production', last_modified=production.last_modified)
-
-    # Inline FormSet problems - seems ideal, but can't get person name
-    # instead of <select> or ID number, plus can't get order right
-    # Model FormSet seems to have same issue.
-    #PartFormSet = inlineformset_factory(Production, Part, extra=0, can_delete=False, form=PartEditForm, exclude='credit', formset=PartInlineFormSet)
-    #parts_formset = PartFormSet(request.POST or None, instance=production, prefix='parts-existing')
-
-    # So let's use a normal FormSet with a ModelForm...
-    PartFormSet = formset_factory(PartEditForm, BasePartFormSet, extra=0)
-    PartAddFormSet = formset_factory(PartAddForm)
-    new_parts_formset = PartAddFormSet(request.POST or None, prefix='parts-new')
-
-    parts = production.part_set.all().order_by('-cast', 'order', 'role')
-    initial = []
-    for part in parts:
-        initial.append({
-            'part': part,
-            'id': part.id,
-            'person': part.person,
-            'role': part.role,
-            'cast': part.cast,
-            'order': part.order,
-            'start_date': part.start_date,
-            'end_date': part.end_date,
-        })
+    production_form = ProductionEditForm(data=request.POST or None, instance=production, last_modified=production.last_modified)
 
     if request.method == 'POST':
-        new_initial = []
-        POST = {} # request.POST.copy()
-        for i in range(0, len(initial)):
-            key = 'parts-existing-%d-edit_status' % i
-            if key in request.POST.keys() and request.POST[key] == 'leave':
-                pass
-            elif key in request.POST.keys() and request.POST[key] == 'remove':
-                pass
-            else:
-                new_initial.append(initial[i])
-                for k,v in request.POST.items():
-                    m = re.match('parts-existing-%d-' % i, k)
-                    if m:
-                        new_key = k.replace('parts-existing-%d-' % i, 'parts-existing-%d-' % (len(new_initial)-1) )
-                        POST[new_key] = v
-        initial = new_initial
-        POST['parts-existing-TOTAL_FORMS'] = len(initial)
-        POST['parts-existing-INITIAL_FORMS'] = len(initial)
-        parts_formset = PartFormSet( data=POST, initial=initial, prefix='parts-existing' )
-        if production_form.is_valid() and parts_formset.is_valid() and new_parts_formset.is_valid():
-            # Save the production model first
+        if production_form.is_valid():
             production_form.save()
-            # Then save all the parts
-            parts_formset.save()
-            # Save any new rows from new_parts_formset
-            for form in new_parts_formset.forms:
-                pass
             request.user.message_set.create(message="Your changes have been stored; thank you.")
             return HttpResponseRedirect(production.get_absolute_url())
-    else:
-        parts_formset = PartFormSet( initial=initial, prefix='parts-existing' )
 
     return render(request, 'production_edit.html', {
         'form': production_form,
-        'parts': parts_formset,
-        'new_parts': new_parts_formset,
         'production': production,
     })
 

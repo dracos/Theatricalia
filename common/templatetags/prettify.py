@@ -66,14 +66,14 @@ def prettify_num(num):
 @register.filter
 def prettify_list(list):
     if not list: return ''
-    print "In prettify_list", list
+    if isinstance(list, str): return list
     num = len(list)
     if num > 2:
-        str = ', '.join(list[:num-2]) + ', and '.join(list[num-2:])
+        s = ', '.join(list[:num-2]) + ', ' + ', and '.join(list[num-2:])
     elif num == 2:
-        str = ' and '.join(list)
+        s = ' and '.join(list)
     elif num == 1:
-        str = list[0]
+        s = list[0]
     else:
-        str = ''
-    return str
+        s = ''
+    return s
