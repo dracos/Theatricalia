@@ -6,15 +6,31 @@
 
 <h1>Box Office</h1>
 
-{% if form.errors %}
-Show error
-{% endif %}
+{% for field, errors in form.errors.items %}
+{{ errors }}
+{% endfor %}
 
 <form method="post">
-<table>
-{{ form }}
-</table>
-<input type="submit" value="Sign up">
+
+<p>To prevent ticket touting, we ask for some information from people to help identify
+them on the site.</p>
+
+<p>Please tell us your <label for="id_name">name</label>:
+{{ form.name }},
+<label for="id_email">email address</label>:
+{{ form.email }},
+and <label for="id_website">website</label>:
+{{ form.website }}
+(if you have one).</p>
+
+<p>Please could you also provide a
+<label for="id_username">username</label> to use on the site:
+{{ form.username }},
+and a
+<label for="id_password">password</label>:
+{{ form.password }} so others cannot pretend to be you.</p>
+
+<input type="submit" value="Enroll">
 </form>
 
 {% endblock %}

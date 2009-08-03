@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.conf import settings
+from django.views.decorators.cache import never_cache
 
 def register(request):
 	if request.user.is_authenticated():
@@ -19,9 +20,6 @@ def register(request):
 			send_confirmation_email(request, user)
 			return render(request, 'registration/register-checkemail.html')
 	return render(request, 'registration/register.html', { 'form': form })
-
-from django.views.decorators.cache import never_cache
-#from django.core.urlresolvers import reverse
 
 def login(request, template_name='registration/login.html', redirect_field_name=REDIRECT_FIELD_NAME):
     if request.user.is_authenticated():

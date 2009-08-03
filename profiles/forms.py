@@ -4,7 +4,6 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.models import Site
 from django.template import Context, loader
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm as DjangoAuthenticationForm
 from models import Profile
 
@@ -15,6 +14,7 @@ class RegistrationForm(forms.ModelForm):
         #help_text = "Required. 30 characters or fewer. Alphanumeric characters only (letters, digits and underscores).",
         error_message = "This value must contain only letters, numbers and underscores.")
     password = forms.CharField( label = "Password", widget = forms.PasswordInput )
+    website = forms.CharField(label = "Website", required=False)
 
     #def __init__(self, *args, **kwargs):
     #    super(RegistrationForm, self).__init__(*args, **kwargs)
@@ -23,6 +23,14 @@ class RegistrationForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ("username", "name", "email", "password")
+
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        try:
+            User.objects.get(email=email)
+        except User.DoesNotExist:
+            return email
+        raise forms.ValidationError("Someone is already registered with the box office with that email address.")
 
     def clean_username(self):
         username = self.cleaned_data["username"]
@@ -40,7 +48,7 @@ class RegistrationForm(forms.ModelForm):
         return user
 
 class AuthenticationForm(DjangoAuthenticationForm):
-    username = forms.CharField(label="Email or username", max_length=100)
+    username = forms.CharField(label="Email", max_length=100)
     def clean(self):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
@@ -48,7 +56,7 @@ class AuthenticationForm(DjangoAuthenticationForm):
         if username and password:
             self.user_cache = authenticate(username=username, password=password)
             if self.user_cache is None:
-                raise forms.ValidationError("Please enter a correct username and password. Note that both fields are case-sensitive.")
+                raise forms.ValidationError("Please enter a correct email and password.")
             elif not self.user_cache.is_active:
                 raise forms.ValidationError("This account is inactive.")
             if not self.user_cache.get_profile().email_validated:
