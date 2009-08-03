@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block title %}Editing {{ production.company }} production of {{ production.play|prettify }}{% endblock %}
+
+{% block content %}
+
+<h1>Editing production</h1>
+
+<div id="primary">
+
+<p>Thank you for taking the time to add or correct some information on this site.</p>
+
+<form method="post" id="production_edit">
+{{ form.as_p }}
+<p><span style="float:left"><input type="submit" value="Record changes"></span>
+
+<span style="float:right"><input type="submit" id="edit-form-cancel" value="Disregard"></span>
+</p>
+</form>
+ 
+</div>
+
+{% include 'production_sidebar.html' %}
+
+{% endblock %}

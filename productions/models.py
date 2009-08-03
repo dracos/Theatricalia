@@ -139,3 +139,11 @@ class Part(TrackedModel):
 
     def __unicode__(self):
         return '%s, %s in %s' % (self.person, self.role, self.production)
+
+    def cast_string(self):
+        if self.cast == 1:
+            return 'Cast'
+        elif self.cast == 0:
+            return 'Crew'
+        else:
+            return 'Unknown'
