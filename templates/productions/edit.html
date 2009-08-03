@@ -11,6 +11,8 @@
 
 <h1>Editing production</h1>
 
+{% if messages %}<ul id="messages">{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>{% endif %}
+
 <div id="primary">
 
 <p>Thank you for taking the time to add or correct some information on this site.
@@ -28,7 +30,7 @@
  
 {% for part in parts.all %}
 <div class="{% cycle row1,row2 %}">
-  <a style="float: right" href="?part={{ part.id }}">Edit</a>
+  <a style="float: right" href="edit/{{ part.id }}">Edit</a>
   {{ part.person.name }}, {{ part.role }} <small>({{ part.cast_string }})</small>
   <small>{{ part.order|default:'' }}
   {% if part.start_date %}, {{ part.start_date|default:'' }}{% endif %}
@@ -38,6 +40,6 @@
     
 </div>
 
-{% include 'production_sidebar.html' %}
+{% include 'productions/sidebar.html' %}
 
 {% endblock %}

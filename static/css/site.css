@@ -544,6 +544,7 @@ td {
     display: none;
     margin: 1.5em 0;
 }
+
 #production_edit label, #production_edit_inline_basic label {
     float: left;
     width: 6em;
@@ -553,6 +554,17 @@ td {
 }
 #production_edit p:last-child {
     margin-top: 1.5em;
+}
+
+#production_edit ul.errorlist li {
+    background: none;
+    padding: 0;
+}
+#production_edit ul li {
+    margin-bottom: 0;
+}
+#production_edit ul label {
+    float: none;
 }
 
 .row2 {

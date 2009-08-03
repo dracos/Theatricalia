@@ -12,15 +12,36 @@
 <p>Thank you for taking the time to add or correct some information on this site.</p>
 
 <form method="post" id="production_edit">
-{{ form.as_p }}
-<p><span style="float:left"><input type="submit" value="Record changes"></span>
 
+{% if form.person_choice.errors or form.person_choice.is_hidden %}
+{{ form.person_choice.errors }}
+{{ form.person_choice }}
+{% endif %}
+
+{% if form.person.errors %}
+{{ form.person.errors }}
+{{ form.person }}
+{% else %}
+<p>{{ form.person.label_tag }} {{ form.person }}</p>
+{% endif %}
+
+{% for field in form %}
+{% ifnotequal field.label 'Person' %}
+{% if field.is_hidden %}
+{{ field }}
+{% else %}
+<p>{{ field.label_tag }} {{ field }}</p>
+{% endif %}
+{% endifnotequal %}
+{% endfor %}
+
+<p><span style="float:left"><input type="submit" value="Record changes"></span>
 <span style="float:right"><input type="submit" id="edit-form-cancel" value="Disregard"></span>
 </p>
 </form>
  
 </div>
 
-{% include 'production_sidebar.html' %}
+{% include 'productions/sidebar.html' %}
 
 {% endblock %}

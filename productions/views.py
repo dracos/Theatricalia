@@ -10,7 +10,7 @@ from django.contrib.comments.views.comments import post_comment
 from django.http import Http404, HttpResponseRedirect
 from shortcuts import render
 from models import Production, Part
-from forms import ProductionEditForm, PartEditForm, PartAddForm, BasePartFormSet
+from forms import ProductionEditForm, PartEditForm, PartAddForm
 from plays.models import Play
 from photos.forms import PhotoForm
 from people.models import Person
@@ -98,18 +98,32 @@ def by_company(request, production):
     pass
 
 @login_required
-def part_edit(request, production, part_id):
+def part_edit(request, play, production_id, part_id):
+    production_id = base36_to_int(production_id)
+    production = get_object_or_404(Production, id=production_id)
+
+    play = get_object_or_404(Play, slug=play)
+    if play != production.play:
+        raise Http404()
+
     part = get_object_or_404(Part, id=part_id)
-    part_form = PartEditForm(data=request.POST or None, instance=part)
+    if part.production != production:
+        raise Http404()
+
+    part_form = PartEditForm(
+        data = request.POST or None,
+        instance = part,
+        initial = { 'person': part.person } # To make form have name rather than ID
+    )
 
     if request.method == 'POST':
         if part_form.is_valid():
-            pass
-            #production_form.save()
-            #request.user.message_set.create(message="Your changes have been stored; thank you.")
-            #return HttpResponseRedirect(production.get_absolute_url())
+            part_form.save()
+            request.user.message_set.create(message="Your changes have been stored; thank you.")
+            return HttpResponseRedirect(production.get_edit_url())
 
-    return render(request, 'part_edit.html', {
+    return render(request, 'productions/edit-part.html', {
+        'id': part_id,
         'form': part_form,
         'production': production,
     })
@@ -122,10 +136,6 @@ def production_edit(request, play, production_id):
     if play != production.play:
         raise Http404()
 
-    edit_part = request.GET.get('part', 0)
-    if edit_part:
-        return part_edit(request, production, edit_part)
-
     production_form = ProductionEditForm(data=request.POST or None, instance=production, last_modified=production.last_modified)
 
     if request.method == 'POST':
@@ -134,7 +144,7 @@ def production_edit(request, play, production_id):
             request.user.message_set.create(message="Your changes have been stored; thank you.")
             return HttpResponseRedirect(production.get_absolute_url())
 
-    return render(request, 'production_edit.html', {
+    return render(request, 'productions/edit.html', {
         'form': production_form,
         'production': production,
         'parts': production.part_set.order_by('-cast','order','role'),
