@@ -18,18 +18,15 @@
 {{ form.person_choice }}
 {% endif %}
 
-{% if form.person.errors %}
 {{ form.person.errors }}
-{{ form.person }}
-{% else %}
 <p>{{ form.person.label_tag }} {{ form.person }}</p>
-{% endif %}
 
 {% for field in form %}
 {% ifnotequal field.label 'Person' %}
 {% if field.is_hidden %}
 {{ field }}
 {% else %}
+{{ field.errors }}
 <p>{{ field.label_tag }} {{ field }}</p>
 {% endif %}
 {% endifnotequal %}

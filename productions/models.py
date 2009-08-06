@@ -131,7 +131,7 @@ class Part(TrackedModel):
     production = models.ForeignKey(Production)
     person = models.ForeignKey(Person)
     role = models.CharField(max_length=100)
-    cast = models.NullBooleanField(null=True, blank=True)
+    cast = models.NullBooleanField(null=True, blank=True, verbose_name='Cast/Crew')
     credit = models.CharField(max_length=100)
     order = models.IntegerField(blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)

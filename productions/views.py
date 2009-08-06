@@ -11,7 +11,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.template.defaultfilters import slugify
 from shortcuts import render
 from models import Production, Part
-from forms import ProductionEditForm, PartEditForm, PartAddForm
+from forms import ProductionEditForm, PartForm
 from plays.models import Play
 from photos.forms import PhotoForm
 from people.models import Person
@@ -111,6 +111,13 @@ def production(request, play, production_id):
 def by_company(request, production):
     pass
 
+def part_add(name):
+    first_name, last_name = name.split(None, 1)
+    slug = unique_slugify(Person, '%s %s' % (first_name, last_name))
+    new_person = Person(first_name=first_name, last_name=last_name, slug=slug, created_by=request.user)
+    new_person.save()
+    return new_person
+
 @login_required
 def part_edit(request, play, production_id, part_id):
     production = check_parameters(play, production_id)
@@ -119,7 +126,7 @@ def part_edit(request, play, production_id, part_id):
     if part.production != production:
         raise Http404()
 
-    part_form = PartEditForm(
+    part_form = PartForm(
         data = request.POST or None,
         instance = part,
         initial = { 'person': part.person } # To make form have name rather than ID
@@ -131,12 +138,7 @@ def part_edit(request, play, production_id, part_id):
             return HttpResponseRedirect(production.get_edit_cast_url())
         if part_form.is_valid():
             if part_form.cleaned_data.get('person_choice') == 'new':
-                name = part_form.cleaned_data['person']
-                first_name, last_name = name.split(None, 1)
-                slug = unique_slugify(Person, '%s %s' % (first_name, last_name))
-                new_person = Person(first_name=first_name, last_name=last_name, slug=slug, created_by=request.user)
-                new_person.save()
-                part_form.cleaned_data['person'] = new_person
+                part_form.cleaned_data['person'] = part_add(part_form.cleaned_data['person'])
             part_form.save()
             request.user.message_set.create(message="Your changes have been stored; thank you.")
             return HttpResponseRedirect(production.get_edit_cast_url())
@@ -168,9 +170,23 @@ def production_edit(request, play, production_id):
 
 @login_required
 def production_edit_cast(request, play, production_id):
+    """For picking someone to edit, or adding a new Part"""
     production = check_parameters(play, production_id)
+    part_form = PartForm(request.POST or None)
+
+    if request.method == 'POST':
+        if part_form.is_valid():
+            if part_form.cleaned_data.get('person_choice') == 'new':
+                part_form.cleaned_data['person'] = part_add(part_form.cleaned_data['person'])
+            part_form.cleaned_data['created_by'] = request.user
+            part_form.cleaned_data['production'] = production
+            part_form.save()
+            request.user.message_set.create(message="Your new part has been added; thank you.")
+            return HttpResponseRedirect(production.get_edit_cast_url())
+
     return render(request, 'productions/edit-parts.html', {
         'production': production,
+        'form': part_form,
         'parts': production.part_set.order_by('-cast','order','role'),
     })
 

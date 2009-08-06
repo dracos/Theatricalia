@@ -36,33 +36,20 @@ class ProductionEditForm(forms.ModelForm):
 
         return self.cleaned_data
 
-class PartAddForm(forms.ModelForm):
+# person is the ext box where someone enters a name, and always will be
+# person_choice is the selection of someone from that, or the creation of a new person
+class PartForm(forms.ModelForm):
     person = forms.CharField()
+    person_choice = forms.ChoiceField(label='Person', widget=forms.RadioSelect(), required=False)
 
     class Meta:
         model = Part
         exclude = ('production', 'credit', 'created_by', 'visible')
 
     def __init__(self, *args, **kwargs):
-        super(PartAddForm, self).__init__(*args, **kwargs)
+        super(PartForm, self).__init__(*args, **kwargs)
         self.fields['order'].widget.attrs['size'] = 5
         self.fields['cast'].widget = CastCrewNullBooleanSelect()
-
-# person is the ext box where someone enters a name, and always will be
-# person_choice is the selection of someone from that, or the creation of a new person
-class PartEditForm(PartAddForm):
-    id = forms.IntegerField(widget=forms.HiddenInput())
-    person_choice = forms.ChoiceField(label='Person', widget=forms.RadioSelect(), required=False)
-#    last_modified = forms.DateTimeField(widget=forms.HiddenInput())
-
-    class Meta:
-        model = Part
-        fields = ('id', 'person_choice', 'person', 'role', 'cast', 'order', 'start_date', 'end_date')
-
-    def __init__(self, last_modified=None, *args, **kwargs):
-#        self.db_last_modified = last_modified
-#        kwargs.setdefault('initial', {}).update({'last_modified':last_modified})
-        super(PartEditForm, self).__init__(*args, **kwargs)
         # Submitting the form with something selected in person_choice...
         if 'person_choice' in self.data and 'person' in self.data:
             choices = self.radio_choices(self.data['person'])
@@ -72,10 +59,16 @@ class PartEditForm(PartAddForm):
         people, dummy = search_people(s)
         choices = []
         for p in people:
-            last_production = p.productions.order_by('-IFNULL(press_date, IF(productions_production.end_date!="", productions_production.end_date, productions_production.start_date))')[0]
+            last_production = p.productions.order_by('-IFNULL(press_date, IF(productions_production.end_date!="", productions_production.end_date, productions_production.start_date))')
+            if len(last_production):
+                last_production = last_production[0]
+            else:
+                last_production = 'nothing yet on this site'
             choices.append( (p.id, prettify(str(p) + ', last in ' + str(last_production)) ) )
         if len(choices) > 1:
             choices.append( ( 'new', prettify('None of these, a new person called \'' + s + '\'') ) )
+        elif str(p) == s:
+            choices.append( ( 'new', prettify('A new person also called \'' + s + '\'') ) )
         else:
             choices.append( ( 'new', prettify('A new person called \'' + s + '\'') ) )
         choices.append( ( 'back', 'I misspelled, and will enter a new name below:' ) )
