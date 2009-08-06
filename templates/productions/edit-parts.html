@@ -18,14 +18,18 @@
 <p>Thank you for taking the time to add or correct some information on this site.
 </p>
 
-<form method="post" id="production_edit">
-{{ form.as_p }}
-<p><span style="float:left"><input type="submit" value="Record changes"></span>
-
-<span style="float:right"><input type="submit" name="disregard" id="edit-form-cancel" value="Disregard"></span>
-</p>
-</form>
+<h2><a name="castandcrew"></a>Cast &amp; Crew</h2>
  
+{% for part in parts.all %}
+<div class="{% cycle row1,row2 %}">
+  <a style="float: right" href="./{{ part.id }}">Edit</a>
+  {{ part.person.name }}, {{ part.role }} <small>({{ part.cast_string }})</small>
+  <small>{{ part.order|default:'' }}
+  {% if part.start_date %}, {{ part.start_date|default:'' }}{% endif %}
+  {% if part.end_date %}, {{ part.end_date|default:'' }}{% endif %}</small>
+</div>
+{% endfor %}
+    
 </div>
 
 {% include 'productions/sidebar.html' %}
@@ -33,8 +37,8 @@
 <div class="secondary">
 
 <ul>
-<li><strong>Edit production details</strong></li>
-<li><a href="edit/cast">Edit Cast &amp; Crew</a></li>
+<li><a href="edit">Edit production details</a></li>
+<li><strong>Edit Cast &amp; Crew</strong></li>
 </ul>
 
 </div>

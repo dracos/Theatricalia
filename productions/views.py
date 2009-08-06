@@ -76,13 +76,17 @@ def object_productions(object):
         #production_add_parts(object, past_page, future_page)
     return past_page, future_page
 
-def production(request, play, production_id):
+def check_parameters(play, production_id):
     production_id = base36_to_int(production_id)
     production = get_object_or_404(Production, id=production_id)
+
     play = get_object_or_404(Play, slug=play)
     if play != production.play:
         raise Http404()
+    return production
 
+def production(request, play, production_id):
+    production = check_parameters(play, production_id)
     photo_form = PhotoForm(production)
     production_form = ProductionEditForm(instance=production, last_modified=production.last_modified)
 
@@ -99,12 +103,7 @@ def by_company(request, production):
 
 @login_required
 def part_edit(request, play, production_id, part_id):
-    production_id = base36_to_int(production_id)
-    production = get_object_or_404(Production, id=production_id)
-
-    play = get_object_or_404(Play, slug=play)
-    if play != production.play:
-        raise Http404()
+    production = check_parameters(play, production_id)
 
     part = get_object_or_404(Part, id=part_id)
     if part.production != production:
@@ -117,10 +116,13 @@ def part_edit(request, play, production_id, part_id):
     )
 
     if request.method == 'POST':
+        if request.POST.get('disregard'):
+            request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
+            return HttpResponseRedirect(production.get_edit_cast_url())
         if part_form.is_valid():
             part_form.save()
             request.user.message_set.create(message="Your changes have been stored; thank you.")
-            return HttpResponseRedirect(production.get_edit_url())
+            return HttpResponseRedirect(production.get_edit_cast_url())
 
     return render(request, 'productions/edit-part.html', {
         'id': part_id,
@@ -130,15 +132,13 @@ def part_edit(request, play, production_id, part_id):
 
 @login_required
 def production_edit(request, play, production_id):
-    production_id = base36_to_int(production_id)
-    production = get_object_or_404(Production, id=production_id)
-    play = get_object_or_404(Play, slug=play)
-    if play != production.play:
-        raise Http404()
-
+    production = check_parameters(play, production_id)
     production_form = ProductionEditForm(data=request.POST or None, instance=production, last_modified=production.last_modified)
 
     if request.method == 'POST':
+        if request.POST.get('disregard'):
+            request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
+            return HttpResponseRedirect(production.get_absolute_url())
         if production_form.is_valid():
             production_form.save()
             request.user.message_set.create(message="Your changes have been stored; thank you.")
@@ -146,6 +146,13 @@ def production_edit(request, play, production_id):
 
     return render(request, 'productions/edit.html', {
         'form': production_form,
+        'production': production,
+    })
+
+@login_required
+def production_edit_cast(request, play, production_id):
+    production = check_parameters(play, production_id)
+    return render(request, 'productions/edit-parts.html', {
         'production': production,
         'parts': production.part_set.order_by('-cast','order','role'),
     })

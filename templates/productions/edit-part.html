@@ -36,12 +36,21 @@
 {% endfor %}
 
 <p><span style="float:left"><input type="submit" value="Record changes"></span>
-<span style="float:right"><input type="submit" id="edit-form-cancel" value="Disregard"></span>
+<span style="float:right"><input name="disregard" type="submit" id="edit-form-cancel" value="Disregard"></span>
 </p>
 </form>
  
 </div>
 
 {% include 'productions/sidebar.html' %}
+
+<div class="secondary">
+
+<ul>
+<li><a href="../edit">Edit production details</a></li>
+<li><a href="cast">Edit Cast &amp; Crew</a></li>
+</ul>
+
+</div>
 
 {% endblock %}

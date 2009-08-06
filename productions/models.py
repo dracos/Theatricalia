@@ -42,6 +42,10 @@ class Production(TrackedModel):
     def get_edit_url(self):
         return ('production-edit', (), {'play': self.play.slug, 'production_id': int_to_base36(self.id) } )
 
+    @models.permalink
+    def get_edit_cast_url(self):
+        return ('production-edit-cast', (), {'play': self.play.slug, 'production_id': int_to_base36(self.id) } )
+
     def __unicode__(self):
         producer = ''
         if self.company:
