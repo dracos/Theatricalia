@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.forms.formsets import formset_factory
 from django.contrib.comments.views.comments import post_comment
 from django.http import Http404, HttpResponseRedirect
+from django.template.defaultfilters import slugify
 from shortcuts import render
 from models import Production, Part
 from forms import ProductionEditForm, PartEditForm, PartAddForm
@@ -15,6 +16,15 @@ from plays.models import Play
 from photos.forms import PhotoForm
 from people.models import Person
 from aggregates import Concatenate
+
+def unique_slugify(thing, s):
+    slug = slugify(s)
+    slug0 = slug
+    i = 2
+    while thing.objects.filter(slug=slug):
+        slug = '%s-%s' % (slug0, i)
+        i += 1
+    return slug
 
 def productions_past(object):
     return object.productions.filter(
@@ -120,6 +130,13 @@ def part_edit(request, play, production_id, part_id):
             request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
             return HttpResponseRedirect(production.get_edit_cast_url())
         if part_form.is_valid():
+            if part_form.cleaned_data.get('person_choice') == 'new':
+                name = part_form.cleaned_data['person']
+                first_name, last_name = name.split(None, 1)
+                slug = unique_slugify(Person, '%s %s' % (first_name, last_name))
+                new_person = Person(first_name=first_name, last_name=last_name, slug=slug, created_by=request.user)
+                new_person.save()
+                part_form.cleaned_data['person'] = new_person
             part_form.save()
             request.user.message_set.create(message="Your changes have been stored; thank you.")
             return HttpResponseRedirect(production.get_edit_cast_url())

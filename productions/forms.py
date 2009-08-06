@@ -63,6 +63,7 @@ class PartEditForm(PartAddForm):
 #        self.db_last_modified = last_modified
 #        kwargs.setdefault('initial', {}).update({'last_modified':last_modified})
         super(PartEditForm, self).__init__(*args, **kwargs)
+        # Submitting the form with something selected in person_choice...
         if 'person_choice' in self.data and 'person' in self.data:
             choices = self.radio_choices(self.data['person'])
             self.fields['person_choice'].choices = choices
@@ -81,7 +82,7 @@ class PartEditForm(PartAddForm):
         return choices
 
     def clean(self):
-        if 'person_choice' in self.cleaned_data:
+        if isinstance(self.cleaned_data.get('person_choice'), Person):
             self.cleaned_data['person'] = self.cleaned_data['person_choice']
             del self.cleaned_data['person_choice']
         return self.cleaned_data
@@ -90,9 +91,9 @@ class PartEditForm(PartAddForm):
         person = self.cleaned_data['person_choice']
         if re.match('[0-9]+$', person):
             return Person.objects.get(id=person)
-
+        if person == 'new' or (person == '' and 'person' not in self.changed_data):
+            return person
         raise forms.ValidationError('Please select one of the choices below:')
-        return person
 
     def clean_person(self):
         if not 'person' in self.changed_data:
@@ -104,4 +105,5 @@ class PartEditForm(PartAddForm):
             # Okay, so we have a search string
             choices = self.radio_choices(person)
             self.fields['person_choice'].choices = choices # = forms.ChoiceField( label='Person', choices=choices, widget = forms.RadioSelect() )
-        return self.cleaned_data['person']
+        return person
+
