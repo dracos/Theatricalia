@@ -8,10 +8,9 @@ from people.models import Person
 from plays.models import Play
 from photos.models import Photo
 from fields import ApproximateDateField
-from common.models import TrackedModel
 from common.templatetags.prettify import prettify
 
-class ProductionCompany(TrackedModel):
+class ProductionCompany(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
     description = models.TextField(blank=True)
@@ -23,7 +22,7 @@ class ProductionCompany(TrackedModel):
     def __unicode__(self):
         return self.name
 
-class Production(TrackedModel):
+class Production(models.Model):
     play = models.ForeignKey(Play, related_name='productions')
     company = models.ForeignKey(ProductionCompany, related_name='productions', blank=True, null=True)
     start_date = ApproximateDateField(blank=True)
@@ -117,7 +116,7 @@ class Production(TrackedModel):
     def title(self):
         return self.company or ''
 
-class Performance(TrackedModel):
+class Performance(models.Model):
     production = models.ForeignKey(Production)
     date = models.DateField()
     time = models.TimeField(blank=True, null=True)
@@ -127,7 +126,7 @@ class Performance(TrackedModel):
     def __unicode__(self):
         return '%s %s performance of %s at %s' % (self.date, self.time, self.production, self.place)
 
-class Part(TrackedModel):
+class Part(models.Model):
     production = models.ForeignKey(Production)
     person = models.ForeignKey(Person)
     role = models.CharField(max_length=100)

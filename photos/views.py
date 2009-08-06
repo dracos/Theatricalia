@@ -34,7 +34,6 @@ def take_photo(request):
 
 	form = PhotoForm(target, data=data, files=request.FILES)
 
-	data['created_by'] = request.user.id
 	if not form.is_valid():
 		template_list = [ "photos/preview.html"
 			#"comments/%s_%s_preview.html" % tuple(str(model._meta).split(".")),
@@ -44,7 +43,6 @@ def take_photo(request):
 
 	photo = form.save()
 	#photo = form.get_photo_object()
-        #photo.created_by = request.user
 	#photo.save()
 
 	next = data.get("next", '/')

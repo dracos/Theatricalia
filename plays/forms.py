@@ -8,7 +8,7 @@ class PlayEditForm(forms.ModelForm):
 
 	class Meta:
 		model = Play
-		exclude = ('title', 'slug', 'parent', 'created_by')
+		exclude = ('title', 'slug', 'parent')
 
 	#def clean(self):
 	#	super(PersonEditForm, self).clean()

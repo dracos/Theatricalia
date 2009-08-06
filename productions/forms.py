@@ -19,7 +19,7 @@ class ProductionEditForm(forms.ModelForm):
 
     class Meta:
         model = Production
-        exclude = ('parts', 'created_by')
+        exclude = ('parts')
 
     def __init__(self, last_modified=None, *args, **kwargs):
         self.db_last_modified = last_modified
@@ -44,7 +44,7 @@ class PartForm(forms.ModelForm):
 
     class Meta:
         model = Part
-        exclude = ('production', 'credit', 'created_by', 'visible')
+        exclude = ('production', 'credit', 'visible')
 
     def __init__(self, *args, **kwargs):
         super(PartForm, self).__init__(*args, **kwargs)

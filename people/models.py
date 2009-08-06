@@ -3,9 +3,8 @@ from fields import ApproximateDateField
 from django.contrib.contenttypes import generic
 from photos.models import Photo
 from sounds.metaphone import dm
-from common.models import TrackedModel
 
-class Person(TrackedModel):
+class Person(models.Model):
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50)
     first_name_metaphone = models.CharField(max_length=50, editable=False)

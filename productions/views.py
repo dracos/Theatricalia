@@ -98,7 +98,7 @@ def check_parameters(play, production_id):
 def production(request, play, production_id):
     production = check_parameters(play, production_id)
     photo_form = PhotoForm(production)
-    production_form = ProductionEditForm(instance=production, last_modified=production.last_modified)
+    production_form = ProductionEditForm(instance=production)
 
     return render(request, 'production.html', {
         'production': production,
@@ -114,7 +114,7 @@ def by_company(request, production):
 def part_add(name):
     first_name, last_name = name.split(None, 1)
     slug = unique_slugify(Person, '%s %s' % (first_name, last_name))
-    new_person = Person(first_name=first_name, last_name=last_name, slug=slug, created_by=request.user)
+    new_person = Person(first_name=first_name, last_name=last_name, slug=slug)
     new_person.save()
     return new_person
 
@@ -152,7 +152,7 @@ def part_edit(request, play, production_id, part_id):
 @login_required
 def production_edit(request, play, production_id):
     production = check_parameters(play, production_id)
-    production_form = ProductionEditForm(data=request.POST or None, instance=production, last_modified=production.last_modified)
+    production_form = ProductionEditForm(data=request.POST or None, instance=production)
 
     if request.method == 'POST':
         if request.POST.get('disregard'):
@@ -178,7 +178,6 @@ def production_edit_cast(request, play, production_id):
         if part_form.is_valid():
             if part_form.cleaned_data.get('person_choice') == 'new':
                 part_form.cleaned_data['person'] = part_add(part_form.cleaned_data['person'])
-            part_form.cleaned_data['created_by'] = request.user
             part_form.cleaned_data['production'] = production
             part_form.save()
             request.user.message_set.create(message="Your new part has been added; thank you.")

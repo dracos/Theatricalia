@@ -3,12 +3,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.contrib.auth.models import User
 from sorl.thumbnail.fields import ImageWithThumbnailsField
-from common.models import TrackedModel
 
 def get_upload_to(instance, filename):
 	return 'photos/%s/%s/%s' % (instance.content_type, instance.object_id, filename)
 
-class Photo(TrackedModel):
+class Photo(models.Model):
 	is_visible = models.BooleanField(default=True)
 
 	title = models.CharField(max_length=255)

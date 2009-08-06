@@ -4,9 +4,8 @@ from django.db import models
 from people.models import Person
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
-from common.models import TrackedModel
 
-class Play(TrackedModel):
+class Play(models.Model):
 	title = models.CharField(max_length=255)
 	slug = models.SlugField(max_length=255, unique=True)
 	authors = models.ManyToManyField(Person, related_name='plays', blank=True)

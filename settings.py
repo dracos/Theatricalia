@@ -105,6 +105,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'dmigrations',
     'sorl.thumbnail',
+    'reversion',
     'theatredb.common',
     'theatredb.places',
     'theatredb.plays',

@@ -39,7 +39,7 @@ def person_js(request, person):
 def person_edit(request, person):
     person = get_object_or_404(Person, slug=person)
 
-    form = PersonEditForm(data=request.POST or None, instance=person, last_modified=person.last_modified)
+    form = PersonEditForm(data=request.POST or None, instance=person)
     if request.method == 'POST' and form.is_valid():
         form.save_with_log(request)
         request.user.message_set.create(message="Your changes have been stored, thank you.")

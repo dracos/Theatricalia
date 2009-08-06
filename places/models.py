@@ -1,9 +1,8 @@
 from django.db import models
 from django.contrib.contenttypes import generic
 from photos.models import Photo
-from common.models import TrackedModel
 
-class Place(TrackedModel):
+class Place(models.Model):
 	name = models.CharField(max_length=100)
 	slug = models.SlugField(unique=True, max_length=100)
 	description = models.TextField(blank=True)
