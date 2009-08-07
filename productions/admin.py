@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django import forms
 from reversion.admin import VersionAdmin
 from models import Production, ProductionCompany, Part, Performance
 from autocomplete.widgets import AutocompleteModelAdmin
@@ -14,9 +15,18 @@ class PartAdmin(VersionAdmin, AutocompleteModelAdmin):
         'person': ('first_name','last_name'),
     }
 
+class PartInlineForm(forms.ModelForm):
+    lookup_person = forms.CharField()
+    def __init__(self, *args, **kwargs):
+        if 'instance' in kwargs:
+            kwargs['initial']['lookup_person'] = kwargs['instance'].person.name()
+        super(PartInlineForm, self).__init__(*args, **kwargs)
+        self.fields['person'].widget = forms.HiddenInput()
+
 class PartInline(admin.options.InlineModelAdmin):
-    template = 'edit_inline.html'
+    template = 'admin/edit_part_inline.html' # To have auto-complete for the inline Part
     model = Part
+    form = PartInlineForm
     extra = 1
 
 class ProductionAdmin(VersionAdmin, AutocompleteModelAdmin):
