@@ -29,7 +29,9 @@ $(function(){
      <thead><tr>
      {% for field in inline_admin_formset.fields %}
        {% if not field.is_hidden %}
+            {% ifnotequal field.label 'LookupPerson' %}
          <th {% if forloop.first %}colspan="2"{% endif %}>{{ field.label|capfirst }}</th>
+            {% endifnotequal %}
         {% endif %}
      {% endfor %}
      {% if inline_admin_formset.formset.can_delete %}<th>{% trans "Delete?" %}</th>{% endif %}

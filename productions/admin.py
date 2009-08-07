@@ -16,7 +16,7 @@ class PartAdmin(VersionAdmin, AutocompleteModelAdmin):
     }
 
 class PartInlineForm(forms.ModelForm):
-    lookup_person = forms.CharField()
+    lookup_person = forms.CharField(label='LookupPerson')
     def __init__(self, *args, **kwargs):
         if 'instance' in kwargs:
             kwargs['initial']['lookup_person'] = kwargs['instance'].person.name()
