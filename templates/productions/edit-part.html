@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
-{% block title %}Editing {{ production.company }} production of {{ production.play|prettify }}{% endblock %}
+{% block title %}Editing {{ production.company|default:"" }} production of {{ production.play|prettify }}{% endblock %}
 
 {% block content %}
 

@@ -77,7 +77,7 @@ class ApproximateDateField(models.CharField):
 
     def value_to_string(self, obj):
         value = self._get_val_from_obj(obj)
-        return self.get_db_pref_value(value)
+        return self.get_db_prep_value(value)
 
     def formfield(self, **kwargs):
         defaults = { 'form_class': ApproximateDateFormField }

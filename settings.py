@@ -83,6 +83,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'theatredb.middleware.AlphaMiddleware',
     'theatredb.middleware.OnlyLowercaseUrls',
+    'django.middleware.transaction.TransactionMiddleware',
+    'reversion.middleware.RevisionMiddleware',
 )
 
 ROOT_URLCONF = 'theatredb.urls'
