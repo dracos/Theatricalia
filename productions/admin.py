@@ -14,18 +14,19 @@ class PartAdmin(VersionAdmin, AutocompleteModelAdmin):
         'person': ('first_name','last_name'),
     }
 
-class PartInline(admin.TabularInline):
-	model = Part
-	extra = 1
+class PartInline(admin.options.InlineModelAdmin):
+    template = 'edit_inline.html'
+    model = Part
+    extra = 1
 
 class ProductionAdmin(VersionAdmin, AutocompleteModelAdmin):
     related_search_fields = {
         'places': ('name',),
         'play': ('title',),
     }
-	#inlines = [
-#		PartInline,
-#	]
+    inlines = [
+        PartInline,
+    ]
 
 admin.site.register(Production, ProductionAdmin)
 admin.site.register(ProductionCompany, CompanyAdmin)
