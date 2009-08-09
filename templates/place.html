@@ -22,7 +22,7 @@
 {% endfor %}
 </ul>
 {% if future.has_other_pages %}
-<p align="right"><a href="{% url place-productions-future place.slug %}?page=2">More &rarr;</a></p>
+<p align="right"><a href="{{ place.get_future_url }}?page=2">More &rarr;</a></p>
 {% endif %}
 {% endif %}
 
@@ -35,7 +35,7 @@
 {% endfor %}
 </ul>
 {% if past.has_other_pages %}
-<p align="right"><a href="{% url place-productions-past place.slug %}?page=2">More &rarr;</a></p>
+<p align="right"><a href="{{ place.get_past_url }}?page=2">More &rarr;</a></p>
 {% endif %}
 {% endif %}
 
@@ -94,7 +94,7 @@ to upload, please <a href="{% url login %}?next={{ request.path }}">sign in</a>.
 {% if wikipedia %}<li><a href="{{ wikipedia }}">Wikipedia</a>{% endif %}
 </ul>
 
-<p><a href="">Edit this place&rsquo;s information</a></p>
+<p><a href="{{ place.get_edit_url }}">Edit this place&rsquo;s information</a></p>
 
 <p><a href="">Add a production here</a></p>
 </div>

@@ -2,7 +2,7 @@ from shortcuts import render, send_email
 from forms import RegistrationForm, AuthenticationForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import int_to_base36, base36_to_int
+from utils import int_to_base32, base32_to_int
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -51,9 +51,9 @@ login = never_cache(login)
 #def registration_complete(request):
 #    return render(request, 'accounts/registration_complete.html', {})
 
-def register_confirm(request, uidb36, token):
+def register_confirm(request, uidb32, token):
 	try:
-		uid_int = base36_to_int(uidb36)
+		uid_int = base32_to_int(uidb32)
 	except ValueError:
 		raise Http404
 
@@ -78,7 +78,7 @@ def send_confirmation_email(request, user):
 		'registration/confirmation-email.txt',
 		{
 		        'email': user.email,
-		        'uid': int_to_base36(user.id),
+		        'uid': int_to_base32(user.id),
 		        'user': user,
 		        'token': default_token_generator.make_token(user),
 		        'protocol': 'http',

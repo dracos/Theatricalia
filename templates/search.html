@@ -20,7 +20,7 @@
 <h2>Places</h2>
 <ul id="person_list">
 {% for place in places %}
-<li><a href="{% url place place.slug %}">{{ place }}</a>
+<li><a href="{{ place.get_absolute_url }}">{{ place }}</a>
 {% endfor %}
 </ul>
 {% endif %}
@@ -35,7 +35,7 @@
 {% endifequal %}
 <ul id="person_list">
 {% for person in people %}
-<li><a href="{% url person person.slug %}">{{ person }}</a>
+<li><a href="{{ person.get_absolute_url }}">{{ person }}</a>
 {% endfor %}
 </ul>
 {% if not request.GET.similar and not sounds_people %}

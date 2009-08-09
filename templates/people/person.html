@@ -17,7 +17,7 @@
 {{ person.bio|prettify|linebreaks }}
 {% else %}
 <p>This person doesn&rsquo;t appear to have a biography yet.
-Why not <a href="{% url person-edit person.slug %}">add one</a>?
+Why not <a href="{{ person.get_edit_url }}">add one</a>?
 {% endif %}
 
 {% if plays %}
@@ -56,7 +56,7 @@ Why not <a href="{% url person-edit person.slug %}">add one</a>?
 {% endfor %}
 </ul>
 {% if past.has_other_pages %}
-<p align="right"><a href="{% url person-productions-past person.slug %}?page=2">More &rarr;</a></p>
+<p align="right"><a href="{% url person-productions-past person.id person.slug %}?page=2">More &rarr;</a></p>
 {% endif %}
 {% endif %}
 
@@ -112,7 +112,7 @@ to upload, please <a href="{% url login %}?next={{ request.path }}">sign in</a>.
 
 {% endif %}
 
-<p align="right"><a href="{% url person-edit person.slug %}">Edit this person</a></p>
+<p align="right"><a href="{{ person.get_edit_url }}">Edit this person</a></p>
 
 </div>
 

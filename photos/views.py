@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
-from django.utils.http import base36_to_int
+from utils import base32_to_int
 from django.contrib.auth.decorators import login_required
 from django.utils.html import escape 
 from models import Photo
@@ -52,7 +52,7 @@ def photo_taken(request):
 	pass
 
 def view(request, photo_id):
-	photo_id = base36_to_int(photo_id)
+	photo_id = base32_to_int(photo_id)
 	photo = get_object_or_404(Photo, id=photo_id)
 
 	next_photo = Photo.objects.filter(id__gt=photo.id)

@@ -117,7 +117,7 @@ by the <a href="{{ production.company.get_absolute_url }}">{{ production.company
 {{ production.date_summary|prettify }},
 
 {% ifequal production.places.count 1 %}
-at the <a href="{% url place production.places.all.0.slug %}">{{ production.places.all.0|prettify }}</a>.</p>
+at the <a href="{{ production.places.all.0.get_absolute_url }}">{{ production.places.all.0|prettify }}</a>.</p>
 {% else %}
 at {{ production.place_list|prettify_list|safe }}.
 {% endifequal %}

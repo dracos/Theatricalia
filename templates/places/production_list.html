@@ -27,7 +27,7 @@
 </div>
 
 <div class="secondary">
-<p>{{ type }} at <a href="{% url place object.slug %}">{{ object.name|prettify }}</a>.</p>
+<p>{{ type }} at <a href="{{ object.get_absolute_url }}">{{ object.name|prettify }}</a>.</p>
 {% include "pagination.html" %}
 </div>
 

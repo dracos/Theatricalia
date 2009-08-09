@@ -1,6 +1,7 @@
 from django.db import models
-from fields import ApproximateDateField
+from utils import int_to_base32
 from django.contrib.contenttypes import generic
+from fields import ApproximateDateField
 from photos.models import Photo
 from sounds.metaphone import dm
 
@@ -32,7 +33,11 @@ class Person(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-            return ('person', [self.slug])
+            return ('person', [int_to_base32(self.id), self.slug])
+
+    @models.permalink
+    def get_edit_url(self):
+            return ('person-edit', [int_to_base32(self.id), self.slug])
 
     class Meta:
         ordering = ['last_name', 'first_name']

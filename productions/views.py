@@ -3,7 +3,7 @@ from datetime import datetime
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.utils.http import base36_to_int
+from utils import base32_to_int
 from django.contrib.auth.decorators import login_required
 from django.forms.formsets import formset_factory
 from django.contrib.comments.views.comments import post_comment
@@ -87,7 +87,7 @@ def object_productions(object):
     return past_page, future_page
 
 def check_parameters(play, production_id):
-    production_id = base36_to_int(production_id)
+    production_id = base32_to_int(production_id)
     production = get_object_or_404(Production, id=production_id)
 
     play = get_object_or_404(Play, slug=play)

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.contenttypes import generic
 from photos.models import Photo
+from utils import int_to_base32
 
 class Place(models.Model):
 	name = models.CharField(max_length=100)
@@ -11,7 +12,7 @@ class Place(models.Model):
 	type = models.CharField(blank=True, max_length=100, choices=(('proscenium', 'Proscenium Arch'), ('thrust', 'Thrust'), ('multiple', 'Multiple'), ('other', 'Other')))
 	size = models.CharField(blank=True, max_length=100)
 	opening_date = models.DateField(blank=True, null=True)
-	url = models.URLField(blank=True)
+	url = models.URLField('URL', blank=True)
 	wikipedia = models.URLField(blank=True)
 	photos = generic.GenericRelation(Photo)
 
@@ -23,7 +24,17 @@ class Place(models.Model):
 
 	@models.permalink
 	def get_absolute_url(self):
-		return ('place', (), { 'place': self.slug })
+		return ('place', (), { 'place_id': int_to_base32(self.id), 'place': self.slug })
+
+	@models.permalink
+	def get_edit_url(self):
+		return ('place-edit', (), { 'place_id': int_to_base32(self.id), 'place': self.slug })
+
+	def get_past_url(self):
+		return '%s/past' % self.get_absolute_url()
+
+	def get_future_url(self):
+		return '%s/future' % self.get_absolute_url()
 
 	def get_feed_url(self):
 		return '%s/feed' % self.get_absolute_url()

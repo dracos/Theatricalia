@@ -3,7 +3,7 @@ Hello,
 Thanks for registering with Theatricalia. To confirm your 
 registration, please follow the following link:
 
-http://{{ host }}{% url register-confirm uidb36=uid, token=token %}
+http://{{ host }}{% url register-confirm uidb32=uid, token=token %}
 
 Yours,
 Matthew, Theatricalia

@@ -1,9 +1,20 @@
 import os
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, loader, Context
 from django.core.mail import send_mail
 from django.db import connection
+from utils import base32_to_int
 
+class UnmatchingSlugException(Exception):
+    pass
+
+def check_url(type, id, slug):
+    id = base32_to_int(id)
+    obj = get_object_or_404(type, id=id)
+    if obj.slug != slug:
+        raise UnmatchingSlugException(obj)
+    return obj
+    
 def render(request, template_name, context={}, base=None):
 #    context['base'] = base or 'base.html'
 #    context['path'] = request.path

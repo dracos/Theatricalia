@@ -30,7 +30,7 @@
 
 <ul id="places_list">
 {% for place in object_list %}
-    <li><a href="{% url place place.slug %}">{{ place }}</a></li>
+    <li><a href="{{ place.get_absolute_url }}">{{ place }}</a></li>
 {% empty %}
     <li>No results.</li>
 {% endfor %}

@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import dateformat
 from django.contrib.contenttypes import generic
 from django.utils.safestring import mark_safe
-from django.utils.http import int_to_base36
+from utils import int_to_base32
 from places.models import Place
 from people.models import Person
 from plays.models import Play
@@ -35,15 +35,15 @@ class Production(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('production', (), {'play': self.play.slug, 'production_id': int_to_base36(self.id) } )
+        return ('production', (), {'play': self.play.slug, 'production_id': int_to_base32(self.id) } )
 
     @models.permalink
     def get_edit_url(self):
-        return ('production-edit', (), {'play': self.play.slug, 'production_id': int_to_base36(self.id) } )
+        return ('production-edit', (), {'play': self.play.slug, 'production_id': int_to_base32(self.id) } )
 
     @models.permalink
     def get_edit_cast_url(self):
-        return ('production-edit-cast', (), {'play': self.play.slug, 'production_id': int_to_base36(self.id) } )
+        return ('production-edit-cast', (), {'play': self.play.slug, 'production_id': int_to_base32(self.id) } )
 
     def __unicode__(self):
         producer = ''

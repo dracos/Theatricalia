@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block title %}Editing {{ place }}{% endblock %}
+
+{% block content %}
+
+<h1>Editing {{ place }}</h1>
+
+<form method="post">
+{% for field in form %} {% if field.is_hidden %} {{ field }} {% endif %} {% endfor %}
+
+<div id="primary">
+
+<table>
+{% for field in form %}
+    {% if not field.is_hidden %}
+    {% ifnotequal field.label 'Location' %}
+    <tr><th>{{ field.label_tag }}:</th> <td>{{ field }}</td></tr>
+    {% endifnotequal %}
+    {% endif %}
+{% endfor %}
+
+<tr><td colspan="2" style="text-align:right"><input type="submit" value="Record changes"></td></tr>
+</table>
+
+</div>
+
+<div class="secondary">
+{{ form.latitude }}
+
+<p>Help text here.</p>
+</div>
+
+</form>
+
+{% endblock %}
