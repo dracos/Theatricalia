@@ -64,13 +64,7 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 
 <div class="secondary">
 
-{% if messages %}
-<ul id="messages">
-{% for message in messages %}
-<li>{{ message }}</li>
-{% endfor %}
-</ul>
-{% endif %}
+{% include 'includes/messages.html' %}
 
 {% if person.dob or person.web or person.imdb or person.wikipedia %}
 <ul>

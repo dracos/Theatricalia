@@ -88,6 +88,12 @@ input[type="submit"]:hover {
 #edit-form-submit[disabled], #edit-form-submit[disabled]:hover {
     background-color: #cccccc;
 }
+#edit-form-cancel {
+    background-color: #999999;
+}
+#edit-form-cancel:hover {
+    background-color: #333333;
+}
 
 textarea {
 	font-family: inherit;

@@ -21,9 +21,14 @@ def place_edit(request, place_id, place):
     place = check_url(Place, place_id, place)
 
     form = PlaceForm(request.POST or None, instance=place)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        return HttpResponseRedirect(place.get_absolute_url())
+    if request.method == 'POST':
+        if request.POST.get('disregard'):
+            request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
+            return HttpResponseRedirect(place.get_absolute_url())
+        if form.is_valid():
+            form.save()
+            request.user.message_set.create(message="Your changes have been stored; thank you.")
+            return HttpResponseRedirect(place.get_absolute_url())
 
     return render(request, 'places/place_edit.html', {
         'place': place,
