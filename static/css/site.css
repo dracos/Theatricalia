@@ -505,9 +505,9 @@ td {
 
 #map {
 	margin: 1.5em auto 0;
-	height: 18em;
+	height: 17.875em;
 	width: 99%;
-	border: solid 0px #666666;
+	border: solid 0.0625em #666666;
 }
 
 /* select multiples */
