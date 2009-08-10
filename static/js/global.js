@@ -31,3 +31,46 @@ $(function() {
 		}
 	}).change();
 });
+
+var map, tinyIcon;
+$(function() {
+    if (GBrowserIsCompatible() && document.getElementById('map')) {
+        $(document).unload(function() { GUnload() });
+        map = new GMap2(document.getElementById("map"));
+        map.addControl(new GLargeMapControl());
+        map.setCenter(new GLatLng(52.19, -1.71), 13);
+
+        tinyIcon = new GIcon();
+        tinyIcon.image = '/static/i/pin-red.png';
+        tinyIcon.shadow = '/static/i/pin-shadow.png';
+        tinyIcon.iconSize = new GSize(12, 20);
+        tinyIcon.shadowSize = new GSize(22, 20);
+        tinyIcon.iconAnchor = new GPoint(6, 20);
+        tinyIcon.infoWindowAnchor = new GPoint(5, 1);
+
+        if (document.getElementById('id_latitude')) {
+            var lat = $('#id_latitude')[0].value || 0;
+            var lon = $('#id_longitude')[0].value || 0;
+            var opts = { icon: tinyIcon, draggable: true };
+            if (!lat && !lon) opts['hide'] = true;
+            map.setCenter(new GLatLng(lat, lon), 13);
+            marker = new GMarker(new GLatLng(lat, lon), opts);
+            map.addOverlay(marker);
+            GEvent.addListener(marker, "dragend", function() {
+                var point = this.getLatLng();
+                $('#id_latitude')[0].value = point.lat();
+                $('#id_longitude')[0].value = point.lng();
+            });
+            GEvent.addListener(map, 'click', function(overlay, point) {
+                if (point) {
+                    marker.setLatLng(point);
+                    marker.show();
+                    $('#id_latitude')[0].value = point.lat();
+                    $('#id_longitude')[0].value = point.lng();
+                }
+            });
+        }
+    }
+});
+
+

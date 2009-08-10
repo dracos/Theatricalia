@@ -13,6 +13,10 @@
 
 <div id="primary">
 
+{% if place.description %}
+{{ place.description|prettify|linebreaks }}
+{% endif %}
+
 {% if future.object_list %}
 <h2>Current &amp; Upcoming productions</h2>
 <ul class="production_list">
@@ -43,16 +47,23 @@
 
 <div class="secondary">
 
-{% if place.description %}
-{{ place.description|prettify|linebreaks }}
-{% endif %}
+<ul>
+{% if place.type %}<li>{{ place.type }}{% endif %}
+{% if place.size %}<li>Seats {{ place.size }}.{% endif %}
+{% if place.opening_date %}<li>{{ place.opening_date }}{% endif %}
+{% if place.url %}<li><a href="{{ place.url }}">Official website</a>{% endif %}
+{% if place.wikipedia %}<li><a href="{{ place.wikipedia }}">Wikipedia</a>{% endif %}
+</ul>
 
 {% if place.latitude and place.longitude %}
-<div id="map">
-<iframe src="http://www.dracos.co.uk/temp/osm-embed.html?bbox=-1.71154,52.18415,-1.70154,52.19415&layer=mapnik&marker={{ place.latitude }},{{ place.longitude }}">
-Gah, an iframe to show a map? WTF?
-</iframe>
-</div>
+<script type="text/javascript">
+$(function(){
+    map.setCenter(new GLatLng({{ place.latitude }}, {{ place.longitude }}), 13);
+    marker = new GMarker(new GLatLng({{ place.latitude }}, {{ place.longitude }}), { icon: tinyIcon });
+    map.addOverlay(marker);
+});
+</script>
+<div id="map"></div>
 {% endif %}
 
 {% if place.photos.all %}
@@ -85,14 +96,6 @@ have permission to do so, please upload it here.</p>
 to upload, please <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
 
 {% endif %}
-
-<ul>
-{% if type %}<li>{{ type }}{% endif %}
-{% if size %}<li>{{ size }}{% endif %}
-{% if opening_date %}<li>{{ opening_date }}{% endif %}
-{% if url %}<li>{{ url }}{% endif %}
-{% if wikipedia %}<li><a href="{{ wikipedia }}">Wikipedia</a>{% endif %}
-</ul>
 
 <p><a href="{{ place.get_edit_url }}">Edit this place&rsquo;s information</a></p>
 

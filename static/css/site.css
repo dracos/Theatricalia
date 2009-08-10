@@ -504,15 +504,10 @@ td {
 /* Place page */
 
 #map {
-	margin: 0 auto;
-	height: 214px;
-	width: 214px;
-	border: solid 1px #666666;
-}
-#map iframe {
-	border: none;
-	width: 214px;
-	height: 214px;
+	margin: 1.5em auto 0;
+	height: 18em;
+	width: 99%;
+	border: solid 0px #666666;
 }
 
 /* select multiples */
