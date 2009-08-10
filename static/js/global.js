@@ -38,7 +38,7 @@ $(function() {
         $(document).unload(function() { GUnload() });
         map = new GMap2(document.getElementById("map"));
         map.addControl(new GLargeMapControl());
-        map.setCenter(new GLatLng(52.19, -1.71), 13);
+        map.setCenter(new GLatLng(53.5, -1.7), 5);
 
         tinyIcon = new GIcon();
         tinyIcon.image = '/static/i/pin-red.png';
@@ -52,8 +52,11 @@ $(function() {
             var lat = $('#id_latitude')[0].value || 0;
             var lon = $('#id_longitude')[0].value || 0;
             var opts = { icon: tinyIcon, draggable: true };
-            if (!lat && !lon) opts['hide'] = true;
-            map.setCenter(new GLatLng(lat, lon), 13);
+            if (!lat && !lon) {
+                opts['hide'] = true;
+            } else {
+                map.setCenter(new GLatLng(lat, lon), 13);
+            }
             marker = new GMarker(new GLatLng(lat, lon), opts);
             map.addOverlay(marker);
             GEvent.addListener(marker, "dragend", function() {

@@ -50,6 +50,14 @@
 <div class="secondary">
 
 <ul>
+
+{% if place.address or place.town or place.postcode %}
+<li>
+<address>{{ place.address }}{% if place.address and place.town %}, {% endif %}{{ place.town }}{% if place.address or place.town %}{% if place.postcode %}, {% endif %}{% endif %}{{ place.postcode }}
+</address>
+</li>
+{% endif %}
+
 {% if place.type %}<li>{{ place.type }}{% endif %}
 {% if place.size %}<li>Seats {{ place.size }}.{% endif %}
 {% if place.opening_date %}<li>{{ place.opening_date }}{% endif %}

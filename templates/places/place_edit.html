@@ -10,6 +10,8 @@
 <form method="post">
 {% for field in form %} {% if field.is_hidden %} {{ field }} {% endif %} {% endfor %}
 
+{{ form.errors }}
+
 <div id="primary">
 
 <table>

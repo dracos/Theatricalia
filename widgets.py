@@ -18,6 +18,7 @@ class LocationWidget(widgets.Widget):
         super(LocationWidget, self).__init__(*args, **kw)
 
     def render(self, name, value, *args, **kwargs):
+        if not value: value = ''
         html = '<input type="hidden" name="%(name)s" id="id_%(name)s" value="%(value)s">' % dict(name=name, value=value)
         html += "<div id='map'></div>"
         return mark_safe(html)
