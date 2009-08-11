@@ -39,6 +39,10 @@ class Place(models.Model):
     def get_edit_url(self):
         return ('place-edit', (), { 'place_id': int_to_base32(self.id), 'place': self.slug })
 
+    @models.permalink
+    def get_add_production_url(self):
+        return ('place-production-add', (), { 'place_id': int_to_base32(self.id), 'place': self.slug })
+
     def get_past_url(self):
         return '%s/past' % self.get_absolute_url()
 

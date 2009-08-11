@@ -70,7 +70,7 @@ class Production(models.Model):
         if not self.start_date:
             if not self.press_date:
                 if not self.end_date:
-                    return ''
+                    return 'date unknown'
                 else:
                     return u'Ended %s' % dateformat.format(self.end_date, 'jS F Y')
             else:

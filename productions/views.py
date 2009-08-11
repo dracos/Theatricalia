@@ -8,10 +8,11 @@ from django.contrib.auth.decorators import login_required
 from django.forms.formsets import formset_factory
 from django.contrib.comments.views.comments import post_comment
 from django.http import Http404, HttpResponseRedirect
-from shortcuts import render
+from shortcuts import render, check_url
 from models import Production, Part
 from forms import ProductionEditForm, PartForm
 from plays.models import Play
+from places.models import Place
 from photos.forms import PhotoForm
 from people.models import Person
 from aggregates import Concatenate
@@ -177,6 +178,51 @@ def production_edit_cast(request, play, production_id):
         'production': production,
         'form': part_form,
         'parts': production.part_set.order_by('-cast','order','role'),
+    })
+
+@login_required
+def production_add(request, play):
+    play = get_object_or_404(Play, slug=play)
+    production_form = ProductionEditForm(
+        data = request.POST or None,
+        initial = { 'play': play.id },
+    )
+
+    if request.method == 'POST':
+        if request.POST.get('disregard'):
+            request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
+            return HttpResponseRedirect(play.get_absolute_url())
+        if production_form.is_valid():
+            production = production_form.save()
+            request.user.message_set.create(message="Your addition has been stored; thank you.")
+            return HttpResponseRedirect(production.get_absolute_url())
+
+    return render(request, 'productions/add.html', {
+        'play': play,
+        'form': production_form,
+    })
+
+
+@login_required
+def add_from_place(request, place_id, place):
+    place = check_url(Place, place_id, place)
+    production_form = ProductionEditForm(
+        data = request.POST or None,
+        initial = { 'places': [ place.id ] },
+    )
+
+    if request.method == 'POST':
+        if request.POST.get('disregard'):
+            request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
+            return HttpResponseRedirect(play.get_absolute_url())
+        if production_form.is_valid():
+            production = production_form.save()
+            request.user.message_set.create(message="Your addition has been stored; thank you.")
+            return HttpResponseRedirect(production.get_absolute_url())
+
+    return render(request, 'productions/add.html', {
+        'place': place,
+        'form': production_form,
     })
 
 def post_comment_wrapper(request):

@@ -119,7 +119,7 @@ to upload, please <a href="{% url login %}?next={{ request.path }}">sign in</a>.
 
 <p><a href="{{ place.get_edit_url }}">Edit this place&rsquo;s information</a></p>
 
-<p><a href="">Add a production here</a></p>
+<p><a href="{{ place.get_add_production_url }}">Add a production here</a></p>
 </div>
 
 {% endblock %}

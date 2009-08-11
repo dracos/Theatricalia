@@ -14,7 +14,7 @@ class CastCrewNullBooleanSelect(forms.widgets.NullBooleanSelect):
 
 class ProductionEditForm(forms.ModelForm):
     last_modified = forms.DateTimeField(widget=forms.HiddenInput(), required=False)
-    press_date = PrettyDateField()
+    press_date = PrettyDateField(required=False)
     description = forms.CharField(required=False, widget=forms.Textarea(attrs={'cols': 30, 'rows':5}))
 
     class Meta:
@@ -23,7 +23,7 @@ class ProductionEditForm(forms.ModelForm):
 
     def __init__(self, last_modified=None, *args, **kwargs):
         self.db_last_modified = last_modified
-        kwargs['initial'] = { 'last_modified': last_modified }
+        kwargs.setdefault('initial', {}).update({ 'last_modified': last_modified })
         super(ProductionEditForm, self).__init__(*args, **kwargs)
 
     def clean(self):
