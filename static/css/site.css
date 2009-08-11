@@ -467,6 +467,10 @@ td {
 	margin: 0;
 }
 
+#photograph-feature {
+    float: right;
+}
+
 #photographs ul {
 	margin-top: 2em;
 	margin-bottom: 2em;
@@ -479,7 +483,7 @@ td {
 	margin-right: 0.66667em;
 	float: left;
 }
-#photographs img {
+#photographs img, #photograph-feature img {
 	height: 6.66667em;
 	width: 6.66667em;
 	margin-bottom: 0.66667em;
@@ -570,4 +574,8 @@ td {
 
 .row2 {
     background-color: #eeeeff;
+}
+
+#map_location {
+    font-style: italic;
 }

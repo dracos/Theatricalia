@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
-{% block title %}Editing {{ place }}{% endblock %}
+{% block title %}Editing {{ place|prettify }}{% endblock %}
 
 {% block content %}
 
-<h1>Editing {{ place }}</h1>
+<h1>Editing {{ place.name|prettify }}</h1>
 
 <form method="post">
 {% for field in form %} {% if field.is_hidden %} {{ field }} {% endif %} {% endfor %}
@@ -31,9 +31,11 @@
 </div>
 
 <div class="secondary">
-{{ form.latitude }}
+<p>Locate this theatre by clicking or dragging the marker.</p>
 
-<p>Position the marker above by clicking or dragging.</p>
+{{ form.latitude }}
+<span id="map_location"></span>
+
 </div>
 
 </form>

@@ -59,17 +59,37 @@ $(function() {
             }
             marker = new GMarker(new GLatLng(lat, lon), opts);
             map.addOverlay(marker);
-            GEvent.addListener(marker, "dragend", function() {
-                var point = this.getLatLng();
+
+            function updateInputs(point) {
                 $('#id_latitude')[0].value = point.lat();
                 $('#id_longitude')[0].value = point.lng();
+                $.getJSON('http://ws.geonames.org/findNearbyPlaceNameJSON?lat=' + point.lat() + '&lng=' + point.lng() + '&style=full&radius=5&callback=?', function(data) {
+                    var pop_max = 0;
+                    var pop_item;
+                    $.each(data.geonames, function(i, item) {
+                        if (item.population && item.population > pop_max) {
+                            pop_max = item.population;
+                            pop_item = item;
+                        }
+                    });
+                    var text = 'geonames.org thinks this is near ';
+                    if (pop_item) {
+                        $('#map_location').text(text + pop_item.name);
+                    } else {
+                        $('#map_location').text(text + data.geonames[0].name);
+                    }
+                });
+            }
+
+            GEvent.addListener(marker, "dragend", function() {
+                var point = this.getLatLng();
+                updateInputs(point);
             });
             GEvent.addListener(map, 'click', function(overlay, point) {
                 if (point) {
                     marker.setLatLng(point);
                     marker.show();
-                    $('#id_latitude')[0].value = point.lat();
-                    $('#id_longitude')[0].value = point.lng();
+                    updateInputs(point);
                 }
             });
         }

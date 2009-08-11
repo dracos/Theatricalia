@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
-{% block title %}{{ place.name|prettify }}{% endblock %}
+{% block title %}{{ place|prettify }}{% endblock %}
 
 {% block extra_head %}
 <link href="{{ place.get_feed_url }}" type="application/rss+xml" rel="alternate">
@@ -49,6 +49,14 @@
 
 <div class="secondary">
 
+{% if place.photos.all %}
+    {% with place.photos.all|random as photo %}
+    <div id="photograph-feature">
+    <a href="{{ photo.get_absolute_url }}">{{ photo.photo.thumbnail_tag }}</a>
+    </div>
+    {% endwith %}
+{% endif %}
+
 <ul>
 
 {% if place.address or place.town or place.postcode %}
@@ -58,8 +66,11 @@
 </li>
 {% endif %}
 
-{% if place.type %}<li>{{ place.type }}{% endif %}
-{% if place.size %}<li>Seats {{ place.size }}.{% endif %}
+{% if place.type or place.size %}
+    <li>
+    {% if place.type %}A {{ place.type }} theatre{% endif %}{% if place.size and place.type %},
+    s{% else %}S{% endif %}{%if place.size %}eats {{ place.size }}{% endif %}.
+{% endif %}
 {% if place.opening_date %}<li>{{ place.opening_date }}{% endif %}
 {% if place.url %}<li><a href="{{ place.url }}">Official website</a>{% endif %}
 {% if place.wikipedia %}<li><a href="{{ place.wikipedia }}">Wikipedia</a>{% endif %}
@@ -77,15 +88,14 @@ $(function(){
 {% endif %}
 
 {% if place.photos.all %}
-<div id="photographs">
-
-<ul>
-{% for photo in place.photos.all %}
-<li><a href="{{ photo.get_absolute_url }}">{{ photo.photo.thumbnail_tag }}</a>
-{% endfor %}
-</ul>
-
-</div>
+    <div id="photographs">
+<h2>Photographs</h2>
+    <ul>
+    {% for photo in place.photos.all %}
+    <li><a href="{{ photo.get_absolute_url }}">{{ photo.photo.thumbnail_tag }}</a>
+    {% endfor %}
+    </ul>
+    </div>
 {% endif %}
 
 {% if user.is_authenticated %}
