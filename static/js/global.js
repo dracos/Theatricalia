@@ -49,20 +49,35 @@ $(function() {
         tinyIcon.infoWindowAnchor = new GPoint(5, 1);
 
         if (document.getElementById('id_latitude')) {
+            $('#form_latlon').hide();
             var lat = $('#id_latitude')[0].value || 0;
             var lon = $('#id_longitude')[0].value || 0;
             var opts = { icon: tinyIcon, draggable: true };
             if (!lat && !lon) {
+                $('#map').before('<p style="margin-top:0">Please locate this theatre by clicking, then dragging the pin to adjust.</p>');
                 opts['hide'] = true;
             } else {
+                $('#map').before('<p style="margin-top:0">Please locate the theatre by dragging the pin.</p>');
                 map.setCenter(new GLatLng(lat, lon), 13);
             }
             marker = new GMarker(new GLatLng(lat, lon), opts);
             map.addOverlay(marker);
 
+            $('#id_town').change(function(){
+                $.getJSON('http://ws.geonames.org/searchJSON?q=' + $('#id_town').val() + '&maxRows=1&callback=?', function(data) {
+                    if (data.geonames) {
+                        var lat = data.geonames[0].lat;
+                        var lng = data.geonames[0].lng;
+                        map.setCenter(new GLatLng(lat, lng), 13);
+                    }
+                });
+            });
+
             function updateInputs(point) {
                 $('#id_latitude')[0].value = point.lat();
                 $('#id_longitude')[0].value = point.lng();
+                if ($('#id_town').val()) return;
+                // If no town, pre-populate with one from geonames
                 $.getJSON('http://ws.geonames.org/findNearbyPlaceNameJSON?lat=' + point.lat() + '&lng=' + point.lng() + '&style=full&radius=5&callback=?', function(data) {
                     var pop_max = 0;
                     var pop_item;
@@ -72,11 +87,10 @@ $(function() {
                             pop_item = item;
                         }
                     });
-                    var text = 'geonames.org thinks this is near ';
                     if (pop_item) {
-                        $('#map_location').text(text + pop_item.name);
+                        $('#id_town').val(pop_item.name);
                     } else {
-                        $('#map_location').text(text + data.geonames[0].name);
+                        $('#id_town').val(data.geonames[0].name);
                     }
                 });
             }
@@ -86,7 +100,7 @@ $(function() {
                 updateInputs(point);
             });
             GEvent.addListener(map, 'click', function(overlay, point) {
-                if (point) {
+                if (point && marker.isHidden()) {
                     marker.setLatLng(point);
                     marker.show();
                     updateInputs(point);

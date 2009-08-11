@@ -17,8 +17,10 @@
 <table>
 {% for field in form %}
     {% if not field.is_hidden %}
-    {% ifnotequal field.label 'Location' %}
+    {% ifnotequal field.label 'Latitude' %}
+    {% ifnotequal field.label 'Longitude' %}
     <tr><th>{{ field.label_tag }}:</th> <td>{{ field }}</td></tr>
+    {% endifnotequal %}
     {% endifnotequal %}
     {% endif %}
 {% endfor %}
@@ -31,10 +33,12 @@
 </div>
 
 <div class="secondary">
-<p>Locate this theatre by clicking or dragging the marker.</p>
 
-{{ form.latitude }}
-<span id="map_location"></span>
+<div id="form_latlon">
+<p>{{ form.latitude.label_tag }}: {{ form.latitude }}</p>
+<p>{{ form.longitude.label_tag }}: {{ form.longitude }}</p>
+</div>
+<div id="map"></div>
 
 </div>
 
