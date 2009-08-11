@@ -40,6 +40,10 @@ class Play(models.Model):
 	def get_absolute_url(self):
 		return ('play', [self.slug])
 
+	@models.permalink
+	def get_add_url(self):
+		return ('play-production-add', [self.slug])
+
 	def get_feed_url(self):
 		return '%s/feed' % self.get_absolute_url()
 

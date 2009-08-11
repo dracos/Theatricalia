@@ -52,6 +52,7 @@
 <ul>
 {% if play.url %}<li><a href="{{ play.url }}">Website</a>{% endif %}
 {% if play.wikipedia %}<li><a href="{{ play.wikipedia }}">Wikipedia</a>{% endif %}
+<li><a href="{{ play.get_add_url }}">Add a production of this play</a></li>
 </ul>
 
 {% if play.description %}

@@ -59,7 +59,7 @@ urlpatterns = patterns('',
 
     url('^plays$', plays.list, name='plays_all'),
     url('^plays/(?P<letter>[a-z0*])$', plays.list, name='plays'),
-    url('^play/(?P<play>.*?)/production-add$', productions.production_add, name='production-add'),
+    url('^play/(?P<play>.*?)/production-add$', productions.production_add, name='play-production-add'),
     url('^play/(?P<play>.*?)/production/(?P<production_id>[0-9a-z]+)/edit$', productions.production_edit, name='production-edit'),
     url('^play/(?P<play>.*?)/production/(?P<production_id>[0-9a-z]+)/edit/cast$', productions.production_edit_cast, name='production-edit-cast'),
     url('^play/(?P<play>.*?)/production/(?P<production_id>[0-9a-z]+)/edit/(?P<part_id>[0-9]+)$', productions.part_edit, name='part-edit'),

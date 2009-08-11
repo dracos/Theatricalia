@@ -71,7 +71,7 @@
     {% if place.type %}A {{ place.type }} theatre{% endif %}{% if place.size and place.type %},
     s{% else %}S{% endif %}{%if place.size %}eats {{ place.size }}{% endif %}.
 {% endif %}
-{% if place.opening_date %}<li>{{ place.opening_date }}{% endif %}
+{% if place.opening_date %}<li>Opened {{ place.opening_date|date:"jS F Y"|prettify }}{% endif %}
 {% if place.url %}<li><a href="{{ place.url }}">Official website</a>{% endif %}
 {% if place.wikipedia %}<li><a href="{{ place.wikipedia }}">Wikipedia</a>{% endif %}
 </ul>

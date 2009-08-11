@@ -1,11 +1,12 @@
 from django.db import models
 from django.contrib.contenttypes import generic
+from django.template.defaultfilters import slugify
 from photos.models import Photo
-from utils import int_to_base32, unique_slugify
+from utils import int_to_base32
 
 class Place(models.Model):
     name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True, max_length=100)
+    slug = models.SlugField(max_length=150)
     description = models.TextField(blank=True)
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
@@ -28,7 +29,7 @@ class Place(models.Model):
         return out
 
     def save(self):
-        self.slug = unique_slugify(Place, '%s %s' % (self.name, self.town), self)
+        self.slug = slugify('%s %s' % (self.name, self.town))
         super(Place, self).save()
 
     @models.permalink

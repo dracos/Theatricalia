@@ -180,6 +180,10 @@ def production_edit_cast(request, play, production_id):
         'parts': production.part_set.order_by('-cast','order','role'),
     })
 
+def _production_add(request, play=None, place=None):
+    if not play and not place:
+        raise Exception, 'Must not get here without something!'
+
 @login_required
 def production_add(request, play):
     play = get_object_or_404(Play, slug=play)
@@ -190,7 +194,7 @@ def production_add(request, play):
 
     if request.method == 'POST':
         if request.POST.get('disregard'):
-            request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
+            request.user.message_set.create(message=u"All right, we\u2019ve ignored what you had done.")
             return HttpResponseRedirect(play.get_absolute_url())
         if production_form.is_valid():
             production = production_form.save()
@@ -213,8 +217,8 @@ def add_from_place(request, place_id, place):
 
     if request.method == 'POST':
         if request.POST.get('disregard'):
-            request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
-            return HttpResponseRedirect(play.get_absolute_url())
+            request.user.message_set.create(message=u"All right, we\u2019ve ignored what you had done.")
+            return HttpResponseRedirect(place.get_absolute_url())
         if production_form.is_valid():
             production = production_form.save()
             request.user.message_set.create(message="Your addition has been stored; thank you.")
