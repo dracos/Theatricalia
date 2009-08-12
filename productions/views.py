@@ -10,7 +10,7 @@ from django.contrib.comments.views.comments import post_comment
 from django.http import Http404, HttpResponseRedirect
 from shortcuts import render, check_url
 from models import Production, Part
-from forms import ProductionEditForm, PartForm
+from forms import ProductionForm, PartForm
 from plays.models import Play
 from places.models import Place
 from photos.forms import PhotoForm
@@ -43,9 +43,9 @@ def productions_future(object):
 def production_list(request, object, type, template):
     """Given an object, such as a Person, Place, or Play, return a page of productions for it."""
     if type == 'future':
-        paginator = Paginator(productions_future(object), 10)
+        paginator = Paginator(productions_future(object), 10, orphans=2)
     elif type == 'past':
-        paginator = Paginator(productions_past(object), 10)
+        paginator = Paginator(productions_past(object), 10, orphans=2)
 
     page = request.GET.get('page', 1)
     try:
@@ -71,8 +71,8 @@ def object_productions(object):
     """Given an object, such as a Person, Place, or Play, return the closes
        past/future productions for that object. If it's a Person, also include
        the Part(s) they played."""
-    future_page = Paginator(productions_future(object), 10).page(1)
-    past_page = Paginator(productions_past(object), 10).page(1)
+    future_page = Paginator(productions_future(object), 10, orphans=2).page(1)
+    past_page = Paginator(productions_past(object), 10, orphans=2).page(1)
     #if isinstance(object, Person):
         #production_add_parts(object, past_page, future_page)
     return past_page, future_page
@@ -89,7 +89,7 @@ def check_parameters(play, production_id):
 def production(request, play, production_id):
     production = check_parameters(play, production_id)
     photo_form = PhotoForm(production)
-    production_form = ProductionEditForm(instance=production)
+    production_form = ProductionForm(instance=production)
 
     return render(request, 'production.html', {
         'production': production,
@@ -143,7 +143,7 @@ def part_edit(request, play, production_id, part_id):
 @login_required
 def production_edit(request, play, production_id):
     production = check_parameters(play, production_id)
-    production_form = ProductionEditForm(data=request.POST or None, instance=production)
+    production_form = ProductionForm(data=request.POST or None, instance=production)
 
     if request.method == 'POST':
         if request.POST.get('disregard'):
@@ -184,50 +184,39 @@ def _production_add(request, play=None, place=None):
     if not play and not place:
         raise Exception, 'Must not get here without something!'
 
-@login_required
-def production_add(request, play):
-    play = get_object_or_404(Play, slug=play)
-    production_form = ProductionEditForm(
+    initial = {}
+    if play: initial['play'] = play.id
+    if place: initial['places'] = [ place.id ]
+    production_form = ProductionForm(
         data = request.POST or None,
-        initial = { 'play': play.id },
+        initial = initial,
     )
 
     if request.method == 'POST':
         if request.POST.get('disregard'):
             request.user.message_set.create(message=u"All right, we\u2019ve ignored what you had done.")
-            return HttpResponseRedirect(play.get_absolute_url())
+            if play: return HttpResponseRedirect(play.get_absolute_url())
+            if place: return HttpResponseRedirect(place.get_absolute_url())
         if production_form.is_valid():
             production = production_form.save()
-            request.user.message_set.create(message="Your addition has been stored; thank you.")
-            return HttpResponseRedirect(production.get_absolute_url())
+            request.user.message_set.create(message="Your addition has been stored; thank you. If you know members of the cast or crew, please feel free to add them now.")
+            return HttpResponseRedirect(production.get_edit_cast_url())
 
     return render(request, 'productions/add.html', {
+        'place': place,
         'play': play,
         'form': production_form,
     })
 
+@login_required
+def production_add(request, play):
+    play = get_object_or_404(Play, slug=play)
+    return _production_add(request, play=play)
 
 @login_required
 def add_from_place(request, place_id, place):
     place = check_url(Place, place_id, place)
-    production_form = ProductionEditForm(
-        data = request.POST or None,
-        initial = { 'places': [ place.id ] },
-    )
-
-    if request.method == 'POST':
-        if request.POST.get('disregard'):
-            request.user.message_set.create(message=u"All right, we\u2019ve ignored what you had done.")
-            return HttpResponseRedirect(place.get_absolute_url())
-        if production_form.is_valid():
-            production = production_form.save()
-            request.user.message_set.create(message="Your addition has been stored; thank you.")
-            return HttpResponseRedirect(production.get_absolute_url())
-
-    return render(request, 'productions/add.html', {
-        'place': place,
-        'form': production_form,
-    })
+    return _production_add(request, place=place)
 
 def post_comment_wrapper(request):
     if not request.user.is_authenticated():

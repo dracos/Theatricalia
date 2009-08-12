@@ -12,7 +12,7 @@ from sounds.jarowpy import jarow
 distance = jarow
 threshold = 0.8
 
-def search_people(search, force_similar=False):
+def search_people(search, force_similar=False, use_distance=True):
     sounds_people = 0
     names = search.split(None, 3)
     if len(names)==1:
@@ -41,7 +41,7 @@ def search_people(search, force_similar=False):
         #        allnames.extend((p.first_name, p.last_name))
         #    people = difflib.get_close_matches(names[0], allnames)
         #    people = Person.objects.filter(Q(first_name__in=people) | Q(last_name__in=people))
-        if not people:
+        if not people and use_distance:
             people = []
             for p in Person.objects.all():
                 sim = distance(names[0].lower(), p.first_name.lower())
@@ -76,7 +76,7 @@ def search_people(search, force_similar=False):
                 Q(first_name_metaphone_alt=dm_first, last_name_metaphone_alt=dm_last) |
                 Q(first_name_metaphone_alt=dm_first, last_name_metaphone=dm_last_alt)
             )
-        if not people:
+        if not people and use_distance:
             people = []
             people2 = []
             people3 = []
@@ -109,7 +109,7 @@ def search(request):
     people = plays = places = []
     sounds_people = 0
     if search:
-        people, sounds_people = search_people(search, request.GET.get('similar'))
+        people, sounds_people = search_people(search, force_similar=request.GET.get('similar'))
         places = Place.objects.filter(name__icontains=search)
         plays = Play.objects.filter(title__icontains=search)
         # Search for characters

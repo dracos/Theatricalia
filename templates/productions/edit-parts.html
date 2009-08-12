@@ -20,7 +20,7 @@
 <p>Thank you for taking the time to add or correct some information on this site.
 </p>
 
-<h2><a name="castandcrew"></a>Cast &amp; Crew</h2>
+<h2 class="no-descenders"><a name="castandcrew"></a>Cast &amp; Crew</h2>
  
 {% for part in parts.all %}
 <div class="{% cycle row1,row2 %}">
@@ -30,11 +30,13 @@
   {% if part.start_date %}, {{ part.start_date|default:'' }}{% endif %}
   {% if part.end_date %}, {{ part.end_date|default:'' }}{% endif %}</small>
 </div>
+{% empty %}
+<p>No parts currently. If you know some, please contribute them below.</p>
 {% endfor %}
     
 {% endif %}
 
-<h2>Add new Part</h2>
+<h2 class="no-descenders">Add new Part</h2>
 
 <form method="post" id="production_edit">
 

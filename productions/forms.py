@@ -12,7 +12,7 @@ class CastCrewNullBooleanSelect(forms.widgets.NullBooleanSelect):
         choices = ((u'1', 'Unknown'), (u'2', 'Cast'), (u'3', 'Crew'))
         super(forms.widgets.NullBooleanSelect, self).__init__(attrs, choices)
 
-class ProductionEditForm(forms.ModelForm):
+class ProductionForm(forms.ModelForm):
     last_modified = forms.DateTimeField(widget=forms.HiddenInput(), required=False)
     press_date = PrettyDateField(required=False)
     description = forms.CharField(required=False, widget=forms.Textarea(attrs={'cols': 30, 'rows':5}))
@@ -24,10 +24,10 @@ class ProductionEditForm(forms.ModelForm):
     def __init__(self, last_modified=None, *args, **kwargs):
         self.db_last_modified = last_modified
         kwargs.setdefault('initial', {}).update({ 'last_modified': last_modified })
-        super(ProductionEditForm, self).__init__(*args, **kwargs)
+        super(ProductionForm, self).__init__(*args, **kwargs)
 
     def clean(self):
-        super(ProductionEditForm, self).clean()
+        super(ProductionForm, self).clean()
 
         # Not clean_last_modified, as I want it as a generic error
         last_mod = self.cleaned_data.get('last_modified')
@@ -56,8 +56,9 @@ class PartForm(forms.ModelForm):
             self.fields['person_choice'].choices = choices
 
     def radio_choices(self, s):
-        people, dummy = search_people(s)
+        people, dummy = search_people(s, use_distance=False)
         choices = []
+        p = ''
         for p in people:
             last_production = p.productions.order_by('-IFNULL(press_date, IF(productions_production.end_date!="", productions_production.end_date, productions_production.start_date))')
             if len(last_production):
