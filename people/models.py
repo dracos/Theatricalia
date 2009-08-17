@@ -12,7 +12,7 @@ class Person(models.Model):
     first_name_metaphone_alt = models.CharField(max_length=50, editable=False)
     last_name_metaphone = models.CharField(max_length=50, editable=False)
     last_name_metaphone_alt = models.CharField(max_length=50, editable=False)
-    slug = models.SlugField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100)
     bio = models.TextField(blank=True, verbose_name='Biography')
     dob = ApproximateDateField(blank=True, verbose_name='Date of birth')
     imdb = models.URLField(blank=True, verbose_name='IMDb URL')
@@ -44,6 +44,7 @@ class Person(models.Model):
         verbose_name_plural = 'people'
 
     def save(self, **kwargs):
+        self.slug = slugify(self.name())
         first_name_metaphone = dm(self.first_name)
         last_name_metaphone = dm(self.last_name)
         self.first_name_metaphone = first_name_metaphone[0]

@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import dateformat
 from django.contrib.contenttypes import generic
 from django.utils.safestring import mark_safe
+from django.template.defaultfilters import slugify
 from utils import int_to_base32
 from places.models import Place
 from people.models import Person
@@ -21,6 +22,10 @@ class ProductionCompany(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def save(self):
+        self.slug = slugify(self.name)
+        super(ProductionCompany, self).save()
 
 class Production(models.Model):
     play = models.ForeignKey(Play, related_name='productions')
