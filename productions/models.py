@@ -3,6 +3,7 @@ from django.utils import dateformat
 from django.contrib.contenttypes import generic
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import slugify
+from django.db.models import Max, Min
 from utils import int_to_base32
 from places.models import Place
 from people.models import Person
@@ -69,29 +70,58 @@ class Production(models.Model):
         return "%s, %s%s" % (self.play, places, self.date_summary())
 
     def date_summary(self):
-        if not self.start_date:
-            if not self.press_date:
-                if not self.end_date:
-                    return 'date unknown'
+        start_date = None # Might be approximate
+        end_date = None # Might be approximate
+        press_date = None # Can't be approximate
+
+        # Find min/max dates from the places of this production
+        for place in self.place_set.all():
+            if not start_date or place.start_date < start_date: start_date = place.start_date
+            if not press_date or place.press_date < press_date: press_date = place.press_date
+            if not   end_date or place.end_date   <   end_date:   end_date = place.end_date
+
+        if not start_date:
+            if not press_date:
+                if not end_date:
+                    return 'Date unknown'
                 else:
-                    return u'Ended %s' % dateformat.format(self.end_date, 'jS F Y')
-            else:
-                date = '%s (press night)' % dateformat.format(self.press_date, 'jS F Y')
-                if self.end_date:
-                    date += ' - %s' % self.end_date
-                return mark_safe(date)
+                    return u'Ended %s' % end_date
+            elif not end_date:
+                return '%s (press night)' % dateformat.format(press_date, 'jS F Y')
 
-        if not self.end_date:
-            return u'Started %s' % dateformat.format(self.start_date, 'jS F Y')
+        if not end_date:
+            return u'Started %s' % start_date
 
-        if dateformat.format(self.start_date, 'dmY') == dateformat.format(self.end_date, 'dmY'):
-                        date = u'%s' % dateformat.format(self.end_date, 'jS F Y')
-        elif dateformat.format(self.start_date, 'mY') == dateformat.format(self.end_date, 'mY'):
-                        date = u'%s - %s' % (dateformat.format(self.start_date, 'jS'), dateformat.format(self.end_date, 'jS F Y'))
-        elif self.start_date.year == self.end_date.year:
-                        date = u'%s - %s' % (dateformat.format(self.start_date, 'jS F'), dateformat.format(self.end_date, 'jS F Y'))
+        press = ''
+        if not start_date and press_date:
+            press = ' (press night)'
+            start_date = press_date
+
+        if dateformat.format(start_date, 'dmY') == dateformat.format(end_date, 'dmY'):
+            date = end_date
+
+        elif dateformat.format(start_date, 'mY') == dateformat.format(end_date, 'mY') and start_date.day and end_date.day:
+            date = u'%s%s - %s' % (dateformat.format(start_date, 'jS'), press, end_date)
+        elif dateformat.format(start_date, 'mY') == dateformat.format(end_date, 'mY') and start_date.day:
+            date = u'%s%s - ? %s' % (dateformat.format(start_date, 'jS'), press, end_date)
+        elif dateformat.format(start_date, 'mY') == dateformat.format(end_date, 'mY'):
+            date = u'?%s - %s' % (press, end_date)
+
+        elif start_date.year == end_date.year and start_date.day and end_date.month:
+            date = u'%s%s - %s' % (dateformat.format(start_date, 'jS F'), press, end_date)
+        elif start_date.year == end_date.year and start_date.day:
+            date = u'%s%s - ? %s' % (dateformat.format(start_date, 'jS F'), press, end_date)
+        elif start_date.year == end_date.year and start_date.month and end_date.month:
+            date = u'%s%s - %s' % (dateformat.format(start_date, 'F'), press, end_date)
+        elif start_date.year == end_date.year and start_date.month:
+            date = u'%s%s - ? %s' % (dateformat.format(start_date, 'F'), press, end_date)
+        elif start_date.year == end_date.year:
+            date = u'?%s - %s' % (press, end_date)
+
+        elif start_date.day:
+            date = u'%s%s - %s' % (dateformat.format(start_date, 'jS F Y'), press, end_date)
         else:
-                        date = u'%s - %s' % (dateformat.format(self.start_date, 'jS F Y'), dateformat.format(self.end_date, 'jS F Y'))
+            date = u'%s%s - %s' % (start_date, press, end_date)
         return date
 
     def place_summary(self):

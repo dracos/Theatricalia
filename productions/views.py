@@ -19,14 +19,14 @@ from aggregates import Concatenate
 
 def productions_past(object):
     return object.productions.filter(
-        Q(end_date__lt=datetime.now) | Q(end_date='', press_date__lt=datetime.now)
-    ).annotate(Concatenate('part__role')).order_by('-IFNULL(press_date, IF(productions_production.end_date!="", productions_production.end_date, productions_production.start_date))')
+        Q(place__end_date__lt=datetime.now) | Q(place__end_date='', place__press_date__lt=datetime.now)
+    ).annotate(Concatenate('part__role')).order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))')
 
 def productions_future(object):
     return object.productions.filter(
-        Q(end_date__gte=datetime.now) | Q(end_date='', press_date__gte=datetime.now)
+        Q(place__end_date__gte=datetime.now) | Q(place__end_date='', place__press_date__gte=datetime.now)
     #).order_by('-IFNULL(press_date, IF(productions_production.end_date!="", productions_production.end_date, productions_production.start_date))')
-    ).order_by('start_date', 'press_date')
+    ).order_by('place__start_date', 'place__press_date')
 
 #def production_add_parts(person, *pages):
 #    production_ids = []

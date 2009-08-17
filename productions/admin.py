@@ -11,7 +11,7 @@ class CompanyAdmin(VersionAdmin):
 
 class PartAdmin(VersionAdmin, AutocompleteModelAdmin):
     related_search_fields = {
-        'production': ('play__title', 'company__name', 'start_date', 'end_date'),
+        'production': ('play__title', 'company__name'),
         'person': ('first_name','last_name'),
     }
 

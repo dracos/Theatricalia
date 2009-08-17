@@ -33,11 +33,11 @@ class ApproximateDate(object):
 
     def __str__(self):
         if self.year and self.month and self.day:
-            return dateformat.format(date(self.year, self.month, self.day), "jS F Y")
+            return dateformat.format(self, "jS F Y")
         elif self.year and self.month:
-            return dateformat.format(date(self.year, self.month, 1), "F Y")
+            return dateformat.format(self, "F Y")
         elif self.year:
-            return dateformat.format(date(self.year, 1, 1), "Y")
+            return dateformat.format(self, "Y")
 
 ansi_date_re = re.compile(r'^\d{4}-\d{1,2}-\d{1,2}$')
 
