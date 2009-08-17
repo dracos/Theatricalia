@@ -136,18 +136,6 @@ class Production(models.Model):
             place = 'Unknown location'
         return place
         
-    def place_list(self):
-        if self.places.count()>1:
-            place = []
-            for p in self.places.all():
-                place.append('<a href="%s">%s</a>' % (p.get_absolute_url(), p))
-        elif self.places.count()==1:
-            p = self.places.all()[0]
-            place = '<a href="%s">%s</a>' % (p.get_absolute_url(), p)
-        else:
-            place = 'an unknown location'
-        return place
-        
     def title(self):
         return self.company or ''
 

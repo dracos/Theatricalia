@@ -68,6 +68,7 @@ def prettify_list(list):
     if not list: return ''
     if isinstance(list, str): return list
     num = len(list)
+    list = [ prettify(x) for x in list ]
     if num > 2:
         s = ', '.join(list[:num-2]) + ', ' + ', and '.join(list[num-2:])
     elif num == 2:

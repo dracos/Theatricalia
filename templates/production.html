@@ -106,17 +106,9 @@ or
 <p>This is a production of the play
 <a href="{{ production.play.get_absolute_url }}">{{ production.play|prettify }}</a>{% if production.company %}
 by the <a href="{{ production.company.get_absolute_url }}">{{ production.company|prettify }}</a>{% endif %},
-{{ production.date_summary|prettify }},
 
-{% ifequal production.places.count 1 %}
-at the <a href="{{ production.places.all.0.get_absolute_url }}">{{ production.places.all.0|prettify }}</a>.</p>
-{% else %}
-at {{ production.place_list|prettify_list|safe }}.
-{% endifequal %}
+{% include 'productions/sidebar_bit.html' %}
 
-{% if production.press_date and production.start_date %}
-<p>Press night was {{ production.press_date|date:"jS F Y"|prettify }}.</p>
-{% endif %}
 </div>
 
 <div id="production_edit_inline_basic">
