@@ -490,11 +490,20 @@ td {
 	margin-right: 0.66667em;
 	float: left;
 }
-#photographs img, #photograph-feature img {
+/* In a 75% ul */
+#photographs img {
 	height: 6.66667em;
 	width: 6.66667em;
 	margin-bottom: 0.66667em;
 	border: solid 0.083333em #999999;
+	padding: 0.25em;
+}
+/* Not */
+#photograph-feature img {
+	height: 6.75em;
+	width: 6.75em;
+    margin-bottom: 0.125em;
+	border: solid 0.0625em #999999;
 	padding: 0.25em;
 }
 

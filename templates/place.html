@@ -52,7 +52,7 @@
 {% if place.photos.all %}
     {% with place.photos.all|random as photo %}
     <div id="photograph-feature">
-    <a href="{{ photo.get_absolute_url }}">{{ photo.photo.thumbnail_tag }}</a>
+    <a href="{{ photo.get_absolute_url }}">{{ photo.photo.extra_thumbnails_tag.feature }}</a>
     </div>
     {% endwith %}
 {% endif %}
@@ -75,6 +75,8 @@
 {% if place.url %}<li><a href="{{ place.url }}">Official website</a>{% endif %}
 {% if place.wikipedia %}<li><a href="{{ place.wikipedia }}">Wikipedia</a>{% endif %}
 </ul>
+
+<div style="clear:both"></div>
 
 {% if place.latitude and place.longitude %}
 <script type="text/javascript">
