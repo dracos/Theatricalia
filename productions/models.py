@@ -25,10 +25,7 @@ class ProductionCompany(models.Model):
 class Production(models.Model):
     play = models.ForeignKey(Play, related_name='productions')
     company = models.ForeignKey(ProductionCompany, related_name='productions', blank=True, null=True)
-    start_date = ApproximateDateField(blank=True)
-    press_date = models.DateField(blank=True, null=True)
-    end_date = ApproximateDateField(blank=True)
-    places = models.ManyToManyField(Place, related_name='productions', blank=True)
+    places = models.ManyToManyField(Place, through='Place', related_name='productions', blank=True)
     parts = models.ManyToManyField(Person, through='Part', related_name='productions', blank=True)
     photos = generic.GenericRelation(Photo)
     description = models.TextField(blank=True)
@@ -116,26 +113,32 @@ class Production(models.Model):
     def title(self):
         return self.company or ''
 
-class Performance(models.Model):
-    production = models.ForeignKey(Production)
-    date = models.DateField()
-    time = models.TimeField(blank=True, null=True)
-    duration = models.IntegerField(blank=True, null=True)
-    place = models.ForeignKey(Place)
+#class Performance(models.Model):
+#    production = models.ForeignKey(Production)
+#    date = models.DateField()
+#    time = models.TimeField(blank=True, null=True)
+#    duration = models.IntegerField(blank=True, null=True)
+#    place = models.ForeignKey(Place)
+#
+#    def __unicode__(self):
+#        return '%s %s performance of %s at %s' % (self.date, self.time, self.production, self.place)
 
-    def __unicode__(self):
-        return '%s %s performance of %s at %s' % (self.date, self.time, self.production, self.place)
+class Place(models.Model):
+    production = models.ForeignKey(Production)
+    place = models.ForeignKey(Place)
+    start_date = ApproximateDateField(blank=True)
+    press_date = models.DateField(blank=True, null=True)
+    end_date = ApproximateDateField(blank=True)
 
 class Part(models.Model):
     production = models.ForeignKey(Production)
     person = models.ForeignKey(Person)
     role = models.CharField(max_length=100, blank=True)
     cast = models.NullBooleanField(null=True, blank=True, verbose_name='Cast/Crew')
-    credit = models.CharField(max_length=100, blank=True)
-    order = models.IntegerField(blank=True, null=True)
-    start_date = models.DateField(blank=True, null=True)
-    end_date = models.DateField(blank=True, null=True)
-    visible = models.BooleanField(default=True)
+    credited_as = models.CharField(max_length=100, blank=True)
+    #order = models.IntegerField(blank=True, null=True)
+    #start_date = models.DateField(blank=True, null=True)
+    #end_date = models.DateField(blank=True, null=True)
 
     def role_or_unknown(self):
         return self.role or 'Unknown'

@@ -19,7 +19,7 @@ from feeds import PersonFeed, PlayFeed, PlaceFeed
 
 urlpatterns = patterns('',
     # Example:
-    # (r'^theatredb/', include('theatredb.foo.urls')),
+    # (r'^theatricalia/', include('theatricalia.foo.urls')),
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
