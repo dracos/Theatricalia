@@ -44,7 +44,6 @@ def add_person_nicely(first_name, last_name):
 #            person, created = Person.objects.get_or_create(first_name=first_name, last_name=last_name, slug=slug)
 #    return person
 
-slugs = {}
 for n in range(1, 67):
     print n
     file = open('../data/ahds/lists/%d' % n).read()
@@ -88,9 +87,6 @@ for n in range(1, 67):
         play, created = Play.objects.get_or_create(title=data['play'], slug=slugify(data['play']))
         if 'author' in data:
             slug = slugify("%s %s" % (data['author'][1], data['author'][0]))
-            if slug in slugs and slugs[slug] != data['author']:
-                raise Exception, 'grr1'
-            slugs[slug] = data['author']
             author = add_person_nicely(data['author'][1], data['author'][0])
             play.authors.add(author)
 
@@ -111,17 +107,11 @@ for n in range(1, 67):
             if c[0] == 'Cast Unknown' or c[0] == "Playgoers' Society":
                 continue
             slug = slugify('%s %s' % (c[1], c[0]))
-            if slug in slugs and slugs[slug]!=c:
-                raise Exception, 'grr4 %s %s %s' % (slug, slugs[slug], c)
-            slugs[slug] = c
             person = add_person_nicely(c[1], c[0])
             Part.objects.get_or_create(production=production, person=person, cast=True)
 
         if 'director' in data:
             slug=slugify("%s %s" % (data['director'][1], data['director'][0]))
-            if slug in slugs and slugs[slug] != data['director']:
-                raise Exception, 'grr2'
-            slugs[slug] = data['director']
             director = add_person_nicely(data['director'][1], data['director'][0])
             part, created = Part.objects.get_or_create(production=production, person=director, cast=False)
             part.role = 'Director'
@@ -129,9 +119,6 @@ for n in range(1, 67):
 
         if 'designer' in data:
             slug=slugify("%s %s" % (data['designer'][1], data['designer'][0]))
-            if slug in slugs and slugs[slug]!=data['designer']:
-                raise Exception, 'grr3 %s %s %s' % (slug, slugs[slug], data['designer'])
-            slugs[slug] = data['designer']
             designer = add_person_nicely(data['designer'][1], data['designer'][0])
             part, created = Part.objects.get_or_create(production=production, person=designer, cast=False)
             part.role = 'Designer'
