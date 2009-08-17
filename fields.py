@@ -39,6 +39,13 @@ class ApproximateDate(object):
         elif self.year:
             return dateformat.format(self, "Y")
 
+    def __cmp__(self, other):
+        if other is None or (self.year, self.month, self.day) > (other.year, other.month, other.day):
+            return 1
+        elif (self.year, self.month, self.day) < (other.year, other.month, other.day):
+            return -1
+        return 0
+
 ansi_date_re = re.compile(r'^\d{4}-\d{1,2}-\d{1,2}$')
 
 class ApproximateDateField(models.CharField):

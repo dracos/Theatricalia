@@ -12,6 +12,51 @@ from photos.models import Photo
 from fields import ApproximateDateField
 from common.templatetags.prettify import prettify
 
+def pretty_date_range(start_date, press_date, end_date):
+    if not start_date:
+        if not press_date:
+            if not end_date:
+                return 'Date unknown'
+            else:
+                return u'Ended %s' % end_date
+        elif not end_date:
+            return '%s (press night)' % dateformat.format(press_date, 'jS F Y')
+
+    if not end_date:
+        return u'Started %s' % start_date
+
+    press = ''
+    if not start_date and press_date:
+        press = ' (press night)'
+        start_date = press_date
+
+    if dateformat.format(start_date, 'dmY') == dateformat.format(end_date, 'dmY'):
+        date = end_date
+
+    elif dateformat.format(start_date, 'mY') == dateformat.format(end_date, 'mY') and start_date.day and end_date.day:
+        date = u'%s%s - %s' % (dateformat.format(start_date, 'jS'), press, end_date)
+    elif dateformat.format(start_date, 'mY') == dateformat.format(end_date, 'mY') and start_date.day:
+        date = u'%s%s - ? %s' % (dateformat.format(start_date, 'jS'), press, end_date)
+    elif dateformat.format(start_date, 'mY') == dateformat.format(end_date, 'mY'):
+        date = u'?%s - %s' % (press, end_date)
+
+    elif start_date.year == end_date.year and start_date.day and end_date.month:
+        date = u'%s%s - %s' % (dateformat.format(start_date, 'jS F'), press, end_date)
+    elif start_date.year == end_date.year and start_date.day:
+        date = u'%s%s - ? %s' % (dateformat.format(start_date, 'jS F'), press, end_date)
+    elif start_date.year == end_date.year and start_date.month and end_date.month:
+        date = u'%s%s - %s' % (dateformat.format(start_date, 'F'), press, end_date)
+    elif start_date.year == end_date.year and start_date.month:
+        date = u'%s%s - ? %s' % (dateformat.format(start_date, 'F'), press, end_date)
+    elif start_date.year == end_date.year:
+        date = u'?%s - %s' % (press, end_date)
+
+    elif start_date.day:
+        date = u'%s%s - %s' % (dateformat.format(start_date, 'jS F Y'), press, end_date)
+    else:
+        date = u'%s%s - %s' % (start_date, press, end_date)
+    return date
+
 class ProductionCompany(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
@@ -70,59 +115,17 @@ class Production(models.Model):
         return "%s, %s%s" % (self.play, places, self.date_summary())
 
     def date_summary(self):
-        start_date = None # Might be approximate
-        end_date = None # Might be approximate
-        press_date = None # Can't be approximate
+        start_date = None
+        end_date = None
+        press_date = None
 
         # Find min/max dates from the places of this production
         for place in self.place_set.all():
             if not start_date or place.start_date < start_date: start_date = place.start_date
             if not press_date or place.press_date < press_date: press_date = place.press_date
-            if not   end_date or place.end_date   <   end_date:   end_date = place.end_date
+            if not   end_date or place.end_date   >   end_date:   end_date = place.end_date
 
-        if not start_date:
-            if not press_date:
-                if not end_date:
-                    return 'Date unknown'
-                else:
-                    return u'Ended %s' % end_date
-            elif not end_date:
-                return '%s (press night)' % dateformat.format(press_date, 'jS F Y')
-
-        if not end_date:
-            return u'Started %s' % start_date
-
-        press = ''
-        if not start_date and press_date:
-            press = ' (press night)'
-            start_date = press_date
-
-        if dateformat.format(start_date, 'dmY') == dateformat.format(end_date, 'dmY'):
-            date = end_date
-
-        elif dateformat.format(start_date, 'mY') == dateformat.format(end_date, 'mY') and start_date.day and end_date.day:
-            date = u'%s%s - %s' % (dateformat.format(start_date, 'jS'), press, end_date)
-        elif dateformat.format(start_date, 'mY') == dateformat.format(end_date, 'mY') and start_date.day:
-            date = u'%s%s - ? %s' % (dateformat.format(start_date, 'jS'), press, end_date)
-        elif dateformat.format(start_date, 'mY') == dateformat.format(end_date, 'mY'):
-            date = u'?%s - %s' % (press, end_date)
-
-        elif start_date.year == end_date.year and start_date.day and end_date.month:
-            date = u'%s%s - %s' % (dateformat.format(start_date, 'jS F'), press, end_date)
-        elif start_date.year == end_date.year and start_date.day:
-            date = u'%s%s - ? %s' % (dateformat.format(start_date, 'jS F'), press, end_date)
-        elif start_date.year == end_date.year and start_date.month and end_date.month:
-            date = u'%s%s - %s' % (dateformat.format(start_date, 'F'), press, end_date)
-        elif start_date.year == end_date.year and start_date.month:
-            date = u'%s%s - ? %s' % (dateformat.format(start_date, 'F'), press, end_date)
-        elif start_date.year == end_date.year:
-            date = u'?%s - %s' % (press, end_date)
-
-        elif start_date.day:
-            date = u'%s%s - %s' % (dateformat.format(start_date, 'jS F Y'), press, end_date)
-        else:
-            date = u'%s%s - %s' % (start_date, press, end_date)
-        return date
+        return pretty_date_range(start_date, press_date, end_date)
 
     def place_summary(self):
         if self.places.count()>1:
@@ -164,6 +167,12 @@ class Place(models.Model):
     start_date = ApproximateDateField(blank=True)
     press_date = models.DateField(blank=True, null=True)
     end_date = ApproximateDateField(blank=True)
+
+    def __unicode__(self):
+        return "The part of production %d at %s, %s" % (self.production.id, self.place, self.date_summary())
+
+    def date_summary(self):
+        return pretty_date_range(self.start_date, self.press_date, self.end_date)
 
 class Part(models.Model):
     production = models.ForeignKey(Production)
