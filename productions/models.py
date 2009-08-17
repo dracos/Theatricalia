@@ -171,9 +171,9 @@ class Part(models.Model):
     role = models.CharField(max_length=100, blank=True)
     cast = models.NullBooleanField(null=True, blank=True, verbose_name='Cast/Crew')
     credited_as = models.CharField(max_length=100, blank=True)
-    #order = models.IntegerField(blank=True, null=True)
-    #start_date = models.DateField(blank=True, null=True)
-    #end_date = models.DateField(blank=True, null=True)
+    order = models.IntegerField(blank=True, null=True)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
 
     def role_or_unknown(self):
         return self.role or 'Unknown'
