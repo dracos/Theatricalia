@@ -184,6 +184,13 @@ ul.errorlist li {
 	margin: 0 auto;
 }
 
+/*
+@font-face {
+    font-family: Zapfino;
+    src: url(/static/css/Zapfino.dfont);
+}
+*/
+
 h1, h2, h3, h4, h5, h6, #header {
 	font-family: Zapfino, "Apple Chancery", "Zapf Chancery Italic", "Lucida Calligraphy", "Palatino Linotype", Palatino, "Book Antiqua", "Hoefler Text", Garamond, "Bookman Old Style", Bookman, serif;
 }

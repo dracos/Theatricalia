@@ -3,6 +3,7 @@ from django.contrib.contenttypes import generic
 from django.template.defaultfilters import slugify
 from photos.models import Photo
 from utils import int_to_base32
+from fields import ApproximateDateField
 
 class Place(models.Model):
     name = models.CharField(max_length=100)
@@ -15,7 +16,7 @@ class Place(models.Model):
     postcode = models.CharField(blank=True, max_length=10)
     type = models.CharField(blank=True, max_length=100, choices=(('proscenium', 'Proscenium Arch'), ('thrust', 'Thrust'), ('multiple', 'Multiple'), ('other', 'Other')))
     size = models.CharField(blank=True, max_length=100)
-    opening_date = models.DateField(blank=True, null=True)
+    opening_date = ApproximateDateField(blank=True)
     url = models.URLField('URL', blank=True)
     wikipedia = models.URLField(blank=True)
     photos = generic.GenericRelation(Photo)
