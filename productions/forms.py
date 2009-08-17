@@ -14,7 +14,6 @@ class CastCrewNullBooleanSelect(forms.widgets.NullBooleanSelect):
 
 class ProductionForm(forms.ModelForm):
     last_modified = forms.DateTimeField(widget=forms.HiddenInput(), required=False)
-    press_date = PrettyDateField(required=False)
     description = forms.CharField(required=False, widget=forms.Textarea(attrs={'cols': 30, 'rows':5}))
 
     class Meta:

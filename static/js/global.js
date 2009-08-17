@@ -34,7 +34,7 @@ $(function() {
 
 var map, tinyIcon;
 $(function() {
-    if (GBrowserIsCompatible() && document.getElementById('map')) {
+    if (document.getElementById('map') && GBrowserIsCompatible()) {
         $(document).unload(function() { GUnload() });
         map = new GMap2(document.getElementById("map"));
         map.addControl(new GLargeMapControl());
