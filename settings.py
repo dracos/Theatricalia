@@ -1,4 +1,4 @@
-# Django settings for theatredb project.
+# Django settings for theatricalia project.
 
 # My additions
 import os.path, sys
@@ -29,7 +29,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = 'theatredb'             # Or path to database file if using sqlite3.
+DATABASE_NAME = 'theatricalia'             # Or path to database file if using sqlite3.
 DATABASE_USER = 'theatredb'             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -81,13 +81,13 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.csrf.middleware.CsrfMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'theatredb.middleware.AlphaMiddleware',
-    'theatredb.middleware.OnlyLowercaseUrls',
+    'theatricalia.middleware.AlphaMiddleware',
+    'theatricalia.middleware.OnlyLowercaseUrls',
     'django.middleware.transaction.TransactionMiddleware',
     'reversion.middleware.RevisionMiddleware',
 )
 
-ROOT_URLCONF = 'theatredb.urls'
+ROOT_URLCONF = 'theatricalia.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -108,13 +108,13 @@ INSTALLED_APPS = (
     'dmigrations',
     'sorl.thumbnail',
     'reversion',
-    'theatredb.common',
-    'theatredb.places',
-    'theatredb.plays',
-    'theatredb.productions',
-    'theatredb.photos',
-    'theatredb.people',
-    'theatredb.profiles',
+    'theatricalia.common',
+    'theatricalia.places',
+    'theatricalia.plays',
+    'theatricalia.productions',
+    'theatricalia.photos',
+    'theatricalia.people',
+    'theatricalia.profiles',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

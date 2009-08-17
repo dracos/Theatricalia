@@ -63,7 +63,7 @@ def register_confirm(request, uidb32, token):
 		p.email_validated = True
 		print p
 		p.save()
-                user.backend = 'theatredb.profiles.backends.ModelBackend' # Needs backend to login?
+                user.backend = 'theatricalia.profiles.backends.ModelBackend' # Needs backend to login?
 		from django.contrib.auth import login
 		login(request, user)
 		print user.is_authenticated()
