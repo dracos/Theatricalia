@@ -9,6 +9,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 from plays.models import Play
 from productions.models import Production, Part, ProductionCompany
+from productions.models import Place as ProductionPlace
 from people.models import Person
 from places.models import Place
 from django.contrib.auth.models import User
@@ -52,9 +53,7 @@ rsc, created = ProductionCompany.objects.get_or_create(name='Royal Shakespeare C
 
 for file in glob.glob('../data/rsc/dataProds/*'):
     r = open(file).read()
-    file = file.replace('dataProds/', '')
     print file
-    sys.exit()
 
     data = {}
     matches = re.findall('<tr>\s*<td class="FieldLabel">(.*?)</td>\s*<td class="[^"]*">(.*?)\s*</td>', r)
@@ -87,8 +86,7 @@ for file in glob.glob('../data/rsc/dataProds/*'):
     press_date = datetime.strptime(re.sub('\s*(\d\d)/(\d\d)/(\d\d\d\d)\s*', r'\3-\2-\1', data['PressNight']), '%Y-%m-%d')
 
     location = re.sub('\.$', '', data['Venue'].strip())
-    if location != 'Tour':
-        location, created = Place.objects.get_or_create(name=location)
+    location, created = Place.objects.get_or_create(name=location)
 
     end_date = re.sub('\s*(\d\d)/(\d\d)/(\d\d\d\d)\s*', r'\3-\2-\1', data.get('LastPerformed', ''))
             
@@ -97,14 +95,13 @@ for file in glob.glob('../data/rsc/dataProds/*'):
         description += ' (%s performance%s)' % (data['NoPerformances'], data['NoPerformances'] != 1 and 's' or '')
     description = description.strip()
 
-    production, created = Production.objects.get_or_create(
-        play=play,
-        press_date=press_date, end_date=end_date,
-        company=rsc,
+    production = Production(
+        play = play,
+        company = rsc,
         description = description,
     )
-    if location != 'Tour':
-        production.places.add(location)
+    production.save()
+    ProductionPlace.objects.get_or_create(production=production, place=location, press_date=press_date, end_date=end_date)
 
     m = re.search('<table summary="" class="UnderviewTable">\s*<tr>\s*<td class="UnderviewHeader" colspan=4>Creative Roles</td>\s*</tr>(.*?)</table>(?s)', r)
     if m:

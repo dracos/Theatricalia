@@ -1,6 +1,7 @@
 from django.db import models
 from utils import int_to_base32
 from django.contrib.contenttypes import generic
+from django.template.defaultfilters import slugify
 from fields import ApproximateDateField
 from photos.models import Photo
 from sounds.metaphone import dm

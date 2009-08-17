@@ -23,9 +23,9 @@ class ProductionCompany(models.Model):
     def __unicode__(self):
         return self.name
 
-    def save(self):
+    def save(self, **kwargs):
         self.slug = slugify(self.name)
-        super(ProductionCompany, self).save()
+        super(ProductionCompany, self).save(**kwargs)
 
 class Production(models.Model):
     play = models.ForeignKey(Play, related_name='productions')

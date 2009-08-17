@@ -28,9 +28,9 @@ class Place(models.Model):
         if self.town: out += ", " + self.town
         return out
 
-    def save(self):
+    def save(self, **kwargs):
         self.slug = slugify('%s %s' % (self.name, self.town))
-        super(Place, self).save()
+        super(Place, self).save(**kwargs)
 
     @models.permalink
     def get_absolute_url(self):
