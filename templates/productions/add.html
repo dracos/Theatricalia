@@ -25,12 +25,27 @@
 
 {{ form.as_p }}
 
+<div id="edit_places">
+
 <h2>Places</h2>
 
 {{ formset.management_form }}
 {% for f in formset.forms %}
-    {{ f.as_p }}
+    <p>{{ f.place.label_tag }} {{ f.place }}</p>
+    <p>{{ f.start_date.label_tag }} {{ f.start_date }}
+    <span class="m">
+    {{ f.end_date.label_tag }}&nbsp;{{ f.end_date }}
+    </span></p>
+    <p>{{ f.press_date.label_tag }} {{ f.press_date }}</p>
+    {% if f.DELETE %}
+    <p>{{ f.DELETE.label_tag }} {{ f.DELETE }} <small>&ndash; select this if this production did not perform in this place, to remove it.</small></p>
+    {% endif %}
+    {{ f.production }}
+    {{ f.id }}
+    <br>
 {% endfor %}
+
+</div>
 
 <p><span style="float:left"><input type="submit" value="Record changes"></span>
 
