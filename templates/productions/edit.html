@@ -20,6 +20,16 @@
 
 <form method="post" id="production_edit">
 {{ form.as_p }}
+
+<h2>Places</h2>
+
+<p style="margin-bottom:1.5em">Use the empty form to add a new place for this production.</p>
+
+{{ formset.management_form }}
+{% for f in formset.forms %}
+    {{ f.as_p }}
+{% endfor %}
+
 <p><span style="float:left"><input type="submit" value="Record changes"></span>
 
 <span style="float:right"><input type="submit" name="disregard" id="edit-form-cancel" value="Disregard"></span>

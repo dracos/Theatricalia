@@ -25,10 +25,10 @@ $(function() {
             }
         });
         table.find('a').click(function() { return false; });
-        $('#edit-link').hide();
-        $('#production_meta').slideUp(1000);
-        $('#production_edit_inline_basic').fadeIn(1000);
-        $('#edit-form').slideDown('slow');
+        $('#production-stuff').hide();
+        $('#production_meta').slideUp(900);
+        $('#production_edit_inline_basic').show();
+        $('#edit-form').slideDown(600);
         return false;
     });
     $('form#production_edit_inline').submit(function(){
@@ -38,8 +38,8 @@ $(function() {
         table.find('a').unbind('click');
         $('#edit-form').slideUp('slow');
         $('#production_edit_inline_basic').hide();
-        $('#production_meta').show();
-        $('#edit-link').show();
+        $('#production_meta').slideDown('slow');
+        $('#production-stuff').show();
         return false;
     });
 });

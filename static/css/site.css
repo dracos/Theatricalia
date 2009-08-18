@@ -104,6 +104,9 @@ textarea {
 	/* border-top-width: 0.1em;
 	border-bottom-width: 0.1em; */
 }
+textarea[rows='5'] {
+    height: 7.25em;
+}
 
 blockquote {
 	margin-left: 1.5em;

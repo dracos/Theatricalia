@@ -1,6 +1,6 @@
 import re
 from django import forms
-from models import Production, Part
+from models import Production, Part, Place
 from people.models import Person
 from fields import PrettyDateField
 from django.forms.formsets import BaseFormSet
@@ -13,27 +13,31 @@ class CastCrewNullBooleanSelect(forms.widgets.NullBooleanSelect):
         super(forms.widgets.NullBooleanSelect, self).__init__(attrs, choices)
 
 class ProductionForm(forms.ModelForm):
-    last_modified = forms.DateTimeField(widget=forms.HiddenInput(), required=False)
+    #last_modified = forms.DateTimeField(widget=forms.HiddenInput(), required=False)
     description = forms.CharField(required=False, widget=forms.Textarea(attrs={'cols': 30, 'rows':5}))
 
     class Meta:
         model = Production
-        exclude = ('parts')
+        exclude = ('parts', 'places')
 
-    def __init__(self, last_modified=None, *args, **kwargs):
-        self.db_last_modified = last_modified
-        kwargs.setdefault('initial', {}).update({ 'last_modified': last_modified })
-        super(ProductionForm, self).__init__(*args, **kwargs)
+#    def __init__(self, last_modified=None, *args, **kwargs):
+#        self.db_last_modified = last_modified
+#        kwargs.setdefault('initial', {}).update({ 'last_modified': last_modified })
+#        super(ProductionForm, self).__init__(*args, **kwargs)
+#
+#    def clean(self):
+#        super(ProductionForm, self).clean()
+#
+#        # Not clean_last_modified, as I want it as a generic error
+#        last_mod = self.cleaned_data.get('last_modified')
+#        if last_mod < self.db_last_modified:
+#            raise forms.ValidationError('I am afraid that this production has been edited since you started editing.')
+#
+#        return self.cleaned_data
 
-    def clean(self):
-        super(ProductionForm, self).clean()
-
-        # Not clean_last_modified, as I want it as a generic error
-        last_mod = self.cleaned_data.get('last_modified')
-        if last_mod < self.db_last_modified:
-            raise forms.ValidationError('I am afraid that this production has been edited since you started editing.')
-
-        return self.cleaned_data
+class PlaceForm(forms.ModelForm):
+    class Meta:
+        model = Place
 
 # person is the ext box where someone enters a name, and always will be
 # person_choice is the selection of someone from that, or the creation of a new person

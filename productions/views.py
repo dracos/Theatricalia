@@ -5,12 +5,12 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from utils import base32_to_int, unique_slugify
 from django.contrib.auth.decorators import login_required
-from django.forms.formsets import formset_factory
+from django.forms.models import modelformset_factory, inlineformset_factory
 from django.contrib.comments.views.comments import post_comment
 from django.http import Http404, HttpResponseRedirect
 from shortcuts import render, check_url
-from models import Production, Part
-from forms import ProductionForm, PartForm
+from models import Production, Part, Place as ProductionPlace
+from forms import ProductionForm, PartForm, PlaceForm
 from plays.models import Play
 from places.models import Place
 from photos.forms import PhotoForm
@@ -18,9 +18,12 @@ from people.models import Person
 from aggregates import Concatenate
 
 def productions_past(object):
-    return object.productions.filter(
+    o = object.productions.filter(
         Q(place__end_date__lt=datetime.now) | Q(place__end_date='', place__press_date__lt=datetime.now)
-    ).annotate(Concatenate('part__role')).order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))')
+    )
+    if isinstance(object, Person):
+        o = o.annotate(Concatenate('part__role'))
+    return o.order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))')
 
 def productions_future(object):
     return object.productions.filter(
@@ -145,17 +148,26 @@ def production_edit(request, play, production_id):
     production = check_parameters(play, production_id)
     production_form = ProductionForm(data=request.POST or None, instance=production)
 
+    ProductionPlaceFormSet = inlineformset_factory( Production, ProductionPlace, extra=1 )
+    formset = ProductionPlaceFormSet(
+        data = request.POST or None,
+        prefix = 'place',
+        instance = production,
+    )
+
     if request.method == 'POST':
         if request.POST.get('disregard'):
             request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
             return HttpResponseRedirect(production.get_absolute_url())
-        if production_form.is_valid():
+        if production_form.is_valid() and formset.is_valid():
             production_form.save()
+            formset.save()
             request.user.message_set.create(message="Your changes have been stored; thank you.")
             return HttpResponseRedirect(production.get_absolute_url())
 
     return render(request, 'productions/edit.html', {
         'form': production_form,
+        'formset': formset,
         'production': production,
     })
 
@@ -186,24 +198,38 @@ def _production_add(request, play=None, place=None):
 
     initial = {}
     if play: initial['play'] = play.id
-    if place: initial['places'] = [ place.id ]
     production_form = ProductionForm(
         data = request.POST or None,
         initial = initial,
     )
+
+    ProductionPlaceFormSet = modelformset_factory( ProductionPlace, exclude=('production') )
+    formset = ProductionPlaceFormSet(
+        data = request.POST or None,
+        prefix = 'place',
+        queryset = ProductionPlace.objects.none()
+    )
+
+    # Yucky, but no way to pass initial to a model formset XXX
+    if place:
+        formset.forms[0].initial['place'] = place.id
 
     if request.method == 'POST':
         if request.POST.get('disregard'):
             request.user.message_set.create(message=u"All right, we\u2019ve ignored what you had done.")
             if play: return HttpResponseRedirect(play.get_absolute_url())
             if place: return HttpResponseRedirect(place.get_absolute_url())
-        if production_form.is_valid():
+        if production_form.is_valid() and formset.is_valid():
             production = production_form.save()
+            for form in formset.forms:
+                form.cleaned_data['production'] = production
+            formset.save()
             request.user.message_set.create(message="Your addition has been stored; thank you. If you know members of the cast or crew, please feel free to add them now.")
             return HttpResponseRedirect(production.get_edit_cast_url())
 
     return render(request, 'productions/add.html', {
         'place': place,
+        'formset': formset,
         'play': play,
         'form': production_form,
     })
