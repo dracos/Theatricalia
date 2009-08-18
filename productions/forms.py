@@ -52,11 +52,11 @@ class PartForm(forms.ModelForm):
 
     class Meta:
         model = Part
-        exclude = ('production', 'credit', 'visible')
+        exclude = ('production', 'order')
 
     def __init__(self, *args, **kwargs):
         super(PartForm, self).__init__(*args, **kwargs)
-        self.fields['order'].widget.attrs['size'] = 5
+        self.fields['start_date'].help_text = 'if they were only in this production for part of its run'
         self.fields['cast'].widget = CastCrewNullBooleanSelect()
         # Submitting the form with something selected in person_choice...
         if 'person_choice' in self.data and 'person' in self.data:

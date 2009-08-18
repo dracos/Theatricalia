@@ -27,7 +27,9 @@
 {{ field }}
 {% else %}
 {{ field.errors }}
-<p>{{ field.label_tag }} {{ field }}</p>
+<p>{{ field.label_tag }} {{ field }}
+{% if field.help_text %}<small>({{ field.help_text }})</small>{% endif %}
+</p>
 {% endif %}
 {% endifnotequal %}
 {% endfor %}
