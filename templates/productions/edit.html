@@ -27,21 +27,7 @@
 
 <p style="margin-bottom:1.5em">Use the empty form to add a new place for this production.</p>
 
-{{ formset.management_form }}
-{% for f in formset.forms %}
-    <p>{{ f.place.label_tag }} {{ f.place }}</p>
-    <p>{{ f.start_date.label_tag }} {{ f.start_date }}
-    <span class="m">
-    {{ f.end_date.label_tag }}&nbsp;{{ f.end_date }}
-    </span></p>
-    <p>{{ f.press_date.label_tag }} {{ f.press_date }}</p>
-    {% if f.DELETE %}
-    <p>{{ f.DELETE.label_tag }} {{ f.DELETE }} <small>&ndash; select this if this production did not perform in this place, to remove it.</small></p>
-    {% endif %}
-    {{ f.production }}
-    {{ f.id }}
-    <br>
-{% endfor %}
+{% include 'productions/place-form.html' %}
 
 </div>
 

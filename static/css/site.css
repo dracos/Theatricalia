@@ -577,6 +577,9 @@ td {
 #production_edit div#edit_places label {
     width: 7.5em;
 }
+#production_edit .place {
+    margin-bottom: 1.5em;
+}
 #production_edit span.m label {
     float: none;
     clear: none;

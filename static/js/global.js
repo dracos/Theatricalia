@@ -30,6 +30,28 @@ $(function() {
 			$(this).parents('tr').addClass('remove');
 		}
 	}).change();
+
+    $('#production_edit .place:last').after(
+        $('<a href="">Add another</a>').click(function(){
+            var last_form = $('#production_edit .place:last');
+            var newRow = last_form.clone().insertAfter(last_form);
+            var total = $('#id_place-TOTAL_FORMS').val();
+            var old_id = '-' + (total-1) + '-';
+            var new_id = '-' + total + '-';
+            newRow.find(':input').each(function(){
+                var name = $(this).attr('name').replace(old_id, new_id);
+                var id = 'id_' + name;
+                $(this).attr({'name': name, 'id': id}).val('');
+            });
+            newRow.find('label').each(function(){
+                var newFor = $(this).attr('for').replace(old_id, new_id);
+                $(this).attr('for': newFor);
+            });
+            total++;
+            $('#id_place-TOTAL_FORMS').val(total);
+            return false;
+        })
+    );
 });
 
 var map, tinyIcon;
