@@ -94,9 +94,17 @@ def production(request, play, production_id):
     photo_form = PhotoForm(production)
     production_form = ProductionForm(instance=production)
 
+    ProductionPlaceFormSet = inlineformset_factory( Production, ProductionPlace, extra=1 )
+    formset = ProductionPlaceFormSet(
+        data = request.POST or None,
+        prefix = 'place',
+        instance = production,
+    )
+
     return render(request, 'production.html', {
         'production': production,
         'production_form': production_form,
+        'production_formset': formset,
         'cast': production.part_set.filter(cast=True).order_by('order', 'role'),
         'crew': production.part_set.filter(cast=False).order_by('order', 'role'),
         'photo_form': photo_form,

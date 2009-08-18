@@ -113,6 +113,9 @@ by the <a href="{{ production.company.get_absolute_url }}">{{ production.company
 
 <div id="production_edit_inline_basic">
 {{ production_form.as_p }}
+{% for form in production_formset.forms %}
+    {{ form.as_p }}
+{% endfor %}
 </div>
 
 </div></div>

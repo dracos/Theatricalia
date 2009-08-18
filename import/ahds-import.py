@@ -84,7 +84,9 @@ for n in range(1, 67):
                 data['cast'] = [ [ fix_dots(y) for y in re.split(', ', x)] for x in re.split('\s*<br>\s*', value) if x ]
 
         # Okay, got it all now. Let's stick it all in the db
-        play, created = Play.objects.get_or_create(title=data['play'], slug=slugify(data['play']))
+        slug = slugify(data['play'])
+        title = re.sub('^(A|The) (.*)$', r'\2, \1', data['play'])
+        play, created = Play.objects.get_or_create(title=title, slug=slug)
         if 'author' in data:
             slug = slugify("%s %s" % (data['author'][1], data['author'][0]))
             author = add_person_nicely(data['author'][1], data['author'][0])
@@ -98,7 +100,8 @@ for n in range(1, 67):
         production = Production(play=play, company=company)
         production.save()
         if 'theatre' in data and data['theatre']:
-            location, created = Place.objects.get_or_create(name=data['theatre'])
+            location = re.sub('^(A|The) (.*)$', r'\2, \1', data['theatre'])
+            location, created = Place.objects.get_or_create(name=location)
             ProductionPlace.objects.get_or_create(production=production, place=location, start_date=data['first'], end_date=data['last'])
         else:
             location, created = Place.objects.get_or_create(name='Unknown')

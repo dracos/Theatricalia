@@ -30,7 +30,8 @@ class Place(models.Model):
         return out
 
     def save(self, **kwargs):
-        self.slug = slugify('%s %s' % (self.name, self.town))
+        name = re.sub('^(.*), (A|The)$', r'\2 \1', self.name)
+        self.slug = slugify('%s %s' % (name, self.town))
         super(Place, self).save(**kwargs)
 
     @models.permalink
