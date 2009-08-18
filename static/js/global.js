@@ -45,7 +45,7 @@ $(function() {
             });
             newRow.find('label').each(function(){
                 var newFor = $(this).attr('for').replace(old_id, new_id);
-                $(this).attr('for': newFor);
+                $(this).attr('for', newFor);
             });
             total++;
             $('#id_place-TOTAL_FORMS').val(total);
