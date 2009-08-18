@@ -13,7 +13,6 @@ from productions.models import Place as ProductionPlace
 from people.models import Person
 from places.models import Place
 from django.contrib.auth.models import User
-from django.template.defaultfilters import slugify
 
 def add_parts(str, cast):
     people = re.findall('<tr>\s*<td class="UnderviewKey">\s*&nbsp;</td>\s*<td class="UnderviewEntry"><p>(.*?)</p></td>\s*<td class="UnderviewEntry"><p>(.*?)</p></td>\s*<td class="AuthorityLink">', str)
@@ -66,9 +65,7 @@ for file in glob.glob('../data/rsc/dataProds/*'):
     if not data['PerfCode']: raise Exception, 'Missing production code'
 
     title = data['Title'].replace('&amp;', '&')
-    slug = slugify(title)
-    title = re.sub('^(A|An|The) (.*)$', r'\2, \1', title)
-    play, created = Play.objects.get_or_create(title=title, slug=slug)
+    play, created = Play.objects.get_or_create(title=title)
 
     playwrights = re.findall('<td class="UnderviewEntry"><p>(.*?)</p></td>\s*<td class="UnderviewEntry"><p>Playwright</p></td>', r)
     for p in playwrights:

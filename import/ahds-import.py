@@ -10,7 +10,6 @@ from productions.models import Production, Part, Place as ProductionPlace, Produ
 from people.models import Person
 from places.models import Place
 from django.contrib.auth.models import User
-from django.template.defaultfilters import slugify
 
 def fix_dots(s):
     return s.title().replace('.', ' ').replace('  ', ' ').strip()
@@ -84,11 +83,8 @@ for n in range(1, 67):
                 data['cast'] = [ [ fix_dots(y) for y in re.split(', ', x)] for x in re.split('\s*<br>\s*', value) if x ]
 
         # Okay, got it all now. Let's stick it all in the db
-        slug = slugify(data['play'])
-        title = re.sub('^(A|An|The) (.*)$', r'\2, \1', data['play'])
-        play, created = Play.objects.get_or_create(title=title, slug=slug)
+        play, created = Play.objects.get_or_create(title=data['play'])
         if 'author' in data:
-            slug = slugify("%s %s" % (data['author'][1], data['author'][0]))
             author = add_person_nicely(data['author'][1], data['author'][0])
             play.authors.add(author)
 
@@ -109,19 +105,16 @@ for n in range(1, 67):
         for c in data['cast']:
             if c[0] == 'Cast Unknown' or c[0] == "Playgoers' Society":
                 continue
-            slug = slugify('%s %s' % (c[1], c[0]))
             person = add_person_nicely(c[1], c[0])
             Part.objects.get_or_create(production=production, person=person, cast=True)
 
         if 'director' in data:
-            slug=slugify("%s %s" % (data['director'][1], data['director'][0]))
             director = add_person_nicely(data['director'][1], data['director'][0])
             part, created = Part.objects.get_or_create(production=production, person=director, cast=False)
             part.role = 'Director'
             part.save()
 
         if 'designer' in data:
-            slug=slugify("%s %s" % (data['designer'][1], data['designer'][0]))
             designer = add_person_nicely(data['designer'][1], data['designer'][0])
             part, created = Part.objects.get_or_create(production=production, person=designer, cast=False)
             part.role = 'Designer'
