@@ -85,7 +85,7 @@ for n in range(1, 67):
 
         # Okay, got it all now. Let's stick it all in the db
         slug = slugify(data['play'])
-        title = re.sub('^(A|The) (.*)$', r'\2, \1', data['play'])
+        title = re.sub('^(A|An|The) (.*)$', r'\2, \1', data['play'])
         play, created = Play.objects.get_or_create(title=title, slug=slug)
         if 'author' in data:
             slug = slugify("%s %s" % (data['author'][1], data['author'][0]))
@@ -100,7 +100,7 @@ for n in range(1, 67):
         production = Production(play=play, company=company)
         production.save()
         if 'theatre' in data and data['theatre']:
-            location = re.sub('^(A|The) (.*)$', r'\2, \1', data['theatre'])
+            location = re.sub('^(A|An|The) (.*)$', r'\2, \1', data['theatre'])
             location, created = Place.objects.get_or_create(name=location)
             ProductionPlace.objects.get_or_create(production=production, place=location, start_date=data['first'], end_date=data['last'])
         else:

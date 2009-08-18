@@ -4,6 +4,7 @@ from django.db import models
 from people.models import Person
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
+from django.template.defaultfilters import slugify
 
 class Play(models.Model):
 	title = models.CharField(max_length=255)
@@ -15,9 +16,18 @@ class Play(models.Model):
 	wikipedia = models.URLField(blank=True)
 
 	def __unicode__(self):
-		return self.nice_title()
+		m = re.search('^(.*),\s+(A|An|The)$(?i)', self.title)
+		if m:
+			return "%s %s" % (m.group(2), m.group(1))
+		return self.title
 
-	def authors_str(self):
+    def save(self, **kwargs):
+        title = re.sub('^(.*), (A|An|The)$', r'\2 \1', self.title)
+        self.slug = slugify(title)
+        self.title = re.sub('^(A|An|The) (.*)$', r'\2, \1', self.title)
+        super(Place, self).save(**kwargs)
+
+	def get_authors_display(self):
 		num = self.authors.count()
 		authors = map(lambda x: '<a href="%s">%s</a>' % (x.get_absolute_url(), escape(x)), self.authors.all())
 		if num > 2:
@@ -30,12 +40,6 @@ class Play(models.Model):
 			str = 'No author'
 		return mark_safe(str)
 			
-	def nice_title(self):
-		m = re.search('^(.*),\s+(A|An|The)$(?i)', self.title)
-		if m:
-			return "%s %s" % (m.group(2), m.group(1))
-		return self.title
-
 	@models.permalink
 	def get_absolute_url(self):
 		return ('play', [self.slug])

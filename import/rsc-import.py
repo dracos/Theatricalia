@@ -67,7 +67,7 @@ for file in glob.glob('../data/rsc/dataProds/*'):
 
     title = data['Title'].replace('&amp;', '&')
     slug = slugify(title)
-    title = re.sub('^(A|The) (.*)$', r'\2, \1', title)
+    title = re.sub('^(A|An|The) (.*)$', r'\2, \1', title)
     play, created = Play.objects.get_or_create(title=title, slug=slug)
 
     playwrights = re.findall('<td class="UnderviewEntry"><p>(.*?)</p></td>\s*<td class="UnderviewEntry"><p>Playwright</p></td>', r)
@@ -87,7 +87,7 @@ for file in glob.glob('../data/rsc/dataProds/*'):
     press_date = datetime.strptime(re.sub('\s*(\d\d)/(\d\d)/(\d\d\d\d)\s*', r'\3-\2-\1', data['PressNight']), '%Y-%m-%d')
 
     location = re.sub('\.$', '', data['Venue'].strip())
-    location = re.sub('^(A|The) (.*)$', r'\2, \1', location)
+    location = re.sub('^(A|An|The) (.*)$', r'\2, \1', location)
     location, created = Place.objects.get_or_create(name=location)
 
     end_date = re.sub('\s*(\d\d)/(\d\d)/(\d\d\d\d)\s*', r'\3-\2-\1', data.get('LastPerformed', ''))

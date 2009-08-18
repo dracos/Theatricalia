@@ -47,7 +47,7 @@
 
 <div class="secondary">
 
-<p>A play by {{ play.authors_str }}</p>
+<p>A play by {{ play.get_authors_display }}</p>
 
 <ul>
 {% if play.url %}<li><a href="{{ play.url }}">Website</a>{% endif %}

@@ -10,7 +10,7 @@
 
 {% block content %}
 
-<h1>Editing {{ place.name|prettify }}</h1>
+<h1>Editing {{ place.get_name_display|prettify }}</h1>
 
 <form method="post">
 {% for field in form %} {% if field.is_hidden %} {{ field }} {% endif %} {% endfor %}

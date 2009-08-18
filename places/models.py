@@ -1,3 +1,4 @@
+import re
 from django.db import models
 from django.contrib.contenttypes import generic
 from django.template.defaultfilters import slugify
@@ -25,14 +26,22 @@ class Place(models.Model):
         ordering = ['name']
 
     def __unicode__(self):
-        out = self.name
+        out = self.get_name_display()
         if self.town: out += ", " + self.town
         return out
 
     def save(self, **kwargs):
-        name = re.sub('^(.*), (A|The)$', r'\2 \1', self.name)
+        name = re.sub('^(.*), (A|An|The)$', r'\2 \1', self.name)
         self.slug = slugify('%s %s' % (name, self.town))
+        self.name = re.sub('^(A|An|The) (.*)$', r'\2, \1', self.name)
         super(Place, self).save(**kwargs)
+
+    def get_name_display(self):
+        out = self.name
+        m = re.search('^(.*),\s+(A|An|The)$(?i)', out)
+        if m:
+            out = "%s %s" % (m.group(2), m.group(1))
+        return out
 
     @models.permalink
     def get_absolute_url(self):

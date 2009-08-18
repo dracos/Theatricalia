@@ -36,6 +36,7 @@ class ProductionForm(forms.ModelForm):
 #        return self.cleaned_data
 
 class PlaceForm(forms.ModelForm):
+    press_date = PrettyDateField(required=False)
     class Meta:
         model = Place
 

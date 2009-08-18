@@ -2,7 +2,7 @@
 
 {% ifequal production.places.count 1 %}
     {{ production.date_summary|prettify }},
-    at the <a href="{{ production.places.all.0.get_absolute_url }}">{{ production.places.all.0|prettify }}</a>.</p>
+    at <a href="{{ production.places.all.0.get_absolute_url }}">{{ production.places.all.0|prettify }}</a>.</p>
     {% if production.place_set.all.0.press_date and production.place_set.all.0.start_date %}
         <p>Press night was {{ production.place_set.all.0.press_date|date:"jS F Y"|prettify }}.</p>
     {% endif %}

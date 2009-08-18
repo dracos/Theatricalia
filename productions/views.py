@@ -94,7 +94,7 @@ def production(request, play, production_id):
     photo_form = PhotoForm(production)
     production_form = ProductionForm(instance=production)
 
-    ProductionPlaceFormSet = inlineformset_factory( Production, ProductionPlace, extra=1 )
+    ProductionPlaceFormSet = inlineformset_factory( Production, ProductionPlace, extra=1, form=PlaceForm )
     formset = ProductionPlaceFormSet(
         data = request.POST or None,
         prefix = 'place',
@@ -156,7 +156,7 @@ def production_edit(request, play, production_id):
     production = check_parameters(play, production_id)
     production_form = ProductionForm(data=request.POST or None, instance=production)
 
-    ProductionPlaceFormSet = inlineformset_factory( Production, ProductionPlace, extra=1 )
+    ProductionPlaceFormSet = inlineformset_factory( Production, ProductionPlace, extra=1, form=PlaceForm )
     formset = ProductionPlaceFormSet(
         data = request.POST or None,
         prefix = 'place',
@@ -211,7 +211,7 @@ def _production_add(request, play=None, place=None):
         initial = initial,
     )
 
-    ProductionPlaceFormSet = modelformset_factory( ProductionPlace, exclude=('production') )
+    ProductionPlaceFormSet = modelformset_factory( ProductionPlace, exclude=('production'), form=PlaceForm )
     formset = ProductionPlaceFormSet(
         data = request.POST or None,
         prefix = 'place',
