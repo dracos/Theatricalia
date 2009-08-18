@@ -65,6 +65,7 @@ for file in glob.glob('../data/rsc/dataProds/*'):
     if not data['PerfCode']: raise Exception, 'Missing production code'
 
     title = data['Title'].replace('&amp;', '&')
+    title = re.sub('^(A|An|The) (.*)$', r'\2, \1', title)
     play, created = Play.objects.get_or_create(title=title)
 
     playwrights = re.findall('<td class="UnderviewEntry"><p>(.*?)</p></td>\s*<td class="UnderviewEntry"><p>Playwright</p></td>', r)

@@ -83,7 +83,8 @@ for n in range(1, 67):
                 data['cast'] = [ [ fix_dots(y) for y in re.split(', ', x)] for x in re.split('\s*<br>\s*', value) if x ]
 
         # Okay, got it all now. Let's stick it all in the db
-        play, created = Play.objects.get_or_create(title=data['play'])
+        title = re.sub('^(A|An|The) (.*)$', r'\2, \1', data['play'])
+        play, created = Play.objects.get_or_create(title=title)
         if 'author' in data:
             author = add_person_nicely(data['author'][1], data['author'][0])
             play.authors.add(author)
