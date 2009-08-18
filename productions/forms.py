@@ -38,9 +38,9 @@ class ProductionForm(forms.ModelForm):
 
 class PlaceForm(forms.ModelForm):
     # All this just to shrink them a bit
-    start_date = ApproximateDateFormField(required=False, widget=forms.TextInput(attrs={'size':'15'}))
-    press_date = PrettyDateField(required=False, widget=PrettyDateInput(attrs={'size':'15'}))
-    end_date = ApproximateDateFormField(required=False, widget=forms.TextInput(attrs={'size':'15'}))
+    start_date = ApproximateDateFormField(required=False, label='It ran here from')
+    press_date = PrettyDateField(required=False, label='Press night')
+    end_date = ApproximateDateFormField(required=False, label='to')
     class Meta:
         model = Place
 

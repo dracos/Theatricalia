@@ -328,7 +328,7 @@ li#nav-plays a {
 	width: 62%;
 }
 #primary select {
-    max-width: 80%;
+    max-width: 74%;
 }
 .secondary select {
     max-width: 70%;
@@ -571,11 +571,15 @@ td {
 
 #production_edit label, #production_edit_inline_basic label {
     float: left;
+    clear: left;
     width: 6em;
+}
+#production_edit div#edit_places label {
+    width: 7.5em;
 }
 #production_edit span.m label {
     float: none;
-    margin-left: 1em;
+    clear: none;
 }
 #production_edit p, #production_edit_inline_basic p {
     margin: 0;
