@@ -2,7 +2,8 @@ import re
 from django import forms
 from models import Production, Part, Place
 from people.models import Person
-from fields import PrettyDateField
+from fields import PrettyDateField, ApproximateDateFormField
+from widgets import PrettyDateInput
 from django.forms.formsets import BaseFormSet
 from search.views import search_people
 from common.templatetags.prettify import prettify
@@ -36,7 +37,10 @@ class ProductionForm(forms.ModelForm):
 #        return self.cleaned_data
 
 class PlaceForm(forms.ModelForm):
-    press_date = PrettyDateField(required=False)
+    # All this just to shrink them a bit
+    start_date = ApproximateDateFormField(required=False, widget=forms.TextInput(attrs={'size':'15'}))
+    press_date = PrettyDateField(required=False, widget=PrettyDateInput(attrs={'size':'15'}))
+    end_date = ApproximateDateFormField(required=False, widget=forms.TextInput(attrs={'size':'15'}))
     class Meta:
         model = Place
 

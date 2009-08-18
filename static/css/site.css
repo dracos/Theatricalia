@@ -573,6 +573,10 @@ td {
     float: left;
     width: 6em;
 }
+#production_edit span.m label {
+    float: none;
+    margin-left: 1em;
+}
 #production_edit p, #production_edit_inline_basic p {
     margin: 0;
 }
