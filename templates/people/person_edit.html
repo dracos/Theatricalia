@@ -11,24 +11,28 @@
 
 <h1>Editing {{ person.name }}</h1>
 
-<div id="primary">
-
-<form method="post">
-<table>
-{{ form }}
-<tr><td colspan="2" style="text-align:right"><input type="submit" value="Update"></td></tr>
-</table>
-</form>
-
-</div>
-
 <div class="secondary">
 
 <p>A person&rsquo;s biography should be a short summary of their life and career to date.</p>
 
 <p>Date of birth may simply be month and year, or just year, if that is all that is known.</p>
 
-<p><a href="{{ person.get_absolute_url }}">Cancel</a></p>
+<p><a href="{{ person.get_absolute_url }}">Disregard</a></p>
+
+</div>
+
+<div id="primary">
+
+<form method="post" id="production_edit">
+{% for field in form.hidden_fields %} {{ field }} {% endfor %}
+{% for field in form.visible_fields %}
+<p>{{ field.label_tag }} {{ field }}</p>
+{% if field.help_text %}
+<p style="margin-left:6em; position:relative; top:-0.3em"><small>{{ field.help_text }}</small></p>
+{% endif %}
+{% endfor %}
+<p><input type="submit" value="Record changes"></p>
+</form>
 
 </div>
 

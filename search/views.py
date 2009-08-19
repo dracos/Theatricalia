@@ -1,5 +1,6 @@
-import re, difflib
-import operator
+import re # , difflib
+import urllib
+from django.utils import simplejson
 from django.db.models import Q
 from shortcuts import render
 from people.models import Person
@@ -104,13 +105,19 @@ def search_people(search, force_similar=False, use_distance=True):
         )
     return people, sounds_people
 
+def search_near(s):
+    r = urllib.urlopen('http://ws.geonames.org/searchJSON?isNameRequired=true&style=LONG&q=' + s + '&maxRows=10').read()
+    r = simplejson.loads(r)
+    return r
+
 def search(request):
     search = request.GET.get('q', '')
-    people = plays = places = []
+    people = plays = places = near = []
     sounds_people = 0
     if search:
-        people, sounds_people = search_people(search, force_similar=request.GET.get('similar'))
-        places = Place.objects.filter(name__icontains=search)
+        people, sounds_people = search_people(search, force_similar=request.GET.get('similar'), use_distance=False)
+        near = search_near(search)
+        places = Place.objects.filter(Q(name__icontains=search) | Q(town__icontains=search))
         plays = Play.objects.filter(title__icontains=search)
         # Search for characters
 
@@ -118,6 +125,7 @@ def search(request):
         'people': people,
         'plays': plays,
         'places': places,
+        'near': near,
         'sounds_people': sounds_people,
         'search': search,
     })

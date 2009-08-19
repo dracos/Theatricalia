@@ -30,7 +30,7 @@
 
 {% include "pagination.html" %}
 
-<ul id="person_list" style="clear:both">
+<ul class="person_list" style="clear:both">
 {% for person in object_list %}
 <li><a href="{{ person.get_absolute_url }}">{{ person }}</a></li>
 {% empty %}

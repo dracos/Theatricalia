@@ -98,14 +98,14 @@ input[type="submit"]:hover {
 textarea {
 	font-family: inherit;
 	line-height: 1.5;
-	font-size: inherit;
+	font-size: 0.75em;
 	max-width: 25em;
 	/* height: 14.675em; */
 	/* border-top-width: 0.1em;
 	border-bottom-width: 0.1em; */
 }
 textarea[rows='5'] {
-    height: 7.25em;
+    height: 7.66667em;
 }
 
 blockquote {
@@ -377,7 +377,7 @@ ul#atoz li {
 	margin: 0 0.5em;
 }
 
-#person_list {
+.person_list {
 	-moz-column-count: 3;
 	column-count: 3;
 }
@@ -571,7 +571,6 @@ td {
 
 #production_edit label, #production_edit_inline_basic label {
     float: left;
-    clear: left;
     width: 6em;
 }
 #production_edit div#edit_places label {
@@ -586,6 +585,7 @@ td {
 }
 #production_edit p, #production_edit_inline_basic p {
     margin: 0;
+    clear: left;
 }
 #production_edit p:last-child {
     margin-top: 1.5em;
