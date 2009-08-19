@@ -19,7 +19,12 @@
 {{ production.part__role__concatenate }}, {% endif %}
 <a href="{{ production.get_absolute_url }}">{{ production.play|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
 <span>{{ production.date_summary|prettify }},
-{{ production.place_summary }}.</span>
+{% ifequal production.places.count 1 %}
+<a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
+{% else %}
+{{ production.place_summary|prettify }}.
+{% endifequal %}
+</span>
 {% endfor %}
 </ul>
 {% else %}
