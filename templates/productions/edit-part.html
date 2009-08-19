@@ -11,7 +11,7 @@
 
 <p>Thank you for taking the time to add or correct some information on this site.</p>
 
-<form method="post" id="production_edit">
+<form method="post" id="edit">
 
 {% if form.person_choice.errors or form.person_choice.is_hidden %}
 {{ form.person_choice.errors }}
@@ -34,9 +34,9 @@
 {% endifnotequal %}
 {% endfor %}
 
-<p><span style="float:left"><input type="submit" value="Record changes"></span>
-<span style="float:right"><input name="disregard" type="submit" id="edit-form-cancel" value="Disregard"></span>
-</p>
+<p><input id="submit" type="submit" value="Record changes">
+<input type="submit" name="disregard" id="cancel" value="Disregard"></p>
+
 </form>
  
 </div>

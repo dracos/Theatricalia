@@ -12,7 +12,7 @@
 
 <h1>Editing {{ place.get_name_display|prettify }}</h1>
 
-<form method="post" id="production_edit">
+<form method="post" id="edit">
 {% for field in form.hidden_fields %} {{ field }} {% endfor %}
 
 {{ form.errors }}
@@ -30,9 +30,8 @@
     {% endif %}
 {% endfor %}
 
-<p><span style="float:left"><input type="submit" value="Record changes"></span>
-
-<span style="float:right"><input type="submit" name="disregard" id="edit-form-cancel" value="Disregard"></span>
+<p><input id="submit" type="submit" value="Record changes">
+<input type="submit" name="disregard" id="cancel" value="Disregard"></p>
 
 </div>
 

@@ -18,7 +18,7 @@
 <p>Thank you for taking the time to add or correct some information on this site.
 </p>
 
-<form method="post" id="production_edit">
+<form method="post" id="edit">
 {{ form.as_p }}
 
 <div id="edit_places">
@@ -31,10 +31,9 @@
 
 </div>
 
-<p><span style="float:left"><input type="submit" value="Record changes"></span>
+<p><input id="submit" type="submit" value="Record changes">
+<input type="submit" name="disregard" id="cancel" value="Disregard"></p>
 
-<span style="float:right"><input type="submit" name="disregard" id="edit-form-cancel" value="Disregard"></span>
-</p>
 </form>
  
 </div>

@@ -88,12 +88,6 @@ input[type="submit"]:hover {
 #edit-form-submit[disabled], #edit-form-submit[disabled]:hover {
     background-color: #cccccc;
 }
-#edit-form-cancel {
-    background-color: #999999;
-}
-#edit-form-cancel:hover {
-    background-color: #333333;
-}
 
 textarea {
 	font-family: inherit;
@@ -539,6 +533,10 @@ td {
 	border: solid 0.0625em #666666;
 }
 
+#map_location {
+    font-style: italic;
+}
+
 /* select multiples */
 
 .asmContainer {
@@ -563,51 +561,62 @@ td {
     content: ')';
 }
 
+/* Most add/edit forms */
+
 #production_edit_inline_basic {
     text-align: left;
     display: none;
     margin: 1.5em 0;
 }
 
-#production_edit label, #production_edit_inline_basic label {
+form#edit label, #production_edit_inline_basic label {
     float: left;
     width: 7.5em;
 }
-#production_edit .help_text {
+form#edit .help_text {
     margin-left: 7.5em;
     position: relative;
     top: -0.3em;
 }
-#production_edit .place {
+form#edit .place {
     margin-bottom: 1.5em;
 }
-#production_edit span.m label {
+form#edit span.m label {
     float: none;
     clear: none;
 }
-#production_edit p, #production_edit_inline_basic p {
+form#edit p, #production_edit_inline_basic p {
     margin: 0;
     clear: left;
 }
-#production_edit p:last-child {
+form#edit p:last-child {
     margin-top: 1.5em;
 }
 
-#production_edit ul.errorlist li {
+form#edit ul.errorlist li {
     background: none;
     padding: 0;
 }
-#production_edit ul li {
+form#edit ul li {
     margin-bottom: 0;
 }
-#production_edit ul label {
+form#edit ul label {
     float: none;
+}
+
+form#edit #submit {
+    float: left;
+}
+
+form#edit #cancel {
+    float: right;
+    background-color: #999999;
+}
+form#edit #cancel:hover {
+    background-color: #333333;
 }
 
 .row2 {
     background-color: #eeeeff;
 }
 
-#map_location {
-    font-style: italic;
-}

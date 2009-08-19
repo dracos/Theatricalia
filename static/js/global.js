@@ -31,9 +31,9 @@ $(function() {
 		}
 	}).change();
 
-    $('#production_edit .place:last').after(
+    $('form#edit .place:last').after(
         $('<a href="">Add another</a>').click(function(){
-            var last_form = $('#production_edit .place:last');
+            var last_form = $('form#edit .place:last');
             var newRow = last_form.clone().insertAfter(last_form);
             var total = $('#id_place-TOTAL_FORMS').val();
             var old_id = '-' + (total-1) + '-';
