@@ -40,6 +40,14 @@ class Person(models.Model):
     def get_edit_url(self):
             return ('person-edit', [int_to_base32(self.id), self.slug])
 
+    @models.permalink
+    def get_more_future_url(self):
+            return ('person-productions-future', [int_to_base32(self.id), self.slug])
+
+    @models.permalink
+    def get_more_past_url(self):
+            return ('person-productions-past', [int_to_base32(self.id), self.slug])
+
     class Meta:
         ordering = ['last_name', 'first_name']
         verbose_name_plural = 'people'

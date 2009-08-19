@@ -12,7 +12,7 @@
 <h2>Plays</h2>
 <ul class="person_list">
 {% for play in plays %}
-<li><a href="{% url play play.slug %}">{{ play }}</a>
+<li><a href="{{ play.get_absolute_url }}">{{ play }}</a>
 {% endfor %}
 </ul>
 {% endif %}

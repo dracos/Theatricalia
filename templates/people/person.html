@@ -47,7 +47,7 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 {% endfor %}
 </ul>
 {% if future.has_other_pages %}
-<p align="right"><a href="{% url person-productions-future person.slug %}?page=2">More &rarr;</a></p>
+<p align="right"><a href="{{ person.get_more_future_url }}?page=2">More &rarr;</a></p>
 {% endif %}
 {% endif %}
 
@@ -69,7 +69,7 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 {% endfor %}
 </ul>
 {% if past.has_other_pages %}
-<p align="right"><a href="{% url person-productions-past person.id person.slug %}?page=2">More &rarr;</a></p>
+<p align="right"><a href="{{ person.get_more_past_url }}?page=2">More &rarr;</a></p>
 {% endif %}
 {% endif %}
 
