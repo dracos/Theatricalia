@@ -1,3 +1,4 @@
+from datetime import date
 from django.db import models
 from django.utils import dateformat
 from django.contrib.contenttypes import generic
@@ -114,18 +115,33 @@ class Production(models.Model):
             places = ''
         return "%s, %s%s" % (self.play, places, self.date_summary())
 
-    def date_summary(self):
+    # Find min/max dates from the places of this production
+    def get_min_max_dates(self):
         start_date = None
         end_date = None
         press_date = None
-
-        # Find min/max dates from the places of this production
         for place in self.place_set.all():
             if not start_date or place.start_date < start_date: start_date = place.start_date
             if not press_date or place.press_date < press_date: press_date = place.press_date
             if not   end_date or place.end_date   >   end_date:   end_date = place.end_date
+        return start_date, press_date, end_date
 
-        return pretty_date_range(start_date, press_date, end_date)
+    def date_summary(self):
+        return pretty_date_range(*self.get_min_max_dates())
+
+    def started(self):
+        start_date, press_date, end_date = self.get_min_max_dates()
+        if start_date and start_date <= date.today():
+            return True
+        if press_date and press_date <= date.today():
+            return True
+        return False
+
+    def finished(self):
+        start_date, press_date, end_date = self.get_min_max_dates()
+        if end_date and end_date < date.today():
+            return True
+        return False
 
     def place_summary(self):
         if self.places.count()>1:
