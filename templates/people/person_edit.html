@@ -28,7 +28,7 @@
 {% for field in form.visible_fields %}
 <p>{{ field.label_tag }} {{ field }}</p>
 {% if field.help_text %}
-<p style="margin-left:6em; position:relative; top:-0.3em"><small>{{ field.help_text }}</small></p>
+<p class="help_text"><small>{{ field.help_text }}</small></p>
 {% endif %}
 {% endfor %}
 <p><input type="submit" value="Record changes"></p>

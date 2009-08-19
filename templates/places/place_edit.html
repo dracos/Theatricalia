@@ -12,24 +12,23 @@
 
 <h1>Editing {{ place.get_name_display|prettify }}</h1>
 
-<form method="post">
-{% for field in form %} {% if field.is_hidden %} {{ field }} {% endif %} {% endfor %}
+<form method="post" id="production_edit">
+{% for field in form.hidden_fields %} {{ field }} {% endfor %}
 
 {{ form.errors }}
 
 <div id="primary">
 
-<table>
 {% for field in form %}
     {% if not field.is_hidden %}
     {% ifnotequal field.label 'Latitude' %}
     {% ifnotequal field.label 'Longitude' %}
-    <tr><th>{{ field.label_tag }}:</th> <td>{{ field }}</td></tr>
+    <p>{{ field.label_tag }} {{ field }}</p>
+    {% if field.help_text %}<p class="help_text"><small>{{ field.help_text }}</small></p>{% endif %}
     {% endifnotequal %}
     {% endifnotequal %}
     {% endif %}
 {% endfor %}
-</table>
 
 <p><span style="float:left"><input type="submit" value="Record changes"></span>
 

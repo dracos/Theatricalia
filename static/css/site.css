@@ -571,10 +571,12 @@ td {
 
 #production_edit label, #production_edit_inline_basic label {
     float: left;
-    width: 6em;
-}
-#production_edit div#edit_places label {
     width: 7.5em;
+}
+#production_edit .help_text {
+    margin-left: 7.5em;
+    position: relative;
+    top: -0.3em;
 }
 #production_edit .place {
     margin-bottom: 1.5em;
