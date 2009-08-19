@@ -37,10 +37,10 @@ class ProductionForm(forms.ModelForm):
 #        return self.cleaned_data
 
 class PlaceForm(forms.ModelForm):
-    # All this just to shrink them a bit
     start_date = ApproximateDateFormField(required=False, label='It ran here from')
     press_date = PrettyDateField(required=False, label='Press night')
     end_date = ApproximateDateFormField(required=False, label='to')
+    production = forms.CharField(required=False, widget=forms.HiddenInput())
     class Meta:
         model = Place
 
@@ -49,10 +49,11 @@ class PlaceForm(forms.ModelForm):
 class PartForm(forms.ModelForm):
     person = forms.CharField()
     person_choice = forms.ChoiceField(label='Person', widget=forms.RadioSelect(), required=False)
+    production = forms.CharField(required=False, widget=forms.HiddenInput())
 
     class Meta:
         model = Part
-        exclude = ('production', 'order')
+        exclude = ('order')
 
     def __init__(self, *args, **kwargs):
         super(PartForm, self).__init__(*args, **kwargs)

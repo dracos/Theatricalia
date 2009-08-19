@@ -23,11 +23,15 @@
 
 <form method="post" id="edit">
 
+{{ form.errors }}
+
 {{ form.as_p }}
 
 <div id="edit_places">
 
 <h2>Places</h2>
+
+{{ formset.errors }}
 
 {% include 'productions/place-form.html' %}
 
@@ -42,9 +46,17 @@
 
 <div id="sidebar_tulip" class="secondary"><div id="sidebar_tulip_r">
 
+{% if play or place %}
 <p>A production
 {% if play %}of the play <a href="{{ play.get_absolute_url }}">{{ play|prettify }}</a>.{% endif %}
 {% if place %}at <a href="{{ place.get_absolute_url }}">{{ place|prettify }}</a>.{% endif %}
+</p>
+{% else %}
+<p>You are adding a brand new production to Theatricalia.
+Don&rsquo;t worry if you don&rsquo;t have all the information asked for &ndash;
+just let us have what you know, and perhaps someone else will fill in the blanks.
+</p>
+{% endif %}
 
 </div></div>
 

@@ -59,7 +59,7 @@ urlpatterns = patterns('',
 
     url('^plays$', plays.list, name='plays_all'),
     url('^plays/(?P<letter>[a-z0*])$', plays.list, name='plays'),
-    url('^play/(?P<play>.*?)/add$', productions.production_add, name='play-production-add'),
+    url('^play/(?P<play>.*?)/add$', productions.add_from_play, name='play-production-add'),
     url('^play/(?P<play>.*?)/production/(?P<production_id>[0-9a-z]+)/edit$', productions.production_edit, name='production-edit'),
     url('^play/(?P<play>.*?)/production/(?P<production_id>[0-9a-z]+)/edit/cast$', productions.production_edit_cast, name='production-edit-cast'),
     url('^play/(?P<play>.*?)/production/(?P<production_id>[0-9a-z]+)/edit/(?P<part_id>[0-9]+)$', productions.part_edit, name='part-edit'),
@@ -96,4 +96,6 @@ urlpatterns = patterns('',
     url('^photograph/view/(?P<photo_id>[0-9a-z]+)$', photos.view, name='photo-view'),
 
     url('^search$', search.search, name='search'),
+
+    url('^add$', productions.production_add, name='production-add'),
 )

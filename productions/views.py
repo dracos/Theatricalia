@@ -200,9 +200,8 @@ def production_edit_cast(request, play, production_id):
         'parts': production.part_set.order_by('-cast','order','role'),
     })
 
-def _production_add(request, play=None, place=None):
-    if not play and not place:
-        raise Exception, 'Must not get here without something!'
+@login_required
+def production_add(request, play=None, place=None):
 
     initial = {}
     if play: initial['play'] = play.id
@@ -211,7 +210,7 @@ def _production_add(request, play=None, place=None):
         initial = initial,
     )
 
-    ProductionPlaceFormSet = modelformset_factory( ProductionPlace, exclude=('production'), form=PlaceForm )
+    ProductionPlaceFormSet = modelformset_factory( ProductionPlace, form=PlaceForm )
     formset = ProductionPlaceFormSet(
         data = request.POST or None,
         prefix = 'place',
@@ -243,14 +242,14 @@ def _production_add(request, play=None, place=None):
     })
 
 @login_required
-def production_add(request, play):
+def add_from_play(request, play):
     play = get_object_or_404(Play, slug=play)
-    return _production_add(request, play=play)
+    return production_add(request, play=play)
 
 @login_required
 def add_from_place(request, place_id, place):
     place = check_url(Place, place_id, place)
-    return _production_add(request, place=place)
+    return production_add(request, place=place)
 
 def post_comment_wrapper(request):
     if not request.user.is_authenticated():
