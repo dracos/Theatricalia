@@ -52,10 +52,14 @@ def person_edit(request, person_id, person):
         return HttpResponseRedirect(e.args[0].get_absolute_url())
 
     form = PersonEditForm(data=request.POST or None, instance=person)
-    if request.method == 'POST' and form.is_valid():
-        form.save_with_log(request)
-        request.user.message_set.create(message="Your changes have been stored, thank you.")
-        return HttpResponseRedirect(person.get_absolute_url())
+    if request.method == 'POST':
+        if request.POST.get('disregard'):
+            request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
+            return HttpResponseRedirect(person.get_absolute_url())
+        if form.is_valid():
+            form.save()
+            request.user.message_set.create(message="Your changes have been stored, thank you.")
+            return HttpResponseRedirect(person.get_absolute_url())
 
     return render(request, 'people/person_edit.html', {
         'person': person,

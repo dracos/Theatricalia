@@ -32,9 +32,3 @@ class PersonEditForm(forms.ModelForm):
             raise forms.ValidationError('Please specify at least one item of data')
         return self.cleaned_data
 
-    def save_with_log(self, request):
-        new_object = self.save(commit=True)
-        # Yucky hook into the admin logging system
-        admin = PersonAdmin(Person, None)
-        change_message = admin.construct_change_message(request, self, None)
-        admin.log_change(request, new_object, change_message)

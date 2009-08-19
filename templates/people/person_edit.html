@@ -13,15 +13,18 @@
 
 <div class="secondary">
 
+<p>Thank you for taking the time to add or correct some information on this site.
+All information is optional, just provide us with what you know.</p>
+
 <p>A person&rsquo;s biography should be a short summary of their life and career to date.</p>
-
-<p>Date of birth may simply be month and year, or just year, if that is all that is known.</p>
-
-<p><a href="{{ person.get_absolute_url }}">Disregard</a></p>
 
 </div>
 
 <div id="primary">
+
+{% for error in form.errors.values %}
+{{ error }}
+{% endfor %}
 
 <form method="post" id="edit">
 {% for field in form.hidden_fields %} {{ field }} {% endfor %}
@@ -31,7 +34,10 @@
 <p class="help_text"><small>{{ field.help_text }}</small></p>
 {% endif %}
 {% endfor %}
-<p><input type="submit" value="Record changes"></p>
+
+<p><input id="submit" type="submit" value="Record changes">
+<input type="submit" name="disregard" id="cancel" value="Disregard"></p>
+
 </form>
 
 </div>
