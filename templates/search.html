@@ -8,11 +8,35 @@
 <h1>Search{% if search %} for {% ifequal sounds_people 2 %}similar to {% endifequal %}
 &ldquo;{{ search }}&rdquo;{% endif %}</h1>
 
+<script type="text/javascript">
+var start_tab = {% ifequal sounds_people 2 %}2{% else %}{% if plays %}0{% else %}{% if near.geonames or places %}1{% else %}{% if people %}2{% else %}3{% endif %}{% endif %}{% endif %}{% endifequal %};
+</script>
+<div id="search_tabs">
+<ul>
+<li{% if not plays %} class="ui-state-disabled"{% endif %}><a href="#search_plays">Plays</a>
+<li{% if not near.geonames and not places %} class="ui-state-disabled"{% endif %}><a href="#search_places">Places</a>
+<li{% if not people %} class="ui-state-disabled"{% endif %}><a href="#search_people">People</a>
+<li{% if not parts %} class="ui-state-disabled"{% endif %}><a href="#search_parts">Parts</a>
+</ul>
+
+<div id="search_plays">
 {% if plays %}
 <h2>Plays</h2>
 <ul class="person_list">
 {% for play in plays %}
 <li><a href="{{ play.get_absolute_url }}">{{ play }}</a>
+{% endfor %}
+</ul>
+{% endif %}
+</div>
+
+<div id="search_places">
+
+{% if places %}
+<h2>Places</h2>
+<ul class="person_list">
+{% for place in places %}
+<li><a href="{{ place.get_absolute_url }}">{{ place }}</a>
 {% endfor %}
 </ul>
 {% endif %}
@@ -28,19 +52,13 @@
 </ul>
 {% endif %}
 
-{% if places %}
-<h2>Places</h2>
-<ul class="person_list">
-{% for place in places %}
-<li><a href="{{ place.get_absolute_url }}">{{ place }}</a>
-{% endfor %}
-</ul>
-{% endif %}
+</div>
 
+<div id="search_people">
 {% if people %}
 <h2>People</h2>
 {% ifequal sounds_people 1 %}
-<p>We couldn&rsquo;t find any results for &ldquo;{{ search }}&rdquo;. Here are some results that are, or sound, similar:
+    <p>We couldn&rsquo;t find any results for &ldquo;{{ search }}&rdquo;. Here are some results that are, or sound, similar:
 {% endifequal %}
 {% ifequal sounds_people 2 %}
 <p>Here are results that are, or sound, similar to &ldquo;{{ search }}&rdquo;:
@@ -54,10 +72,23 @@
 <p>If none of these is who you&rsquo;re looking for, <a href="{% url search %}?q={{ search }};similar=1">see if we have any similar sounding results</a>.
 {% endif %}
 {% else %}
-{% if search %}
-<p>I&rsquo;m afraid we couldn&rsquo;t find any results. If you&rsquo;re searching for someone, try
-just their first or last name.
+    {% if search %}
+        <p>I&rsquo;m afraid we couldn&rsquo;t find any results. If you&rsquo;re searching for someone, try
+        just their first or last name.
+    {% endif %}
 {% endif %}
-{% endif %}
+</div>
 
+<div id="search_parts">
+{% if parts %}
+<h2>Parts</h2>
+<ul class="person_list">
+{% for part in parts %}
+<li><a href="{{ part.get_absolute_url }}">{{ part }}</a>
+{% endfor %}
+</ul>
+{% endif %}
+</div>
+
+</div>
 {% endblock %}

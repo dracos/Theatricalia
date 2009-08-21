@@ -6,6 +6,7 @@ from shortcuts import render
 from people.models import Person
 from places.models import Place
 from plays.models import Play
+from productions.models import Part
 from sounds.metaphone import dm
 from sounds.jarowpy import jarow
 #from levenshtein import damerau, qnum
@@ -21,7 +22,6 @@ def search_people(search, force_similar=False, use_distance=True):
             people = Person.objects.exclude(first_name__icontains=names[0]).exclude(last_name__iexact=names[0])
         else:
             people = Person.objects.filter(Q(first_name__icontains=names[0]) | Q(last_name__iexact=names[0]))
-            print people
         if force_similar:
             sounds_people = 2
             dm_, dm_alt = dm(names[0])
@@ -119,12 +119,14 @@ def search(request):
         near = search_near(search)
         places = Place.objects.filter(Q(name__icontains=search) | Q(town__icontains=search))
         plays = Play.objects.filter(title__icontains=search)
+        parts = Part.objects.filter(role__icontains=search)
         # Search for characters
 
     return render(request, 'search.html', {
         'people': people,
         'plays': plays,
         'places': places,
+        'parts': parts,
         'near': near,
         'sounds_people': sounds_people,
         'search': search,

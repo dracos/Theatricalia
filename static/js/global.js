@@ -17,6 +17,10 @@ $.fn.wait = function(time, type) {
 $(function() {
 	$('#messages').wait(3000).slideUp('slow');
 
+    $('#search_tabs').tabs({
+        selected: start_tab
+    });
+
 	$('.edit_status select').change(function(){
 		edit_status = $(this).find('option:selected').val();
 		if (edit_status == 'leave') {
