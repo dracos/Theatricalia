@@ -54,82 +54,121 @@ $(function() {
     );
 });
 
+/* Map code */
 var map, tinyIcon;
 $(function() {
-    if (document.getElementById('map') && GBrowserIsCompatible()) {
-        $(document).unload(function() { GUnload() });
-        map = new GMap2(document.getElementById("map"));
-        map.addControl(new GLargeMapControl());
-        map.setCenter(new GLatLng(53.5, -1.7), 5);
+    if (!document.getElementById('map')) return;
 
-        tinyIcon = new GIcon();
-        tinyIcon.image = '/static/i/pin-red.png';
-        tinyIcon.shadow = '/static/i/pin-shadow.png';
-        tinyIcon.iconSize = new GSize(12, 20);
-        tinyIcon.shadowSize = new GSize(22, 20);
-        tinyIcon.iconAnchor = new GPoint(6, 20);
-        tinyIcon.infoWindowAnchor = new GPoint(5, 1);
+    $('#map').show();
+    $('#map-nojs').hide();
 
-        if (document.getElementById('id_latitude')) {
-            $('#form_latlon').hide();
-            var lat = $('#id_latitude')[0].value || 0;
-            var lon = $('#id_longitude')[0].value || 0;
-            var opts = { icon: tinyIcon, draggable: true };
-            if (!lat && !lon) {
-                $('#map').before('<p style="margin-top:0">Please locate this theatre by clicking, then dragging the pin to adjust.</p>');
-                opts['hide'] = true;
-            } else {
-                $('#map').before('<p style="margin-top:0">Please locate the theatre by dragging the pin.</p>');
-                map.setCenter(new GLatLng(lat, lon), 13);
+    var cloudmade = new CM.Tiles.CloudMade.Web({key: '28fad93380975f22a60c0f855ce380ca', styleId:5950});
+    map = new CM.Map('map', cloudmade);
+    map.setCenter(new CM.LatLng(53.5, -1.7), 5);
+    map.enableScrollWheelZoom();
+    map.enableDoubleClickZoom();
+    map.enableShiftDragZoom();
+    var topRight = new CM.ControlPosition(CM.TOP_RIGHT, new CM.Size(2, 2));
+    map.addControl(new CM.LargeMapControl(), topRight);
+
+    tinyIcon = new CM.Icon();
+    tinyIcon.image = '/static/i/pin-red.png';
+    tinyIcon.shadow = '/static/i/pin-shadow.png';
+    tinyIcon.iconSize = new CM.Size(12, 20);
+    tinyIcon.shadowSize = new CM.Size(22, 20);
+    tinyIcon.iconAnchor = new CM.Point(6, 20);
+    tinyIcon.infoWindowAnchor = new CM.Point(5, 1);
+
+    /* Unless we're on an editing page, we're done */
+    if (!document.getElementById('id_latitude')) return;
+    
+    $('#form_latlon').hide();
+    var lat = $('#id_latitude')[0].value || 0;
+    var lon = $('#id_longitude')[0].value || 0;
+    var opts = { icon: tinyIcon, draggable: true };
+    marker = new CM.Marker(new CM.LatLng(lat, lon), opts);
+    map.addOverlay(marker);
+    if (!lat && !lon) {
+        marker.hide();
+        $('#map').before('<p style="margin-top:0">Please locate this theatre by positioning the map, then drag the pin from the corner to the right location. You can reposition the pin.</p>');
+    } else {
+        $('#map').before('<p style="margin-top:0">Please locate the theatre by dragging the pin.</p>');
+        map.setCenter(new CM.LatLng(lat, lon), 13);
+    }
+    $('#map').after('<p style="margin-top:0"><small>You can zoom by using the controls, double-clicking, using your scroll wheel, or shift-dragging an area.</small></p>');
+
+    var pinControl = function(){};
+    pinControl.prototype = {
+        initialize: function(map, position) {
+            var control = document.createElement('div');
+            control.style.background = 'white';
+            control.style.padding = '5px';
+            control.style.borderBottom = '1px solid #666';
+            control.style.borderRight = '1px solid #666';
+            var pin = document.createElement('img');
+            pin.id = 'draggablePin';
+            pin.src = '/static/i/pin-red.png';
+            $(pin).draggable({ revert:'invalid', helper:'clone', cursor:'crosshair', cursorAt:{ bottom:0 } });
+            control.appendChild(pin);
+            map.getContainer().appendChild(control);
+            return control;
+        },
+        getDefaultPosition: function() {
+            return new CM.ControlPosition(CM.TOP_LEFT, new CM.Size(0,0));
+        }
+    };
+    map.addControl(new pinControl());
+
+    $('#map').droppable({
+        drop: function(event, ui) {
+            var latlng = map.fromContainerPixelToLatLng(new CM.Point(ui.position.left + 6, ui.position.top + 20));
+            marker.setLatLng(latlng);
+            marker.show();
+            updateInputs(latlng);
+        }
+    });
+
+    $('#id_town').change(function(){
+        $.getJSON('http://ws.geonames.org/searchJSON?q=' + $('#id_town').val() + '&maxRows=1&callback=?', function(data) {
+            if (data.geonames) {
+                var lat = data.geonames[0].lat;
+                var lng = data.geonames[0].lng;
+                map.setCenter(new CM.LatLng(lat, lng), 13);
             }
-            marker = new GMarker(new GLatLng(lat, lon), opts);
-            map.addOverlay(marker);
+        });
+    });
 
-            $('#id_town').change(function(){
-                $.getJSON('http://ws.geonames.org/searchJSON?q=' + $('#id_town').val() + '&maxRows=1&callback=?', function(data) {
-                    if (data.geonames) {
-                        var lat = data.geonames[0].lat;
-                        var lng = data.geonames[0].lng;
-                        map.setCenter(new GLatLng(lat, lng), 13);
-                    }
-                });
-            });
-
-            function updateInputs(point) {
-                $('#id_latitude')[0].value = point.lat();
-                $('#id_longitude')[0].value = point.lng();
-                if ($('#id_town').val()) return;
-                // If no town, pre-populate with one from geonames
-                $.getJSON('http://ws.geonames.org/findNearbyPlaceNameJSON?lat=' + point.lat() + '&lng=' + point.lng() + '&style=full&radius=5&callback=?', function(data) {
-                    var pop_max = 0;
-                    var pop_item;
-                    $.each(data.geonames, function(i, item) {
-                        if (item.population && item.population > pop_max) {
-                            pop_max = item.population;
-                            pop_item = item;
-                        }
-                    });
-                    if (pop_item) {
-                        $('#id_town').val(pop_item.name);
-                    } else {
-                        $('#id_town').val(data.geonames[0].name);
-                    }
-                });
-            }
-
-            GEvent.addListener(marker, "dragend", function() {
-                var point = this.getLatLng();
-                updateInputs(point);
-            });
-            GEvent.addListener(map, 'click', function(overlay, point) {
-                if (point && marker.isHidden()) {
-                    marker.setLatLng(point);
-                    marker.show();
-                    updateInputs(point);
+    function updateInputs(point) {
+        $('#id_latitude').val(point.lat());
+        $('#id_longitude').val(point.lng());
+        if ($('#id_town').val()) return;
+        // If no town, pre-populate with one from geonames
+        $.getJSON('http://ws.geonames.org/findNearbyPlaceNameJSON?lat=' + point.lat() + '&lng=' + point.lng() + '&style=full&radius=5&callback=?', function(data) {
+            var pop_max = 0;
+            var pop_item;
+            $.each(data.geonames, function(i, item) {
+                if (item.population && item.population > pop_max) {
+                    pop_max = item.population;
+                    pop_item = item;
                 }
             });
-        }
+            if (pop_item) {
+                $('#id_town').val(pop_item.name);
+            } else {
+                $('#id_town').val(data.geonames[0].name);
+            }
+        });
     }
+
+    CM.Event.addListener(marker, "dragend", function() {
+        var point = this.getLatLng();
+        updateInputs(point);
+    });
+    //CM.Event.addListener(map, 'click', function(point) {
+    //    marker.setLatLng(point);
+    //    marker.show();
+    //    updateInputs(point);
+    //});
 });
 
 

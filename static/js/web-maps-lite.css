@@ -1,0 +1,311 @@
+.wml-container {
+	overflow: hidden;
+	background: #dddddd;
+	font: 11px/13px Arial, sans-serif;
+	color: black;
+}
+
+.wml-map-layer {
+	position: absolute;
+}
+
+.wml-tile {
+	position: absolute;
+	-moz-user-select: none;
+}
+
+.wml-container a {
+	color: #0078A8;
+}
+
+.wml-shift-drag-box {
+	position: absolute;
+	border: 2px solid red;
+	background: white;
+	width: 0;
+	height: 0;
+	opacity: 0.4;
+}
+.wml-ie .wml-shift-drag-box {
+	filter: alpha(opacity=40);
+} 
+
+.wml-loading-indicator {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin: -16px 0 0 -16px;
+	width: 32px;
+	height: 32px;
+	background: url(images/loading.gif) no-repeat;
+}
+
+.wml-marker-print {
+	display: none;
+}
+.wml-marker {
+	display: block;
+}
+
+.wml-marker, 
+.wml-marker-shadow,
+.wml-marker-print {
+	position: absolute;
+}
+
+.wml-info-window {
+	position: absolute;
+	z-index: 1000000;
+}
+.wml-info-window .wml-info-window-content {
+	background: white;
+	border: 1px solid #666666;
+	padding: 10px;
+}
+.wml-info-window .wml-info-window-bottom {
+}
+.wml-info-window .wml-info-window-tip {
+	margin: -1px auto 0;
+	height: 10px;
+	width: 19px;
+	display: block;
+	overflow: hidden;
+}
+.wml-info-window .wml-info-window-close {
+	float: right;
+	display: inline;
+	margin: 6px;
+	background: url(images/info-close.png);
+	width: 15px;
+	height: 15px;
+}
+.wml-info-window .wml-info-window-heading {
+	margin-bottom: 0.5em;
+	line-height: 18px;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.wml-info-window .wml-info-window-desc, .wml-info-window .wml-info-window-desc p {
+	height: 1%;
+}
+
+.wml-info-window .wml-info-window-desc:after, .wml-info-window .wml-info-window-desc p:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+/* controls */
+
+.wml-text-background {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+	background: white;
+	opacity: 0.7;
+}
+.wml-ie .wml-text-background {
+	filter: alpha(opacity=70);
+}
+.wml-ie6 .wml-text-background { /* ie6 ugly hack :( */
+	height: expression(this.parentNode.offsetHeight + 'px');
+	width: expression(this.parentNode.offsetWidth + 'px');
+}
+
+.wml-copyright {
+	position: absolute;
+	bottom: 0px;
+	right: 0px;
+}
+.wml-copyright-text {
+	position: relative;
+	padding: 1px 5px 2px;
+	text-align: right;
+}
+
+.wml-small-map-control, .wml-large-map-control {
+	width: 38px;
+	height: 108px;
+}
+
+.wml-small-map-control a, .wml-large-map-control a {
+	display: block;
+	width: 18px;
+	height: 18px;
+	position: absolute;
+}
+.wml-button-north {
+	background: url(images/go-north.png);
+	top: 0;
+	left: 10px;
+}
+.wml-button-west {
+	background: url(images/go-west.png);
+	top: 20px;
+	left: 0;
+}
+.wml-button-east {
+	background: url(images/go-east.png);
+	top: 20px;
+	left: 20px;
+}
+.wml-button-south {
+	background: url(images/go-south.png);
+	top: 40px;
+	left: 10px;
+}
+.wml-button-zoom-in {
+	background: url(images/zoom-in.png);
+	top: 70px;
+	left: 10px;
+}
+.wml-button-zoom-out {
+	background: url(images/zoom-out.png);
+	top: 90px;
+	left: 10px;
+}
+.wml-large-map-control .wml-button-zoom-out {
+	top: auto;
+	bottom: 0px;
+}
+.wml-zoom-slider {
+	position: absolute;
+	width: 17px;
+	background: url(images/zoom-point.png);
+	left: 10px;
+	top: 90px;
+}
+.wml-zoom-handle {
+	position: absolute;
+	left: 0px;
+	width: 17px;
+	overflow: hidden;
+	height: 7px;
+	background: url(images/zoom-handle.png);
+}
+
+.wml-tile-layer-control {
+	position: absolute;
+	background: white;
+	border-left: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+.wml-tile-layer-control a.wml-tile-layer-control-link {
+	display: block;
+	position: relative;
+	text-decoration: none;
+	padding: 2px 5px;
+}
+.wml-tile-layer-control a.wml-tile-layer-control-link-active {
+	color: white;
+	background: #0066CB;
+}
+
+.wml-permalink {
+	position: absolute;
+	padding: 2px 5px;
+}
+.wml-permalink a {
+	position: relative;
+}
+
+.wml-scale-control {
+}
+
+.wml-scale-control .wml-scale-control-m,
+.wml-scale-control .wml-scale-control-f {
+	padding-left: 5px;
+	position: relative;
+	border: 2px solid black;
+}
+.wml-scale-control .wml-scale-control-m {
+	border-top: none;
+}
+.wml-scale-control .wml-scale-control-f {
+	border-bottom: none;
+	margin-top: -2px;
+}
+
+.wml-overview-map-control {
+	border: 2px solid #fff;
+}
+.wml-overview-map-rect {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	border: 1px solid #f55;
+}
+
+
+/* printing */
+
+@media print {
+	.wml-small-map-control, 
+	.wml-permalink, 
+	.wml-tile-layer-control,
+	.wml-info-window {
+		display: none;
+	}
+	
+	.wml-ie6 .wml-marker, 
+	.wml-ie6 .wml-marker-shadow {
+		display: none;
+	}
+	.wml-ie6 .wml-marker-print {
+		display: block;
+	}
+}
+
+
+/* directions */
+
+.wml-routes-output .wml-total-length span {
+	font-weight:bold !important;
+}
+.wml-routes-output dl {
+	padding: 0; 
+	margin: 0;
+}
+.wml-routes-output dt {
+	font-size: 16px; 
+	padding: 5px 0; 
+	font-weight: bold; 
+	vertical-align: middle;
+}
+.wml-routes-output dt img {
+	margin-right: 10px; 
+	vertical-align: middle;
+}
+.wml-routes-output dd {
+	margin-left: 0; 
+	float:left;
+	width:100%;
+}
+.wml-routes-output dd a {
+	padding: 3px 0; 
+	display: block; 
+	text-decoration: none; 
+	border-top: 1px solid #E5E5E5; 
+	color: #000 !important;
+}
+.wml-routes-output dd .selected {
+	color: #000 !important; 
+	background-color: #EEE;
+}
+.wml-error-message {
+	color: #900; 
+	font-weight: bold;
+}
+.wml-route-length {
+	margin-top: 5px; 
+	color: #999;
+}
+.wml-route-length span {
+	font-weight: bold; 
+	color: #000;
+}

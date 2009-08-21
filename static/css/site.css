@@ -526,11 +526,17 @@ td {
 
 /* Place page */
 
+#map-nojs img {
+    border: solid 0.0625em #666666;
+}
+
 #map {
-	margin: 1.5em auto 0;
-	height: 17.875em;
-	width: 99%;
-	border: solid 0.0625em #666666;
+    display: none;
+    margin: 2.1818em auto 0;
+    height: 30em;
+    width: 99%;
+    border: solid 0.0625em #666666;
+    font-size: 0.6875em;
 }
 
 #map_location {

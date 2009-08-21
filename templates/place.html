@@ -5,8 +5,7 @@
 
 {% block extra_head %}
 <link href="{{ place.get_feed_url }}" type="application/rss+xml" rel="alternate">
-<!-- <script type="text/javascript" src="http://maps.google.com/maps/?file=api&amp;v=2&amp;key=ABQIAAAAr0jEilTj74QAOSQ54V3GrxQi7pH9eW_TVT-JV0JhoiD8D-2d8BSEfMWhkhrn96EYsa3PDcwO_RNspQ&amp;sensor=false"></script> -->
-<script type="text/javascript" src="/static/js/maps.js"></script>
+<script type="text/javascript" src="/static/js/web-maps-lite.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -83,12 +82,14 @@
 {% if place.latitude and place.longitude %}
 <script type="text/javascript">
 $(function(){
-    map.setCenter(new GLatLng({{ place.latitude }}, {{ place.longitude }}), 13);
-    marker = new GMarker(new GLatLng({{ place.latitude }}, {{ place.longitude }}), { icon: tinyIcon });
+    map.setCenter(new CM.LatLng({{ place.latitude }}, {{ place.longitude }}), 14);
+    marker = new CM.Marker(new CM.LatLng({{ place.latitude }}, {{ place.longitude }}), { icon: tinyIcon });
     map.addOverlay(marker);
 });
 </script>
 <div id="map"></div>
+<p id="map-nojs"><img src="http://maps.google.com/staticmap?zoom=14&size=300x300&maptype=roadmap&markers={{ place.latitude }},{{ place.longitude }},smallred&sensor=false&key=ABQIAAAAr0jEilTj74QAOSQ54V3GrxQi7pH9eW_TVT-JV0JhoiD8D-2d8BSEfMWhkhrn96EYsa3PDcwO_RNspQ"></p>
+</div>
 {% endif %}
 
 {% if place.photos.all %}

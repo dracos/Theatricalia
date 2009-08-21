@@ -30,12 +30,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -44,7 +40,7 @@
 
 <design>
     <image>
-        <url>http://dracos.co.uk/temp/thpics/1887-12-26_Jack&amp;theBeanstalk.jpg</url>
+        <url>http://dracos.co.uk/temp/thpics/1887-12-26_JackandtheBeanstalk-cropped.jpg</url>
         <type>variable</type>
         <crop><auto>true</auto></crop>
     </image>
@@ -60,12 +56,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -74,16 +66,13 @@
 
 <design>
     <image>
-        <url>http://dracos.co.uk/temp/thpics/193784853sjWJDF_fs.jpg</url>
+        <url>http://dracos.co.uk/temp/thpics/193784853sjWJDF_fs-cropped-0.jpg</url>
         <type>variable</type>
         <crop><auto>true</auto></crop>
     </image>
     <text_collection>
     <minicard>
-        <text_line>
-            <id>1</id><string>Royal Exchange Theatre, Manchester</string>
-            <align>left</align><font>traditional</font><colour>#666666</colour>
-        </text_line>
+        
         <text_line>
             <id>3</id><string>www.theatricalia.com</string><bold>true</bold>
             <align>center</align><font>traditional</font><colour>#92000a</colour>
@@ -93,12 +82,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -123,12 +108,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -153,12 +134,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -167,7 +144,7 @@
 
 <design>
     <image>
-        <url>http://dracos.co.uk/temp/thpics/ChesterMysteryPlay_300dpi.jpg</url>
+        <url>http://dracos.co.uk/temp/thpics/ChesterMysteryPlay_300dpi-cropped.jpg</url>
         <type>variable</type>
         <crop><auto>true</auto></crop>
     </image>
@@ -183,12 +160,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -213,12 +186,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -227,7 +196,7 @@
 
 <design>
     <image>
-        <url>http://dracos.co.uk/temp/thpics/Goethe's_Faust.jpeg.jpg</url>
+        <url>http://dracos.co.uk/temp/thpics/Goethes_Faust.jpeg.jpg</url>
         <type>variable</type>
         <crop><auto>true</auto></crop>
     </image>
@@ -243,12 +212,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -273,12 +238,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -287,7 +248,7 @@
 
 <design>
     <image>
-        <url>http://dracos.co.uk/temp/thpics/Henry_VI_pt_2_quarto2.jpg</url>
+        <url>http://dracos.co.uk/temp/thpics/Henry_VI_pt_2_quarto2-cropped.jpg</url>
         <type>variable</type>
         <crop><auto>true</auto></crop>
     </image>
@@ -303,12 +264,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -333,12 +290,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -347,7 +300,7 @@
 
 <design>
     <image>
-        <url>http://dracos.co.uk/temp/thpics/Image1360.jpg</url>
+        <url>http://dracos.co.uk/temp/thpics/Image1360-cropped.jpg</url>
         <type>variable</type>
         <crop><auto>true</auto></crop>
     </image>
@@ -363,12 +316,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -377,7 +326,7 @@
 
 <design>
     <image>
-        <url>http://dracos.co.uk/temp/thpics/Image-Loves_Labours_Lost_(Title_Page).jpg</url>
+        <url>http://dracos.co.uk/temp/thpics/Image-Loves_Labours_Lost_(Title_Page)-cropped.jpg</url>
         <type>variable</type>
         <crop><auto>true</auto></crop>
     </image>
@@ -393,12 +342,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -407,7 +352,7 @@
 
 <design>
     <image>
-        <url>http://dracos.co.uk/temp/thpics/MND_title_page.jpg</url>
+        <url>http://dracos.co.uk/temp/thpics/MND_title_page-cropped.jpg</url>
         <type>variable</type>
         <crop><auto>true</auto></crop>
     </image>
@@ -423,12 +368,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -437,7 +378,7 @@
 
 <design>
     <image>
-        <url>http://dracos.co.uk/temp/thpics/Manchester_Opera_House_2.jpg</url>
+        <url>http://dracos.co.uk/temp/thpics/Manchester_Opera_House_2-cropped.jpg</url>
         <type>variable</type>
         <crop><auto>true</auto></crop>
     </image>
@@ -453,12 +394,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -483,12 +420,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -497,7 +430,7 @@
 
 <design>
     <image>
-        <url>http://dracos.co.uk/temp/thpics/New_York_State_Theater_by_David_Shankbone.jpg</url>
+        <url>http://dracos.co.uk/temp/thpics/New_York_State_Theater_by_David_Shankbone-cropped.jpg</url>
         <type>variable</type>
         <crop><auto>true</auto></crop>
     </image>
@@ -513,12 +446,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -527,7 +456,7 @@
 
 <design>
     <image>
-        <url>http://dracos.co.uk/temp/thpics/PaulCezanne.jpg</url>
+        <url>http://dracos.co.uk/temp/thpics/PaulCezanne-cropped.jpg</url>
         <type>variable</type>
         <crop><auto>true</auto></crop>
     </image>
@@ -543,12 +472,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -557,7 +482,7 @@
 
 <design>
     <image>
-        <url>http://dracos.co.uk/temp/thpics/Performance_in_the_Bolshoi_Theatre.jpg</url>
+        <url>http://dracos.co.uk/temp/thpics/Performance_in_the_Bolshoi_Theatre-cropped.jpg</url>
         <type>variable</type>
         <crop><auto>true</auto></crop>
     </image>
@@ -573,12 +498,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -587,7 +508,7 @@
 
 <design>
     <image>
-        <url>http://dracos.co.uk/temp/thpics/Settle-Morocco.png</url>
+        <url>http://dracos.co.uk/temp/thpics/Settle-Morocco-cropped.png</url>
         <type>variable</type>
         <crop><auto>true</auto></crop>
     </image>
@@ -603,12 +524,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -633,12 +550,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -663,12 +576,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -693,12 +602,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -707,7 +612,7 @@
 
 <design>
     <image>
-        <url>http://dracos.co.uk/temp/thpics/WarnePantomine1890.jpg</url>
+        <url>http://dracos.co.uk/temp/thpics/WarnePantomine1890-cropped.jpg</url>
         <type>variable</type>
         <crop><auto>true</auto></crop>
     </image>
@@ -723,12 +628,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
@@ -737,7 +638,7 @@
 
 <design>
     <image>
-        <url>http://dracos.co.uk/temp/thpics/Wicked_World_-_Illustrated_London_News,_Feb_8_1873.png</url>
+        <url>http://dracos.co.uk/temp/thpics/Wicked_World_-_Illustrated_London_News,_Feb_8_1873-cropped.png</url>
         <type>variable</type>
         <crop><auto>true</auto></crop>
     </image>
@@ -753,12 +654,8 @@
             <align>center</align><font>traditional</font><colour>#000000</colour>
         </text_line>
         <text_line>
-            <id>5</id><string>Matthew Somerville</string>
-            <align>right</align><font>traditional</font>
-        </text_line>
-        <text_line>
-            <id>6</id><string>matthew@dracos.co.uk</string>
-            <align>right</align><font>traditional</font>
+            <id>6</id><string>A Matthew Somerville Production</string>
+            <align>center</align><font>traditional</font><colour>#666666</colour>
         </text_line>
     </minicard>
 </text_collection>
