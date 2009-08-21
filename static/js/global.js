@@ -14,12 +14,19 @@ $.fn.wait = function(time, type) {
 	});
 };
 
+var start_tab;
 $(function() {
 	$('#messages').wait(3000).slideUp('slow');
 
     $('#search_tabs').tabs({
-        selected: start_tab
+        selected: start_tab,
+        select: function(e, ui) {
+            window.location.hash = ui.tab.hash;
+        }
     });
+    if ($('#search_tabs').length && window.location.hash) {
+        window.scrollTo(0, 0);
+    }
 
 	$('.edit_status select').change(function(){
 		edit_status = $(this).find('option:selected').val();

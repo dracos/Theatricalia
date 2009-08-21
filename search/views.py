@@ -106,7 +106,7 @@ def search_people(search, force_similar=False, use_distance=True):
     return people, sounds_people
 
 def search_near(s):
-    r = urllib.urlopen('http://ws.geonames.org/searchJSON?isNameRequired=true&style=LONG&q=' + s + '&maxRows=10').read()
+    r = urllib.urlopen('http://ws.geonames.org/searchJSON?isNameRequired=true&style=LONG&q=' + s + '&maxRows=20').read()
     r = simplejson.loads(r)
     return r
 

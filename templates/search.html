@@ -9,7 +9,8 @@
 &ldquo;{{ search }}&rdquo;{% endif %}</h1>
 
 <script type="text/javascript">
-var start_tab = {% ifequal sounds_people 2 %}2{% else %}{% if plays %}0{% else %}{% if near.geonames or places %}1{% else %}{% if people %}2{% else %}3{% endif %}{% endif %}{% endif %}{% endifequal %};
+if (!window.location.hash)
+    start_tab = {% ifequal sounds_people 2 %}2{% else %}{% if plays %}0{% else %}{% if near.geonames or places %}1{% else %}{% if people %}2{% else %}3{% endif %}{% endif %}{% endif %}{% endifequal %};
 </script>
 <div id="search_tabs">
 <ul>
@@ -32,24 +33,40 @@ var start_tab = {% ifequal sounds_people 2 %}2{% else %}{% if plays %}0{% else %
 
 <div id="search_places">
 
-{% if places %}
+{% if places or near.geonames %}
 <h2>Places</h2>
-<ul class="person_list">
+{% endif %}
+
+{% if places and near.geonames %}
+<div id="primary">
+{% endif %}
+
+{% if places %}
+<p>The following places matched your search:</p>
+<ul class="place_list">
 {% for place in places %}
 <li><a href="{{ place.get_absolute_url }}">{{ place }}</a>
 {% endfor %}
 </ul>
 {% endif %}
 
+{% if places and near.geonames %}
+</div>
+<div class="secondary">
+{% endif %}
+
 {% if near.geonames %}
-<h2>Locations</h2>
-<p>We&rsquo;ve found some towns that match your search. If you&rsquo;d like to see:
-<ul class="person_list">
+<p>Or, to see all places around a location, pick from below:
+<ul>
 {% for place in near.geonames %}
-<li><a href="?pid={{ place.geonameId }}">{{ place.name|prettify }}</a>,
-{{ place.adminName1 }}, {{ place.countryName }}
+<li><a href="?q={{ place.lat }},{{ place.lng }}">{{ place.name|prettify }}</a>{% if place.adminName1 %},
+{{ place.adminName1 }}{% endif %}, {{ place.countryName }}
 {% endfor %}
 </ul>
+{% endif %}
+
+{% if places and near.geonames %}
+</div>
 {% endif %}
 
 </div>
@@ -69,7 +86,11 @@ var start_tab = {% ifequal sounds_people 2 %}2{% else %}{% if plays %}0{% else %
 {% endfor %}
 </ul>
 {% if not request.GET.similar and not sounds_people %}
-<p>If none of these is who you&rsquo;re looking for, <a href="{% url search %}?q={{ search }};similar=1">see if we have any similar sounding results</a>.
+    {% ifequal people.count 1 %}
+        <p>If this isn&rsquo;t who you&rsquo;re looking for, <a href="{% url search %}?q={{ search }};similar=1">see if we have any similar sounding results</a>.
+    {% else %}
+        <p>If none of these is who you&rsquo;re looking for, <a href="{% url search %}?q={{ search }};similar=1">see if we have any similar sounding results</a>.
+    {% endifequal %}
 {% endif %}
 {% else %}
     {% if search %}
