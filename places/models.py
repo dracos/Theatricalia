@@ -8,7 +8,7 @@ from fields import ApproximateDateField
 
 class PlaceManager(models.Manager):
     def around(self, lat, lon):
-        return Place.objects.filter(
+        return self.get_query_set().filter(
             longitude__gte = lon - 0.1,
             longitude__lte = lon + 0.1,
             latitude__gte = lat - 0.1,
