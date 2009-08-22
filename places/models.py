@@ -6,6 +6,15 @@ from photos.models import Photo
 from utils import int_to_base32
 from fields import ApproximateDateField
 
+class PlaceManager(models.Manager):
+    def around(self, lat, lon):
+        return Place.objects.filter(
+            longitude__gte = lon - 0.1,
+            longitude__lte = lon + 0.1,
+            latitude__gte = lat - 0.1,
+            latitude__lte = lat + 0.1
+        )
+
 class Place(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=150)
@@ -22,6 +31,8 @@ class Place(models.Model):
     url = models.URLField('URL', blank=True)
     wikipedia = models.URLField(blank=True)
     photos = generic.GenericRelation(Photo)
+
+    objects = PlaceManager()
 
     class Meta:
         ordering = ['name']

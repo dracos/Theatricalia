@@ -105,22 +105,42 @@ def search_people(search, force_similar=False, use_distance=True):
         )
     return people, sounds_people
 
-def search_near(s):
+def search_geonames(s):
     r = urllib.urlopen('http://ws.geonames.org/searchJSON?isNameRequired=true&style=LONG&q=' + s + '&maxRows=20').read()
     r = simplejson.loads(r)
     return r
+
+# Crappy bounding box, need to do radial!
+def search_around(lat, lon):
+    places = Place.objects.around(float(lat), float(lon))
+    # Look up production future/past lists at these places
+    # Display them
+    # Map on right showing places
+    # RSS feed, email alerts
+    return places
 
 def search(request):
     search = request.GET.get('q', '')
     people = plays = places = near = []
     sounds_people = 0
+
+    # Searching round a point
+    m = re.match('\s*([-\d.]+)\s*,\s*([-\d.]+)\s*$', search)
+    if m:
+        lat, lon = m.groups()
+        data = search_around(lat, lon)
+        return render(request, 'search-around.html', {
+            'lat': lat,
+            'lon': lon,
+            'name': request.GET.get('name', ''),
+        })
+
     if search:
         people, sounds_people = search_people(search, force_similar=request.GET.get('similar'), use_distance=False)
-        near = search_near(search)
+        near = search_geonames(search)
         places = Place.objects.filter(Q(name__icontains=search) | Q(town__icontains=search))
         plays = Play.objects.filter(title__icontains=search)
         parts = Part.objects.filter(role__icontains=search)
-        # Search for characters
 
     return render(request, 'search.html', {
         'people': people,

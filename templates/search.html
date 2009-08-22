@@ -59,7 +59,7 @@ if (!window.location.hash)
 <p>Or, to see all places around a location, pick from below:
 <ul>
 {% for place in near.geonames %}
-<li><a href="?q={{ place.lat }},{{ place.lng }}">{{ place.name|prettify }}</a>{% if place.adminName1 %},
+<li><a href="?q={{ place.lat }},{{ place.lng }};name={{ place.name|urlencode }}">{{ place.name|prettify }}</a>{% if place.adminName1 %},
 {{ place.adminName1 }}{% endif %}, {{ place.countryName }}
 {% endfor %}
 </ul>
