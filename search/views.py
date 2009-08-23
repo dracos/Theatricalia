@@ -1,15 +1,18 @@
 import re # , difflib
 import urllib
+from datetime import datetime
+from django.core.paginator import Paginator
 from django.utils import simplejson
 from django.db.models import Q
 from shortcuts import render
 from people.models import Person
 from places.models import Place
 from plays.models import Play
-from productions.models import Part
+from productions.models import Part, Production
 from sounds.metaphone import dm
 from sounds.jarowpy import jarow
 #from levenshtein import damerau, qnum
+from productions.time import productions_for, productions_list
 
 distance = jarow
 threshold = 0.8
@@ -110,14 +113,22 @@ def search_geonames(s):
     r = simplejson.loads(r)
     return r
 
-# Crappy bounding box, need to do radial!
-def search_around(lat, lon):
+# For pagination of parts search
+def search_parts(request, search):
+    return productions_list(request, search, 'parts', 'search-parts.html')
+
+# For pagination of search around
+def search_around(request, latlon, type):
+    m = re.match('\s*([-\d.]+)\s*,\s*([-\d.]+)\s*$', latlon)
+    if not m:
+        raise Exception, 'Bad request'
+
+    lat, lon = m.groups()
     places = Place.objects.around(float(lat), float(lon))
-    # Look up production future/past lists at these places
-    # Display them
-    # Map on right showing places
-    # RSS feed, email alerts
-    return places
+    return productions_list(request, places, type, 'search-around-productions.html', {
+        'lat': lat,
+        'lon': lon,
+    })
 
 def search(request):
     search = request.GET.get('q', '')
@@ -128,10 +139,15 @@ def search(request):
     m = re.match('\s*([-\d.]+)\s*,\s*([-\d.]+)\s*$', search)
     if m:
         lat, lon = m.groups()
-        data = search_around(lat, lon)
+        places = Place.objects.around(float(lat), float(lon))
+        past, future = productions_for(places, 'places')
         return render(request, 'search-around.html', {
+            'places': places,
+            'past': past,
+            'future': future,
             'lat': lat,
             'lon': lon,
+            'latlon': '%s,%s' % (lat, lon),
             'name': request.GET.get('name', ''),
         })
 
@@ -140,7 +156,7 @@ def search(request):
         near = search_geonames(search)
         places = Place.objects.filter(Q(name__icontains=search) | Q(town__icontains=search))
         plays = Play.objects.filter(title__icontains=search)
-        parts = Part.objects.filter(role__icontains=search)
+        parts = Paginator(Part.objects.search(search), 10, orphans=2).page(1)
 
     return render(request, 'search.html', {
         'people': people,

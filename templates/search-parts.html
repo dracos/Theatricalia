@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block title %}Search{% if search %}: &ldquo;{{ search }}&rdquo;{% endif %}{% endblock %}
+
+{% block content %}
+
+<h1>Search{% if object %} for &ldquo;{{ object }}&rdquo;{% endif %}</h1>
+
+{% if page_obj.object_list %}
+<h2>Parts</h2>
+<div id="primary">
+
+<ul class="production_list">
+{% for part in page_obj.object_list %}
+<li>
+{{ part.role|prettify }}, played by <a href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>, in
+<a href="{{ part.production.get_absolute_url }}">{{ part.production.play|prettify }}</a>{% if part.production.title %}, {{ part.production.title|prettify }}{% endif %}
+<span>{{ part.production.date_summary|prettify }},
+{% ifequal part.production.places.count 1 %}
+<a href="{{ part.production.place_summary.get_absolute_url }}">{{ part.production.place_summary|prettify }}</a>.
+{% else %}
+{{ part.production.place_summary|prettify }}.
+{% endifequal %}
+</span>
+{% endfor %}
+</ul>
+{% else %}
+<p>There are no results to display.</p>
+{% endif %}
+
+{% include "pagination.html" %}
+
+</div>
+
+<div class="secondary">
+{% include "pagination.html" %}
+</div>
+
+{% endblock %}

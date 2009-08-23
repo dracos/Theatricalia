@@ -1,8 +1,5 @@
 import re
-from datetime import datetime
 from django.shortcuts import get_object_or_404
-from django.core.paginator import Paginator
-from django.db.models import Q
 from utils import base32_to_int, unique_slugify
 from django.contrib.auth.decorators import login_required
 from django.forms.models import modelformset_factory, inlineformset_factory
@@ -15,70 +12,6 @@ from plays.models import Play
 from places.models import Place
 from photos.forms import PhotoForm
 from people.models import Person
-from aggregates import Concatenate
-
-def productions_past(object):
-    o = object.productions.filter(
-        Q(place__end_date__lt=datetime.now) | Q(place__end_date='', place__press_date__lt=datetime.now)
-    )
-    if isinstance(object, Person):
-        o = o.annotate(Concatenate('part__role'))
-    return o.order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))')
-
-def productions_future(object):
-    return object.productions.filter(
-        Q(place__end_date__gte=datetime.now) | Q(place__end_date='', place__press_date__gte=datetime.now)
-    #).order_by('-IFNULL(press_date, IF(productions_production.end_date!="", productions_production.end_date, productions_production.start_date))')
-    ).order_by('place__start_date', 'place__press_date')
-
-#def production_add_parts(person, *pages):
-#    production_ids = []
-#    for page in pages:
-#        production_ids += [ x.id for x in page.object_list ]
-#    parts = Part.objects.filter(production__in=production_ids, person=person)
-#    parts_for_production = {}
-#    for p in parts:
-#        parts_for_production.setdefault(p.production, []).append(p.role_or_unknown())
-#    for page in pages:
-#        for p in page.object_list:
-#            p.their_parts = parts_for_production[p]
-
-def production_list(request, object, type, template):
-    """Given an object, such as a Person, Place, or Play, return a page of productions for it."""
-    if type == 'future':
-        paginator = Paginator(productions_future(object), 10, orphans=2)
-    elif type == 'past':
-        paginator = Paginator(productions_past(object), 10, orphans=2)
-
-    page = request.GET.get('page', 1)
-    try:
-        page_number = int(page)
-    except ValueError:
-        raise Http404
-    try:
-        page_obj = paginator.page(page_number)
-    except InvalidPage:
-        raise Http404
-
-    #if isinstance(object, Person):
-    #    production_add_parts(object, page_obj)
-
-    return render(request, template, {
-        'type': type=='past' and 'Past productions' or 'Current & Upcoming productions',
-        'object': object,
-        'paginator': paginator,
-        'page_obj': page_obj,
-    })
-
-def object_productions(object):
-    """Given an object, such as a Person, Place, or Play, return the closes
-       past/future productions for that object. If it's a Person, also include
-       the Part(s) they played."""
-    future_page = Paginator(productions_future(object), 10, orphans=2).page(1)
-    past_page = Paginator(productions_past(object), 10, orphans=2).page(1)
-    #if isinstance(object, Person):
-        #production_add_parts(object, past_page, future_page)
-    return past_page, future_page
 
 def check_parameters(play, production_id):
     production_id = base32_to_int(production_id)

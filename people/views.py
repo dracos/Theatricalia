@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from models import Person, first_letters
 from forms import PersonEditForm
 from photos.forms import PhotoForm
-from productions.views import production_list, object_productions
+from productions.time import productions_list, productions_for
 from django.core import serializers
 
 def person_productions(request, person_id, person, type):
@@ -17,14 +17,14 @@ def person_productions(request, person_id, person, type):
         person = check_url(Person, person_id, person)
     except UnmatchingSlugException, e:
         return HttpResponseRedirect(e.args[0].get_absolute_url())
-    return production_list(request, person, type, 'people/production_list.html')
+    return productions_list(request, person, type, 'people/production_list.html')
 
 def person(request, person_id, person):
     try:
         person = check_url(Person, person_id, person)
     except UnmatchingSlugException, e:
         return HttpResponseRedirect(e.args[0].get_absolute_url())
-    past, future = object_productions(person)
+    past, future = productions_for(person)
     plays = person.plays.all()
     photo_form = PhotoForm(person)
     return render(request, 'people/person.html', {

@@ -7,6 +7,7 @@ from utils import int_to_base32
 from fields import ApproximateDateField
 
 class PlaceManager(models.Manager):
+    # Crappy bounding box, need to do radial!
     def around(self, lat, lon):
         return self.get_query_set().filter(
             longitude__gte = lon - 0.1,

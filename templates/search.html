@@ -56,7 +56,11 @@ if (!window.location.hash)
 {% endif %}
 
 {% if near.geonames %}
+{% if places %}
 <p>Or, to see all places around a location, pick from below:
+{% else %}
+<p>To see all places around a location, pick from below:
+{% endif %}
 <ul>
 {% for place in near.geonames %}
 <li><a href="?q={{ place.lat }},{{ place.lng }};name={{ place.name|urlencode }}">{{ place.name|prettify }}</a>{% if place.adminName1 %},
@@ -101,14 +105,27 @@ if (!window.location.hash)
 </div>
 
 <div id="search_parts">
-{% if parts %}
+{% if parts.object_list %}
 <h2>Parts</h2>
-<ul class="person_list">
-{% for part in parts %}
-<li><a href="{{ part.get_absolute_url }}">{{ part }}</a>
+<ul class="production_list">
+{% for part in parts.object_list %}
+<li>
+{{ part.role|prettify }}, played by <a href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>, in
+<a href="{{ part.production.get_absolute_url }}">{{ part.production.play|prettify }}</a>{% if part.production.title %}, {{ part.production.title|prettify }}{% endif %}
+<span>{{ part.production.date_summary|prettify }},
+{% ifequal part.production.places.count 1 %}
+<a href="{{ part.production.place_summary.get_absolute_url }}">{{ part.production.place_summary|prettify }}</a>.
+{% else %}
+{{ part.production.place_summary|prettify }}.
+{% endifequal %}
+</span>
 {% endfor %}
 </ul>
+{% if parts.has_other_pages %}
+<p align="right"><a href="{% url search-parts search %}?page=2">More &rarr;</a></p>
 {% endif %}
+{% endif %}
+
 </div>
 
 </div>

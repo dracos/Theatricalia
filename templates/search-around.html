@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block title %}Search around {{ name|prettify }} ({{ lat }}, {{ lon }}){% endblock %}
+
+{% block extra_head %}
+<script type="text/javascript" src="/static/js/web-maps-lite.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<h1>Search around {{ name|prettify }}</h1>
+
+{% if places %}
+
+<div id="primary">
+
+{% if future.object_list %}
+<h2>Current &amp; Upcoming productions</h2>
+<ul class="production_list">
+{% for production in future.object_list %}
+<li><a href="{{ production.get_absolute_url }}">{{ production.play|prettify }}</a>, {{ production.title|prettify }}
+<span>{{ production.date_summary|prettify }},
+{% ifequal production.places.count 1 %}
+<a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
+{% else %}
+{{ production.place_summary|prettify }}.
+{% endifequal %}
+</span>
+{% endfor %}
+</ul>
+{% if future.has_other_pages %}
+<p align="right"><a href="{{ place.get_future_url }}?page=2">More &rarr;</a></p>
+{% endif %}
+{% endif %}
+
+{% if past.object_list %}
+<h2>Past productions</h2>
+<ul class="production_list">
+{% for production in past.object_list %}
+<li><a href="{{ production.get_absolute_url }}">{{ production.play|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
+<span>{{ production.date_summary|prettify }},
+{% ifequal production.places.count 1 %}
+<a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
+{% else %}
+{{ production.place_summary|prettify }}.
+{% endifequal %}
+</span>
+{% endfor %}
+</ul>
+{% if past.has_other_pages %}
+<p align="right"><a href="{% url search-around-past latlon %}?page=2">More &rarr;</a></p>
+{% endif %}
+{% endif %}
+
+</div>
+
+<div class="secondary">
+<p>The following places are in this locality:</p>
+<script type="text/javascript">
+$(function(){
+    function addMarker(point, name, link) {
+        marker = new CM.Marker(point, { icon: tinyIcon, title: name });
+        marker.bindInfoWindow(
+            '<strong>' + name + '</strong><br><a href="' + link + '">More information</a>',
+            { pixelOffset: new CM.Size(-1, -21) }
+        );
+        map.addOverlay(marker);
+    }
+    var bounds;
+{% for place in places %}
+    //map.setCenter(new CM.LatLng({{ place.latitude }}, {{ place.longitude }}), 14);
+    var latlng = new CM.LatLng({{ place.latitude }}, {{ place.longitude }});
+    addMarker(latlng, "{{ place|prettify }}", "{{ place.get_absolute_url }}");
+    if (!bounds) {
+        bounds = new CM.LatLngBounds(latlng, latlng);
+    } else {
+        bounds.extend(latlng);
+    }
+{% endfor %}
+    map.zoomToBounds(bounds);
+    if (map.getZoom() > 15) {
+        map.setZoom(15);
+    }
+});
+</script>
+<div id="map"></div>
+
+<ul class="place_list">
+{% for place in places %}
+<li><a href="{% url search-around-past latlon %}">{{ place }}</a>
+{% endfor %}
+</ul>
+
+</div>
+
+{% else %}
+
+<p>No results have been found, I&rsquo;m afraid.</p>
+
+{% endif %}
+
+{% endblock %}

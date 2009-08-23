@@ -8,15 +8,15 @@ from shortcuts import render
 from models import Play, first_letters
 from forms import PlayEditForm, PlayAuthorForm
 from datetime import datetime
-from productions.views import production_list, object_productions
+from productions.time import productions_list, productions_for
 
 def play_productions(request, play, type):
 	play = get_object_or_404(Play, slug=play)
-	return production_list(request, play, type, 'plays/production_list.html')
+	return productions_list(request, play, type, 'plays/production_list.html')
 
 def play(request, play):
 	play = get_object_or_404(Play, slug=play)
-	past, future = object_productions(play)
+	past, future = productions_for(play)
 	return render(request, 'plays/play.html', {
 		'play': play,
 		'past': past,

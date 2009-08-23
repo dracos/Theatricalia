@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block title %}Search around ({{ lat }}, {{ lon }}){% endblock %}
+
+{% block extra_head %}
+<script type="text/javascript" src="/static/js/web-maps-lite.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<h1>Search</h1>
+
+<div id="primary">
+
+{% if page_obj.object_list %}
+<h2>{{ type }}</h2>
+<ul class="production_list">
+{% for production in page_obj.object_list %}
+<li><a href="{{ production.get_absolute_url }}">{{ production.play|prettify }}</a>, {{ production.title|prettify }}
+<span>{{ production.date_summary|prettify }},
+{% ifequal production.places.count 1 %}
+<a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
+{% else %}
+{{ production.place_summary|prettify }}.
+{% endifequal %}
+</span>
+{% endfor %}
+</ul>
+{% endif %}
+
+</div>
+
+<div class="secondary">
+<p>{{ type }} around the location ({{ lat }}, {{ lon }}).</p>
+
+{% include 'pagination.html' %}
+</div>
+
+{% endblock %}

@@ -6,7 +6,8 @@ from django.conf import settings
 class OnlyLowercaseUrls:
     def process_request(self, request):
         if request.path.lower() != request.path:
-            return HttpResponseRedirect(request.path.lower())
+            path = request.get_full_path().replace(request.path, request.path.lower())
+            return HttpResponseRedirect(path)
 
 class AlphaMiddleware(object):
     cookie_name = 'alpha'

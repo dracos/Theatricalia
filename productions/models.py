@@ -178,6 +178,10 @@ class Place(models.Model):
     def date_summary(self):
         return pretty_date_range(self.start_date, self.press_date, self.end_date)
 
+class PartManager(models.Manager):
+    def search(self, search):
+        return self.get_query_set().filter(role__icontains=search).order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))', 'production__place__press_date')
+
 class Part(models.Model):
     production = models.ForeignKey(Production)
     person = models.ForeignKey(Person)
@@ -187,6 +191,8 @@ class Part(models.Model):
     order = models.IntegerField(blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
+
+    objects = PartManager()
 
     def role_or_unknown(self):
         return self.role or 'Unknown'

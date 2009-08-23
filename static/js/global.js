@@ -81,6 +81,7 @@ $(function() {
     map.enableShiftDragZoom();
     var topRight = new CM.ControlPosition(CM.TOP_RIGHT, new CM.Size(2, 2));
     map.addControl(new CM.LargeMapControl(), topRight);
+    map.addControl(new CM.ScaleControl());
 
     tinyIcon = new CM.Icon();
     tinyIcon.image = '/static/i/pin-red.png';
@@ -141,7 +142,7 @@ $(function() {
 
     $('#id_town').change(function(){
         $.getJSON('http://ws.geonames.org/searchJSON?q=' + $('#id_town').val() + '&maxRows=1&callback=?', function(data) {
-            if (data.geonames) {
+            if (data.geonames.length) {
                 var lat = data.geonames[0].lat;
                 var lng = data.geonames[0].lng;
                 map.setCenter(new CM.LatLng(lat, lng), 13);

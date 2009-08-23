@@ -9,12 +9,12 @@ from django.http import HttpResponseRedirect
 from forms import PlaceForm
 from models import Place, first_letters
 from shortcuts import render, check_url, UnmatchingSlugException
-from productions.views import production_list, object_productions
+from productions.time import productions_list, productions_for
 from photos.forms import PhotoForm
 
 def place_productions(request, place_id, place, type):
     place = check_url(Place, place_id, place)
-    return production_list(request, place, type, 'places/production_list.html')
+    return productions_list(request, place, type, 'places/production_list.html')
 
 @login_required
 def place_edit(request, place_id, place):
@@ -40,7 +40,7 @@ def place(request, place_id, place):
         place = check_url(Place, place_id, place)
     except UnmatchingSlugException, e:
         return HttpResponseRedirect(e.args[0].get_absolute_url())
-    past, future = object_productions(place)
+    past, future = productions_for(place)
     photo_form = PhotoForm(place)
     return render(request, 'place.html', {
         'place': place,
