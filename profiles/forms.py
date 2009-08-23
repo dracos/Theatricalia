@@ -8,12 +8,13 @@ from django.contrib.auth.forms import AuthenticationForm as DjangoAuthentication
 from models import Profile
 
 class RegistrationForm(forms.ModelForm):
-    name = forms.CharField(label="Name", max_length=100)
-    email = forms.EmailField(label="Email")
+    name = forms.CharField(label="Name", max_length=100, error_messages = {'required':'Please provide your name.'})
+    email = forms.EmailField(label="Email", error_messages = {'required': 'Please enter your email address.'} )
     username = forms.RegexField(label="Username", max_length=30, regex=r'^\w+$',
         #help_text = "Required. 30 characters or fewer. Alphanumeric characters only (letters, digits and underscores).",
         error_message = "This value must contain only letters, numbers and underscores.")
-    password = forms.CharField( label = "Password", widget = forms.PasswordInput )
+    password = forms.CharField( label = "Password", widget = forms.PasswordInput,
+        error_messages = {'required': 'Please enter a password.'} )
     website = forms.CharField(label = "Website", required=False)
 
     #def __init__(self, *args, **kwargs):

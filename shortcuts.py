@@ -28,10 +28,11 @@ def render(request, template_name, context={}, base=None):
     )
 
 def send_email(request, subject, template, context, to):
-	t = loader.get_template(template)
-	context.update({
-		'host': request.META['HTTP_HOST'],
-	})
-	mail = t.render(Context(context))
-	send_mail(subject, mail, 'Matthew Somerville <matthew@theatricalia.com>', [to])
+    t = loader.get_template(template)
+    context.update({
+        'host': request.META['HTTP_HOST'],
+    })
+    mail = t.render(Context(context))
+    send_mail(subject, mail, 'Matthew Somerville <matthew@theatricalia.com>', [to])
+    print mail
 
