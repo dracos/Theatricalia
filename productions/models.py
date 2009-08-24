@@ -82,24 +82,24 @@ class Production(models.Model):
     photos = generic.GenericRelation(Photo)
     description = models.TextField(blank=True)
 
-    def url_components(self):
-        return {
+    def url_components(self, name):
+        return (name, (), {
             'play': self.play.slug,
             'play_id': int_to_base32(self.play.id),
             'production_id': int_to_base32(self.id),
-        }
+        })
 
     @models.permalink
     def get_absolute_url(self):
-        return ('production', (), self.url_components())
+        return self.url_components('production')
 
     @models.permalink
     def get_edit_url(self):
-        return ('production-edit', (), self.url_components())
+        return self.url_components('production-edit')
 
     @models.permalink
     def get_edit_cast_url(self):
-        return ('production-edit-cast', (), self.url_components())
+        return self.url_components('production-edit-cast')
 
     def __unicode__(self):
         producer = ''
@@ -112,15 +112,6 @@ class Production(models.Model):
         else:
             places = ''
         return "%sproduction of %s, %s%s" % (producer, self.play, places, self.date_summary())
-
-    def feed_title(self):
-        if self.places.count()>1:
-            places = 'On tour, '
-        elif self.places.count()==1:
-            places = '%s, ' % self.places.all()[0]
-        else:
-            places = ''
-        return "%s, %s%s" % (self.play, places, self.date_summary())
 
     # Find min/max dates from the places of this production
     def get_min_max_dates(self):

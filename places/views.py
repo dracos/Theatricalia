@@ -9,7 +9,7 @@ from django.http import HttpResponseRedirect
 from forms import PlaceForm
 from models import Place, first_letters
 from shortcuts import render, check_url, UnmatchingSlugException
-from productions.time import productions_list, productions_for
+from productions.objshow import productions_list, productions_for
 from photos.forms import PhotoForm
 
 def place_productions(request, place_id, place, type):

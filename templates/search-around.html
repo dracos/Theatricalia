@@ -4,6 +4,7 @@
 {% block title %}Search around {{ name|prettify }} ({{ lat }}, {{ lon }}){% endblock %}
 
 {% block extra_head %}
+<link href="/around/{{ latlon }}/feed" type="application/rss+xml" rel="alternate">
 <script type="text/javascript" src="/static/js/web-maps-lite.js"></script>
 {% endblock %}
 

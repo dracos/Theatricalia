@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from models import Person, first_letters
 from forms import PersonEditForm
 from photos.forms import PhotoForm
-from productions.time import productions_list, productions_for
+from productions.objshow import productions_list, productions_for
 from django.core import serializers
 
 def person_productions(request, person_id, person, type):

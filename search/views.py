@@ -12,7 +12,7 @@ from productions.models import Part, Production
 from sounds.metaphone import dm
 from sounds.jarowpy import jarow
 #from levenshtein import damerau, qnum
-from productions.time import productions_for, productions_list
+from productions.objshow import productions_for, productions_list
 
 distance = jarow
 threshold = 0.8

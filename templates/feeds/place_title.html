@@ -1,1 +1,9 @@
-{{ obj.feed_title }}
+{{ obj.play }},
+{% ifequal 1 obj.places.count %}
+    {{ obj.places.all.0 }}
+{% else %}
+    {% ifnotequal 0 obj.places.count %}
+        On tour
+    {% endifnotequal %}
+{% endifequal %}
+

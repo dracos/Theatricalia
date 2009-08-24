@@ -45,7 +45,7 @@ class Play(models.Model):
         return mark_safe(str)
             
     def construct_url(self, name):
-        return (name, (int_to_base32(self,id), self.slug))
+        return (name, (int_to_base32(self.id), self.slug))
 
     @models.permalink
     def get_absolute_url(self):

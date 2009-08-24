@@ -7,7 +7,7 @@ from shortcuts import render, check_url, UnmatchingSlugException
 from models import Play, first_letters
 from forms import PlayEditForm, PlayAuthorForm
 from datetime import datetime
-from productions.time import productions_list, productions_for
+from productions.objshow import productions_list, productions_for
 
 def play_productions(request, play_id, play, type):
     try:

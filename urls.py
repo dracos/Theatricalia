@@ -15,7 +15,7 @@ from photos import views as photos
 from django.contrib import admin
 admin.autodiscover()
 
-from feeds import PersonFeed, PlayFeed, PlaceFeed
+from feeds import PersonFeed, PlayFeed, PlaceFeed, NearbyFeed
 
 urlpatterns = patterns('',
     # Example:
@@ -49,11 +49,12 @@ urlpatterns = patterns('',
     url('^criticism$', static_contact, name='criticism'),
     url('^colophon$', static_colophon, name='colophon'),
 
-    url('^(?P<url>(play|person|place)/.*)/feed$', 'django.contrib.syndication.views.feed',
+    url('^(?P<url>(play|person|place|around)/.*)/feed$', 'django.contrib.syndication.views.feed',
         { 'feed_dict': {
 		'person': PersonFeed,
 		'play': PlayFeed,
 		'place': PlaceFeed,
+		'around': NearbyFeed,
 	} },
     ),
 
