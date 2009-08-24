@@ -31,7 +31,7 @@
 
 <h2>Places</h2>
 
-{{ formset.errors }}
+{% if formset.errors %} {{ formset.errors }} {% endif %}
 
 {% include 'productions/place-form.html' %}
 

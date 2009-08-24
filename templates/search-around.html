@@ -96,7 +96,11 @@ $(function(){
 
 {% else %}
 
-<p>No results have been found, I&rsquo;m afraid.</p>
+<p>No results have been found, I&rsquo;m afraid.
+It&rsquo;s possible the theatre is present but not geo-located, or that it is
+not yet in our database &ndash; <a href="{% url production-add %}">add a production</a>
+and you can add a place along the way.
+</p>
 
 {% endif %}
 

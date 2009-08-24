@@ -13,17 +13,17 @@ from places.models import Place
 from photos.forms import PhotoForm
 from people.models import Person
 
-def check_parameters(play, production_id):
+def check_parameters(play_id, play, production_id):
     production_id = base32_to_int(production_id)
     production = get_object_or_404(Production, id=production_id)
 
-    play = get_object_or_404(Play, slug=play)
+    play = check_url(Play, play_id, play)
     if play != production.play:
         raise Http404()
     return production
 
-def production(request, play, production_id):
-    production = check_parameters(play, production_id)
+def production(request, play_id, play, production_id):
+    production = check_parameters(play_id, play, production_id)
     photo_form = PhotoForm(production)
     production_form = ProductionForm(instance=production)
 
@@ -175,8 +175,11 @@ def production_add(request, play=None, place=None):
     })
 
 @login_required
-def add_from_play(request, play):
-    play = get_object_or_404(Play, slug=play)
+def add_from_play(request, play_id, play):
+    try:
+        play = check_url(Play, play_id, play)
+    except UnmatchingSlugException, e:
+        return HttpResponseRedirect(e.args[0].get_absolute_url())
     return production_add(request, play=play)
 
 @login_required

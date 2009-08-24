@@ -10,17 +10,6 @@ class PlayEditForm(forms.ModelForm):
 		model = Play
 		exclude = ('title', 'slug', 'parent')
 
-	#def clean(self):
-	#	super(PersonEditForm, self).clean()
-		#dob = self.cleaned_data.get('dob')
-		#bio = self.cleaned_data.get('bio')
-		#imdb = self.cleaned_data.get('imdb')
-		#wikipedia = self.cleaned_data.get('wikipedia')
-		#web = self.cleaned_data.get('web')
-		#if not dob and not bio and not imdb and not wikipedia and not web:
-		#	raise ValidationError('Please specify at least one item of data')
-	#	return self.cleaned_data
-
 class PlayAuthorForm(forms.Form):
 	id = forms.CharField(widget=forms.HiddenInput, required=False)
 	name = forms.CharField(label="Author", max_length=101, required=False)
@@ -29,8 +18,7 @@ class PlayAuthorForm(forms.Form):
 		name = self.cleaned_data['name']
 		if not name:
 			return None
-		people, _ = search_people(name)
-		print people
+		people, _ = search_people(name, use_distance=False)
 		if len(people) == 0:
 			raise forms.ValidationError('This name could not be found. Is it a new person?')
 		if len(people) == 1:

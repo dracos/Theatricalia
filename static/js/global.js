@@ -43,7 +43,7 @@ $(function() {
 	}).change();
 
     $('form#edit .place:last').after(
-        $('<a href="">Add another</a>').click(function(){
+        $('<p>If this production performed at another place, <a href="">add another place</a>.</p>').click(function(){
             var last_form = $('form#edit .place:last');
             var newRow = last_form.clone().insertAfter(last_form);
             var total = $('#id_place-TOTAL_FORMS').val();

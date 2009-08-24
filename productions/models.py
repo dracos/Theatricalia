@@ -82,17 +82,24 @@ class Production(models.Model):
     photos = generic.GenericRelation(Photo)
     description = models.TextField(blank=True)
 
+    def url_components(self):
+        return {
+            'play': self.play.slug,
+            'play_id': int_to_base32(self.play.id),
+            'production_id': int_to_base32(self.id),
+        }
+
     @models.permalink
     def get_absolute_url(self):
-        return ('production', (), {'play': self.play.slug, 'production_id': int_to_base32(self.id) } )
+        return ('production', (), self.url_components())
 
     @models.permalink
     def get_edit_url(self):
-        return ('production-edit', (), {'play': self.play.slug, 'production_id': int_to_base32(self.id) } )
+        return ('production-edit', (), self.url_components())
 
     @models.permalink
     def get_edit_cast_url(self):
-        return ('production-edit-cast', (), {'play': self.play.slug, 'production_id': int_to_base32(self.id) } )
+        return ('production-edit-cast', (), self.url_components())
 
     def __unicode__(self):
         producer = ''

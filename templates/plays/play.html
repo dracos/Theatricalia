@@ -25,7 +25,7 @@
 {% endfor %}
 </ul>
 {% if future.has_other_pages %}
-<p align="right"><a href="{% url play-productions-future play.slug %}?page=2">More &rarr;</a></p>
+<p align="right"><a href="{{ play.get_future_url }}?page=2">More &rarr;</a></p>
 {% endif %}
 {% endif %}
 
@@ -39,7 +39,7 @@
 {% endfor %}
 </ul>
 {% if past.has_other_pages %}
-<p align="right"><a href="{% url play-productions-past play.slug %}?page=2">More &rarr;</a></p>
+<p align="right"><a href="{{ play.get_past_url }}?page=2">More &rarr;</a></p>
 {% endif %}
 {% endif %}
 
@@ -57,10 +57,10 @@
 
 {% if play.description %}
 {{ play.description|prettify|linebreaks }}
-<p align="right"><a href="{% url play-edit play.slug %}">Edit &rarr;</a></p>
+<p align="right"><a href="{{ play.get_edit_url }}">Edit &rarr;</a></p>
 {% else %}
 <p>This play doesn&rsquo;t appear to have a description yet.
-Why not <a href="{% url play-edit play.slug %}">add one</a>?
+Why not <a href="{{ play.get_edit_url }}">add one</a>?
 {% endif %}
 
 </div>

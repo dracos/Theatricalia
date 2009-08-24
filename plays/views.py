@@ -1,51 +1,59 @@
 import string
 from django.views.generic.list_detail import object_list
 from django.forms.formsets import formset_factory
-from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from shortcuts import render
+from shortcuts import render, check_url, UnmatchingSlugException
 from models import Play, first_letters
 from forms import PlayEditForm, PlayAuthorForm
 from datetime import datetime
 from productions.time import productions_list, productions_for
 
-def play_productions(request, play, type):
-	play = get_object_or_404(Play, slug=play)
-	return productions_list(request, play, type, 'plays/production_list.html')
+def play_productions(request, play_id, play, type):
+    try:
+        play = check_url(Play, play_id, play)
+    except UnmatchingSlugException, e:
+        return HttpResponseRedirect(e.args[0].get_absolute_url())
+    return productions_list(request, play, type, 'plays/production_list.html')
 
-def play(request, play):
-	play = get_object_or_404(Play, slug=play)
-	past, future = productions_for(play)
-	return render(request, 'plays/play.html', {
-		'play': play,
-		'past': past,
-		'future': future,
-	})
+def play(request, play_id, play):
+    try:
+        play = check_url(Play, play_id, play)
+    except UnmatchingSlugException, e:
+        return HttpResponseRedirect(e.args[0].get_absolute_url())
+    past, future = productions_for(play)
+    return render(request, 'plays/play.html', {
+        'play': play,
+        'past': past,
+        'future': future,
+    })
 
 @login_required
-def play_edit(request, play):
-	play = get_object_or_404(Play, slug=play)
+def play_edit(request, play_id, play):
+    try:
+        play = check_url(Play, play_id, play)
+    except UnmatchingSlugException, e:
+        return HttpResponseRedirect(e.args[0].get_absolute_url())
 
-	form = PlayEditForm(request.POST or None, instance=play)
-	PlayAuthorFormSet = formset_factory(PlayAuthorForm)
-	initial = [ { 'id': author.id, 'name': author.name() } for author in play.authors.all() ]
-	formset = PlayAuthorFormSet(request.POST or None, initial=initial)
-	if request.method == 'POST' and form.is_valid() and formset.is_valid():
-		authors = []
-		for author in formset.cleaned_data:
-			if author and author['name']:
-				authors.append(author['name'])
-		print "*", authors
-		form.cleaned_data['authors'] = authors
-		form.save()
-		return HttpResponseRedirect(play.get_absolute_url())
+    form = PlayEditForm(request.POST or None, instance=play)
+    PlayAuthorFormSet = formset_factory(PlayAuthorForm)
+    initial = [ { 'id': author.id, 'name': author.name() } for author in play.authors.all() ]
+    formset = PlayAuthorFormSet(request.POST or None, initial=initial)
+    if request.method == 'POST' and form.is_valid() and formset.is_valid():
+        authors = []
+        for author in formset.cleaned_data:
+            if author and author['name']:
+                authors.append(author['name'])
+        print "*", authors
+        form.cleaned_data['authors'] = authors
+        form.save()
+        return HttpResponseRedirect(play.get_absolute_url())
 
-	return render(request, 'plays/play_edit.html', {
-		'play': play,
-		'form': form,
-		'formset': formset,
-	})
+    return render(request, 'plays/play_edit.html', {
+        'play': play,
+        'form': form,
+        'formset': formset,
+    })
 
 
 def list(request, letter='a'):

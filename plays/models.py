@@ -5,6 +5,7 @@ from people.models import Person
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import slugify
+from utils import int_to_base32
 
 class Play(models.Model):
     title = models.CharField(max_length=255)
@@ -43,13 +44,28 @@ class Play(models.Model):
             str = 'No author'
         return mark_safe(str)
             
+    def construct_url(self, name):
+        return (name, (int_to_base32(self,id), self.slug))
+
     @models.permalink
     def get_absolute_url(self):
-        return ('play', [self.slug])
+        return self.construct_url('play')
+
+    @models.permalink
+    def get_past_url(self):
+        return self.construct_url('play-productions-past')
+
+    @models.permalink
+    def get_future_url(self):
+        return self.construct_url('play-productions-future')
 
     @models.permalink
     def get_add_url(self):
-        return ('play-production-add', [self.slug])
+        return self.construct_url('play-production-add')
+
+    @models.permalink
+    def get_edit_url(self):
+        return self.construct_url('play-edit')
 
     def get_feed_url(self):
         return '%s/feed' % self.get_absolute_url()

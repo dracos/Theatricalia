@@ -28,7 +28,7 @@
 </div>
 
 <div class="secondary">
-<p>{{ type }} of the play <a href="{% url play object.slug %}">{{ object|prettify }}</a>.</p>
+<p>{{ type }} of the play <a href="{{ object.get_absolute_url }}">{{ object|prettify }}</a>.</p>
 {% include "pagination.html" %}
 </div>
 
