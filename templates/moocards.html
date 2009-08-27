@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+<style type="text/css">
+#main table {
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+#main td {
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+#main img {
+    border: solid 1px #666666;
+    padding: 4px;
+    margin: 15px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<p>Hit refresh for a different layout.</p>
+
+<table>
+{% for row in rows %}
+<tr>{{ row|safe }}</tr>
+{% endfor %}
+</table>
+
+<h2>Unused</h2>
+
+<table>
+{% for row in unused %}
+<tr>{{ row|safe }}</tr>
+{% endfor %}
+</table>
+
+{% endblock %}
+
