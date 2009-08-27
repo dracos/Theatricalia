@@ -11,6 +11,7 @@ from people import views as people
 from places import views as places
 from search import views as search
 from photos import views as photos
+from common import views as common
 
 from django.contrib import admin
 admin.autodiscover()
@@ -58,9 +59,11 @@ urlpatterns = patterns('',
 		'around': NearbyFeed,
 	} },
     ),
+    url('^around/(.*?)/alert/(add|remove)$', common.alert, name='around-alert'),
 
     url('^plays$', plays.list, name='plays_all'),
     url('^plays/(?P<letter>[a-z0*])$', plays.list, name='plays'),
+    url('^play/(?P<play_id>.*?)/(?P<play>.*)/alert/(?P<type>add|remove)$', plays.play_alert, name='play-alert'),
     url('^play/(?P<play_id>.*?)/(?P<play>.*?)/add$', productions.add_from_play, name='play-production-add'),
     url('^play/(?P<play_id>.*?)/(?P<play>.*?)/production/(?P<production_id>[0-9a-z]+)/edit$', productions.production_edit, name='production-edit'),
     url('^play/(?P<play_id>.*?)/(?P<play>.*?)/production/(?P<production_id>[0-9a-z]+)/edit/cast$', productions.production_edit_cast, name='production-edit-cast'),
@@ -78,6 +81,7 @@ urlpatterns = patterns('',
     url('^person/(?P<person_id>.*?)/(?P<person>.*)/future$', people.person_productions, {'type':'future'}, name='person-productions-future'),
     url('^person/(?P<person_id>.*?)/(?P<person>.*)/past$', people.person_productions, {'type':'past'}, name='person-productions-past'),
     url('^person/(?P<person_id>.*?)/(?P<person>.*)/edit$', people.person_edit, name='person-edit'),
+    url('^person/(?P<person_id>.*?)/(?P<person>.*)/alert/(?P<type>add|remove)$', people.person_alert, name='person-alert'),
     url('^person/(?P<person_id>.*?)/(?P<person>.*)\.js$', people.person_js, name='person-json'),
     url('^person/(?P<person_id>.*?)/(?P<person>.*)$', people.person, name='person'),
 
@@ -86,6 +90,7 @@ urlpatterns = patterns('',
     url('^place/(?P<place_id>.+?)/(?P<place>.*)/future$', places.place_productions, {'type':'future'}, name='place-productions-future'),
     url('^place/(?P<place_id>.+?)/(?P<place>.*)/past$', places.place_productions, {'type':'past'}, name='place-productions-past'),
     url('^place/(?P<place_id>.+?)/(?P<place>.*)/edit$', places.place_edit, name='place-edit'),
+    url('^place/(?P<place_id>.*?)/(?P<place>.*)/alert/(?P<type>add|remove)$', places.place_alert, name='place-alert'),
     url('^place/(?P<place_id>.+?)/(?P<place>.*)/add$', productions.add_from_place, name='place-production-add'),
     url('^place/(?P<place_id>.+?)/(?P<place>.*)$', places.place, name='place'),
 
@@ -99,6 +104,7 @@ urlpatterns = patterns('',
 
     url('^search/around/(?P<latlon>.+)/future$', search.search_around, {'type':'future'}, name='search-around-future'),
     url('^search/around/(?P<latlon>.+)/past$', search.search_around, {'type':'past'}, name='search-around-past'),
+    url('^search/around/(?P<latlon>.+)$', search.search_around, name='search-around'),
     url('^search/parts/(?P<search>.+)$', search.search_parts, name='search-parts'),
     url('^search$', search.search, name='search'),
 

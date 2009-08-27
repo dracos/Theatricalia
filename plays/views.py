@@ -1,4 +1,5 @@
 import string
+from datetime import datetime
 from django.views.generic.list_detail import object_list
 from django.forms.formsets import formset_factory
 from django.contrib.auth.decorators import login_required
@@ -6,8 +7,8 @@ from django.http import HttpResponseRedirect
 from shortcuts import render, check_url, UnmatchingSlugException
 from models import Play, first_letters
 from forms import PlayEditForm, PlayAuthorForm
-from datetime import datetime
 from productions.objshow import productions_list, productions_for
+from common.models import Alert
 
 def play_productions(request, play_id, play, type):
     try:
@@ -22,11 +23,34 @@ def play(request, play_id, play):
     except UnmatchingSlugException, e:
         return HttpResponseRedirect(e.args[0].get_absolute_url())
     past, future = productions_for(play)
+    alert = play.alerts.filter(user=request.user)
     return render(request, 'plays/play.html', {
         'play': play,
         'past': past,
         'future': future,
+        'alert': alert,
     })
+
+@login_required
+def play_alert(request, play_id, play, type):
+    try:
+        play = check_url(Play, play_id, play)
+    except UnmatchingSlugException, e:
+        return HttpResponseRedirect(e.args[0].get_absolute_url())
+
+    if type == 'add':
+        alert = Alert(user=request.user, content_object=play)
+        try:
+            alert.save()
+        except IntegrityError, e:
+            if e.args[0] != 1062: # Duplicate
+                raise
+        request.user.message_set.create(message=u"Your alert has been added.")
+    elif type == 'remove':
+        play.alerts.filter(user=request.user).delete()
+        request.user.message_set.create(message=u"Your alert has been removed.")
+
+    return HttpResponseRedirect(play.get_absolute_url())
 
 @login_required
 def play_edit(request, play_id, play):

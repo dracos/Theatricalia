@@ -50,17 +50,27 @@
 <p>A play by {{ play.get_authors_display }}</p>
 
 <ul>
-{% if play.url %}<li><a href="{{ play.url }}">Website</a>{% endif %}
+{% if play.url %}<li><a href="{{ play.url }}">Official website</a>{% endif %}
 {% if play.wikipedia %}<li><a href="{{ play.wikipedia }}">Wikipedia</a>{% endif %}
 <li><a href="{{ play.get_add_url }}">Add a production of this play</a></li>
+{% if alert %}
+<li><a href="{{ play.get_alert_remove_url }}">Stop alerting me to productions of this play</a>
+{% else %}
+<li><a href="{{ play.get_alert_add_url }}">Alert me to productions of this play</a>
+{% endif %}
 </ul>
 
 {% if play.description %}
 {{ play.description|prettify|linebreaks }}
 <p align="right"><a href="{{ play.get_edit_url }}">Edit &rarr;</a></p>
 {% else %}
+{% if user.is_authenticated %}
 <p>This play doesn&rsquo;t appear to have a description yet.
 Why not <a href="{{ play.get_edit_url }}">add one</a>?
+{% else %}
+<p>To add a description of this play, or to request an alert,
+please <a href="{% url login %}?next={{ request.path }}">sign in </a>.</p>
+{% endif %}
 {% endif %}
 
 </div>

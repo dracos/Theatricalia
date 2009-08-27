@@ -5,6 +5,7 @@ from django.template.defaultfilters import slugify
 from photos.models import Photo
 from utils import int_to_base32
 from fields import ApproximateDateField
+from common.models import Alert
 
 class PlaceManager(models.Manager):
     # Crappy bounding box, need to do radial!
@@ -35,6 +36,8 @@ class Place(models.Model):
 
     objects = PlaceManager()
 
+    alerts = generic.GenericRelation(Alert)
+
     class Meta:
         ordering = ['name']
 
@@ -55,18 +58,29 @@ class Place(models.Model):
         if m:
             out = "%s %s" % (m.group(2), m.group(1))
         return out
+    
+    def make_url(self, name, *args):
+        return (name, (int_to_base32(self.id), self.slug) + args)
 
     @models.permalink
     def get_absolute_url(self):
-        return ('place', (), { 'place_id': int_to_base32(self.id), 'place': self.slug })
+        return self.make_url('place')
 
     @models.permalink
     def get_edit_url(self):
-        return ('place-edit', (), { 'place_id': int_to_base32(self.id), 'place': self.slug })
+        return self.make_url('place-edit')
 
     @models.permalink
     def get_add_production_url(self):
-        return ('place-production-add', (), { 'place_id': int_to_base32(self.id), 'place': self.slug })
+        return self.make_url('place-production-add')
+
+    @models.permalink
+    def get_alert_add_url(self):
+        return self.make_url('place-alert', 'add')
+
+    @models.permalink
+    def get_alert_remove_url(self):
+        return self.make_url('place-alert', 'remove')
 
     def get_past_url(self):
         return '%s/past' % self.get_absolute_url()

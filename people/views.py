@@ -4,8 +4,10 @@ from shortcuts import render, check_url, UnmatchingSlugException
 from django.shortcuts import get_object_or_404
 from django.views.generic.list_detail import object_list
 from django.http import HttpResponse, HttpResponseRedirect
+from django.db import IntegrityError
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from common.models import Alert
 from models import Person, first_letters
 from forms import PersonEditForm
 from photos.forms import PhotoForm
@@ -27,12 +29,14 @@ def person(request, person_id, person):
     past, future = productions_for(person)
     plays = person.plays.all()
     photo_form = PhotoForm(person)
+    alert = person.alerts.filter(user=request.user)
     return render(request, 'people/person.html', {
         'person': person,
         'past': past,
         'future': future,
         'plays': plays,
         'photo_form': photo_form,
+        'alert': alert,
     })
 
 def person_js(request, person_id, person):
@@ -43,6 +47,27 @@ def person_js(request, person_id, person):
     response = HttpResponse()
     serializers.serialize("json", [ person ], ensure_ascii=False, stream=response)
     return response
+
+@login_required
+def person_alert(request, person_id, person, type):
+    try:
+        person = check_url(Person, person_id, person)
+    except UnmatchingSlugException, e:
+        return HttpResponseRedirect(e.args[0].get_absolute_url())
+
+    if type == 'add':
+        alert = Alert(user=request.user, content_object=person)
+        try:
+            alert.save()
+        except IntegrityError, e:
+            if e.args[0] != 1062: # Duplicate
+                raise
+        request.user.message_set.create(message=u"Your alert has been added.")
+    elif type == 'remove':
+        person.alerts.filter(user=request.user).delete()
+        request.user.message_set.create(message=u"Your alert has been removed.")
+
+    return HttpResponseRedirect(person.get_absolute_url())
 
 @login_required
 def person_edit(request, person_id, person):

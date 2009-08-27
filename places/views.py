@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 
+from common.models import Alert
 from forms import PlaceForm
 from models import Place, first_letters
 from shortcuts import render, check_url, UnmatchingSlugException
@@ -42,12 +43,35 @@ def place(request, place_id, place):
         return HttpResponseRedirect(e.args[0].get_absolute_url())
     past, future = productions_for(place)
     photo_form = PhotoForm(place)
+    alert = place.alerts.filter(user=request.user)
     return render(request, 'place.html', {
         'place': place,
         'past': past,
         'future': future,
         'photo_form': photo_form,
+        'alert': alert,
     })
+
+@login_required
+def place_alert(request, place_id, place, type):
+    try:
+        place = check_url(Place, place_id, place)
+    except UnmatchingSlugException, e:
+        return HttpResponseRedirect(e.args[0].get_absolute_url())
+
+    if type == 'add':
+        alert = Alert(user=request.user, content_object=place)
+        try:
+            alert.save()
+        except IntegrityError, e:
+            if e.args[0] != 1062: # Duplicate
+                raise
+        request.user.message_set.create(message=u"Your alert has been added.")
+    elif type == 'remove':
+        place.alerts.filter(user=request.user).delete()
+        request.user.message_set.create(message=u"Your alert has been removed.")
+
+    return HttpResponseRedirect(place.get_absolute_url())
 
 def list(request, letter='a'):
     if letter == '0':

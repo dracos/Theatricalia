@@ -88,6 +88,20 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 </ul>
 {% endif %}
 
+{% if user.is_authenticated %}
+<ul>
+<li><a href="{{ person.get_edit_url }}">Edit this person</a>
+{% if alert %}
+<li><a href="{{ person.get_alert_remove_url }}">Stop alerting me to productions involving this person</a>
+{% else %}
+<li><a href="{{ person.get_alert_add_url }}">Alert me to productions involving this person</a>
+{% endif %}
+</ul>
+{% else %}
+<p>To edit this person, or to set up an email alert for them, please
+<a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
+{% endif %}
+
 <h2>Photographs</h2>
 
 <div id="photographs">
@@ -118,8 +132,6 @@ have permission to do so, please upload it here.</p>
 to upload, please <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
 
 {% endif %}
-
-<p align="right"><a href="{{ person.get_edit_url }}">Edit this person</a></p>
 
 </div>
 

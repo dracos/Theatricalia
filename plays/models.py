@@ -5,7 +5,9 @@ from people.models import Person
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import slugify
+from django.contrib.contenttypes import generic
 from utils import int_to_base32
+from common.models import Alert
 
 class Play(models.Model):
     title = models.CharField(max_length=255)
@@ -15,6 +17,8 @@ class Play(models.Model):
     description = models.TextField(blank=True)
     url = models.URLField(blank=True, verbose_name='URL')
     wikipedia = models.URLField(blank=True)
+
+    alerts = generic.GenericRelation(Alert)
 
     class Meta:
         ordering = ['title']
@@ -44,8 +48,8 @@ class Play(models.Model):
             str = 'No author'
         return mark_safe(str)
             
-    def construct_url(self, name):
-        return (name, (int_to_base32(self.id), self.slug))
+    def construct_url(self, name, *args):
+        return (name, (int_to_base32(self.id), self.slug) + args)
 
     @models.permalink
     def get_absolute_url(self):
@@ -66,6 +70,14 @@ class Play(models.Model):
     @models.permalink
     def get_edit_url(self):
         return self.construct_url('play-edit')
+
+    @models.permalink
+    def get_alert_add_url(self):
+        return self.construct_url('play-alert', 'add')
+
+    @models.permalink
+    def get_alert_remove_url(self):
+        return self.construct_url('play-alert', 'remove')
 
     def get_feed_url(self):
         return '%s/feed' % self.get_absolute_url()

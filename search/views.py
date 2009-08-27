@@ -13,6 +13,7 @@ from sounds.metaphone import dm
 from sounds.jarowpy import jarow
 #from levenshtein import damerau, qnum
 from productions.objshow import productions_for, productions_list
+from common.models import AlertLocal
 
 distance = jarow
 threshold = 0.8
@@ -118,29 +119,16 @@ def search_parts(request, search):
     return productions_list(request, search, 'parts', 'search-parts.html')
 
 # For pagination of search around
-def search_around(request, latlon, type):
+def search_around(request, latlon, type=''):
     m = re.match('\s*([-\d.]+)\s*,\s*([-\d.]+)\s*$', latlon)
     if not m:
         raise Exception, 'Bad request'
 
     lat, lon = m.groups()
     places = Place.objects.around(float(lat), float(lon))
-    return productions_list(request, places, type, 'search-around-productions.html', {
-        'lat': lat,
-        'lon': lon,
-    })
-
-def search(request):
-    search = request.GET.get('q', '')
-    people = plays = places = near = []
-    sounds_people = 0
-
-    # Searching round a point
-    m = re.match('\s*([-\d.]+)\s*,\s*([-\d.]+)\s*$', search)
-    if m:
-        lat, lon = m.groups()
-        places = Place.objects.around(float(lat), float(lon))
+    if not type:
         past, future = productions_for(places, 'places')
+        alert = AlertLocal.objects.filter(user=request.user, latitude=lat, longitude=lon)
         return render(request, 'search-around.html', {
             'places': places,
             'past': past,
@@ -149,7 +137,22 @@ def search(request):
             'lon': lon,
             'latlon': '%s,%s' % (lat, lon),
             'name': request.GET.get('name', ''),
+            'alert': alert,
         })
+    return productions_list(request, places, type, 'search-around-productions.html', {
+        'lat': lat,
+        'lon': lon,
+    })
+
+def search(request):
+    search = request.GET.get('q', '')
+    people = plays = places = near = parts = []
+    sounds_people = 0
+
+    # Searching round a point
+    m = re.match('\s*([-\d.]+)\s*,\s*([-\d.]+)\s*$', search)
+    if m:
+        return search_around(request, search)
 
     if search:
         people, sounds_people = search_people(search, force_similar=request.GET.get('similar'), use_distance=False)

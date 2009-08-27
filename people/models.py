@@ -5,6 +5,7 @@ from django.template.defaultfilters import slugify
 from fields import ApproximateDateField
 from photos.models import Photo
 from sounds.metaphone import dm
+from common.models import Alert
 
 class Person(models.Model):
     first_name = models.CharField(max_length=50, blank=True)
@@ -21,6 +22,8 @@ class Person(models.Model):
     web = models.URLField(blank=True, verbose_name='Personal website')
     photos = generic.GenericRelation(Photo)
 
+    alerts = generic.GenericRelation(Alert)
+
     def __unicode__(self):
         if self.first_name and self.last_name:
             return '%s %s' % (self.first_name, self.last_name)
@@ -32,21 +35,33 @@ class Person(models.Model):
     def name(self):
         return unicode(self)
 
+    def make_url(self, name, *args):
+        params = (int_to_base32(self.id), self.slug) + args
+        return (name, params)
+
     @models.permalink
     def get_absolute_url(self):
-            return ('person', [int_to_base32(self.id), self.slug])
+        return self.make_url('person')
 
     @models.permalink
     def get_edit_url(self):
-            return ('person-edit', [int_to_base32(self.id), self.slug])
+        return self.make_url('person-edit')
 
     @models.permalink
     def get_more_future_url(self):
-            return ('person-productions-future', [int_to_base32(self.id), self.slug])
+        return self.make_url('person-productions-future')
 
     @models.permalink
     def get_more_past_url(self):
-            return ('person-productions-past', [int_to_base32(self.id), self.slug])
+        return self.make_url('person-productions-past')
+
+    @models.permalink
+    def get_alert_add_url(self):
+        return self.make_url('person-alert', 'add')
+
+    @models.permalink
+    def get_alert_remove_url(self):
+        return self.make_url('person-alert', 'remove')
 
     class Meta:
         ordering = ['last_name', 'first_name']

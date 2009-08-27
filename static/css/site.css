@@ -58,6 +58,15 @@ ul li {
 	margin-bottom: 1.5em;
 }
 
+dt {
+    margin-top: 1.5em;
+    font-weight: bold;
+}
+
+dd {
+    margin-left: 1em;
+}
+
 fieldset {
 	border: 0;
 }
@@ -532,8 +541,8 @@ td {
 
 #map {
     display: none;
-    margin: 2.1818em auto 0;
-    height: 30em;
+    margin: 2.1818em auto 2.1818em;
+    height: 26em;
     width: 99%;
     border: solid 0.0625em #666666;
     font-size: 0.6875em;

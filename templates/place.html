@@ -91,6 +91,16 @@ $(function(){
 <p id="map-nojs"><img src="http://maps.google.com/staticmap?zoom=14&size=300x300&maptype=roadmap&markers={{ place.latitude }},{{ place.longitude }},smallred&sensor=false&key=ABQIAAAAr0jEilTj74QAOSQ54V3GrxQi7pH9eW_TVT-JV0JhoiD8D-2d8BSEfMWhkhrn96EYsa3PDcwO_RNspQ"></p>
 {% endif %}
 
+<ul>
+<li><a href="{{ place.get_edit_url }}">Edit this place&rsquo;s information</a></li>
+<li><a href="{{ place.get_add_production_url }}">Add a production here</a></li>
+{% if alert %}
+<li><a href="{{ place.get_alert_remove_url }}">Stop alerting me to productions here</a>
+{% else %}
+<li><a href="{{ place.get_alert_add_url }}">Alert me to productions here</a>
+{% endif %}
+</ul>
+
 {% if place.photos.all %}
     <div id="photographs">
 <h2>Photographs</h2>
@@ -121,9 +131,6 @@ to upload, please <a href="{% url login %}?next={{ request.path }}">sign in</a>.
 
 {% endif %}
 
-<p><a href="{{ place.get_edit_url }}">Edit this place&rsquo;s information</a></p>
-
-<p><a href="{{ place.get_add_production_url }}">Add a production here</a></p>
 </div>
 
 {% endblock %}
