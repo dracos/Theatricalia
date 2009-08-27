@@ -109,4 +109,8 @@ urlpatterns = patterns('',
     url('^search$', search.search, name='search'),
 
     url('^add$', productions.production_add, name='production-add'),
+
+    url('^profile/(?P<username>.*)/alert/(?P<id>\d+)$', profiles.profile_alert, name='profile-alert-remove'),
+    url('^profile/(?P<username>.*)/alert$', profiles.profile_alert, name='profile-alert'),
+    url('^profile/(?P<username>.*)$', profiles.profile, name='profile'),
 )

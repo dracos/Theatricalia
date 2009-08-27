@@ -4,8 +4,9 @@ from django.contrib.contenttypes import generic
 from django.contrib.auth.models import User
 
 class Alert(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
     enabled = models.BooleanField(default=True)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, related_name='alerts')
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
@@ -15,11 +16,12 @@ class Alert(models.Model):
         unique_together = (('user', 'content_type', 'object_id'),)
     
     def __unicode__(self):
-        return "%s's alert for %s" % (self.user, self.content_object)
+        return "%s" % (self.content_object)
 
 class AlertLocal(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
     enabled = models.BooleanField(default=True)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, related_name='local_alerts')
 
     latitude = models.FloatField()
     longitude = models.FloatField()

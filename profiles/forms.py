@@ -7,6 +7,10 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm as DjangoAuthenticationForm
 from models import Profile
 
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+
 class RegistrationForm(forms.ModelForm):
     name = forms.CharField(label="Name", max_length=100, error_messages = {'required':'Please provide your name.'})
     email = forms.EmailField(label="Email", error_messages = {'required': 'Please enter your email address.'} )
@@ -49,7 +53,7 @@ class RegistrationForm(forms.ModelForm):
         return user
 
 class AuthenticationForm(DjangoAuthenticationForm):
-    username = forms.CharField(label="Email", max_length=100)
+    username = forms.CharField(label="Email or username", max_length=100)
     def clean(self):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
@@ -57,7 +61,7 @@ class AuthenticationForm(DjangoAuthenticationForm):
         if username and password:
             self.user_cache = authenticate(username=username, password=password)
             if self.user_cache is None:
-                raise forms.ValidationError("Please enter a correct email and password.")
+                raise forms.ValidationError("Please enter a correct email address or username, and password.")
             elif not self.user_cache.is_active:
                 raise forms.ValidationError("This account is inactive.")
             if not self.user_cache.get_profile().email_validated:

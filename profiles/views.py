@@ -2,12 +2,37 @@ from shortcuts import render, send_email
 from forms import RegistrationForm, AuthenticationForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.decorators import login_required
 from utils import int_to_base32, base32_to_int
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.conf import settings
 from django.views.decorators.cache import never_cache
+from common.models import Alert
+from reversion.models import Revision
+from productions.models import Part
+
+def profile(request, username):
+    user = get_object_or_404(User, username=username)
+    profile = user.get_profile()
+
+    latest = []
+    for l in Revision.objects.filter(user=user).order_by('-date_created')[:10]:
+        versions = []
+        for v in l.version_set.all():
+            obj = v.content_type.get_object_for_this_type(id=v.object_id)
+            if v.content_type.model_class() == Part:
+                url = obj.production.get_absolute_url()
+            else:
+                url = obj.get_absolute_url()
+            versions.append((obj, url))
+        latest.append(versions)
+    return render(request, 'profile.html', {
+        'view': user,
+        'profile': profile,
+        'latest': latest,
+    })
 
 def register(request):
     if request.user.is_authenticated():
@@ -84,3 +109,12 @@ def send_confirmation_email(request, user):
             'protocol': 'http',
         }, user.email
     )
+
+@login_required
+def profile_alert(request, username, id):
+    user = get_object_or_404(User, username=username)
+    profile = user.get_profile()
+    alert = get_object_or_404(Alert, id=id)
+    if user != alert.user:
+        raise Exception("Trying to unsubscribe someone else's alert?")
+    return HttpResponseRedirect(profile.get_absolute_url())
