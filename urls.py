@@ -48,6 +48,7 @@ urlpatterns = patterns('',
     url('^help$', static_help, name='help'),
     url('^criticism$', static_contact, name='criticism'),
     url('^colophon$', static_colophon, name='colophon'),
+    url('^moo$', static_moocards, name='moo'),
 
     url('^(?P<url>(play|person|place|around)/.*)/feed$', 'django.contrib.syndication.views.feed',
         { 'feed_dict': {
