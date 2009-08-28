@@ -92,9 +92,17 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 <ul>
 <li><a href="{{ person.get_edit_url }}">Edit this person</a>
 {% if alert %}
-<li><a href="{{ person.get_alert_remove_url }}">Stop alerting me to productions involving this person</a>
+    <li><a href="{{ person.get_alert_remove_url }}">Stop alerting me about this person</a>
 {% else %}
-<li><a href="{{ person.get_alert_add_url }}">Alert me to productions involving this person</a>
+    {% if plays %}
+        {% if future.object_list or past.object_list %}
+            <li><a href="{{ person.get_alert_add_url }}">Alert me to productions involving, or of plays by, this person</a>
+        {% else %}
+            <li><a href="{{ person.get_alert_add_url }}">Alert me to productions of plays by this person</a>
+        {% endif %}
+    {% else %}
+        <li><a href="{{ person.get_alert_add_url }}">Alert me to productions involving this person</a>
+    {% endif %}
 {% endif %}
 </ul>
 {% else %}

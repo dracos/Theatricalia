@@ -1,9 +1,11 @@
 import re
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.syndication.feeds import Feed
+from django.db.models import Count
 from people.models import Person
 from plays.models import Play
 from places.models import Place
+from productions.models import Production
 from shortcuts import check_url
 from productions.objshow import productions_past
 
@@ -58,19 +60,22 @@ class PersonFeed(Feed):
         person = check_url(Person, bits[0], bits[1])
         return person
 
-    def title(self, obj):
-        return 'Theatricalia: Productions with %s' % obj
+    def title(self, person):
+        return 'Theatricalia: Productions with, or of a play by, %s' % person
 
-    def link(self, obj):
-        if not obj:
+    def link(self, person):
+        if not person:
             raise FeedDoesNotExist
-        return obj.get_absolute_url()
+        return person.get_absolute_url()
 
-    def description(self, obj):
-        return 'The latest productions with %s from Theatricalia' % obj
+    def description(self, person):
+        return 'The latest productions with, or of a play by, %s from Theatricalia' % person
 
-    def items(self, obj):
-        return obj.productions.order_by('-id').distinct()[:20]
+    def items(self, person):
+        prod_with = person.productions.all().annotate(Count('parts'))
+        prod_by = Production.objects.filter(play__authors=person).annotate(Count('parts'))
+        productions = prod_with | prod_by
+        return productions.order_by('-id')[:20]
 
 class PlayFeed(Feed):
     def get_object(self, bits):
