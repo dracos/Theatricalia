@@ -49,7 +49,6 @@ class PlaceForm(forms.ModelForm):
 class PartForm(forms.ModelForm):
     person = forms.CharField()
     person_choice = forms.ChoiceField(label='Person', widget=forms.RadioSelect(), required=False)
-    production = forms.CharField(required=False, widget=forms.HiddenInput())
 
     class Meta:
         model = Part
@@ -59,6 +58,7 @@ class PartForm(forms.ModelForm):
         super(PartForm, self).__init__(*args, **kwargs)
         self.fields['start_date'].help_text = 'if they were only in this production for part of its run'
         self.fields['cast'].widget = CastCrewNullBooleanSelect()
+        self.fields['production'].widget = forms.HiddenInput()
         # Submitting the form with something selected in person_choice...
         if 'person_choice' in self.data and 'person' in self.data:
             choices = self.radio_choices(self.data['person'])

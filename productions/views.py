@@ -46,6 +46,7 @@ def production(request, play_id, play, production_id):
 def by_company(request, production):
     pass
 
+@login_required
 def part_add(name):
     first_name, last_name = name.split(None, 1)
     slug = unique_slugify(Person, '%s %s' % (first_name, last_name))
@@ -54,8 +55,8 @@ def part_add(name):
     return new_person
 
 @login_required
-def part_edit(request, play, production_id, part_id):
-    production = check_parameters(play, production_id)
+def part_edit(request, play_id, play, production_id, part_id):
+    production = check_parameters(play_id, play, production_id)
 
     part = get_object_or_404(Part, id=part_id)
     if part.production != production:
@@ -85,8 +86,8 @@ def part_edit(request, play, production_id, part_id):
     })
 
 @login_required
-def production_edit(request, play, production_id):
-    production = check_parameters(play, production_id)
+def production_edit(request, play_id, play, production_id):
+    production = check_parameters(play_id, play, production_id)
     production_form = ProductionForm(data=request.POST or None, instance=production)
 
     ProductionPlaceFormSet = inlineformset_factory( Production, ProductionPlace, extra=1, form=PlaceForm )
@@ -113,9 +114,9 @@ def production_edit(request, play, production_id):
     })
 
 @login_required
-def production_edit_cast(request, play, production_id):
+def production_edit_cast(request, play_id, play, production_id):
     """For picking someone to edit, or adding a new Part"""
-    production = check_parameters(play, production_id)
+    production = check_parameters(play_id, play, production_id)
     part_form = PartForm(request.POST or None)
 
     if request.method == 'POST':
