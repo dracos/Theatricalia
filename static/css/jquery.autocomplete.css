@@ -15,6 +15,7 @@
 }
 
 .ac_results li {
+	background-image: none;
 	margin: 0px;
 	padding: 2px 5px;
 	cursor: default;
@@ -35,7 +36,7 @@
 }
 
 .ac_loading {
-	background: white url('indicator.gif') right center no-repeat;
+	background: white url('/static/i/ajax-loader.gif') right center no-repeat;
 }
 
 .ac_odd {

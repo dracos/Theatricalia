@@ -7,6 +7,7 @@ from widgets import PrettyDateInput
 from django.forms.formsets import BaseFormSet
 from search.views import search_people
 from common.templatetags.prettify import prettify
+from autocomplete.widgets import ForeignKeySearchInput
 
 class CastCrewNullBooleanSelect(forms.widgets.NullBooleanSelect):
     def __init__(self, attrs=None):
@@ -21,11 +22,13 @@ class ProductionForm(forms.ModelForm):
         model = Production
         exclude = ('parts', 'places')
 
-#    def __init__(self, last_modified=None, *args, **kwargs):
+    def __init__(self, last_modified=None, *args, **kwargs):
 #        self.db_last_modified = last_modified
 #        kwargs.setdefault('initial', {}).update({ 'last_modified': last_modified })
-#        super(ProductionForm, self).__init__(*args, **kwargs)
-#
+        super(ProductionForm, self).__init__(*args, **kwargs)
+        self.fields['play'].widget = ForeignKeySearchInput(Production.play.field.rel, ('title',))
+        self.fields['company'].widget = ForeignKeySearchInput(Production.company.field.rel, ('name',))
+
 #    def clean(self):
 #        super(ProductionForm, self).clean()
 #

@@ -108,6 +108,8 @@ urlpatterns = patterns('',
     url('^search/parts/(?P<search>.+)$', search.search_parts, name='search-parts'),
     url('^search$', search.search, name='search'),
 
+    url('^ajax/autocomplete$', search.search_autocomplete, name='search-autocomplete'),
+
     url('^add$', productions.production_add, name='production-add'),
 
     url('^profile/(?P<username>.*)/alert/(?P<id>\d+)$', profiles.profile_alert, name='profile-alert-remove'),
