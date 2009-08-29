@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django import forms
 from reversion.admin import VersionAdmin
-from models import Production, ProductionCompany, Part
+from models import Production, ProductionCompany, Part, Place
 from autocomplete.widgets import AutocompleteModelAdmin
 
 class CompanyAdmin(VersionAdmin):
@@ -38,7 +38,11 @@ class ProductionAdmin(VersionAdmin, AutocompleteModelAdmin):
         PartInline,
     ]
 
+class PlaceAdmin(VersionAdmin):
+    pass
+
 admin.site.register(Production, ProductionAdmin)
 admin.site.register(ProductionCompany, CompanyAdmin)
 admin.site.register(Part, PartAdmin)
+admin.site.register(Place, PlaceAdmin)
 
