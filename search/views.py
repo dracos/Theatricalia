@@ -2,8 +2,9 @@ import re # , difflib
 import urllib
 from datetime import datetime
 from django.core.paginator import Paginator
+from django.http import HttpResponse, HttpResponseNotFound
 from django.utils import simplejson
-from django.db.models import Q
+from django.db.models import Q, get_model
 from shortcuts import render
 from people.models import Person
 from places.models import Place
@@ -17,6 +18,46 @@ from common.models import AlertLocal
 
 distance = jarow
 threshold = 0.8
+
+def autocomplete_construct_search(field_name):
+    """Use different lookup methods depending on the notation"""
+    if field_name.startswith('^'):
+        return "%s__istartswith" % field_name[1:]
+    elif field_name.startswith('='):
+        return "%s__iexact" % field_name[1:]
+    elif field_name.startswith('@'):
+        return "%s__search" % field_name[1:]
+    else:
+        return "%s__icontains" % field_name
+
+def search_autocomplete(request):
+    """Searches in the fields of the given related model and returns the 
+       result as a simple string to be used by the jQuery Autocomplete plugin"""
+
+    query = request.GET.get('q', None)
+
+    app_label = request.GET.get('app_label', None)
+    model_name = request.GET.get('model_name', None)
+    search_fields = request.GET.get('search_fields', None)
+
+    if not search_fields or not app_label or not model_name or not query:
+        return HttpResponseNotFound()
+
+    model = get_model(app_label, model_name)
+    q = None
+    for field_name in search_fields.split(','):
+        name = autocomplete_construct_search(field_name)
+        if q:
+            q = q | Q( **{str(name):query} )
+        else:
+            q = Q( **{str(name):query} )
+    if search_fields == 'first_name,last_name' and ' ' in query:
+        first, last = query.split(' ')
+        q = q | Q(first_name__icontains=first, last_name__icontains=last)
+
+    qs = model.objects.filter( q )
+    data = ''.join([u'%s|%s\n' % (f.__unicode__(), f.pk) for f in qs])
+    return HttpResponse(data)
 
 def search_people(search, force_similar=False, use_distance=True):
     sounds_people = 0
