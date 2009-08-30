@@ -105,7 +105,6 @@ INSTALLED_APPS = (
     'django.contrib.webdesign', # Lorem
     #'django.contrib.sites',
     'django.contrib.admin',
-    'dmigrations',
     'sorl.thumbnail',
     'reversion',
     'theatricalia.common',
