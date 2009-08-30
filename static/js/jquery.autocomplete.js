@@ -181,6 +181,9 @@ $.Autocompleter = function(input, options) {
 			if( typeof fn == "function" ) fn(result);
 			else $input.trigger("result", result && [result.data, result.value]);
 		}
+		if (!$input.val() && typeof fn == 'function') {
+			fn(''); // MPS addition - if no text, we want to make sure hidden field is cleared.
+		}
 		$.each(trimWords($input.val()), function(i, value) {
 			request(value, findValueCallback, findValueCallback);
 		});

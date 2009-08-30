@@ -2,6 +2,7 @@ import re
 from django import forms
 from models import Production, Part, Place, ProductionCompany
 from plays.models import Play
+from places.models import Place as PlacePlace
 from people.models import Person
 from fields import PrettyDateField, ApproximateDateFormField
 from widgets import PrettyDateInput
@@ -15,8 +16,33 @@ class CastCrewNullBooleanSelect(forms.widgets.NullBooleanSelect):
         choices = ((u'1', 'Unknown'), (u'2', 'Cast'), (u'3', 'Crew'))
         super(forms.widgets.NullBooleanSelect, self).__init__(attrs, choices)
 
+class AutoCompleteMultiValueField(forms.MultiValueField):
+    def __init__(self, model, column, *args, **kwargs):
+        self.model = model
+        self.column = column
+        super(AutoCompleteMultiValueField, self).__init__(*args, **kwargs)
+
+    def compress(self, data_list):
+        if not data_list:
+            return None
+        if data_list[0] and not data_list[1]:
+            data_list[1] = self.model(**{self.column: data_list[0]})
+        return data_list[1]
+
 class ProductionForm(forms.ModelForm):
     #last_modified = forms.DateTimeField(widget=forms.HiddenInput(), required=False)
+    play = AutoCompleteMultiValueField(
+        Play, 'title',
+        required = False, # It is required, but will be spotted in the clean function
+        fields = (forms.CharField(), forms.ModelChoiceField(Play.objects.all())),
+        widget = ForeignKeySearchInput(Production.play.field.rel, ('title',))
+    )
+    company = AutoCompleteMultiValueField(
+        ProductionCompany, 'name',
+        required = False,
+        fields = (forms.CharField(), forms.ModelChoiceField(ProductionCompany.objects.all())),
+        widget = ForeignKeySearchInput(Production.company.field.rel, ('name',))
+    )
     description = forms.CharField(required=False, widget=forms.Textarea(attrs={'cols': 40, 'rows':5}))
 
     class Meta:
@@ -27,9 +53,6 @@ class ProductionForm(forms.ModelForm):
 #        self.db_last_modified = last_modified
 #        kwargs.setdefault('initial', {}).update({ 'last_modified': last_modified })
         super(ProductionForm, self).__init__(*args, **kwargs)
-        self.fields['play'].widget = ForeignKeySearchInput(Production.play.field.rel, ('title',))
-        self.fields['play'].required = False
-        self.fields['company'].widget = ForeignKeySearchInput(Production.company.field.rel, ('name',))
 
 #    def clean(self):
 #        super(ProductionForm, self).clean()
@@ -42,16 +65,9 @@ class ProductionForm(forms.ModelForm):
 #        return self.cleaned_data
 
     def clean_play(self):
-        if not self.cleaned_data['play'] and not self.data['lookup_play']:
-            raise forms.ValidationError('You must specify a play.')
         if not self.cleaned_data['play']:
-            self.cleaned_data['play'] = Play(title=self.data['lookup_play'])
+            raise forms.ValidationError('You must specify a play.')
         return self.cleaned_data['play']
-
-    def clean_company(self):
-        if not self.cleaned_data['company'] and self.data['lookup_company']:
-            self.cleaned_data['company'] = ProductionCompany(name=self.data['lookup_company'])
-        return self.cleaned_data['company']
 
     def save(self, **kwargs):
         if not self.cleaned_data['play'].id:
@@ -61,6 +77,12 @@ class ProductionForm(forms.ModelForm):
         return super(ProductionForm, self).save(**kwargs)
 
 class PlaceForm(forms.ModelForm):
+    place = AutoCompleteMultiValueField(
+        PlacePlace, 'name',
+        required = False, # It is required, but will be spotted in the clean function
+        fields = (forms.CharField(), forms.ModelChoiceField(PlacePlace.objects.all())),
+        widget = ForeignKeySearchInput(Place.place.field.rel, ('name',))
+    )
     start_date = ApproximateDateFormField(required=False, label='It ran here from')
     press_date = PrettyDateField(required=False, label='Press night')
     end_date = ApproximateDateFormField(required=False, label='to')
@@ -72,6 +94,16 @@ class PlaceForm(forms.ModelForm):
         super(PlaceForm, self).__init__(*args, **kwargs)
         self.fields['production'].required = False
         self.fields['production'].widget = forms.HiddenInput()
+
+    def clean_place(self):
+        if not self.cleaned_data['place']:
+            raise forms.ValidationError('You must specify a place.')
+        return self.cleaned_data['place']
+
+    def save(self, **kwargs):
+        if not self.cleaned_data['place'].id:
+            self.cleaned_data['place'].save()
+        return super(PlaceForm, self).save(**kwargs)
 
 # person is the ext box where someone enters a name, and always will be
 # person_choice is the selection of someone from that, or the creation of a new person
