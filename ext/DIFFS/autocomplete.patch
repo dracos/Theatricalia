@@ -2,7 +2,7 @@ Index: ext/autocomplete/widgets.py
 ===================================================================
 --- ext/autocomplete/widgets.py	(revision 6)
 +++ ext/autocomplete/widgets.py	(working copy)
-@@ -20,96 +20,74 @@
+@@ -20,96 +20,75 @@
  from django.utils.safestring import mark_safe
  from django.utils.datastructures import MultiValueDict, MergeDict
  
@@ -25,7 +25,8 @@ Index: ext/autocomplete/widgets.py
 -			'%s/autocomplete/AutocompleteObjectLookups.js ' % settings.MEDIA_URL
 +			'%sjs/jquery.js' % settings.MEDIA_URL,
 +			'%sjs/jquery.autocomplete.js' % settings.MEDIA_URL,
-+			'%sautocomplete/AutocompleteObjectLookups.js ' % settings.MEDIA_URL
++			'%sautocomplete/AutocompleteObjectLookups.js ' % settings.MEDIA_URL,
++			'%sjs/global.js' % settings.MEDIA_URL,
  		)
  
  	def label_for_value(self, value):
@@ -130,7 +131,7 @@ Index: ext/autocomplete/widgets.py
  
  
  class ManyToManySearchInput(forms.MultipleHiddenInput):
-@@ -119,12 +97,12 @@
+@@ -119,12 +98,13 @@
  	"""
  	class Media:
  		css = {
@@ -143,11 +144,12 @@ Index: ext/autocomplete/widgets.py
 -			'%s/autocomplete/AutocompleteObjectLookups.js ' % settings.MEDIA_URL
 +			'%sjs/jquery.js' % settings.MEDIA_URL,
 +			'%sjs/jquery.autocomplete.js' % settings.MEDIA_URL,
-+			'%sautocomplete/AutocompleteObjectLookups.js ' % settings.MEDIA_URL
++			'%sautocomplete/AutocompleteObjectLookups.js ' % settings.MEDIA_URL,
++			'%sjs/global.js' % settings.MEDIA_URL,
  		)
  
  
-@@ -132,8 +110,7 @@
+@@ -132,8 +112,7 @@
  		self.rel = rel
  		self.search_fields = search_fields
  		super(ManyToManySearchInput, self).__init__(attrs)
@@ -157,7 +159,7 @@ Index: ext/autocomplete/widgets.py
  	
  	def value_from_datadict(self, data, files, name):
  		if isinstance(data, (MultiValueDict, MergeDict)):
-@@ -154,7 +131,7 @@
+@@ -154,7 +133,7 @@
              
  		label = ''
  		selected = ''
@@ -166,7 +168,7 @@ Index: ext/autocomplete/widgets.py
  		
  		for id in value:
  			obj = self.rel.to.objects.get(pk=id)
-@@ -162,7 +139,7 @@
+@@ -162,7 +141,7 @@
  			selected = selected + mark_safe(u"""
  				<div class="to_delete deletelink" ><input type="hidden" name="%(name)s" value="%(value)s"/>%(label)s</div>""" 
  				)%{
@@ -175,7 +177,7 @@ Index: ext/autocomplete/widgets.py
  					'name': name,
  					'value': obj.id,
  		}
-@@ -190,38 +167,23 @@
+@@ -190,38 +169,23 @@
  
  $(document).ready(function(){
  
@@ -224,7 +226,7 @@ Index: ext/autocomplete/widgets.py
  	}); 
  // --- delete initial element ---
  	$(".to_delete").click(function () {$(this).remove();});
-@@ -248,49 +210,9 @@
+@@ -248,49 +212,9 @@
  		return super(AutocompleteModelAdmin, self).__call__(request, url)
  
  	def search(self, request):
