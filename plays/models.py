@@ -30,9 +30,9 @@ class Play(models.Model):
         return self.title
 
     def save(self, **kwargs):
-        title = re.sub('^(.*), (A|An|The)$', r'\2 \1', self.title)
+        title = re.sub('^(.*), (A|An|The)$(?i)', r'\2 \1', self.title)
         self.slug = slugify(title)
-        self.title = re.sub('^(A|An|The) (.*)$', r'\2, \1', self.title)
+        self.title = re.sub('^(A|An|The) (.*)$(?i)', r'\2, \1', self.title)
         super(Play, self).save(**kwargs)
 
     def get_authors_display(self):

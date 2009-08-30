@@ -47,9 +47,9 @@ class Place(models.Model):
         return out
 
     def save(self, **kwargs):
-        name = re.sub('^(.*), (A|An|The)$', r'\2 \1', self.name)
+        name = re.sub('^(.*), (A|An|The)$(?i)', r'\2 \1', self.name)
         self.slug = slugify('%s %s' % (name, self.town))
-        self.name = re.sub('^(A|An|The) (.*)$', r'\2, \1', self.name)
+        self.name = re.sub('^(A|An|The) (.*)$(?i)', r'\2, \1', self.name)
         super(Place, self).save(**kwargs)
 
     def get_name_display(self):

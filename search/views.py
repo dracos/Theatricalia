@@ -43,8 +43,16 @@ def search_autocomplete(request):
     if not search_fields or not app_label or not model_name or not query:
         return HttpResponseNotFound()
 
+    # For database order of articles
+    m = re.match('^(A|An|The) (.*)$(?i)', query)
+    if m:
+        article, rest = m.groups()
+        field_name = search_fields.split(',')[0]
+        q = Q( **{ str('%s__iendswith' % field_name):' %s' % article, str('%s__istartswith' % field_name):rest } )
+    else:
+        q = None
+
     model = get_model(app_label, model_name)
-    q = None
     for field_name in search_fields.split(','):
         name = autocomplete_construct_search(field_name)
         if q:
