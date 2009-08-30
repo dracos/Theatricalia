@@ -201,7 +201,9 @@ function autocomplete_add(params) {
         }
     }).blur(function(){
         $(params.lookup).search(function (result) {
-            if (!result) {
+            if (result && result.data) {
+                $(params.id).val( result.data[1] );
+            } else {
                 $(params.id).val( "" );
             }
         });

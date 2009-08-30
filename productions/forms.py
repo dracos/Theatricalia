@@ -1,6 +1,7 @@
 import re
 from django import forms
-from models import Production, Part, Place
+from models import Production, Part, Place, ProductionCompany
+from plays.models import Play
 from people.models import Person
 from fields import PrettyDateField, ApproximateDateFormField
 from widgets import PrettyDateInput
@@ -27,6 +28,7 @@ class ProductionForm(forms.ModelForm):
 #        kwargs.setdefault('initial', {}).update({ 'last_modified': last_modified })
         super(ProductionForm, self).__init__(*args, **kwargs)
         self.fields['play'].widget = ForeignKeySearchInput(Production.play.field.rel, ('title',))
+        self.fields['play'].required = False
         self.fields['company'].widget = ForeignKeySearchInput(Production.company.field.rel, ('name',))
 
 #    def clean(self):
@@ -38,6 +40,25 @@ class ProductionForm(forms.ModelForm):
 #            raise forms.ValidationError('I am afraid that this production has been edited since you started editing.')
 #
 #        return self.cleaned_data
+
+    def clean_play(self):
+        if not self.cleaned_data['play'] and not self.data['lookup_play']:
+            raise forms.ValidationError('You must specify a play.')
+        if not self.cleaned_data['play']:
+            self.cleaned_data['play'] = Play(title=self.data['lookup_play'])
+        return self.cleaned_data['play']
+
+    def clean_company(self):
+        if not self.cleaned_data['company'] and self.data['lookup_company']:
+            self.cleaned_data['company'] = ProductionCompany(name=self.data['lookup_company'])
+        return self.cleaned_data['company']
+
+    def save(self, **kwargs):
+        if not self.cleaned_data['play'].id:
+            self.cleaned_data['play'].save()
+        if self.cleaned_data['company'] and not self.cleaned_data['company'].id:
+            self.cleaned_data['company'].save()
+        super(ProductionForm, self).save(**kwargs)
 
 class PlaceForm(forms.ModelForm):
     start_date = ApproximateDateFormField(required=False, label='It ran here from')

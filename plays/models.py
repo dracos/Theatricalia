@@ -45,7 +45,7 @@ class Play(models.Model):
         elif num == 1:
             str = authors[0]
         else:
-            str = 'No author'
+            str = 'unknown'
         return mark_safe(str)
             
     def construct_url(self, name, *args):
