@@ -9,7 +9,7 @@ from django.views.decorators.cache import never_cache
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 
-from forms import RegistrationForm, AuthenticationForm
+from forms import RegistrationForm, AuthenticationForm, ProfileForm
 from shortcuts import render, send_email
 from utils import int_to_base32, base32_to_int
 from common.models import Alert
@@ -121,10 +121,28 @@ def send_confirmation_email(request, user):
     )
 
 @login_required
-def profile_alert(request, username, id):
-    user = get_object_or_404(User, username=username)
-    profile = user.get_profile()
+def profile_edit(request):
+    profile = request.user.get_profile()
+    form = ProfileForm(request.POST or None, instance=profile)
+
+    if request.method == 'POST':
+        if request.POST.get('disregard'):
+            request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
+            return HttpResponseRedirect(profile.get_absolute_url())
+        if form.is_valid():
+            form.save()
+            request.user.message_set.create(message="Your changes have been stored; thank you.")
+            return HttpResponseRedirect(profile.get_absolute_url())
+
+    return render(request, 'profile-edit.html', {
+        'form': form,
+        'profile': profile,
+    })
+
+@login_required
+def profile_alert(request, id):
+    profile = request.user.get_profile()
     alert = get_object_or_404(Alert, id=id)
-    if user != alert.user:
+    if request.user != alert.user:
         raise Exception("Trying to unsubscribe someone else's alert?")
     return HttpResponseRedirect(profile.get_absolute_url())

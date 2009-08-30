@@ -9,6 +9,7 @@ from models import Profile
 
 class ProfileForm(forms.ModelForm):
     class Meta:
+        fields = ('biography', 'url')
         model = Profile
 
 class RegistrationForm(forms.ModelForm):

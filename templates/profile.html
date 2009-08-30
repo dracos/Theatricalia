@@ -39,7 +39,7 @@
         {% endifequal %}
     {% else %}{% if view.is_staff %} <li>Staff. {% endif %}{% endif %}
     {% if profile.url %}
-    <li><a href="{{ profile.url }}">Website</a>
+    <li><a rel="nofollow" href="{{ profile.url }}">Personal website</a>.
     {% endif %}
     <li>Joined {{ view.date_joined|date:"jS F Y" }}.
     <li>Last logged in on {{ view.last_login|date:"jS F Y" }}.

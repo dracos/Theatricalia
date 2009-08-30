@@ -113,7 +113,8 @@ urlpatterns = patterns('',
 
     url('^add$', productions.production_add, name='production-add'),
 
-    url('^profile/(?P<username>.*)/alert/(?P<id>\d+)$', profiles.profile_alert, name='profile-alert-remove'),
-    url('^profile/(?P<username>.*)/alert$', profiles.profile_alert, name='profile-alert'),
+    url('^profile/alert/(?P<id>\d+)$', profiles.profile_alert, name='profile-alert-remove'),
+    url('^profile/alert$', profiles.profile_alert, name='profile-alert'),
+    url('^profile/edit$', profiles.profile_edit, name='profile-edit'),
     url('^profile/(?P<username>.*)$', profiles.profile, name='profile'),
 )
