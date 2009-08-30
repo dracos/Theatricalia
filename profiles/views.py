@@ -145,4 +145,5 @@ def profile_alert(request, id):
     alert = get_object_or_404(Alert, id=id)
     if request.user != alert.user:
         raise Exception("Trying to unsubscribe someone else's alert?")
-    return HttpResponseRedirect(profile.get_absolute_url())
+    alert.delete()
+    return HttpResponseRedirect(profile.get_edit_url())

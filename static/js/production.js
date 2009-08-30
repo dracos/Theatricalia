@@ -2,13 +2,14 @@ function edit() {
 }
 
 $(function() {
+/*
     // Make select multiples nicer
-    //$("select[multiple]").attr('title', 'Select where it was performed...');
-    //$("select[multiple]").asmSelect({
-    //    listType: 'ul',
-    //    //highlight: true,
-    //    animate: true
-    //});
+    $("select[multiple]").attr('title', 'Select where it was performed...');
+    $("select[multiple]").asmSelect({
+        listType: 'ul',
+        //highlight: true,
+        animate: true
+    });
 
     $('#production_edit_inline').change(function(){
         $('#edit-form-submit').removeAttr('disabled');
@@ -42,4 +43,5 @@ $(function() {
         $('#production-stuff').show();
         return false;
     });
+*/
 });

@@ -28,14 +28,14 @@ def check_parameters(play_id, play, production_id):
 def production(request, play_id, play, production_id):
     production = check_parameters(play_id, play, production_id)
     photo_form = PhotoForm(production)
-    production_form = ProductionForm(instance=production)
-
-    ProductionPlaceFormSet = inlineformset_factory( Production, ProductionPlace, extra=1, form=PlaceForm )
-    formset = ProductionPlaceFormSet(
-        data = request.POST or None,
-        prefix = 'place',
-        instance = production,
-    )
+#    production_form = ProductionForm(instance=production)
+#
+#    ProductionPlaceFormSet = inlineformset_factory( Production, ProductionPlace, extra=1, form=PlaceForm )
+#    formset = ProductionPlaceFormSet(
+#        data = request.POST or None,
+#        prefix = 'place',
+#        instance = production,
+#    )
 
     try:
         seen = production.visit_set.get(user=request.user)
@@ -44,8 +44,8 @@ def production(request, play_id, play, production_id):
 
     return render(request, 'production.html', {
         'production': production,
-        'production_form': production_form,
-        'production_formset': formset,
+#        'production_form': production_form,
+#        'production_formset': formset,
         'cast': production.part_set.filter(cast=True).order_by('order', 'role'),
         'crew': production.part_set.filter(cast=False).order_by('order', 'role'),
         'photo_form': photo_form,

@@ -28,20 +28,6 @@ $(function() {
         window.scrollTo(0, 0);
     }
 
-    $('.edit_status select').change(function(){
-        edit_status = $(this).find('option:selected').val();
-        if (edit_status == 'leave') {
-            $(this).parents('tr').find('input,select').not('.edit_status select').attr('disabled', 'disabled');
-            $(this).parents('tr').removeClass('remove');
-        } else if (edit_status == 'change') {
-            $(this).parents('tr').find('input,select').not('.edit_status select').removeAttr('disabled');
-            $(this).parents('tr').removeClass('remove');
-        } else if (edit_status == 'remove') {
-            $(this).parents('tr').find('input,select').not('.edit_status select').attr('disabled', 'disabled');
-            $(this).parents('tr').addClass('remove');
-        }
-    }).change();
-
     $('form#edit .place:last').after(
         $('<p>If this production performed at another place, <a href="">add another place</a>.</p>').click(function(){
             var last_form = $('form#edit .place:last');
@@ -60,6 +46,15 @@ $(function() {
             });
             total++;
             $('#id_place-TOTAL_FORMS').val(total);
+
+            autocomplete_add({
+                lookup: "#id_place-" + (total-1) + "-place_0",
+                id: '#id_place-' + (total-1) + '-place_1',
+                search_fields: 'name',
+                app_label: 'places',
+                model_name: 'place'
+            });
+
             return false;
         })
     );
