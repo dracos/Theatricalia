@@ -1,0 +1,278 @@
+Index: ext/autocomplete/widgets.py
+===================================================================
+--- ext/autocomplete/widgets.py	(revision 6)
++++ ext/autocomplete/widgets.py	(working copy)
+@@ -20,96 +20,74 @@
+ from django.utils.safestring import mark_safe
+ from django.utils.datastructures import MultiValueDict, MergeDict
+ 
+-class ForeignKeySearchInput(forms.HiddenInput):
++from search.views import search_autocomplete
++
++class ForeignKeySearchInput(forms.MultiWidget):
+ 	"""
+ 	A Widget for displaying ForeignKeys in an autocomplete search input 
+ 	instead in a <select> box.
+ 	"""
+ 	class Media:
+ 		css = {
+-			'all': ('%s/jquery.autocomplete.css' % settings.MEDIA_URL,)
++			'all': ('%scss/jquery.autocomplete.css' % settings.MEDIA_URL,)
+ 		}
+ 		js = (
+-			'%s/js/jquery.js' % settings.MEDIA_URL,
+-			'%s/js/jquery.autocomplete.js' % settings.MEDIA_URL,
+-			'%s/autocomplete/AutocompleteObjectLookups.js ' % settings.MEDIA_URL
++			'%sjs/jquery.js' % settings.MEDIA_URL,
++			'%sjs/jquery.autocomplete.js' % settings.MEDIA_URL,
++			'%sautocomplete/AutocompleteObjectLookups.js ' % settings.MEDIA_URL
+ 		)
+ 
+ 	def label_for_value(self, value):
+-		rel_name = self.search_fields[0].split('__')[0]
+-		
+ 		key = self.rel.get_related_field().name
+ 		obj = self.rel.to._default_manager.get(**{key: value})
+ 		
+-		return getattr(obj,rel_name)
++		return obj
+ 
+ 	def __init__(self, rel, search_fields, attrs=None):
+ 		self.rel = rel
+ 		self.search_fields = search_fields
+-		super(ForeignKeySearchInput, self).__init__(attrs)
++		widgets = (forms.TextInput(attrs={'size':40}), forms.HiddenInput())
++		super(ForeignKeySearchInput, self).__init__(widgets, attrs)
+ 
++	def decompress(self, value):
++		if value is None:
++			return [ '', None ]
++		return [ self.label_for_value(value), value ]
++
+ 	def render(self, name, value, attrs=None):
+ 		if attrs is None:
+ 			attrs = {}
+ 		rendered = super(ForeignKeySearchInput, self).render(name, value, attrs)
+-		if value:
+-			label = self.label_for_value(value)
+-		else:
+-			label = u''
+ 		return rendered + mark_safe(u'''
+-<input type="text" id="lookup_%(name)s" value="%(label)s" size="40"/>
+ <script type="text/javascript">
+ 
+-function addItem_id_%(name)s(id, name) {
++function addItem_id_%(namenodash)s(id, name) {
+ 	
+-	$("#id_%(name)s").val( id );
+-	$("#lookup_%(name)s").val( name );
++	$("#id_%(name)s_1").val( id );
++	$("#id_%(name)s_0").val( name );
+ }
+ 
+ $(document).ready(function(){
+-
+-function liFormat_%(name)s (row, i, num) {
+-	var result = row[0] ;
+-	return result;
+-}
+-function selectItem_%(name)s(li) {
+-	if( li == null ) var sValue = '';
+-	if( !!li.extra ) var sValue = li.extra[0];
+-	else var sValue = li.selectValue;
+-	$("#id_%(name)s").val( sValue );
+-}
+-
+-// --- Autocomplete ---
+-$("#lookup_%(name)s").autocomplete("../search/", {
+-		extraParams: {
+-		search_fields: '%(search_fields)s',
+-		app_label: '%(app_label)s',
+-		model_name: '%(model_name)s',
+-	},
+-	delay:10,
+-	minChars:2,
+-	matchSubset:1,
+-	autoFill:true,
+-	matchContains:1,
+-	cacheLength:10,
+-	selectFirst:true,
+-	formatItem:liFormat_%(name)s,
+-	maxItemsToShow:10,
+-	onItemSelect:selectItem_%(name)s
+-}); 
+-// --- Autocomplete ---
++    autocomplete_add({
++        lookup: "#id_%(name)s_0",
++        id: '#id_%(name)s_1',
++        search_fields: '%(search_fields)s',
++        app_label: '%(app_label)s',
++        model_name: '%(model_name)s'
++    }); 
+ });
++
+ </script>
+ 
+-		''') % {
++		''' % {
+ 			'search_fields': ','.join(self.search_fields),
+-			'MEDIA_URL': settings.MEDIA_URL,
++			#'MEDIA_URL': settings.MEDIA_URL,
+ 			'model_name': self.rel.to._meta.module_name,
+ 			'app_label': self.rel.to._meta.app_label,
+-			'label': label,
+ 			'name': name,
+-			'value': value,
+-		}
++			'namenodash': name.replace('-', '_'),
++			#'value': value,
++		})
+ 
+ 
+ class ManyToManySearchInput(forms.MultipleHiddenInput):
+@@ -119,12 +97,12 @@
+ 	"""
+ 	class Media:
+ 		css = {
+-			'all': ('%s/jquery.autocomplete.css' % settings.MEDIA_URL,)
++			'all': ('%scss/jquery.autocomplete.css' % settings.MEDIA_URL,)
+ 		}
+ 		js = (
+-			'%s/js/jquery.js' % settings.MEDIA_URL,
+-			'%s/js/jquery.autocomplete.js' % settings.MEDIA_URL,
+-			'%s/autocomplete/AutocompleteObjectLookups.js ' % settings.MEDIA_URL
++			'%sjs/jquery.js' % settings.MEDIA_URL,
++			'%sjs/jquery.autocomplete.js' % settings.MEDIA_URL,
++			'%sautocomplete/AutocompleteObjectLookups.js ' % settings.MEDIA_URL
+ 		)
+ 
+ 
+@@ -132,8 +110,7 @@
+ 		self.rel = rel
+ 		self.search_fields = search_fields
+ 		super(ManyToManySearchInput, self).__init__(attrs)
+-#		self.help_text = u"To search, enter at least two characters"
+-		self.help_text = u"Для поиска укажите хотя бы два символа"
++		self.help_text = u"To search, enter at least two characters"
+ 	
+ 	def value_from_datadict(self, data, files, name):
+ 		if isinstance(data, (MultiValueDict, MergeDict)):
+@@ -154,7 +131,7 @@
+             
+ 		label = ''
+ 		selected = ''
+-		rel_name = self.search_fields[0].split('__')[0]
++		#rel_name = self.search_fields[0].split('__')[0]
+ 		
+ 		for id in value:
+ 			obj = self.rel.to.objects.get(pk=id)
+@@ -162,7 +139,7 @@
+ 			selected = selected + mark_safe(u"""
+ 				<div class="to_delete deletelink" ><input type="hidden" name="%(name)s" value="%(value)s"/>%(label)s</div>""" 
+ 				)%{
+-					'label': getattr(obj,rel_name),
++					'label': obj, #getattr(obj,rel_name),
+ 					'name': name,
+ 					'value': obj.id,
+ 		}
+@@ -190,38 +167,23 @@
+ 
+ $(document).ready(function(){
+ 
+-	function liFormat_%(name)s (row, i, num) {
+-		var result = row[0] ;
+-		return result;
+-	}
+-	function selectItem_%(name)s(li) {
+-		if( li == null ) return
+-
+-		// --- new element ---
+-		$('<div class="to_delete deletelink"><input type="hidden" name="%(name)s" value="'+li.extra[0]+'"/>'+li.selectValue+'</div>')
+-		.click(function () {$(this).remove();})
+-		.appendTo("#box_%(name)s");
+-
+-		$("#lookup_%(name)s").val( '' );
+-	}
+-		
+ 	// --- Autocomplete ---
+-	$("#lookup_%(name)s").autocomplete("../search/", {
+-			extraParams: {
++	$("#lookup_%(name)s").autocomplete("/ajax/autocomplete", {
++		extraParams: {
+ 			search_fields: '%(search_fields)s',
+ 			app_label: '%(app_label)s',
+ 			model_name: '%(model_name)s',
+ 		},
+-		delay:10,
+ 		minChars:2,
+-		matchSubset:1,
+-		autoFill:false,
+ 		matchContains:1,
+-		cacheLength:10,
+-		selectFirst:true,
+-		formatItem:liFormat_%(name)s,
+-		maxItemsToShow:10,
+-		onItemSelect:selectItem_%(name)s
++	}).result(function(event, data, formatted) {
++        if (!data) return;
++		// --- new element ---
++		$('<div class="to_delete deletelink"><input type="hidden" name="%(name)s" value="' + data[1] + '"/>' + formatted + '</div>')
++		.click(function () {$(this).remove();})
++		.appendTo("#box_%(name)s");
++
++		$("#lookup_%(name)s").val( '' );
+ 	}); 
+ // --- delete initial element ---
+ 	$(".to_delete").click(function () {$(this).remove();});
+@@ -248,49 +210,9 @@
+ 		return super(AutocompleteModelAdmin, self).__call__(request, url)
+ 
+ 	def search(self, request):
+-		
+-		#	Searches in the fields of the given related model and returns the 
+-		#	result as a simple string to be used by the jQuery Autocomplete plugin
+-		
+-		query = request.GET.get('q', None)  # не забудь убрать это виндозное шаманство!!!
++		"""Factor out this function to my own code to be used by front-end"""
++		return search_autocomplete(request)
+ 
+-		app_label = request.GET.get('app_label', None)
+-		model_name = request.GET.get('model_name', None)
+-		search_fields = request.GET.get('search_fields', None)
+-
+-		#print '-----------------------'
+-		#print search_fields, app_label, model_name, query
+-		
+-		if search_fields and app_label and model_name and query:
+-			def construct_search(field_name):
+-				# use different lookup methods depending on the notation
+-				if field_name.startswith('^'):
+-					return "%s__istartswith" % field_name[1:]
+-				elif field_name.startswith('='):
+-					return "%s__iexact" % field_name[1:]
+-				elif field_name.startswith('@'):
+-					return "%s__search" % field_name[1:]
+-				else:
+-					return "%s__icontains" % field_name
+-
+-			model = models.get_model(app_label, model_name)
+-			q = None
+-			for field_name in search_fields.split(','):
+-				name = construct_search(field_name)
+-				#print name,'=',query
+-				if q:
+-					q = q | models.Q( **{str(name):query} )
+-				else:
+-					q = models.Q( **{str(name):query} )
+-			qs = model.objects.filter( q )
+-			
+-			rel_name = field_name.split('__')[0]			
+-			
+-			data = ''.join([u'%s|%s\n' % (getattr(f,rel_name), f.pk) for f in qs])
+-#			data = ''.join([u'%s|%s\n' % (f.__unicode__(), f.pk) for f in qs])
+-			return HttpResponse(data)
+-		return HttpResponseNotFound()
+-
+ 	def formfield_for_dbfield(self, db_field, **kwargs):
+ 		# For ForeignKey use a special Autocomplete widget.
+ 		if isinstance(db_field, models.ForeignKey) and db_field.name in self.related_search_fields:
