@@ -129,15 +129,25 @@ by the {{ production.company|prettify }}{% endif %},
 <ul>
 <li><a href="#observations">{% if comment_count %}Observations ({{ comment_count }}){% else %}Add observation{% endif %}</a>
 <li id="edit-link"><a href="{{ production.get_edit_url }}">Edit this production</a>
-{% if production.finished %}
-    <li><a href="">I saw this production</a>
-{% else %}
-    {% if production.started %}
-        <li><a href="">I saw or am going to see this production</a>
+
+{% if seen %}
+    {% if production.finished %}
+        <li><a href="{{ production.get_seen_no_url }}">I did not see this production</a>
     {% else %}
-        <li><a href="">I&rsquo;m going to see this production</a>
+        <li><a href="{{ production.get_seen_no_url }}">I&rsquo;m not going to see this production</a>
+    {% endif %}
+{% else %}
+    {% if production.finished %}
+        <li><a href="{{ production.get_seen_url }}">I saw this production</a>
+    {% else %}
+        {% if production.started %}
+            <li><a href="{{ production.get_seen_url }}">I saw or am going to see this production</a>
+        {% else %}
+            <li><a href="{{ production.get_seen_url }}">I&rsquo;m going to see this production</a>
+        {% endif %}
     {% endif %}
 {% endif %}
+
 </ul>
 
 <div id="photographs">

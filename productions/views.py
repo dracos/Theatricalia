@@ -1,12 +1,15 @@
 import re
+
 from django.shortcuts import get_object_or_404
-from utils import base32_to_int, unique_slugify
 from django.contrib.auth.decorators import login_required
 from django.forms.models import modelformset_factory, inlineformset_factory
+from django.db import IntegrityError
 from django.contrib.comments.views.comments import post_comment
 from django.http import Http404, HttpResponseRedirect
+
+from utils import base32_to_int, unique_slugify
 from shortcuts import render, check_url
-from models import Production, Part, Place as ProductionPlace
+from models import Production, Part, Place as ProductionPlace, Visit
 from forms import ProductionForm, PartForm, PlaceForm
 from plays.models import Play
 from places.models import Place
@@ -34,6 +37,11 @@ def production(request, play_id, play, production_id):
         instance = production,
     )
 
+    try:
+        seen = production.visit_set.get(user=request.user)
+    except:
+        seen = None
+
     return render(request, 'production.html', {
         'production': production,
         'production_form': production_form,
@@ -41,7 +49,26 @@ def production(request, play_id, play, production_id):
         'cast': production.part_set.filter(cast=True).order_by('order', 'role'),
         'crew': production.part_set.filter(cast=False).order_by('order', 'role'),
         'photo_form': photo_form,
+        'seen': seen,
     })
+
+@login_required
+def production_seen(request, play_id, play, production_id, type):
+    production = check_parameters(play_id, play, production_id)
+    if type == 'add':
+        alert = Visit(user=request.user, production=production)
+        try:
+            alert.save()
+        except IntegrityError, e:
+            if e.args[0] != 1062: # Duplicate
+                raise
+        request.user.message_set.create(message=u"Your visit has been recorded.")
+    elif type == 'remove':
+        Visit.objects.get(user=request.user, production=production).delete()
+        request.user.message_set.create(message=u"Your visit has been removed.")
+
+    return HttpResponseRedirect(production.get_absolute_url())
+
 
 def by_company(request, production):
     pass

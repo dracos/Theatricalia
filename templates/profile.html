@@ -17,16 +17,12 @@
 <p>This user has not yet supplied any details.</p>
 {% endif %}
 
-<h2>Going to see</h2>
+<h2>Seen, or going to see</h2>
 
 <ul>
-<li>...
-</ul>
-
-<h2>Productions seen</h2>
-
-<ul>
-<li>...
+{% for s in seen %}
+<li><a href="{{ s.production.get_absolute_url }}">{{ s.production }}</a>
+{% endfor %}
 </ul>
 
 </div>

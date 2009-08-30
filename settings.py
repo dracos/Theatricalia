@@ -5,8 +5,6 @@ import os.path, sys
 OUR_ROOT = os.path.realpath(os.path.dirname(__file__))
 sys.path.insert(0, os.path.join(OUR_ROOT, 'ext'))
 
-DMIGRATIONS_DIR = os.path.join(OUR_ROOT, 'migrations')
-
 ALPHA_PASSWORD='tiaomiwym' # this, if anything of mine, is worth your memory
 
 EMAIL_HOST = 'localhost'

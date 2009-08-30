@@ -5,6 +5,7 @@ from django.contrib.contenttypes import generic
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import slugify
 from django.db.models import Max, Min
+from django.contrib.auth.models import User
 from utils import int_to_base32
 from places.models import Place
 from people.models import Person
@@ -81,13 +82,16 @@ class Production(models.Model):
     parts = models.ManyToManyField(Person, through='Part', related_name='productions', blank=True)
     photos = generic.GenericRelation(Photo)
     description = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    seen_by = models.ManyToManyField(User, through='Visit', related_name='seen', blank=True)
 
-    def url_components(self, name):
-        return (name, (), {
+    def url_components(self, name, **kwargs):
+        kwargs.update({
             'play': self.play.slug,
             'play_id': int_to_base32(self.play.id),
             'production_id': int_to_base32(self.id),
         })
+        return (name, (), kwargs)
 
     @models.permalink
     def get_absolute_url(self):
@@ -100,6 +104,14 @@ class Production(models.Model):
     @models.permalink
     def get_edit_cast_url(self):
         return self.url_components('production-edit-cast')
+
+    @models.permalink
+    def get_seen_url(self):
+        return self.url_components('production-seen', type='add')
+
+    @models.permalink
+    def get_seen_no_url(self):
+        return self.url_components('production-seen', type='remove')
 
     def __unicode__(self):
         producer = ''
@@ -205,3 +217,18 @@ class Part(models.Model):
             return 'Crew'
         else:
             return 'Unknown'
+
+class Visit(models.Model):
+    production = models.ForeignKey(Production)
+    user = models.ForeignKey(User)
+    recommend = models.BooleanField()
+
+    class Meta:
+        unique_together = (('user', 'production'),)
+    
+    def __unicode__(self):
+        out = '%s saw %s' % (self.user, self.production)
+        if self.recommend:
+            out += ', recommended'
+        return out
+

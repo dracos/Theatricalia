@@ -1,14 +1,17 @@
-from shortcuts import render, send_email
-from forms import RegistrationForm, AuthenticationForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.decorators import login_required
-from utils import int_to_base32, base32_to_int
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.conf import settings
 from django.views.decorators.cache import never_cache
+from django.db.models import Q
+from django.contrib.contenttypes.models import ContentType
+
+from forms import RegistrationForm, AuthenticationForm
+from shortcuts import render, send_email
+from utils import int_to_base32, base32_to_int
 from common.models import Alert
 from reversion.models import Revision
 from productions.models import Part
@@ -18,20 +21,27 @@ def profile(request, username):
     profile = user.get_profile()
 
     latest = []
+    content_types = ContentType.objects.filter(
+        Q(app_label='plays', model='play')
+        | Q(app_label='people', model='person')
+        | Q(app_label='productions', model='production')
+        | Q(app_label='places', model='place')
+    )
     for l in Revision.objects.filter(user=user).order_by('-date_created')[:10]:
         versions = []
-        for v in l.version_set.all():
+        for v in l.version_set.filter(content_type__in=content_types):
             obj = v.content_type.get_object_for_this_type(id=v.object_id)
-            if v.content_type.model_class() == Part:
-                url = obj.production.get_absolute_url()
-            else:
-                url = obj.get_absolute_url()
+            url = obj.get_absolute_url()
             versions.append((obj, url))
         latest.append(versions)
+
+    seen = user.visit_set.all()
+
     return render(request, 'profile.html', {
         'view': user,
         'profile': profile,
         'latest': latest,
+        'seen': seen,
     })
 
 def register(request):
