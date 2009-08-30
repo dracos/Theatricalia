@@ -17,14 +17,14 @@ def pretty_date_range(start_date, press_date, end_date):
     if not start_date:
         if not press_date:
             if not end_date:
-                return 'Date unknown'
+                return 'date unknown'
             else:
-                return u'Ended %s' % end_date
+                return u'ended %s' % end_date
         elif not end_date:
             return '%s (press night)' % dateformat.format(press_date, 'jS F Y')
 
     if not end_date:
-        return u'Started %s' % start_date
+        return u'started %s' % start_date
 
     press = ''
     if not start_date and press_date:

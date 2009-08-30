@@ -58,15 +58,20 @@ class ProductionForm(forms.ModelForm):
             self.cleaned_data['play'].save()
         if self.cleaned_data['company'] and not self.cleaned_data['company'].id:
             self.cleaned_data['company'].save()
-        super(ProductionForm, self).save(**kwargs)
+        return super(ProductionForm, self).save(**kwargs)
 
 class PlaceForm(forms.ModelForm):
     start_date = ApproximateDateFormField(required=False, label='It ran here from')
     press_date = PrettyDateField(required=False, label='Press night')
     end_date = ApproximateDateFormField(required=False, label='to')
-    production = forms.CharField(required=False, widget=forms.HiddenInput())
+
     class Meta:
         model = Place
+
+    def __init__(self, *args, **kwargs):
+        super(PlaceForm, self).__init__(*args, **kwargs)
+        self.fields['production'].required = False
+        self.fields['production'].widget = forms.HiddenInput()
 
 # person is the ext box where someone enters a name, and always will be
 # person_choice is the selection of someone from that, or the creation of a new person
