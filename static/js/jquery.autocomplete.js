@@ -132,7 +132,7 @@ $.Autocompleter = function(input, options) {
 			
 			// matches also semicolon
 			case options.multiple && $.trim(options.multipleSeparator) == "," && KEY.COMMA:
-			case KEY.TAB:
+			//case KEY.TAB:
 			case KEY.RETURN:
 				if( selectCurrent() ) {
 					// stop default to prevent a form submit, Opera needs special handling
@@ -305,9 +305,9 @@ $.Autocompleter = function(input, options) {
 				}
 			);
 		}
-		if (wasVisible)
-			// position cursor at end of input field
-			$.Autocompleter.Selection(input, input.value.length, input.value.length);
+		//if (wasVisible)
+		//	// position cursor at end of input field
+		//	$.Autocompleter.Selection(input, input.value.length, input.value.length);
 	};
 
 	function receiveData(q, data) {

@@ -1,22 +1,22 @@
 jQuery(window).load(function() {
-	// Crazyweird fix lets us style abbr using CSS in IE - do NOT run onDomReady, must be onload
-	document.createElement('abbr');
+    // Crazyweird fix lets us style abbr using CSS in IE - do NOT run onDomReady, must be onload
+    document.createElement('abbr');
 });
 
 $.fn.wait = function(time, type) {
-	time = time || 1000;
-	type = type || 'fx';
-	return this.queue(type, function() {
-		var self = this;
-		setTimeout(function() {
-			$(self).dequeue();
-		}, time);
-	});
+    time = time || 1000;
+    type = type || 'fx';
+    return this.queue(type, function() {
+        var self = this;
+        setTimeout(function() {
+            $(self).dequeue();
+        }, time);
+    });
 };
 
 var start_tab;
 $(function() {
-	$('#messages').wait(3000).slideUp('slow');
+    $('#messages').wait(3000).slideUp('slow');
 
     $('#search_tabs').tabs({
         selected: start_tab,
@@ -28,19 +28,19 @@ $(function() {
         window.scrollTo(0, 0);
     }
 
-	$('.edit_status select').change(function(){
-		edit_status = $(this).find('option:selected').val();
-		if (edit_status == 'leave') {
-			$(this).parents('tr').find('input,select').not('.edit_status select').attr('disabled', 'disabled');
-			$(this).parents('tr').removeClass('remove');
-		} else if (edit_status == 'change') {
-			$(this).parents('tr').find('input,select').not('.edit_status select').removeAttr('disabled');
-			$(this).parents('tr').removeClass('remove');
-		} else if (edit_status == 'remove') {
-			$(this).parents('tr').find('input,select').not('.edit_status select').attr('disabled', 'disabled');
-			$(this).parents('tr').addClass('remove');
-		}
-	}).change();
+    $('.edit_status select').change(function(){
+        edit_status = $(this).find('option:selected').val();
+        if (edit_status == 'leave') {
+            $(this).parents('tr').find('input,select').not('.edit_status select').attr('disabled', 'disabled');
+            $(this).parents('tr').removeClass('remove');
+        } else if (edit_status == 'change') {
+            $(this).parents('tr').find('input,select').not('.edit_status select').removeAttr('disabled');
+            $(this).parents('tr').removeClass('remove');
+        } else if (edit_status == 'remove') {
+            $(this).parents('tr').find('input,select').not('.edit_status select').attr('disabled', 'disabled');
+            $(this).parents('tr').addClass('remove');
+        }
+    }).change();
 
     $('form#edit .place:last').after(
         $('<p>If this production performed at another place, <a href="">add another place</a>.</p>').click(function(){
@@ -183,4 +183,28 @@ $(function() {
     //});
 });
 
+
+/* Autocomplete stuff */
+
+function autocomplete_add(params) {
+    $(params.lookup).autocomplete("/ajax/autocomplete", {
+        extraParams: {
+            search_fields: params.search_fields,
+            app_label: params.app_label,
+            model_name: params.model_name
+        },
+        matchContains:1,
+        selectFirst:0
+    }).result(function(event, data, formatted) {
+        if (data) {
+            $(params.id).val( data[1] );
+        }
+    }).blur(function(){
+        $(params.lookup).search(function (result) {
+            if (!result) {
+                $(params.id).val( "" );
+            }
+        });
+    });
+}
 
