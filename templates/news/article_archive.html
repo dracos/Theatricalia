@@ -15,7 +15,7 @@
 at {{ latest.0.created|date:"g:i a" }}
 on {{ latest.0.created|date:"jS F Y" }}.</p>
 
-<p>{{ latest.0.body|safe }}</p>
+<p>{{ latest.0.body|safe|prettify }}</p>
 
 </div>
 

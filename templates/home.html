@@ -85,7 +85,7 @@ Added by {{ latest_production.creator.name }}.
 <h2 class="no-descenders" style="margin-top:0">Site news</h2>
 
 <p><strong>{{ latest_news.title }}:</strong>
-{{ latest_news.body|truncatewords:"20" }}
+{{ latest_news.body|safe|truncatewords:"20"|prettify }}
 
 <a href="{{ latest_news.get_absolute_url }}">More</a>
 

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load prettify %}
 
 {% block title %}{{ object.title }} &ndash; Publicity{% endblock %}
 
@@ -8,7 +9,7 @@
 
 <div id="primary">
 
-<p>{{ object.body|safe }}</p>
+<p>{{ object.body|safe|prettify }}</p>
 
 </div>
 

@@ -21,19 +21,29 @@ def prettify(str):
 
     # Nice dashes and ellipses
     str = re.sub('\s-\s', ' &ndash; ', str)
+    str = re.sub('(\d)-(\d)', r'\1&ndash;\2', str)
     str = str.replace('--', '&ndash;').replace('---', '&mdash;')
     str = re.sub('\. ?\. ?\.', '&hellip;', str)
 
     # Nice quotes
     str = str.replace('``', '&ldquo;').replace("''", '&rdquo;')
-    str = re.sub('"([^"]*)"', r'&ldquo;\1&rdquo;', str)
-    str = re.sub("'(.*?)'(?=[^\w]|$)", r'&lsquo;\1&rsquo;', str)
+    if str.find('<') == -1:
+        str = re.sub('"([^"]*)"', r'&ldquo;\1&rdquo;', str)
+        str = re.sub("'(.*?)'(?=[^\w]|$)", r'&lsquo;\1&rsquo;', str)
+        str = str.replace('"', '&quot;').replace("'", '&rsquo;')
+    else:
+        # Must be Safe data with HTML tags in it
+        lines = []
+        for line in re.split('(<[^>]*>)', str):
+            if not re.match('<[^>]*>', line):
+                line = re.sub('"([^"]*)"', r'&ldquo;\1&rdquo;', line)
+                line = re.sub("'(.*?)'(?=[^\w]|$)", r'&lsquo;\1&rsquo;', line)
+                line = line.replace('"', '&quot;').replace("'", '&rsquo;')
+            lines.append(line)
+        str = ''.join(lines)
     #str = re.sub("'([dlstv])", r'&rsquo;\1', str) # Nice apostrophe
     #str = re.sub("s'\s", r's&rsquo; ', str) # Nice apostrophe
     #str = re.sub("O'", r'O&rsquo;', str) # Nice apostrophe
-
-    if not isinstance(str, SafeData):
-            str = str.replace('"', '&quot;').replace("'", '&rsquo;')
 
     str = re.sub(r'\b(\d+)(st|nd|rd|th)\b', r'\1<sup>\2</sup>', str) # Nice ordinals
     str = re.sub(r'([A-Z]\.)\s+(?=[A-Z])', r'\1&#8201;', str) # Hair or thin spaces between intermediary periods
