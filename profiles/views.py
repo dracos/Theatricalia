@@ -8,6 +8,7 @@ from django.conf import settings
 from django.views.decorators.cache import never_cache
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.comments.models import Comment
 
 from forms import RegistrationForm, AuthenticationForm, ProfileForm
 from shortcuts import render, send_email
@@ -41,6 +42,7 @@ def profile(request, username):
         'view': user,
         'profile': profile,
         'latest': latest,
+        'observations': Comment.objects.filter(user=user).order_by('-submit_date')[:5],
         'seen': seen,
     })
 

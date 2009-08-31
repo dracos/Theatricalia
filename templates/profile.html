@@ -48,6 +48,18 @@
 {% endifequal %}
     </ul>
 
+<h2>Last five observations</h2>
+{% if observations %}
+<ul>
+{% for o in observations %}
+<li>To <a href="{{ o.content_object.get_absolute_url }}">{{ o.content_object }}</a>:
+&ldquo;{{ o.comment|prettify }}&rdquo;
+{% endfor %}
+</ul>
+{% else %}
+<p>This user has made no observations.</p>
+{% endif %}
+
 <h2>Last ten changes</h2>
 
 <ul>

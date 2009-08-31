@@ -158,14 +158,25 @@ by {{ production.company|prettify }}{% endif %},
 
 </ul>
 
+{% if production.seen_by %}
+<h2>Seen by</h2>
+<ul id="seen_by">
+{% for u in production.seen_by.all %}
+<li><a href="{{ u.get_profile.get_absolute_url }}">{{ u.name }}</a>
+{% endfor %}
+</ul>
+{% endif %}
+
 <div id="photographs">
 <h2>Photographs</h2>
 
+{% if production.photos.all %}
 <ul>
 {% for photo in production.photos.all %}
 <li><a href="{{ photo.photo.extra_thumbnails.larger }}">{{ photo.photo.thumbnail_tag }}</a>
 {% endfor %}
 </ul>
+{% endif %}
 
 </div>
 
