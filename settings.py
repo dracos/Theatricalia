@@ -24,6 +24,8 @@ ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
 
+INTERNAL_IPS = ('127.0.0.1',)
+
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.

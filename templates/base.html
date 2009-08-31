@@ -141,6 +141,7 @@
 <p><img src="/static/i/mouse.png" alt="" height="48">
 </div>
 
+{% if debug %}
 <p><a href="#" onclick="$('#queries').toggle(); return false;">Show/hide database queries</a></p>
 <div class="hide" id="queries">
 <table style="font-size:75%">
@@ -149,6 +150,7 @@
 {% endfor %}
 </table>
 </div>
+{% endif %}
 
 </body>
 </html>
