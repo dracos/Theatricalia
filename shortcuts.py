@@ -4,18 +4,22 @@ from django.template import RequestContext, loader, Context
 from django.core.mail import send_mail
 from django.http import Http404
 from django.db import connection
-from utils import base32_to_int
+from utils import base32_to_int, MistypedIDException
 
 class UnmatchingSlugException(Exception):
     pass
 
 def check_url(type, id, slug):
+    mistyped = False
     try:
         id = base32_to_int(id)
+    except MistypedIDException, e:
+        mistyped = True
+        id = e.args[0]
     except:
         raise Http404('Could not match that id.')
     obj = get_object_or_404(type, id=id)
-    if obj.slug != slug:
+    if obj.slug != slug or mistyped:
         raise UnmatchingSlugException(obj)
     return obj
     
