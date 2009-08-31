@@ -18,6 +18,12 @@ var start_tab;
 $(function() {
     $('#messages').wait(3000).slideUp('slow');
 
+    var edit_link = $('#edit-link a');
+    if (edit_link.length) {
+        var href = edit_link.attr('href');
+        edit_link.attr('href', href.substr(0, href.indexOf('?')));
+    }
+
     $('#search_tabs').tabs({
         selected: start_tab,
         select: function(e, ui) {

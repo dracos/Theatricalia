@@ -16,6 +16,8 @@ class CastCrewNullBooleanSelect(forms.widgets.NullBooleanSelect):
         choices = ((u'1', 'Unknown'), (u'2', 'Cast'), (u'3', 'Crew'))
         super(forms.widgets.NullBooleanSelect, self).__init__(attrs, choices)
 
+# Auto-complete for those with JavaScript
+
 class AutoCompleteMultiValueField(forms.MultiValueField):
     def __init__(self, model, column, *args, **kwargs):
         self.model = model
@@ -47,7 +49,7 @@ class ProductionForm(forms.ModelForm):
 
     class Meta:
         model = Production
-        exclude = ('parts', 'places')
+        exclude = ('parts', 'places', 'seen_by')
 
     def __init__(self, last_modified=None, *args, **kwargs):
 #        self.db_last_modified = last_modified
@@ -75,6 +77,67 @@ class ProductionForm(forms.ModelForm):
         if self.cleaned_data['company'] and not self.cleaned_data['company'].id:
             self.cleaned_data['company'].save()
         return super(ProductionForm, self).save(**kwargs)
+
+# All the non-JavaScript drop-down stuff
+
+class ForeignKeySearchInputNoJS(forms.MultiWidget):
+    """
+    A Widget for NOT displaying ForeignKeys in an autocomplete search input 
+    instead in a <select> box.
+    """
+    #def __init__(self, choices=(), model=None, attrs=None):
+    def __init__(self, model=None, attrs=None):
+        self.model = model
+        #widgets = (forms.Select(choices=choices), forms.TextInput(attrs={'size':40}))
+        widgets = (forms.Select, forms.TextInput(attrs={'size':40}))
+        super(ForeignKeySearchInputNoJS, self).__init__(widgets, attrs)
+
+    def decompress(self, value):
+        if value is None:
+            return [ value, '' ]
+        return [ value, '' ]
+
+    def format_output(self, list):
+        name = self.model.__name__
+        name = re.sub('([A-Z])', r' \1', name).lower().strip()
+        return ('<br>Or if it&rsquo;s a new %s, enter it here: ' % name).join(list)
+
+class AutoCompleteNoJSMultiValueField(forms.MultiValueField):
+    def __init__(self, model, column, fields, *args, **kwargs):
+        self.model = model
+        self.column = column
+        #choices = fields[0].choices
+        #widget = ForeignKeySearchInputNoJS(choices=choices, model=model)
+        widget = ForeignKeySearchInputNoJS(model=model)
+        super(AutoCompleteNoJSMultiValueField, self).__init__(fields, widget=widget, *args, **kwargs)
+
+    def compress(self, data_list):
+        if not data_list:
+            return None
+        if data_list[1]:
+            data_list[0] = self.model(**{self.column: data_list[1]})
+        return data_list[0]
+
+class ProductionFormNoJS(ProductionForm):
+    play = AutoCompleteNoJSMultiValueField(
+        Play, 'title',
+        required = False, # It is required, but will be spotted in the clean function
+        fields = (forms.ModelChoiceField(Play.objects.none()), forms.CharField()),
+    )
+    company = AutoCompleteNoJSMultiValueField(
+        ProductionCompany, 'name',
+        required = False,
+        fields = (forms.ModelChoiceField(ProductionCompany.objects.none()), forms.CharField()),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(ProductionFormNoJS, self).__init__(*args, **kwargs)
+        self.fields['play'].fields[0].queryset = Play.objects
+        # The above line sets some Select widget that is *not* the one actually printed. I don't understand this yet.
+        # But anyway, put the choices in the *right* widget.
+        self.fields['play'].widget.widgets[0].choices = self.fields['play'].fields[0].choices
+        self.fields['company'].fields[0].queryset = ProductionCompany.objects
+        self.fields['company'].widget.widgets[0].choices = self.fields['company'].fields[0].choices
 
 class PlaceForm(forms.ModelForm):
     place = AutoCompleteMultiValueField(
@@ -104,6 +167,20 @@ class PlaceForm(forms.ModelForm):
         if not self.cleaned_data['place'].id:
             self.cleaned_data['place'].save()
         return super(PlaceForm, self).save(**kwargs)
+
+class PlaceFormNoJS(PlaceForm):
+    place = AutoCompleteNoJSMultiValueField(
+        PlacePlace, 'name',
+        required = False, # It is required, but will be spotted in the clean function
+        fields = (forms.ModelChoiceField(PlacePlace.objects.none()), forms.CharField()),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(PlaceFormNoJS, self).__init__(*args, **kwargs)
+        self.fields['place'].fields[0].queryset = PlacePlace.objects
+        # The above line sets some Select widget that is *not* the one actually printed. I don't understand this yet.
+        # But anyway, put the choices in the *right* widget.
+        self.fields['place'].widget.widgets[0].choices = self.fields['place'].fields[0].choices
 
 # person is the ext box where someone enters a name, and always will be
 # person_choice is the selection of someone from that, or the creation of a new person

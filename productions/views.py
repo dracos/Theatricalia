@@ -10,7 +10,7 @@ from django.http import Http404, HttpResponseRedirect
 from utils import base32_to_int, unique_slugify
 from shortcuts import render, check_url
 from models import Production, Part, Place as ProductionPlace, Visit
-from forms import ProductionForm, PartForm, PlaceForm
+from forms import ProductionForm, ProductionFormNoJS, PartForm, PlaceForm, PlaceFormNoJS
 from plays.models import Play
 from places.models import Place
 from photos.forms import PhotoForm
@@ -115,9 +115,17 @@ def part_edit(request, play_id, play, production_id, part_id):
 @login_required
 def production_edit(request, play_id, play, production_id):
     production = check_parameters(play_id, play, production_id)
-    production_form = ProductionForm(data=request.POST or None, instance=production)
 
-    ProductionPlaceFormSet = inlineformset_factory( Production, ProductionPlace, extra=1, form=PlaceForm )
+    if request.GET.get('js', '1')=='1':
+        production_form = ProductionForm
+        place_form = PlaceForm
+    else:
+        production_form = ProductionFormNoJS
+        place_form = PlaceFormNoJS
+
+    production_form = production_form(data=request.POST or None, instance=production)
+
+    ProductionPlaceFormSet = inlineformset_factory( Production, ProductionPlace, extra=1, form=place_form )
     formset = ProductionPlaceFormSet(
         data = request.POST or None,
         prefix = 'place',
@@ -166,12 +174,17 @@ def production_add(request, play=None, place=None):
 
     initial = {}
     if play: initial['play'] = play.id
-    production_form = ProductionForm(
-        data = request.POST or None,
-        initial = initial,
-    )
 
-    ProductionPlaceFormSet = modelformset_factory( ProductionPlace, form=PlaceForm )
+    if request.GET.get('js', '1')=='1':
+        production_form = ProductionForm
+        place_form = PlaceForm
+    else:
+        production_form = ProductionFormNoJS
+        place_form = PlaceFormNoJS
+
+    production_form = production_form(data=request.POST or None, initial=initial)
+
+    ProductionPlaceFormSet = modelformset_factory( ProductionPlace, form=place_form )
     formset = ProductionPlaceFormSet(
         data = request.POST or None,
         prefix = 'place',

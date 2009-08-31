@@ -128,7 +128,7 @@ by the {{ production.company|prettify }}{% endif %},
 
 <ul>
 <li><a href="#observations">{% if comment_count %}Observations ({{ comment_count }}){% else %}Add observation{% endif %}</a>
-<li id="edit-link"><a href="{{ production.get_edit_url }}">Edit this production</a>
+<li id="edit-link"><a href="{{ production.get_edit_url }}?js=0">Edit this production</a>
 
 {% if seen %}
     {% if production.finished %}
