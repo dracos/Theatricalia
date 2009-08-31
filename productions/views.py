@@ -7,7 +7,7 @@ from django.db import IntegrityError
 from django.contrib.comments.views.comments import post_comment
 from django.http import Http404, HttpResponseRedirect
 
-from utils import base32_to_int, unique_slugify
+from utils import base32_to_int
 from shortcuts import render, check_url
 from models import Production, Part, Place as ProductionPlace, Visit
 from forms import ProductionForm, ProductionFormNoJS, PartForm, PlaceForm, PlaceFormNoJS
@@ -75,8 +75,7 @@ def by_company(request, production):
 
 def part_add(name):
     first_name, last_name = name.split(None, 1)
-    slug = unique_slugify(Person, '%s %s' % (first_name, last_name))
-    new_person = Person(first_name=first_name, last_name=last_name, slug=slug)
+    new_person = Person(first_name=first_name, last_name=last_name)
     new_person.save()
     return new_person
 

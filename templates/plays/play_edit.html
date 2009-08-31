@@ -9,14 +9,37 @@
 
 <div id="primary">
 
-<form method="post">
-<table>
-{{ form }}
+<form method="post" id="edit">
+{{ form.as_p }}
 
-{{ formset }}
+{{ formset.management_form }}
 
-<tr><td colspan="2" style="text-align:right"><input type="submit" value="Update"></td></tr>
-</table>
+{% for form in formset.forms %}
+
+{% if form.person_choice.errors or form.person_choice.is_hidden %}
+{{ form.person_choice.errors }}
+{{ form.person_choice }}
+{% endif %}
+
+{{ form.person.errors }}
+<p>{{ form.person.label_tag }} {{ form.person }}</p>
+
+{% for field in form %}
+{% ifnotequal field.label 'Author' %}
+{% if field.is_hidden %}
+{{ field }}
+{% else %}
+{{ field.errors }}
+<p>{{ field.label_tag }} {{ field }}</p>
+{% endif %}
+{% endifnotequal %}
+{% endfor %}
+
+{% endfor %}
+
+<p><input id="submit" type="submit" value="Record changes">
+<input type="submit" name="disregard" id="cancel" value="Disregard"></p>
+
 </form>
 
 </div>

@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from shortcuts import render, check_url, UnmatchingSlugException
 from models import Play, first_letters
+from people.models import Person
 from forms import PlayEditForm, PlayAuthorForm
 from productions.objshow import productions_list, productions_for
 from common.models import Alert
@@ -61,17 +62,26 @@ def play_edit(request, play_id, play):
 
     form = PlayEditForm(request.POST or None, instance=play)
     PlayAuthorFormSet = formset_factory(PlayAuthorForm)
-    initial = [ { 'id': author.id, 'name': author.name() } for author in play.authors.all() ]
+    initial = [ { 'person': author } for author in play.authors.all() ]
     formset = PlayAuthorFormSet(request.POST or None, initial=initial)
-    if request.method == 'POST' and form.is_valid() and formset.is_valid():
-        authors = []
-        for author in formset.cleaned_data:
-            if author and author['name']:
-                authors.append(author['name'])
-        print "*", authors
-        form.cleaned_data['authors'] = authors
-        form.save()
-        return HttpResponseRedirect(play.get_absolute_url())
+    if request.method == 'POST':
+        if request.POST.get('disregard'):
+            request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
+            return HttpResponseRedirect(play.get_absolute_url())
+        if form.is_valid() and formset.is_valid():
+            authors = []
+            for author in formset.cleaned_data:
+                if author and author['person']:
+                    if author.get('person_choice') == 'new':
+                        first_name, last_name = author['person'].split(None, 1)
+                        new_person = Person(first_name=first_name, last_name=last_name)
+                        new_person.save()
+                        author['person'] = new_person
+                    authors.append(author['person'])
+            form.cleaned_data['authors'] = authors
+            form.save()
+            request.user.message_set.create(message="Your changes have been stored; thank you.")
+            return HttpResponseRedirect(play.get_absolute_url())
 
     return render(request, 'plays/play_edit.html', {
         'play': play,
