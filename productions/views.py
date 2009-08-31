@@ -73,7 +73,6 @@ def production_seen(request, play_id, play, production_id, type):
 def by_company(request, production):
     pass
 
-@login_required
 def part_add(name):
     first_name, last_name = name.split(None, 1)
     slug = unique_slugify(Person, '%s %s' % (first_name, last_name))

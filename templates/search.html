@@ -17,7 +17,7 @@ if (!window.location.hash)
 <li{% if not plays %} class="ui-state-disabled"{% endif %}><a href="#search_plays">Plays</a>
 <li{% if not near.geonames and not places %} class="ui-state-disabled"{% endif %}><a href="#search_places">Places</a>
 <li{% if not people %} class="ui-state-disabled"{% endif %}><a href="#search_people">People</a>
-<li{% if not parts %} class="ui-state-disabled"{% endif %}><a href="#search_parts">Parts</a>
+<li{% if not parts.object_list %} class="ui-state-disabled"{% endif %}><a href="#search_parts">Parts</a>
 </ul>
 
 <div id="search_plays">

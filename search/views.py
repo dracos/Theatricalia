@@ -68,6 +68,7 @@ def search_autocomplete(request):
     return HttpResponse(data)
 
 def search_people(search, force_similar=False, use_distance=True):
+    people = []
     sounds_people = 0
     names = search.split(None, 3)
     if len(names)==1:

@@ -15,7 +15,9 @@
 
 <div id="primary">
 
+{% if production.description %}
 <p>{{ production.description|prettify }}</p>
+{% endif %}
 
 <h2 class="no-descenders">Cast &amp; Crew</h2>
 
@@ -61,7 +63,9 @@
 {% for observation in observations %}
 <li id="o{{ observation.id }}">
 <p class="posted-by">
-<span class="meta">On {{ observation.submit_date|date:"jS F Y"|prettify }} at <a title="Permanent link to this observation" href="{{ request.path }}#o{{ observation.id }}">{{ observation.submit_date|date:"g:i a" }}</a>, {{ observation.user_name|title }} noted:</p>
+<span class="meta">On {{ observation.submit_date|date:"jS F Y"|prettify }}
+at <a title="Permanent link to this observation" href="{{ request.path }}#o{{ observation.id }}">{{ observation.submit_date|date:"g:i a" }}</a>,
+<a href="{{ observation.user.get_profile.get_absolute_url }}">{{ observation.user_name|title }}</a> noted:</p>
 <blockquote>{{ observation.comment|prettify|linebreaks }}</blockquote>
 </li>
 {% endfor %}
@@ -132,9 +136,13 @@ by {{ production.company|prettify }}{% endif %},
 
 {% if seen %}
     {% if production.finished %}
-        <li><a href="{{ production.get_seen_no_url }}">I did not see this production</a>
+        <li>You saw this production &ndash; <a href="{{ production.get_seen_no_url }}">correct inaccuracy</a>
     {% else %}
-        <li><a href="{{ production.get_seen_no_url }}">I&rsquo;m not going to see this production</a>
+        {% if production.started %}
+            <li>You saw or are going to see this production &ndash; <a href="{{ production.get_seen_no_url }}">correct inaccuracy</a>
+        {% else %}
+            <li>You are going to see this production &ndash; <a href="{{ production.get_seen_no_url }}">correct inaccuracy</a>
+        {% endif %}
     {% endif %}
 {% else %}
     {% if production.finished %}
