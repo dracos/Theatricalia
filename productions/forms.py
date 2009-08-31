@@ -192,10 +192,12 @@ class PartForm(forms.ModelForm):
         model = Part
         exclude = ('order')
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, editing=True, *args, **kwargs):
         super(PartForm, self).__init__(*args, **kwargs)
         self.fields['start_date'].help_text = 'if they were only in this production for part of its run'
         self.fields['cast'].widget = CastCrewNullBooleanSelect()
+        if not editing:
+            self.fields['production'].required = False
         self.fields['production'].widget = forms.HiddenInput()
         # Submitting the form with something selected in person_choice...
         if 'person_choice' in self.data and 'person' in self.data:

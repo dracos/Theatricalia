@@ -89,6 +89,7 @@ def part_edit(request, play_id, play, production_id, part_id):
         raise Http404()
 
     part_form = PartForm(
+        editing = True,
         data = request.POST or None,
         instance = part,
         initial = { 'person': part.person } # To make form have name rather than ID
@@ -151,7 +152,7 @@ def production_edit(request, play_id, play, production_id):
 def production_edit_cast(request, play_id, play, production_id):
     """For picking someone to edit, or adding a new Part"""
     production = check_parameters(play_id, play, production_id)
-    part_form = PartForm(request.POST or None)
+    part_form = PartForm(request.POST or None, editing=False)
 
     if request.method == 'POST':
         if part_form.is_valid():
