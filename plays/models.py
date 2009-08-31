@@ -11,7 +11,7 @@ from common.models import Alert
 
 class Play(models.Model):
     title = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, unique=True)
+    slug = models.SlugField(max_length=255)
     authors = models.ManyToManyField(Person, related_name='plays', blank=True)
     parent = models.ForeignKey('self', related_name='children', blank=True, null=True)
     description = models.TextField(blank=True)

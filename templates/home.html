@@ -70,7 +70,9 @@ or search for a location to find things near you.
 {% ifnotequal latest_production.last_modifier latest_production.creator %}
 Added by {{ latest_production.creator.name }}, last modified by {{ latest_production.last_modifier.name }}.
 {% else %}
+{% if latest_production.creator.name %}
 Added by {{ latest_production.creator.name }}.
+{% endif %}
 {% endifnotequal %}
 </p>
 
@@ -84,10 +86,13 @@ Added by {{ latest_production.creator.name }}.
 
 <h2 class="no-descenders" style="margin-top:0">Site news</h2>
 
-<p><strong>{{ latest_news.title }}:</strong>
-{{ latest_news.body|safe|truncatewords:"20"|prettify }}
-
-<a href="{{ latest_news.get_absolute_url }}">More</a>
+{% if latest_news %}
+    <p><strong>{{ latest_news.title }}:</strong>
+    {{ latest_news.body|safe|truncatewords:"20"|prettify }}
+    <a href="{{ latest_news.get_absolute_url }}">More</a>
+{% else %}
+    <p>No news yet, we haven&rsquo;t launched!</p>
+{% endif %}
 
 </div>
 

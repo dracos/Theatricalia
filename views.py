@@ -8,9 +8,14 @@ from people.models import Person
 from news.models import Article
 
 def home(request):
+    try:
+        latest_news = Article.objects.latest()
+    except:
+        latest_news = {}
+
 	return render(request, 'home.html', {
         'latest_production': Production.objects.all().order_by('-id')[0],
-        'latest_news': Article.objects.latest(),
+        'latest_news': latest_news,
         'productions': Production.objects.count(),
         'places': Place.objects.count(),
         'plays': Play.objects.count(),

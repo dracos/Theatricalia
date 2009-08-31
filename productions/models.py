@@ -165,12 +165,18 @@ class Production(models.Model):
         return self.company or ''
 
     def creator(self):
-        latest_version = Version.objects.get_for_object(self)[0]
-        return latest_version.revision.user
+        try:
+            latest_version = Version.objects.get_for_object(self)[0]
+            return latest_version.revision.user
+        except:
+            return ''
 
     def last_modifier(self):
-        latest_version = Version.objects.get_for_object(self).reverse()[0]
-        return latest_version.revision.user
+        try:
+            latest_version = Version.objects.get_for_object(self).reverse()[0]
+            return latest_version.revision.user
+        except:
+            return ''
 
 #class Performance(models.Model):
 #    production = models.ForeignKey(Production)
