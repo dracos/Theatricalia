@@ -1,0 +1,7 @@
+<h2 class="no-descenders">All articles</h2>
+<ul>
+{% for article in all %}
+<li><a href="{{ article.get_absolute_url }}">{{ article.title }}</a>,
+{{ article.created|date:"jS F Y" }}
+{% endfor %}
+</ul>

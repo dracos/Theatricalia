@@ -5,9 +5,12 @@ from plays.models import Play
 from places.models import Place
 from places.models import Place
 from people.models import Person
+from news.models import Article
 
 def home(request):
 	return render(request, 'home.html', {
+        'latest_production': Production.objects.all().order_by('-id')[0],
+        'latest_news': Article.objects.latest(),
         'productions': Production.objects.count(),
         'places': Place.objects.count(),
         'plays': Play.objects.count(),

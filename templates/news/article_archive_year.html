@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ year }} &ndash; Publicity{% endblock %}
+
+{% block content %}
+
+<h1>Publicity in {{ year }}</h1>
+
+<div id="primary">
+
+<ul>
+
+{% for article in object_list %}
+<li><a href="{{ article.get_absolute_url }}">{{ article.title }}</a>
+{% endfor %}
+
+</ul>
+
+</div>
+
+<div class="secondary">
+{% include 'news/sidebar-all.html' %}
+</div>
+
+{% endblock %}

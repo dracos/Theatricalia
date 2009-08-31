@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Publicity{% endblock %}
+
+{% block content %}
+
+<h1>Publicity</h1>
+
+<div id="primary">
+
+<h2>{{ latest.0.title }}</h2>
+
+<p style="margin-top:0; color: #666666;">Written by {{ latest.0.author.name }}
+at {{ latest.0.created|date:"g:i a" }}
+on {{ latest.0.created|date:"jS F Y" }}.</p>
+
+<p>{{ latest.0.body }}</p>
+
+</div>
+
+<div class="secondary">
+{% include 'news/sidebar-all.html' %}
+</div>
+
+{% endblock %}

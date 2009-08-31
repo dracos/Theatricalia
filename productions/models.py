@@ -2,23 +2,22 @@ from datetime import date
 from django.db import models
 from django.utils import dateformat
 from django.contrib.contenttypes import generic
-from django.utils.safestring import mark_safe
 from django.template.defaultfilters import slugify
-from django.db.models import Max, Min
 from django.contrib.auth.models import User
+from reversion.models import Version
+
 from utils import int_to_base32
 from places.models import Place
 from people.models import Person
 from plays.models import Play
 from photos.models import Photo
 from fields import ApproximateDateField
-from common.templatetags.prettify import prettify
 
 def pretty_date_range(start_date, press_date, end_date):
     if not start_date:
         if not press_date:
             if not end_date:
-                return 'date unknown'
+                return 'dates unknown'
             else:
                 return u'ended %s' % end_date
         elif not end_date:
@@ -164,6 +163,14 @@ class Production(models.Model):
         
     def title(self):
         return self.company or ''
+
+    def creator(self):
+        latest_version = Version.objects.get_for_object(self)[0]
+        return latest_version.revision.user
+
+    def last_modifier(self):
+        latest_version = Version.objects.get_for_object(self).reverse()[0]
+        return latest_version.revision.user
 
 #class Performance(models.Model):
 #    production = models.ForeignKey(Production)

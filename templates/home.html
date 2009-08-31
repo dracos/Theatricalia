@@ -21,12 +21,12 @@ Thank you.</p>
 
 <div style="float: left; clear:both; width: 30%; margin-right: 2%">
 <h2 class="no-descenders" style="margin-top:0">Example</h2>
-<p><a href="/person/david-tennant">David Tennant</a>
+<p><a href="/person/7xk/david-tennant">David Tennant</a>
 played the title role in the
-<a href="/play/hamlet/production/2yd">RSC&rsquo;s production</a>
-of <a href="/play/hamlet">Hamlet</a> by
+<a href="/play/2/hamlet/production/2yd">RSC&rsquo;s production</a>
+of <a href="/play/2/hamlet">Hamlet</a> by
 <a href="/person/william-shakespeare">William Shakespeare</a>
-at the <a href="/place/courtyard-theatre-stratford-upon-avon">Courtyard Theatre</a>.
+at the <a href="/place/47/courtyard-theatre-stratford-upon-avon">Courtyard Theatre</a>.
 
 <p align="center"><img src="/static/i/hamlet.jpg" alt=""></p>
 
@@ -37,11 +37,11 @@ at the <a href="/place/courtyard-theatre-stratford-upon-avon">Courtyard Theatre<
 <h2 class="no-descenders" style="margin-top:0">Features</h2>
 
 <ul>
-<li>Each place, person, and play has an RSS feed so you can keep up
-to date with what something is doing
-<li>Search for a person, play, or venue
-<li><s>Search for a location to find things near you</s>
-<li><s>Your production not on here? <a href="" title="Add a production">Add it!</a></s>
+<li>Each place, person, and play has an RSS feed or email alert, so you can keep up
+to date with what something or someone is doing.
+<li>Search for a person, play, place, or part;
+or search for a location to find things near you.
+<li>Is your production not on the site? <a href="/add" title="Add a production">Add it</a>!
 </ul>
 
 </div>
@@ -49,10 +49,29 @@ to date with what something is doing
 <div class="secondary">
 <h2 class="no-descenders" >Most recent addition</h2>
 <p>
-<a href="/play/the-comedy-of-errors/production/2yz">The Comedy of Errors</a>
-is playing
-at the <a href="/place/courtyard-theatre-stratford-upon-avon">Courtyard Theatre</a>,
-25<sup>th</sup> June 2009 (press night) – 15<sup>th</sup> August 2009.
+<a href="{{ latest_production.get_absolute_url }}">{{ latest_production.play|prettify }}</a>,
+{% ifequal latest_production.places.count 1 %}
+    at <a href="{{ latest_production.places.all.0.get_absolute_url }}">{{ latest_production.places.all.0|prettify }}</a>,
+    {{ latest_production.date_summary|prettify }}.
+    {% if latest_production.place_set.all.0.press_date and latest_production.place_set.all.0.start_date %}
+        Press night was {{ latest_production.place_set.all.0.press_date|date:"jS F Y"|prettify }}.
+    {% endif %}
+{% else %}
+{% ifequal latest_production.places.count 0 %}
+    at an unknown location.
+{% else %}
+    at
+    {% for place in latest_production.place_set.all %}
+        {% if forloop.last and not forloop.first %} and {% endif %}
+        <a href="{{ place.place.get_absolute_url }}">{{ place.place|prettify }}</a>
+        <small>({{ place.date_summary|prettify }})</small>{% ifequal forloop.revcounter0 0 %}{% else %}{% ifequal forloop.revcounter0 1 %}{% ifnotequal forloop.counter0 0 %},{% endifnotequal %}{% else %},{% endifequal %}{% endifequal %}{% endfor %}.
+{% endifequal %}
+{% endifequal %}
+{% ifnotequal latest_production.last_modifier latest_production.creator %}
+Added by {{ latest_production.creator.name }}, last modified by {{ latest_production.last_modifier.name }}.
+{% else %}
+Added by {{ latest_production.creator.name }}.
+{% endifnotequal %}
 </p>
 
 <p style="margin-bottom:0">Theatricalia knows about
@@ -65,11 +84,10 @@ at the <a href="/place/courtyard-theatre-stratford-upon-avon">Courtyard Theatre<
 
 <h2 class="no-descenders" style="margin-top:0">Site news</h2>
 
-<p>
-The site is launched! Still lots to do, but I thought an archive of
-all RSC productions, and all Birmingham Rep productions from its launch
-to 1971, might be of interest &#9786;
-</p>
+<p><strong>{{ latest_news.title }}:</strong>
+{{ latest_news.body|truncatewords:"20" }}
+
+<a href="{{ latest_news.get_absolute_url }}">More</a>
 
 </div>
 

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ object.title }} &ndash; Publicity{% endblock %}
+
+{% block content %}
+
+<h1>{{ object.title }}</h1>
+
+<div id="primary">
+
+{{ object.body }}
+
+</div>
+
+<div id="sidebar_tulip" class="secondary"><div id="sidebar_tulip_r">
+
+<p>An article written by {{ object.author.name }}
+at {{ object.created|date:"g:i" }}&nbsp;{{ object.created|date:"a" }}
+on {{ object.created|date:"jS F Y" }}.</p>
+
+</div></div>
+
+<div class="secondary">
+
+{% include 'news/sidebar-all.html' %}
+</div>
+
+{% endblock %}

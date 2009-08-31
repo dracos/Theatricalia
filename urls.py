@@ -2,6 +2,7 @@ import os
 import settings
 
 from django.conf.urls.defaults import *
+from django.views.generic import date_based
 
 from views import *
 from profiles import views as profiles
@@ -12,11 +13,20 @@ from places import views as places
 from search import views as search
 from photos import views as photos
 from common import views as common
+from news.models import Article
 
 from django.contrib import admin
 admin.autodiscover()
 
 from feeds import PersonFeed, PlayFeed, PlaceFeed, NearbyFeed
+
+news_info_dict = {
+    'queryset': Article.objects.filter(visible=True),
+    'date_field': 'created',
+    'extra_context': {
+        'all': Article.objects.all,
+    },
+}
 
 urlpatterns = patterns('',
     # Example:
@@ -117,4 +127,10 @@ urlpatterns = patterns('',
     url('^profile/alert$', profiles.profile_alert, name='profile-alert'),
     url('^profile/edit$', profiles.profile_edit, name='profile-edit'),
     url('^profile/(?P<username>.*)$', profiles.profile, name='profile'),
+
+    url('^publicity$', date_based.archive_index, news_info_dict, name='news-index'),
+    url('^publicity/(?P<year>\d{4})$', date_based.archive_year, dict(news_info_dict, make_object_list=True), name='news-year'),
+    url('^publicity/(?P<year>\d{4})/(?P<month>\w+)$', date_based.archive_month, dict(news_info_dict, month_format='%B'), name='news-month'),
+    url('^publicity/(?P<year>\d{4})/(?P<month>\w+)/(?P<slug>[-\w]+)$',
+        date_based.object_detail, dict(news_info_dict, month_format='%B', day=31, slug_field='slug'), name='news-entry'),
 )
