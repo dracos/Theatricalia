@@ -185,8 +185,10 @@ class PlaceFormNoJS(PlaceForm):
 # person is the ext box where someone enters a name, and always will be
 # person_choice is the selection of someone from that, or the creation of a new person
 class PartForm(forms.ModelForm):
-    person = forms.CharField()
+    person = forms.CharField(error_messages = {'required':'You have to specify a person.'})
     person_choice = forms.ChoiceField(label='Person', widget=forms.RadioSelect(), required=False)
+    start_date = PrettyDateField(required=False, help_text='if they were only in this production for part of its run')
+    end_date = PrettyDateField(required=False)
 
     class Meta:
         model = Part
@@ -194,7 +196,6 @@ class PartForm(forms.ModelForm):
 
     def __init__(self, editing=True, *args, **kwargs):
         super(PartForm, self).__init__(*args, **kwargs)
-        self.fields['start_date'].help_text = 'if they were only in this production for part of its run'
         self.fields['cast'].widget = CastCrewNullBooleanSelect()
         if not editing:
             self.fields['production'].required = False

@@ -28,7 +28,7 @@ class PersonEditForm(forms.ModelForm):
         imdb = self.cleaned_data.get('imdb')
         wikipedia = self.cleaned_data.get('wikipedia')
         web = self.cleaned_data.get('web')
-        if not dob and not bio and not imdb and not wikipedia and not web:
-            raise forms.ValidationError('Please specify at least one item of data')
+        if not self.errors and not dob and not bio and not imdb and not wikipedia and not web:
+            raise forms.ValidationError('Please specify at least one item of data.')
         return self.cleaned_data
 

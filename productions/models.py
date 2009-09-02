@@ -208,7 +208,7 @@ class PartManager(models.Manager):
 class Part(models.Model):
     production = models.ForeignKey(Production)
     person = models.ForeignKey(Person)
-    role = models.CharField(max_length=100, blank=True)
+    role = models.CharField(u'R\u00f4le', max_length=100, blank=True)
     cast = models.NullBooleanField(null=True, blank=True, verbose_name='Cast/Crew')
     credited_as = models.CharField(max_length=100, blank=True)
     order = models.IntegerField(blank=True, null=True)

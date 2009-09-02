@@ -107,6 +107,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'sorl.thumbnail',
     'reversion',
+    'countries',
     'theatricalia.common',
     'theatricalia.places',
     'theatricalia.plays',

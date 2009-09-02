@@ -6,6 +6,7 @@ from photos.models import Photo
 from utils import int_to_base32
 from fields import ApproximateDateField
 from common.models import Alert
+from countries.models import Country
 
 class PlaceManager(models.Manager):
     # Crappy bounding box, need to do radial!
@@ -25,7 +26,7 @@ class Place(models.Model):
     longitude = models.FloatField(blank=True, null=True)
     address = models.CharField(blank=True, max_length=200)
     town = models.CharField(blank=True, max_length=50)
-    country = models.CharField(blank=True, max_length=2)
+    country = models.ForeignKey(Country)
     postcode = models.CharField(blank=True, max_length=10)
     type = models.CharField(blank=True, max_length=100, choices=(('proscenium', 'Proscenium Arch'), ('thrust', 'Thrust'), ('multiple', 'Multiple'), ('other', 'Other')))
     size = models.CharField(blank=True, max_length=100)
