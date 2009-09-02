@@ -158,11 +158,11 @@ by {{ production.company|prettify }}{% endif %},
 
 </ul>
 
-{% if production.seen_by %}
+{% if production.seen_by.count %}
 <h2>Seen by</h2>
 <ul id="seen_by">
 {% for u in production.seen_by.all %}
-<li><a href="{{ u.get_profile.get_absolute_url }}">{{ u.name }}</a>
+<li><a href="{{ u.get_profile.get_absolute_url }}">{% firstof u.name u.username %}</a>
 {% endfor %}
 </ul>
 {% endif %}

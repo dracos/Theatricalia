@@ -10,7 +10,7 @@
 
 {% block content %}
 
-<h1>{{ place.name|prettify }}</h1>
+<h1>{{ place.get_name_display|prettify }}</h1>
 
 {% include 'includes/messages.html' %}
 
