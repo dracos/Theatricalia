@@ -47,7 +47,8 @@ or search for a location to find things near you.
 </div>
 
 <div class="secondary">
-<h2 class="no-descenders" >Most recent addition</h2>
+<h2 class="no-descenders">Most recent addition</h2>
+{% if latest_production %}
 <p>
 <a href="{{ latest_production.get_absolute_url }}">{{ latest_production.play|prettify }}</a>,
 {% ifequal latest_production.places.count 1 %}
@@ -75,6 +76,9 @@ Added by {{ latest_production.creator.name }}.
 {% endif %}
 {% endifnotequal %}
 </p>
+{% else %}
+<p>Nothing in the system yet!</p>
+{% endif %}
 
 <p style="margin-bottom:0">Theatricalia knows about
 <strong>{{ people|prettify_num }}</strong> people being cast and crew in

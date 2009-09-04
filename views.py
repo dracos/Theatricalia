@@ -13,8 +13,13 @@ def home(request):
     except:
         latest_news = {}
 
-	return render(request, 'home.html', {
-        'latest_production': Production.objects.all().order_by('-id')[0],
+    try:
+        latest = Production.objects.all().order_by('-id')[0]
+    except:
+        latest = {}
+
+    return render(request, 'home.html', {
+        'latest_production': latest,
         'latest_news': latest_news,
         'productions': Production.objects.count(),
         'places': Place.objects.count(),

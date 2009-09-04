@@ -35,7 +35,8 @@ class ProductionForm(forms.ModelForm):
     #last_modified = forms.DateTimeField(widget=forms.HiddenInput(), required=False)
     play = AutoCompleteMultiValueField(
         Play, 'title',
-        required = False, # It is required, but will be spotted in the clean function
+        required = True,
+        error_messages = { 'required': 'You must specify a play.' },
         fields = (forms.CharField(), forms.ModelChoiceField(Play.objects.all())),
         widget = ForeignKeySearchInput(Production.play.field.rel, ('title',))
     )
@@ -65,11 +66,6 @@ class ProductionForm(forms.ModelForm):
 #            raise forms.ValidationError('I am afraid that this production has been edited since you started editing.')
 #
 #        return self.cleaned_data
-
-    def clean_play(self):
-        if not self.cleaned_data['play']:
-            raise forms.ValidationError('You must specify a play.')
-        return self.cleaned_data['play']
 
     def save(self, **kwargs):
         if not self.cleaned_data['play'].id:

@@ -98,12 +98,12 @@
 
 <div id="header">
 	<div><a href="/"><span></span>Theatricalia</a></div>
-	<form action="/search" method="GET" accept-charset="utf-8">
+	<form action="/search" method="GET" accept-charset="utf-8" role="search">
 		<label for="search_term">Search:</label>
 		<input type="search" name="q" id="search_term" value="{{ request.GET.q }}">
 		<input type="submit" value="Search">
 	</form>
-	<ul id="navigation">
+	<ul id="navigation" role="navigation">
 <!--
 		<li id="nav-plays"><a href="{% url plays_all %}"><img src="/static/i/plays.png" alt="Plays" border="0"></a></li>
 		<li id="nav-people"><a href="{% url people_all %}"><img src="/static/i/people.png" alt="People" border="0"></a></li>
@@ -115,7 +115,7 @@
 	</ul>
 </div>
 
-<div id="main" style="position: relative">
+<div id="main" style="position: relative" role="main">
 {% if request.GET.lines %}
 <div style="position:absolute; top:0; right:0; height: 1000px; border-left: solid 1px #ffcccc; border-right: solid 1px #ffcccc; z-index:-1; width:35%"></div>
 <div style="position:absolute; top:0; left:32%; height: 1000px; border-left: solid 1px #ffcccc; border-right: solid 1px #ffcccc; z-index:-1; width:30%"></div>
@@ -126,7 +126,7 @@
 {% endblock %}
 </div>
 
-<div id="footer">
+<div id="footer" role="navigation">
 	<p>A Matthew Somerville production &mdash; <a href="{% url colophon %}">Colophon &amp; Acknowledgements</a></p>
 <p><a href="{% url about %}">About</a>
 | <a href="{% url help %}">Help</a>
