@@ -1,0 +1,10 @@
+<form method="post" action="{% url take-photo %}" enctype="multipart/form-data" id="photo_form">
+{{ photo_form.content_type }}{{ photo_form.object_id }}
+<input type="hidden" name="next" value="{{ request.path }}#photographs">
+<table>
+<tr><th><label for="id_title">{{ photo_form.title.label }}:</label></th><td>{{ photo_form.title }}</td></tr>
+<tr><th><label for="id_photo">{{ photo_form.photo.label }}:</label></th><td>{{ photo_form.photo }}</td></tr>
+</table>
+<p><input type="submit" value="Add"></p>
+</form>
+

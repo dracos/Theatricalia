@@ -115,7 +115,7 @@
 	</ul>
 </div>
 
-<div id="main" style="position: relative" role="main">
+<div id="main" role="main">
 {% if request.GET.lines %}
 <div style="position:absolute; top:0; right:0; height: 1000px; border-left: solid 1px #ffcccc; border-right: solid 1px #ffcccc; z-index:-1; width:35%"></div>
 <div style="position:absolute; top:0; left:32%; height: 1000px; border-left: solid 1px #ffcccc; border-right: solid 1px #ffcccc; z-index:-1; width:30%"></div>
@@ -144,7 +144,7 @@
 {% if debug %}
 <p><a href="#" onclick="$('#queries').toggle(); return false;">Show/hide database queries</a></p>
 <div class="hide" id="queries">
-<table style="font-size:75%">
+<table>
 {% for q in connection.queries %}
 <tr valign="top"><td>{{ q.time }}</td><td>{{ q.sql }}</td></tr>
 {% endfor %}

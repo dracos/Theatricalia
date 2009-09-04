@@ -83,14 +83,12 @@ that you think others may be interested in, please feel free to record it here:<
         {{ form.honeypot.errors }}
         {{ form.honeypot.label_tag }} {{ form.honeypot }}
     </div>
-    <div>
-        {{ form.content_type }}
-        {{ form.object_pk }}
-        {{ form.timestamp }}
-        {{ form.security_hash }}
-        <input type="hidden" name="next" value="{{ request.path }}#observations">
-        <input type="submit" value="Store">
-    </div>
+    {{ form.content_type }}
+    {{ form.object_pk }}
+    {{ form.timestamp }}
+    {{ form.security_hash }}
+    <input type="hidden" name="next" value="{{ request.path }}#observations">
+    <p><input type="submit" value="Store"></p>
 </form>
 {% else %}
 <p>If you have an interesting observation or anecdote about this production
@@ -100,31 +98,13 @@ that you think others may be interested in, please
         
 </div>
 
-<form id="production_edit_inline">
-
-<div id="edit-form">
-<input type="submit" id="edit-form-submit" value="Record changes" disabled>
-or
-<input type="submit" id="edit-form-cancel" value="Disregard">
-</div>
-
 <div id="sidebar_tulip" class="secondary"><div id="sidebar_tulip_r">
 
-<div id="production_meta">
 <p>This is a production of the play
 <a href="{{ production.play.get_absolute_url }}">{{ production.play|prettify }}</a>{% if production.company %}
 by {{ production.company|prettify }}{% endif %},
 
 {% include 'productions/sidebar_bit.html' %}
-
-</div>
-
-<div id="production_edit_inline_basic">
-{{ production_form.as_p }}
-{% for form in production_formset.forms %}
-    {{ form.as_p }}
-{% endfor %}
-</div>
 
 </div></div>
 
@@ -181,21 +161,12 @@ by {{ production.company|prettify }}{% endif %},
 </div>
 
 {% if user.is_authenticated %}
-<p style="margin-bottom:0" class="clear">If you have a photograph or picture that illustrates this production and you
-have permission to do so, please upload it here.</p>
-
-<form method="post" action="{% url take-photo %}" enctype="multipart/form-data">
-{{ photo_form.content_type }}{{ photo_form.object_id }}
-<input type="hidden" name="next" value="{{ request.path }}#photographs">
-<table>
-<tr><th><label for="id_title">{{ photo_form.title.label }}:</label></th><td>{{ photo_form.title }}</td></tr>
-<tr><th><label for="id_photo">{{ photo_form.photo.label }}:</label></th><td>{{ photo_form.photo }}</td></tr>
-</table>
-<p style="margin-top:0.75em; margin-bottom:0.75em"><input type="submit" value="Add"></p>
-</form>
+    <p class="clear before_form">If you have a photograph or picture that illustrates this production and you
+    have permission to do so, please upload it here.</p>
+    {% include 'includes/photo-form.html' %}
 {% else %}
-<p class="clear">If you have a photograph or picture that illustrates this production that you wish
-to upload, please <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
+    <p class="clear">If you have a photograph or picture that illustrates this production that you wish
+    to upload, please <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
 {% endif %}
 
 </div>

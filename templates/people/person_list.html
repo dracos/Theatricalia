@@ -2,6 +2,8 @@
 
 {% block title %}{{ letter }} | All people{% endblock %}
 
+{% block extra_body %} id="people"{% endblock %}
+
 {% block content %}
 
 <ul id="atoz">
@@ -26,11 +28,11 @@
 -->
 </ul>
 
-<h1 style="float:left">People &ndash; {{ letter }}</h1>
+<h1>People &ndash; {{ letter }}</h1>
 
 {% include "pagination.html" %}
 
-<ul class="person_list" style="clear:both">
+<ul class="person_list clear">
 {% for person in object_list %}
 <li><a href="{{ person.get_absolute_url }}">{{ person }}</a></li>
 {% empty %}

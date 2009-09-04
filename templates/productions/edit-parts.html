@@ -22,9 +22,10 @@
 
 <h2 class="no-descenders"><a name="castandcrew"></a>Cast &amp; Crew</h2>
  
+<div id="edit-parts">
 {% for part in parts.all %}
 <div class="{% cycle row1,row2 %}">
-  <a style="float: right" href="./{{ part.id }}">Edit</a>
+  <a href="./{{ part.id }}">Edit</a>
   {{ part.person.name }}, {{ part.role }} <small>({{ part.cast_string }})</small>
   <small>{{ part.order|default:'' }}
   {% if part.start_date %}, {{ part.start_date|default:'' }}{% endif %}
@@ -33,6 +34,7 @@
 {% empty %}
 <p>No parts currently. If you know some, please contribute them below.</p>
 {% endfor %}
+</div>
     
 {% endif %}
 

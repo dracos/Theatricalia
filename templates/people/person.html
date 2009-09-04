@@ -106,8 +106,8 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 {% endif %}
 </ul>
 {% else %}
-<p>To edit this person, or to set up an email alert for them, please
-<a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
+    <p>To edit this person, or to set up an email alert for them, please
+    <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
 {% endif %}
 
 <h2>Photographs</h2>
@@ -123,22 +123,12 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 </div>
 
 {% if user.is_authenticated %}
-<p style="margin-bottom:0" class="clear">If you have a photograph of this person, and you
-have permission to do so, please upload it here.</p>
-
-<form method="post" action="{% url take-photo %}" enctype="multipart/form-data">
-{{ photo_form.content_type }}{{ photo_form.object_id }}
-<input type="hidden" name="next" value="{{ request.path }}#photographs">
-<table>
-<tr><th><label for="id_title">{{ photo_form.title.label }}:</label></th><td>{{ photo_form.title }}</td></tr>
-<tr><th><label for="id_photo">{{ photo_form.photo.label }}:</label></th><td>{{ photo_form.photo }}</td></tr>
-</table>
-<p style="margin-top:0em;"><input type="submit" value="Add"></p>
-</form>
+    <p class="clear before_form">If you have a photograph of this person, and you
+    have permission to do so, please upload it here.</p>
+    {% include 'includes/photo-form.html' %}
 {% else %}
-<p class="clear">If you have a photograph of this person you wish
-to upload, please <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
-
+    <p class="clear">If you have a photograph of this person you wish
+    to upload, please <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
 {% endif %}
 
 </div>

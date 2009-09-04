@@ -77,8 +77,6 @@
 {% if place.wikipedia %}<li><a href="{{ place.wikipedia }}">Wikipedia</a>{% endif %}
 </ul>
 
-<div style="clear:both"></div>
-
 {% if place.latitude and place.longitude %}
 <script type="text/javascript">
 $(function(){
@@ -87,11 +85,11 @@ $(function(){
     map.addOverlay(marker);
 });
 </script>
-<div id="map"></div>
+<div class="clear" id="map"></div>
 <p id="map-nojs"><img src="http://maps.google.com/staticmap?zoom=14&size=300x300&maptype=roadmap&markers={{ place.latitude }},{{ place.longitude }},smallred&sensor=false&key=ABQIAAAAr0jEilTj74QAOSQ54V3GrxQi7pH9eW_TVT-JV0JhoiD8D-2d8BSEfMWhkhrn96EYsa3PDcwO_RNspQ"></p>
 {% endif %}
 
-<ul>
+<ul class="clear">
 <li><a href="{{ place.get_edit_url }}">Edit this place&rsquo;s information</a></li>
 <li><a href="{{ place.get_add_production_url }}">Add a production here</a></li>
 {% if alert %}
@@ -113,22 +111,12 @@ $(function(){
 {% endif %}
 
 {% if user.is_authenticated %}
-<p style="margin-bottom:0" class="clear">If you have a photograph or picture of this place, and you
-have permission to do so, please upload it here.</p>
-
-<form method="post" action="{% url take-photo %}" enctype="multipart/form-data">
-{{ photo_form.content_type }}{{ photo_form.object_id }}
-<input type="hidden" name="next" value="{{ request.path }}#photographs">
-<table>
-<tr><th><label for="id_title">{{ photo_form.title.label }}:</label></th><td>{{ photo_form.title }}</td></tr>
-<tr><th><label for="id_photo">{{ photo_form.photo.label }}:</label></th><td>{{ photo_form.photo }}</td></tr>
-</table>
-<p style="margin-top:0em;"><input type="submit" value="Add"></p>
-</form>
+    <p class="clear before_form">If you have a photograph or picture of this place, and you
+    have permission to do so, please upload it here.</p>
+    {% include 'includes/photo-form.html' %}
 {% else %}
-<p class="clear">If you have a photograph or picture of this place you wish
-to upload, please <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
-
+    <p class="clear">If you have a photograph or picture of this place you wish
+    to upload, please <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
 {% endif %}
 
 </div>

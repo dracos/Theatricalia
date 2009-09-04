@@ -81,13 +81,20 @@ input[type="submit"] {
     color: #ffffff;
     font-weight: bold;
     -moz-border-radius: 4px;
-    padding: 4px 6px;
+    font-size: 0.75em;
+    padding: 0.166667em 0.5em;
     border: none;
     cursor: pointer;
 }
+
+#header input[type="submit"] {
+    font-size: 0.6em;
+}
+
 input[type="submit"]:hover {
     background-color: #333333;
 }
+
 #edit-form-submit {
     background-color: #cc3333;
 }
@@ -110,6 +117,9 @@ textarea {
 textarea[rows='5'] {
     height: 7.66667em;
 }
+textarea[rows='10'] {
+    height: 15.66667em;
+}
 
 blockquote {
 	margin-left: 1.5em;
@@ -124,6 +134,15 @@ blockquote.verse pre {
 	width: auto;
 	margin: 0 auto 0;
 	line-height: 1.5;
+}
+
+blockquote.large.verse {
+	font-size: 150%;
+    margin-top: 1em;
+}
+
+blockquote div {
+    text-align: right;
 }
 
 abbr, acronym {
@@ -162,6 +181,9 @@ a:active, a:hover {
 
 .clear {
 	clear: both;
+}
+.before_form {
+    margin-bottom: 0;
 }
 
 ul#messages {
@@ -321,6 +343,7 @@ li#nav-plays a {
 
 #main {
 	clear: both;
+    position: relative; /* Just for the lines=1 code, IIRC */
 	overflow: hidden;
 	_zoom: 1;
 }
@@ -523,6 +546,15 @@ td {
 	padding: 0.25em;
 }
 
+#photo_form p {
+    margin: 0.75em 0;
+}
+
+p#photo {
+    text-align: center;
+    margin-top: 0;
+}
+
 /* Other */
 
 .pagination {
@@ -641,7 +673,61 @@ form#edit #cancel:hover {
     background-color: #333333;
 }
 
+div#edit-parts a {
+    float: right;
+}
+
 .row2 {
     background-color: #eeeeff;
+}
+
+#queries table {
+    font-size: 75%;
+}
+
+#home #hello {
+    float: left;
+    width: 30%;
+    margin-top: 0;
+}
+
+#home #warning {
+    float: right;
+    width: 68%;
+}
+#home #warning p {
+    margin-top:0;
+    font-size: 87.5%;
+    line-height: 1.715;
+}
+
+#home .col {
+    float: left;
+    width: 30%;
+}
+#home .col h2 {
+    margin-top: 0;
+}
+
+#home #example {
+    clear: both;
+    margin-right: 2%;
+}
+
+#home #latest h2 {
+    margin-top: 0;
+}
+
+#home #latest p {
+    margin-bottom: 0;
+}
+
+#byline {
+    margin-top: 0;
+    color: #666666;
+}
+
+#people h1 {
+    float: left;
 }
 
