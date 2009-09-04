@@ -673,11 +673,15 @@ form#edit #cancel:hover {
     background-color: #333333;
 }
 
-div#edit-parts a {
+ul#edit-parts a {
     float: right;
 }
 
-.row2 {
+ul#edit-parts li {
+    margin: 0;
+}
+
+ul#edit-parts li:nth-child(2n) {
     background-color: #eeeeff;
 }
 

@@ -80,7 +80,7 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 {% include 'includes/messages.html' %}
 
 {% if person.dob or person.web or person.imdb or person.wikipedia %}
-<ul>
+<ul role="contentinfo">
 {% if person.dob %} <li>Date of birth: {{ person.dob }} {% endif %}
 {% if person.web %} <li><a href="{{ person.web }}">Website</a> {% endif %}
 {% if person.imdb %} <li><a href="{{ person.imdb }}">IMDb</a> {% endif %}

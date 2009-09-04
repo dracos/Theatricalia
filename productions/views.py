@@ -74,7 +74,11 @@ def by_company(request, production):
     pass
 
 def part_add(name):
-    first_name, last_name = name.split(None, 1)
+    names = name.split(None, 1)
+    if len(names)==2:
+        first_name, last_name = names
+    else:
+        first_name, last_name = '', name
     new_person = Person(first_name=first_name, last_name=last_name)
     new_person.save()
     return new_person
