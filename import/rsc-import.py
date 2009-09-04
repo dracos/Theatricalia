@@ -55,7 +55,7 @@ for file in glob.glob('../data/rsc/dataProds/*'):
     print file
 
     data = {}
-    matches = re.findall('<tr>\s*<td class="FieldLabel">(.*?)</td>\s*<td class="[^"]*">(.*?)\s*</td>', r)
+    matches = re.findall('(?s)<tr>\s*<td class="FieldLabel">(.*?)</td>\s*<td class="[^"]*">(.*?)\s*</td>', r)
     for match in matches:
         data[match[0]] = match[1]
 
