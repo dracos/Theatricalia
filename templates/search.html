@@ -10,7 +10,7 @@
 
 <script type="text/javascript">
 if (!window.location.hash)
-    start_tab = {% ifequal sounds_people 2 %}2{% else %}{% if plays %}0{% else %}{% if near.geonames or places %}1{% else %}{% if people %}2{% else %}3{% endif %}{% endif %}{% endif %}{% endifequal %};
+    start_tab = {% ifequal sounds_people 2 %}2{% else %}{% if plays %}0{% else %}{% if near.geonames or places %}1{% else %}{% if people %}2{% else %}{% if parts.object_list %}3{% else %}-1{% endif %}{% endif %}{% endif %}{% endif %}{% endifequal %};
 </script>
 <div id="search_tabs">
 <ul>
@@ -127,6 +127,12 @@ if (!window.location.hash)
 {% endif %}
 
 </div>
+
+{% if plays or near.geonames or places or people or parts.object_list %}
+{% else %}
+    <p>I&rsquo;m afraid we couldn&rsquo;t find any results. If you&rsquo;re searching for someone, try
+    just their first or last name.
+{% endif %}
 
 </div>
 {% endblock %}
