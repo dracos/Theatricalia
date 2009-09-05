@@ -343,7 +343,6 @@ li#nav-plays a {
 
 #main {
 	clear: both;
-    position: relative; /* Just for the lines=1 code, IIRC */
 	overflow: hidden;
 	_zoom: 1;
 }

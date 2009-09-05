@@ -572,9 +572,9 @@ $.Autocompleter.Select = function (options, input, select, config) {
 		.hide()
 		.addClass(options.resultsClass)
 		.css("position", "absolute")
-		.appendTo(document.body);
+		.insertAfter(input);
 	
-		list = $("<ul/>").appendTo(element).mouseover( function(event) {
+		list = $("<ul role='listbox'/>").appendTo(element).mouseover( function(event) {
 			if(target(event).nodeName && target(event).nodeName.toUpperCase() == 'LI') {
 	            active = $("li", list).removeClass(CLASSES.ACTIVE).index(target(event));
 			    $(target(event)).addClass(CLASSES.ACTIVE);            
@@ -610,6 +610,7 @@ $.Autocompleter.Select = function (options, input, select, config) {
 	function moveSelect(step) {
 		listItems.slice(active, active + 1).removeClass(CLASSES.ACTIVE);
 		movePosition(step);
+        if (active == -1) return;
         var activeItem = listItems.slice(active, active + 1).addClass(CLASSES.ACTIVE);
         if(options.scroll) {
             var offset = 0;
@@ -626,10 +627,10 @@ $.Autocompleter.Select = function (options, input, select, config) {
 	
 	function movePosition(step) {
 		active += step;
-		if (active < 0) {
+		if (active < -1) {
 			active = listItems.size() - 1;
 		} else if (active >= listItems.size()) {
-			active = 0;
+			active = -1;
 		}
 	}
 	
@@ -648,7 +649,7 @@ $.Autocompleter.Select = function (options, input, select, config) {
 			var formatted = options.formatItem(data[i].data, i+1, max, data[i].value, term);
 			if ( formatted === false )
 				continue;
-			var li = $("<li/>").html( options.highlight(formatted, term) ).addClass(i%2 == 0 ? "ac_even" : "ac_odd").appendTo(list)[0];
+			var li = $("<li role='option'/>").html( options.highlight(formatted, term) ).addClass(i%2 == 0 ? "ac_even" : "ac_odd").appendTo(list)[0];
 			$.data(li, "ac_data", data[i]);
 		}
 		listItems = list.find("li");

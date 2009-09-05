@@ -195,6 +195,7 @@ function autocomplete_add(params) {
             model_name: params.model_name
         },
         matchContains:1,
+        max:20,
         selectFirst:0
     }).result(function(event, data, formatted) {
         if (data) {

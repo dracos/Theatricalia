@@ -59,7 +59,7 @@ class ForeignKeySearchInput(forms.MultiWidget):
 		if attrs is None:
 			attrs = {}
 		rendered = super(ForeignKeySearchInput, self).render(name, value, attrs)
-		return rendered + mark_safe(u'''
+		return mark_safe('<span role="combobox">') + rendered + mark_safe('</span>') + mark_safe(u'''
 <script type="text/javascript">
 
 function addItem_id_%(namenodash)s(id, name) {
