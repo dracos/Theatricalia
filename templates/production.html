@@ -106,6 +106,10 @@ by {{ production.company|prettify }}{% endif %},
 
 {% include 'productions/sidebar_bit.html' %}
 
+{% if production.source %}
+<p><small>Source: {{ production.source|safe }}</small></p>
+{% endif %}
+
 </div></div>
 
 <div class="secondary" id="production-stuff">

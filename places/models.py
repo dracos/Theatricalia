@@ -26,7 +26,7 @@ class Place(models.Model):
     longitude = models.FloatField(blank=True, null=True)
     address = models.CharField(blank=True, max_length=200)
     town = models.CharField(blank=True, max_length=50)
-    country = models.ForeignKey(Country)
+    country = models.ForeignKey(Country, blank=True, null=True)
     postcode = models.CharField(blank=True, max_length=10)
     type = models.CharField(blank=True, max_length=100, choices=(('proscenium', 'Proscenium Arch'), ('thrust', 'Thrust'), ('multiple', 'Multiple'), ('other', 'Other')))
     size = models.CharField(blank=True, max_length=100)

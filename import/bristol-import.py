@@ -34,19 +34,19 @@ for n in range(1700,2009):
         id = m.group(2)
         print ' ', id, play, theatre, n, '-', (n+1)
 
-        #play, created = Play.objects.get_or_create(title=play)
+        play, created = Play.objects.get_or_create(title=play)
         source = '<a href="http://www.bristol.ac.uk/theatrecollection/%s">University of Bristol Theatre Collection</a>' % search_link
-        #production = Production(
-        #    play = play,
-        #    description = notes,
-        #    source = source,
-        #)
-        #production.save()
+        production = Production(
+            play = play,
+            description = notes,
+            source = source,
+        )
+        production.save()
 
-        #location, created = Place.objects.get_or_create(name=theatre)
+        location, created = Place.objects.get_or_create(name=theatre)
         start_date = '%d-00-00' % n
         end_date = '%d-00-00' % (n+1)
-        #ProductionPlace.objects.get_or_create(production=production, place=location, start_date=start_date, end_date=end_date)
+        ProductionPlace.objects.get_or_create(production=production, place=location, start_date=start_date, end_date=end_date)
 
         fp = open('../data/bristol/productions/%s' % id)
         details = fp.read()
@@ -63,17 +63,17 @@ for n in range(1700,2009):
             job, forename, surname = re.findall('<td[^>]*>\s*(.*?)\s*</td>', row)
             surname = surname.title()
             if job in 'Author':
-                #person, created = Person.objects.get_or_create(first_name=forename, last_name=surname)
-                #play.authors.add(person)
+                person, created = Person.objects.get_or_create(first_name=forename, last_name=surname)
+                play.authors.add(person)
                 continue
             elif job in ('Composer', 'Designer', 'Director'):
                 cast = False
                 role = job
             elif job == 'Actor':
                 cast = True
-                role = None
+                role = ''
             else:
                 raise Exception
-            #person, created = Person.objects.get_or_create(first_name=forename, last_name=surname)
-            #part = Part.objects.get_or_create(production=production, person=person, role=role, cast=cast)
+            person, created = Person.objects.get_or_create(first_name=forename, last_name=surname)
+            part = Part.objects.get_or_create(production=production, person=person, role=role, cast=cast)
 

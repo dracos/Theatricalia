@@ -95,7 +95,7 @@ for file in glob.glob('../data/rsc/dataProds/*'):
         description += ' (%s performance%s)' % (data['NoPerformances'], data['NoPerformances'] != 1 and 's' or '')
     description = description.strip()
 
-    source = '<a href="http://calm.shakespeare.org.uk/dserve/dserve.exe?dsqIni=Dserve.ini&dsqApp=Archive&dsqDb=Performance&dsqSearch=PerfCode==%27' + data['PerfCode'] + '%27&dsqCmd=Show.tcl">RSC</a>'
+    source = '<a href="http://calm.shakespeare.org.uk/dserve/dserve.exe?dsqIni=Dserve.ini&dsqApp=Archive&dsqDb=Performance&dsqSearch=PerfCode==%27' + data['PerfCode'] + '%27&dsqCmd=Show.tcl">RSC Performance Database</a>'
 
     production = Production(
         play = play,

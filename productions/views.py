@@ -46,8 +46,8 @@ def production(request, play_id, play, production_id):
         'production': production,
 #        'production_form': production_form,
 #        'production_formset': formset,
-        'cast': production.part_set.filter(cast=True).order_by('order', 'role'),
-        'crew': production.part_set.filter(cast=False).order_by('order', 'role'),
+        'cast': production.part_set.filter(cast=True).order_by('order', 'role', 'person__last_name', 'person__first_name'),
+        'crew': production.part_set.filter(cast=False).order_by('order', 'role', 'person__last_name', 'person__first_name'),
         'photo_form': photo_form,
         'seen': seen,
     })
@@ -169,7 +169,7 @@ def production_edit_cast(request, play_id, play, production_id):
     return render(request, 'productions/edit-parts.html', {
         'production': production,
         'form': part_form,
-        'parts': production.part_set.order_by('-cast','order','role'),
+        'parts': production.part_set.order_by('-cast', 'order', 'role', 'person__last_name', 'person__first_name'),
     })
 
 @login_required
