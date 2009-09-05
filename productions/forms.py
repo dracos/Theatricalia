@@ -49,7 +49,7 @@ class ProductionForm(forms.ModelForm):
 
     class Meta:
         model = Production
-        exclude = ('parts', 'places', 'seen_by')
+        exclude = ('parts', 'places', 'seen_by', 'source')
 
     def __init__(self, last_modified=None, *args, **kwargs):
 #        self.db_last_modified = last_modified

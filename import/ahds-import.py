@@ -94,7 +94,7 @@ for n in range(1, 67):
             if c[0] == "Playgoers' Society":
                 company, created = ProductionCompany.objects.get_or_create(name="Playgoers' Society")
 
-        production = Production(play=play, company=company)
+        production = Production(play=play, company=company, source='AHDS, ID #' + data['id'])
         production.save()
         if 'theatre' in data and data['theatre']:
             location = re.sub('^(A|An|The) (.*)$', r'\2, \1', data['theatre'])

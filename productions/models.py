@@ -83,6 +83,7 @@ class Production(models.Model):
     description = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     seen_by = models.ManyToManyField(User, through='Visit', related_name='seen', blank=True)
+    source = models.TextField(blank=True)
 
     def url_components(self, name, **kwargs):
         kwargs.update({
