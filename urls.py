@@ -53,7 +53,7 @@ urlpatterns = patterns('',
     (r'^tickets/lost/found$', 'django.contrib.auth.views.password_reset_complete'),
     url(r'^tickets/returns$', 'django.contrib.auth.views.logout', name='logout'),
 
-    ('^$', home),
+    url('^$', home, name='home'),
 
     url('^about$', static_about, name='about'),
     url('^help$', static_help, name='help'),
