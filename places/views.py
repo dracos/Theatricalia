@@ -85,5 +85,5 @@ def list(request, letter='a'):
         letter = letter.upper()
     letters = [ x[0] for x in first_letters() ]
     letters.sort()
-    return object_list(request, queryset=places, paginate_by=25, extra_context={ 'letter': letter, 'letters': letters })
+    return object_list(request, queryset=places, extra_context={ 'letter': letter, 'letters': letters })
 
