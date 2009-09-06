@@ -35,7 +35,7 @@ for n in range(1700,2009):
         print ' ', id, play, theatre, n, '-', (n+1)
 
         play, created = Play.objects.get_or_create(title=play)
-        source = '<a href="http://www.bristol.ac.uk/theatrecollection/%s">University of Bristol Theatre Collection</a>' % search_link
+        source = '<a href="http://www.bristol.ac.uk/theatrecollection/search/%s">University of Bristol Theatre Collection</a>' % search_link
         production = Production(
             play = play,
             description = notes,
