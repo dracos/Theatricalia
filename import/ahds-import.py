@@ -86,6 +86,8 @@ for n in range(1, 67):
         title = re.sub('^(A|An|The) (.*)$', r'\2, \1', data['play'])
         play, created = Play.objects.get_or_create(title=title)
         if 'author' in data:
+            if data['author'][0] in [ p.last_name for p in play.authors.all() ] and data['author'][1][0] in [ p.first_name[0] for p in play.authors.all() ]:
+                break
             author = add_person_nicely(data['author'][1], data['author'][0])
             play.authors.add(author)
 
