@@ -74,6 +74,15 @@ please <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
 {% endif %}
 {% endif %}
 
+{% if same_name %}
+<h2 class="no-descenders">Same name</h2>
+<ul>
+{% for play in same_name %}
+<li><a href="{{ play.get_absolute_url }}">{{ play|prettify }}</a>, by {{ play.get_authors_display }}
+{% endfor %}
+</ul>
+{% endif %}
+
 </div>
 
 {% endblock %}

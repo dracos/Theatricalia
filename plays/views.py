@@ -25,11 +25,13 @@ def play(request, play_id, play):
         return HttpResponseRedirect(e.args[0].get_absolute_url())
     past, future = productions_for(play)
     alert = play.alerts.filter(user=request.user)
+    same_name = Play.objects.filter(title=play.title).exclude(id=play.id)
     return render(request, 'plays/play.html', {
         'play': play,
         'past': past,
         'future': future,
         'alert': alert,
+        'same_name': same_name,
     })
 
 @login_required
