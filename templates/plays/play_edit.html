@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
-{% block title %}Editing {{ play }}{% endblock %}
+{% block title %}Editing {{ play|prettify }}{% endblock %}
 
 {% block content %}
 
-<h1>Editing {{ play }}</h1>
+<h1>Editing {{ play|prettify }}</h1>
 
 <div id="primary">
 

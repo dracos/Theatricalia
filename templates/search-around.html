@@ -100,7 +100,7 @@ $(function(){
 
 <ul class="place_list">
 {% for place in places %}
-<li><a href="{% url search-around-past latlon %}">{{ place }}</a>
+<li><a href="{% url search-around-past latlon %}">{{ place|prettify }}</a>
 {% endfor %}
 </ul>
 
@@ -109,7 +109,7 @@ $(function(){
 {% else %}
 
 <p>No results have been found, I&rsquo;m afraid.
-It&rsquo;s possible the theatre is present but not geo-located, or that it is
+It&rsquo;s possible theatres are present but not yet geo-located, or that they are
 not yet in our database &ndash; <a href="{% url production-add %}">add a production</a>
 and you can add a place along the way.
 </p>

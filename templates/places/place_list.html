@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load prettify %}
 
 {% block title %}{{ letter }} | All Places{% endblock %}
 
@@ -30,7 +31,7 @@
 
 <ul id="places_list">
 {% for place in object_list %}
-    <li><a href="{{ place.get_absolute_url }}">{{ place }}</a></li>
+    <li><a href="{{ place.get_absolute_url }}">{{ place|prettify }}</a></li>
 {% empty %}
     <li>No results.</li>
 {% endfor %}

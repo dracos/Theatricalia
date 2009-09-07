@@ -45,7 +45,7 @@ if (!window.location.hash)
 <p>The following places matched your search:</p>
 <ul class="place_list">
 {% for place in places %}
-<li><a href="{{ place.get_absolute_url }}">{{ place }}</a>
+<li><a href="{{ place.get_absolute_url }}">{{ place|prettify }}</a>
 {% endfor %}
 </ul>
 {% endif %}
@@ -63,7 +63,7 @@ if (!window.location.hash)
 {% endif %}
 <ul>
 {% for place in near.geonames %}
-<li><a href="/search/around/{{ place.lat }},{{ place.lng }}?name={{ place.get_name_display|urlencode }}">{{ place.get_name_display|prettify }}</a>{% if place.adminName1 %},
+<li><a href="/search/around/{{ place.lat }},{{ place.lng }}?name={{ place.name|urlencode }}">{{ place.name|prettify }}</a>{% if place.adminName1 %},
 {{ place.adminName1 }}{% endif %}, {{ place.countryName }}
 {% endfor %}
 </ul>
@@ -86,7 +86,7 @@ if (!window.location.hash)
 {% endifequal %}
 <ul class="person_list">
 {% for person in people %}
-<li><a href="{{ person.get_absolute_url }}">{{ person }}</a>
+<li><a href="{{ person.get_absolute_url }}">{{ person|prettify }}</a>
 {% endfor %}
 </ul>
 {% if not request.GET.similar and not sounds_people %}
