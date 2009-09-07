@@ -24,7 +24,7 @@
 <h2>Current &amp; Upcoming productions</h2>
 <ul class="production_list">
 {% for production in future.object_list %}
-<li><a href="{{ production.get_absolute_url }}">{{ production.play|prettify }}</a>, {{ production.title|prettify }}
+<li><a href="{{ production.get_absolute_url }}">{{ production.play|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
 <span>{{ production.date_summary|prettify }}.</span>
 {% endfor %}
 </ul>
