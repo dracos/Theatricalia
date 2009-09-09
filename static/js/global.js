@@ -18,6 +18,12 @@ var start_tab;
 $(function() {
     $('#messages').wait(3000).slideUp('slow');
 
+    $('#navigation a').hover(function(){
+        $('#navigation a').not(this).addClass('greyed');
+    }, function(){
+        $('#navigation a').not(this).removeClass('greyed');
+    });
+
     var edit_link = $('#edit-link a');
     if (edit_link.length) {
         var href = edit_link.attr('href');

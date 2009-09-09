@@ -292,10 +292,8 @@ h3 {
 	color: #000000;
 }
 
-#navigation:hover a {
-	text-decoration: none;
+#navigation a.greyed {
 	color: #999999;
-	background: none;
 }
 
 #navigation a:hover {
