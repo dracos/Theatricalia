@@ -1,7 +1,7 @@
 import re
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response
 from django.conf import settings
+from shortcuts import render
 
 class OnlyLowercaseUrls:
     def process_request(self, request):
@@ -34,7 +34,7 @@ class AlphaMiddleware(object):
                 return response
             else:
                 msg = 'Incorrect password'
-        return render_to_response('alpha_password.html', {
+        return render(request, 'alpha_password.html', {
             'msg': msg,
             'form_field_name': self.form_field_name,
             'path': request.get_full_path(),
