@@ -32,3 +32,6 @@ class AlertLocal(models.Model):
     def __unicode__(self):
         return "%s's alert around (%s,%s)" % (self.user, self.latitude, self.longitude)
 
+class AlertSent(models.Model):
+    alert = models.ForeignKey(Alert)
+    production = models.ForeignKey('productions.Production')
