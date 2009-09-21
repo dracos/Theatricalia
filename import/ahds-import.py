@@ -18,6 +18,30 @@ def add_person_nicely(first_name, last_name):
     person, created = Person.objects.get_or_create(first_name=first_name, last_name=last_name)
     return person
 
+# Manual list from some already existing Places
+theatre_lookup = {
+   "Comedy, London": "Comedy Theatre, London",
+   "Duchess, London": "Duchess Theatre, London",
+   "Globe, London": "Globe Theatre, London",
+   "King's, Glasgow": "King's Theatre, Glasgow",
+   "Kingsway, London": "Kingsway Theatre, London",
+   "Lyceum, Edinburgh": "Lyceum Theatre, Edinburgh",
+   "Lyric, London": "Lyric Theatre, London",
+   "Malvern": "Malvern Theatre, Worcestershire",
+   "New, London": "New Theatre, London",
+   "Palace, Manchester": "Palace Theatre, Manchester",
+   "Piccadilly, London": "Piccadilly Theatre, London",
+   "Playhouse, London": "Playhouse Theatre, London",
+   "Prince's, Manchester": "Prince's Theatre, Manchester",
+   "Queen's, London": "Queen's Theatre, London",
+   "Regent, London": "Regent Theatre, London",
+   "Royalty, London": "The Royalty Theatre, London",
+   "S. Bernhardt, Paris": "Sarah Bernhardt Theatre des Nations",
+   "S.m.t., Stratford": "Shakespeare Memorial Theatre, Stratford-upon-Avon",
+   "Vaudeville, London": "Vaudeville Theatre, London",
+   "B'ham Rep": "Birmingham Repertory Theatre",
+}
+
 # Unique slugs not needed any more, but here's the code as was
 #    try:
 #        person = Person.objects.get(slug=slug)
@@ -53,6 +77,8 @@ for n in range(1, 67):
         play, author, director, designer, theatre, first, last = re.findall('<td[^>]*>\s*(.*?)\s*</td>(?s)', play_row)
         if play == '<b>Play</b>':
             continue
+        if theatre in theatre_lookup:
+            theatre = theatre_lookup[theatre]
         data = {
             'play': play,
             'theatre': theatre,
@@ -84,12 +110,28 @@ for n in range(1, 67):
 
         # Okay, got it all now. Let's stick it all in the db
         title = re.sub('^(A|An|The) (.*)$', r'\2, \1', data['play'])
-        play, created = Play.objects.get_or_create(title=title)
         if 'author' in data:
-            if data['author'][0] in [ p.last_name for p in play.authors.all() ] and data['author'][1][0] in [ p.first_name[0] for p in play.authors.all() ]:
-                break
-            author = add_person_nicely(data['author'][1], data['author'][0])
-            play.authors.add(author)
+            forename, surname = data['author'][1], data['author'][0]
+            try:
+                play = Play.objects.get(title__iexact=title, authors__last_name=surname, authors__first_name__startswith=forename[0])
+            except:
+                try:
+                    play = Play.objects.get(title__istartswith="%s," % title, authors__last_name=surname, authors__first_name__startswith=forename[0])
+                except:
+                    person = add_person_nicely(forename, surname)
+                    try:
+                        play = Play.objects.get(title__iexact=title, authors=None)
+                        play.authors.add(person)
+                    except:
+                        play = Play(title=title)
+                        play.save()
+                        play.authors.add(person)
+        else:
+            try:
+                play = Play.objects.get(title__iexact=title, authors=None)
+            except:
+                play = Play(title=title)
+                play.save()
 
         company = None
         for c in data['cast']:
@@ -98,13 +140,23 @@ for n in range(1, 67):
 
         production = Production(play=play, company=company, source='AHDS Performing Arts (#' + data['id'] + ')')
         production.save()
+
         if 'theatre' in data and data['theatre']:
-            location = re.sub('^(A|An|The) (.*)$', r'\2, \1', data['theatre'])
-            location, created = Place.objects.get_or_create(name=location)
+            theatre = re.sub('^(A|An|The) (.*)$', r'\2, \1', data['theatre'])
+            theatre_no_the = re.sub(', (A|An|The)$', '', theatre)
+            theatre_with_the = '%s, The' % theatre_no_the
+            try:
+                location = Place.objects.get(name=theatre_with_the)
+            except:
+                try:
+                    location = Place.objects.get(name=theatre_no_the)
+                except:
+                    location, created = Place.objects.get_or_create(name=theatre)
             ProductionPlace.objects.get_or_create(production=production, place=location, start_date=data['first'], end_date=data['last'])
         else:
             location, created = Place.objects.get_or_create(name='Unknown')
             ProductionPlace.objects.get_or_create(production=production, place=location, start_date=data['first'], end_date=data['last'])
+
         for c in data['cast']:
             if c[0] == 'Cast Unknown' or c[0] == "Playgoers' Society":
                 continue
@@ -113,13 +165,9 @@ for n in range(1, 67):
 
         if 'director' in data:
             director = add_person_nicely(data['director'][1], data['director'][0])
-            part, created = Part.objects.get_or_create(production=production, person=director, cast=False)
-            part.role = 'Director'
-            part.save()
+            part, created = Part.objects.get_or_create(production=production, person=director, cast=False, role="Director")
 
         if 'designer' in data:
             designer = add_person_nicely(data['designer'][1], data['designer'][0])
-            part, created = Part.objects.get_or_create(production=production, person=designer, cast=False)
-            part.role = 'Designer'
-            part.save()
+            part, created = Part.objects.get_or_create(production=production, person=designer, cast=False, role="Designer")
 
