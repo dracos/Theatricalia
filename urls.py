@@ -38,10 +38,6 @@ urlpatterns = patterns('',
 
     (r'^admin/(.*)', admin.site.root),
 
-    (r'^static/(?P<path>.*)$', 'django.views.static.serve', {
-        'document_root': os.path.join(settings.OUR_ROOT, 'static')
-    }),
-    
     url(r'^tickets/boxoffice$', profiles.register, name='register'),
     url(r'^tickets/(?P<uidb32>[0-9A-Za-z]+)-(?P<token>.+)$', profiles.register_confirm, name='register-confirm'),
     url(r'^tickets$', profiles.login, name='login'),
@@ -134,3 +130,12 @@ urlpatterns = patterns('',
     url('^publicity/(?P<year>\d{4})/(?P<month>\w+)/(?P<slug>[-\w]+)$',
         date_based.object_detail, dict(news_info_dict, month_format='%B', day=31, slug_field='slug'), name='news-entry'),
 )
+
+if settings.DEBUG:
+    urlpatterns += patterns('', 
+        (r'^static/(?P<path>.*)$', 'django.views.static.serve', {
+            'document_root': os.path.join(settings.OUR_ROOT, 'static')
+        })
+    )
+    
+
