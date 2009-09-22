@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class ArticleManager(models.Manager):
+    def visible(self):
+        return super(ArticleManager, self).get_query_set().filter(visible=True)
+
 class Article(models.Model):
     author = models.ForeignKey(User)
     enable_comments = models.BooleanField(default=True)
@@ -10,6 +14,8 @@ class Article(models.Model):
     visible = models.BooleanField(default=False)
     body = models.TextField()
     body_html = models.TextField(editable=False, blank=True)
+
+    objects = ArticleManager()
 
     class Meta:
         get_latest_by = 'created'
