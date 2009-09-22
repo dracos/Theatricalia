@@ -31,7 +31,7 @@
 
 {% for part in cast %}
 <tr><th>{{ part.role_or_unknown }}</th>
-<td><a href="{{ part.person.get_absolute_url }}">{{ part.person }}</a>
+<td><a href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>
 {% if part.credited_as %}<br>&nbsp;&nbsp;<small>(credited as {{ part.credited_as|prettify }})</small>{% endif %}
 </td></tr>
 {% endfor %}
@@ -42,7 +42,7 @@
 
 {% for part in crew %}
 <tr><th>{{ part.role_or_unknown }}</th>
-<td><a href="{{ part.person.get_absolute_url }}">{{ part.person }}</a>
+<td><a href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>
 {% if part.credited_as %}<br>&nbsp;&nbsp;<small>(credited as {{ part.credited_as|prettify }})</small>{% endif %}
 </td></tr>
 {% endfor %}

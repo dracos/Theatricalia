@@ -32,6 +32,15 @@ body {
 	padding: 0 1em;
 }
 
+div#banner {
+    position: absolute;
+    top: 0; right: 0;
+    background-color: #6782dc;
+    font-size: 75%;
+    padding: 2px 5px;
+    color: #ffffff;
+}
+
 p {
 	margin: 1.5em 0;
 	line-height: 1.5;
