@@ -13,7 +13,7 @@ DEFAULT_FROM_EMAIL = 'Matthew Somerville <matthew@theatricalia.com>'
 SERVER_EMAIL = 'matthew@theatricalia.com'
 
 LOGIN_URL = '/tickets'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/profile'
 AUTHENTICATION_BACKENDS = (
     'profiles.backends.ModelBackend',
 )

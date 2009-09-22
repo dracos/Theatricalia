@@ -116,6 +116,7 @@ urlpatterns = patterns('',
     url('^profile/alert$', profiles.profile_alert, name='profile-alert'),
     url('^profile/edit$', profiles.profile_edit, name='profile-edit'),
     url('^profile/(?P<username>.*)$', profiles.profile, name='profile'),
+    url('^profile$', profiles.profile_user, name='profile-user'),
 
     url('^publicity$', news.index, name='news-index'),
     url('^publicity/(?P<year>\d{4})$', news.year, name='news-year'),

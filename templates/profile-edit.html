@@ -21,7 +21,7 @@
 <div class="secondary">
 
 <h2 class="no-descenders">Your alerts</h2>
-{% if user.alerts or user.local_alerts %}
+{% if user.alerts.all or user.local_alerts.all %}
 <ul>
 {% for alert in user.alerts.all %}
 <li>{{ alert }} &ndash; <a href="{{ profile.get_alert_remove_url }}/{{ alert.id }}">remove</a>

@@ -17,6 +17,10 @@ from common.models import Alert
 from reversion.models import Revision
 from productions.models import Part
 
+@login_required
+def profile_user(request):
+    return HttpResponseRedirect(request.user.get_profile().get_absolute_url())
+
 def profile(request, username):
     user = get_object_or_404(User, username=username)
     profile = user.get_profile()
