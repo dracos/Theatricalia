@@ -103,8 +103,9 @@ def register_confirm(request, uidb32, token):
         from django.contrib.auth import login
         login(request, user)
         # Decide what to do with someone confirming registration
-        #return render(request, 'hmm')
-        #return HttpResponseRedirect(reverse('validate-email-success'))
+        return render(request, 'registration/validated.html', {
+            'user': user,
+        })
     return HttpResponseRedirect('/')
 
 def send_confirmation_email(request, user):
