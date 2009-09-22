@@ -2,6 +2,7 @@ import os
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext, loader, Context
 from django.core.mail import send_mail
+from django.conf import settings
 from django.http import Http404
 from django.db import connection
 from utils import base32_to_int, MistypedIDException
@@ -37,5 +38,5 @@ def send_email(request, subject, template, context, to):
         'host': request.META['HTTP_HOST'],
     })
     mail = t.render(Context(context))
-    send_mail(subject, mail, 'Matthew Somerville <matthew@theatricalia.com>', [to])
+    send_mail(subject, mail, settings.DEFAULT_FROM_EMAIL, [to])
 

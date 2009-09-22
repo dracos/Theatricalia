@@ -8,7 +8,9 @@ sys.path.insert(0, os.path.join(OUR_ROOT, 'ext'))
 ALPHA_PASSWORD='tiaomiwym' # this, if anything of mine, is worth your memory
 
 EMAIL_HOST = 'localhost'
-EMAIL_PORT = 2525
+EMAIL_PORT = 25
+DEFAULT_FROM_EMAIL = 'Matthew Somerville <matthew@theatricalia.com>'
+SERVER_EMAIL = 'matthew@theatricalia.com'
 
 LOGIN_URL = '/tickets'
 LOGIN_REDIRECT_URL = '/'
@@ -17,11 +19,13 @@ AUTHENTICATION_BACKENDS = (
 )
 AUTH_PROFILE_MODULE = 'profiles.profile'
 
-DEBUG = True
+APPEND_SLASH = False
+
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
+    ('Matthew Somerville', 'matthew@theatricalia.com'),
 )
 
 INTERNAL_IPS = ('127.0.0.1',)
@@ -29,9 +33,9 @@ INTERNAL_IPS = ('127.0.0.1',)
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = 'theatricalia'             # Or path to database file if using sqlite3.
-DATABASE_USER = 'theatredb'             # Not used with sqlite3.
-DATABASE_PASSWORD = ''         # Not used with sqlite3.
+DATABASE_NAME = 'theatricalia' # Or path to database file if using sqlite3.
+DATABASE_USER = 'theatricalia' # Not used with sqlite3.
+DATABASE_PASSWORD = 'Lq6BSrC6RFRepEC2'         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
