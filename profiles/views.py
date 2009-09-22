@@ -98,16 +98,13 @@ def register_confirm(request, uidb32, token):
     if default_token_generator.check_token(user, token):
         p = user.get_profile()
         p.email_validated = True
-        print p
         p.save()
         user.backend = 'theatricalia.profiles.backends.ModelBackend' # Needs backend to login?
         from django.contrib.auth import login
         login(request, user)
-        print user.is_authenticated()
         # Decide what to do with someone confirming registration
         #return render(request, 'hmm')
         #return HttpResponseRedirect(reverse('validate-email-success'))
-    print request.user.is_authenticated()
     return HttpResponseRedirect('/')
 
 def send_confirmation_email(request, user):

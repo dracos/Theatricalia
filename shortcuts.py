@@ -38,5 +38,4 @@ def send_email(request, subject, template, context, to):
     })
     mail = t.render(Context(context))
     send_mail(subject, mail, 'Matthew Somerville <matthew@theatricalia.com>', [to])
-    print mail
 
