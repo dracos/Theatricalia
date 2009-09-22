@@ -35,3 +35,7 @@ class AlertLocal(models.Model):
 class AlertSent(models.Model):
     alert = models.ForeignKey(Alert)
     production = models.ForeignKey('productions.Production')
+
+class Prelaunch(models.Model):
+    email = models.EmailField()
+    created = models.DateTimeField(auto_now_add=True)

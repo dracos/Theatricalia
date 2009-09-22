@@ -1,6 +1,8 @@
-import re
+import re, random
 from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
+from django.forms.fields import email_re
+from common.models import Prelaunch
 from shortcuts import render
 
 class OnlyLowercaseUrls:
@@ -10,8 +12,8 @@ class OnlyLowercaseUrls:
             return HttpResponseRedirect(path)
 
 class AlphaMiddleware(object):
-    cookie_name = 'alpha'
-    form_field_name = 'alpha'
+    cookie_name = 'godot'
+    form_field_name = 'godot'
     
     def get_password(self):
         return settings.ALPHA_PASSWORD
@@ -25,20 +27,43 @@ class AlphaMiddleware(object):
             return self.login_screen(request)
     
     def login_screen(self, request):
-        msg = ''
-        if request.method == 'POST':
-            password = request.POST.get(self.form_field_name, '')
-            if password == self.get_password():
-                response = HttpResponseRedirect(request.get_full_path())
-                self.set_cookie(response, password)
-                return response
-            else:
-                msg = 'Incorrect password'
-        return render(request, 'alpha_password.html', {
-            'msg': msg,
+        vars = {
             'form_field_name': self.form_field_name,
             'path': request.get_full_path(),
-        })
+            'error': {},
+        }
+
+        if request.method == 'POST':
+            password = request.POST.get(self.form_field_name, '')
+            if password:
+                if password == self.get_password():
+                    response = HttpResponseRedirect(request.get_full_path())
+                    self.set_cookie(response, password)
+                    return response
+                else:
+                    vars['error']['pw'] = 'That is not the correct password.'
+
+            email = request.POST.get('ebygum', '')
+            if email:
+                if email_re.match(email):
+                    obj = Prelaunch(email = email)
+                    obj.save()
+                    vars['messages'] = ['Thank you; you will hopefully hear from us in the not too distant future.']
+                else:
+                    vars['error']['em'] = 'Please enter a valid email address.'
+
+        statuses = [ 'Painting scenery', 'Auditioning actors', 'Cutting out gobos', 'Rehearsing', 'Measuring for costumes', 'Learning lines', 'Stocking the ice-cream cabinet' ]
+        rand_not = int(request.POST.get('not', 0))
+        if rand_not >= 1 and rand_not <= 7:
+            rand = random.randint(0, len(statuses)-2)
+            if rand >= rand_not:
+                rand += 1
+        else:
+            rand = random.randint(0, len(statuses)-1)
+        vars['rand'] = rand
+        vars['status'] = statuses[rand]
+
+        return render(request, 'alpha_password.html', vars)
     
     def set_cookie(self, response, password):
         response.set_cookie(self.cookie_name, password)

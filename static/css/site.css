@@ -734,3 +734,24 @@ ul#edit-parts li:nth-child(2n) {
     float: left;
 }
 
+#alpha em {
+    color: #92000a;
+}
+#alpha #main {
+    max-width: 43em;
+    margin: 0 auto;
+}
+#alpha form {
+    text-align: center;
+}
+#alpha form p {
+    margin: 0.75em 0;
+}
+#alpha .top {
+    margin-top: 0;
+}
+#alpha .bottom {
+    margin-bottom: 0;
+}
+
+

@@ -15,6 +15,7 @@ from sounds.jarowpy import jarow
 #from levenshtein import damerau, qnum
 from productions.objshow import productions_for, productions_list
 from common.models import AlertLocal
+from common.templatetags.prettify import prettify
 
 distance = jarow
 threshold = 0.8
