@@ -3,8 +3,9 @@
 import os, sys
 
 # Custom paths for location of Django and project - think this should work.
-sys.path.insert(0, "/srv/theatricalia.com/theatricalia") # For my imports
-sys.path.insert(0, "/srv/theatricalia.com") # For everything else
+for path in ("/srv/theatricalia.com/theatricalia", "/srv/theatricalia.com"):
+    if path not in sys.path:
+        sys.path.insert(0, path)
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'theatricalia.settings'
 

@@ -5,16 +5,21 @@ from django.forms.fields import email_re
 from common.models import Prelaunch
 from shortcuts import render
 
+from ratelimitcache import ratelimit
+
 class OnlyLowercaseUrls:
     def process_request(self, request):
         if request.path.lower() != request.path:
             path = request.get_full_path().replace(request.path, request.path.lower())
             return HttpResponseRedirect(path)
 
-class AlphaMiddleware(object):
+class AlphaMiddleware(ratelimit):
     cookie_name = 'godot'
     form_field_name = 'godot'
     
+    def __init__(self):
+        super(AlphaMiddleware, self).__init__(minutes=2, requests=10, expire_after=(2+1)*60)
+
     def get_password(self):
         return settings.ALPHA_PASSWORD
     
@@ -33,6 +38,10 @@ class AlphaMiddleware(object):
             'error': {},
         }
 
+        check = self.rate_limit_manual(request)
+        if check:
+            return check
+
         if request.method == 'POST':
             password = request.POST.get(self.form_field_name, '')
             if password:
@@ -41,6 +50,7 @@ class AlphaMiddleware(object):
                     self.set_cookie(response, password)
                     return response
                 else:
+                    self.cache_incr(self.current_key(request))
                     vars['error']['pw'] = 'That is not the correct password.'
 
             email = request.POST.get('ebygum', '')
@@ -67,3 +77,4 @@ class AlphaMiddleware(object):
     
     def set_cookie(self, response, password):
         response.set_cookie(self.cookie_name, password)
+

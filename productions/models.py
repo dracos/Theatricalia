@@ -210,9 +210,9 @@ class PartManager(models.Manager):
 class Part(models.Model):
     production = models.ForeignKey(Production)
     person = models.ForeignKey(Person)
-    role = models.CharField(u'R\u00f4le', max_length=100, blank=True)
+    role = models.CharField(u'R\u00f4le', max_length=100, blank=True, help_text=u'e.g. \u201cRomeo\u201d or \u201cDirector\u201d')
     cast = models.NullBooleanField(null=True, blank=True, verbose_name='Cast/Crew')
-    credited_as = models.CharField(max_length=100, blank=True)
+    credited_as = models.CharField(max_length=100, blank=True, help_text='if they were credited differently to their name')
     order = models.IntegerField(blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)

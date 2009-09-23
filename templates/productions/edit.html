@@ -23,6 +23,10 @@
 {{ form.errors }}
 
 <p>{{ form.play.label_tag }} {{ form.play }}</p>
+<p class="help_text"><small>If you need to change the play&rsquo;s author
+or description, you can do that from the
+<a href="{{ production.play.get_edit_url }}">play&rsquo;s edit page</a>
+(you&rsquo;ll lose any changes you&rsquo;ve made to this page).</small></p>
 <p>{{ form.company.label_tag }} {{ form.company }}</p>
 <p>{{ form.description.label_tag }} {{ form.description }}</p>
 

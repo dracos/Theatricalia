@@ -3,7 +3,9 @@
 # My additions
 import os.path, sys
 OUR_ROOT = os.path.realpath(os.path.dirname(__file__))
-sys.path.insert(0, os.path.join(OUR_ROOT, 'ext'))
+ext = os.path.join(OUR_ROOT, 'ext')
+if ext not in sys.path:
+    sys.path.insert(0, ext)
 
 ALPHA_PASSWORD='tiaomiwym' # this, if anything of mine, is worth your memory
 
@@ -11,6 +13,10 @@ EMAIL_HOST = 'localhost'
 EMAIL_PORT = 25
 DEFAULT_FROM_EMAIL = 'Matthew Somerville <matthew@theatricalia.com>'
 SERVER_EMAIL = 'matthew@theatricalia.com'
+
+CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
+CACHE_MIDDLEWARE_SECONDS = 300
+CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 
 LOGIN_URL = '/tickets'
 LOGIN_REDIRECT_URL = '/profile'
@@ -81,6 +87,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.csrf.middleware.CsrfMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -89,6 +96,7 @@ MIDDLEWARE_CLASSES = (
     'theatricalia.middleware.OnlyLowercaseUrls',
     'django.middleware.transaction.TransactionMiddleware',
     'reversion.middleware.RevisionMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
 ROOT_URLCONF = 'theatricalia.urls'
