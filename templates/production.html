@@ -1,10 +1,6 @@
 {% extends 'base.html' %}
 {% load prettify %}{% load comments %}
 
-{% block extra_head %}
-    <script type="text/javascript" src="/static/js/production.js"></script>
-{% endblock %}
-
 {% block title %}Production of {{ production.play|prettify }}{% endblock %}
 
 {% block content %}

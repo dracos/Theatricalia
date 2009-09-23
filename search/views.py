@@ -63,6 +63,9 @@ def search_autocomplete(request):
     if search_fields == 'first_name,last_name' and ' ' in query:
         first, last = query.split(' ')
         q = q | Q(first_name__icontains=first, last_name__icontains=last)
+    if app_label == 'places' and ',' in query:
+        name, town = query.rsplit(',', 1)
+        q = q | Q(name__icontains=name, town__icontains=town)
 
     qs = model.objects.filter( q )
     data = ''.join([u'%s|%s\n' % (f.__unicode__(), f.pk) for f in qs])

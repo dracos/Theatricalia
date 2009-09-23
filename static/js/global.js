@@ -202,6 +202,7 @@ function autocomplete_add(params) {
         },
         matchContains:1,
         max:20,
+        multipleSeparator: '|',
         selectFirst:0
     }).result(function(event, data, formatted) {
         if (data) {
