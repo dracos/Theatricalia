@@ -16,7 +16,7 @@
 <div id="primary">
 
 {% if production.description %}
-<p>{{ production.description|prettify }}</p>
+{{ production.description|prettify|linebreaks }}
 {% endif %}
 
 <h2 class="no-descenders">Cast &amp; Crew</h2>

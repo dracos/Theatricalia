@@ -1,12 +1,14 @@
 import re
 from django import forms
+from django.utils.safestring import mark_safe
+from django.forms.formsets import BaseFormSet
+
 from models import Production, Part, Place, ProductionCompany
 from plays.models import Play
 from places.models import Place as PlacePlace
 from people.models import Person
 from fields import PrettyDateField, ApproximateDateFormField
 from widgets import PrettyDateInput
-from django.forms.formsets import BaseFormSet
 from search.views import search_people
 from common.templatetags.prettify import prettify
 from autocomplete.widgets import ForeignKeySearchInput
@@ -215,7 +217,7 @@ class PartForm(forms.ModelForm):
                 last_production = last_production[0]
             else:
                 last_production = 'nothing yet on this site'
-            choices.append( (p.id, prettify(str(p) + ', last in ' + str(last_production)) ) )
+            choices.append( (p.id, prettify(mark_safe('<a target="_blank" href="' + p.get_absolute_url() + '">' + str(p) + '</a> <small>(new window)</small>, last in ' + str(last_production))) ) )
         if len(choices) > 1:
             choices.append( ( 'new', prettify('None of these, a new person called \'' + s + '\'') ) )
         elif str(p) == s:

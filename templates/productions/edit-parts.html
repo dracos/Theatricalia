@@ -15,32 +15,11 @@
 
 <div id="primary">
 
-{% if not form.errors %}
-
 <p>Thank you for taking the time to add or correct some information on this site.
-</p>
+Here, you can either <a href="#add">add a new part</a>, or
+pick from the <a href="#edit-head">list of parts to edit</a>.</p>
 
-<h2 class="no-descenders"><a name="castandcrew"></a>Cast &amp; Crew</h2>
- 
-<ul id="edit-parts">
-{% for part in parts.all %}
-<li>
-  <a href="./{{ part.id }}">Edit</a>
-  {{ part.person.name }}, {{ part.role }} <small>({{ part.cast_string }})</small>
-  {% if part.order or part.start_date or part.end_date %}
-  <small>{{ part.order|default:'' }}
-  {% if part.start_date %}, {{ part.start_date|default:'' }}{% endif %}
-  {% if part.end_date %}, {{ part.end_date|default:'' }}{% endif %}</small>
-  {% endif %}
-</li>
-{% empty %}
-<li>No parts currently. If you know some, please contribute them below.</li>
-{% endfor %}
-</ul>
-    
-{% endif %}
-
-<h2 class="no-descenders">Add new Part</h2>
+<h2 id="add" class="no-descenders">Add new Part</h2>
 
 <form method="post" id="edit">
 
@@ -68,6 +47,28 @@
 <p><input type="submit" value="Record addition"></p>
 </form>
  
+{% if not form.errors %}
+
+<h2 id="edit-head" class="no-descenders"><a name="castandcrew"></a>Cast &amp; Crew</h2>
+ 
+<ul id="edit-parts">
+{% for part in parts.all %}
+<li>
+  <a href="./{{ part.id }}">Edit</a>
+  {{ part.person.name }}, {{ part.role }} <small>({{ part.cast_string }})</small>
+  {% if part.order or part.start_date or part.end_date %}
+  <small>{{ part.order|default:'' }}
+  {% if part.start_date %}, {{ part.start_date|default:'' }}{% endif %}
+  {% if part.end_date %}, {{ part.end_date|default:'' }}{% endif %}</small>
+  {% endif %}
+</li>
+{% empty %}
+<li>No parts currently. If you know some, please contribute them above.</li>
+{% endfor %}
+</ul>
+    
+{% endif %}
+
 </div>
 
 {% include 'productions/sidebar.html' %}

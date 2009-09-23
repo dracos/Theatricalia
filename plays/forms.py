@@ -1,5 +1,6 @@
 import re
 from django import forms
+from django.utils.safestring import mark_safe
 from models import Play
 from people.models import Person
 from search.views import search_people
@@ -33,7 +34,7 @@ class PlayAuthorForm(forms.Form):
                 last_production = last_production[0]
             else:
                 last_production = 'nothing yet on this site'
-            choices.append( (p.id, prettify(str(p) + ', last in ' + str(last_production)) ) )
+            choices.append( (p.id, prettify(mark_safe('<a target="_blank" href="' + p.get_absolute_url() + '">' + str(p) + '</a> <small>(new window)</small>, last in ' + str(last_production))) ) )
         if len(choices) > 1:
             choices.append( ( 'new', prettify('None of these, a new person called \'' + s + '\'') ) )
         elif str(p) == s:
@@ -53,7 +54,7 @@ class PlayAuthorForm(forms.Form):
         person = self.cleaned_data['person_choice']
         if re.match('[0-9]+$', person):
             return Person.objects.get(id=person)
-        if person == 'new' or person == '':
+        if person == 'new' or (person == '' and 'person' not in self.changed_data):
             return person
         raise forms.ValidationError('Please select one of the choices below:')
 

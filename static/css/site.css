@@ -705,6 +705,7 @@ ul#edit-parts li:nth-child(2n) {
 
 #home #warning {
     clear: both;
+    padding-top: 1.5em;
     text-align: center;
     width: 90%;
     margin: 0 auto;
@@ -712,6 +713,7 @@ ul#edit-parts li:nth-child(2n) {
     width: 68%; */
 }
 #home #warning p {
+    margin: 0;
     font-size: 87.5%;
     line-height: 1.715;
 }
