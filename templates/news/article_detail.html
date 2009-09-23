@@ -9,7 +9,7 @@
 
 <div id="primary">
 
-<p>{{ object.body|safe|prettify }}</p>
+{{ object.body|safe|prettify|urlize|linebreaks }}
 
 </div>
 
