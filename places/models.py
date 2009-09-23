@@ -92,6 +92,10 @@ class Place(models.Model):
     def get_feed_url(self):
         return '%s/feed' % self.get_absolute_url()
 
+    @models.permalink
+    def get_productions_url(self):
+        return self.make_url('place-productions')
+
 def first_letters():
     from django.db import connection
     cursor = connection.cursor()

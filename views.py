@@ -1,4 +1,5 @@
 import random
+from django.contrib.comments.models import Comment
 from shortcuts import render
 from productions.models import Production, Part
 from plays.models import Play
@@ -18,8 +19,14 @@ def home(request):
     except:
         latest = {}
 
+    try:
+        latest_comment = Comment.objects.all().order_by('-id')[0]
+    except:
+        latest_comment = {}
+
     return render(request, 'home.html', {
         'latest_production': latest,
+        'latest_observation': latest_comment,
         'latest_news': latest_news,
         'productions': Production.objects.count(),
         'places': Place.objects.count(),

@@ -63,7 +63,7 @@ if (!window.location.hash)
 {% endif %}
 <ul>
 {% for place in near.geonames %}
-<li><a href="/search/around/{{ place.lat }},{{ place.lng }}?name={{ place.name|urlencode }}">{{ place.name|prettify }}</a>{% if place.adminName1 %},
+<li><a href="/search/around/{{ place.lat }},{{ place.lng }}?name={{ place.name|urlencode }}">{{ place.get_name_display|prettify }}</a>{% if place.adminName1 %},
 {{ place.adminName1 }}{% endif %}, {{ place.countryName }}
 {% endfor %}
 </ul>
@@ -110,7 +110,9 @@ if (!window.location.hash)
 <ul class="production_list">
 {% for part in parts.object_list %}
 <li>
-{{ part.role|prettify }}, played by <a href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>, in
+{{ part.role|prettify }},
+{% if part.cast %}played by {% endif %}
+<a href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>, in
 <a href="{{ part.production.get_absolute_url }}">{{ part.production.play|prettify }}</a>{% if part.production.title %}, {{ part.production.title|prettify }}{% endif %}
 <span>{{ part.production.date_summary|prettify }},
 {% ifequal part.production.places.count 1 %}

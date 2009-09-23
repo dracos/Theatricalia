@@ -11,11 +11,20 @@ from forms import PlaceForm
 from models import Place, first_letters
 from shortcuts import render, check_url, UnmatchingSlugException
 from productions.objshow import productions_list, productions_for
+from productions.models import Production
 from photos.forms import PhotoForm
 
 def place_productions(request, place_id, place, type):
     place = check_url(Place, place_id, place)
     return productions_list(request, place, type, 'places/production_list.html')
+
+def productions(request, place_id, place):
+    place = check_url(Place, place_id, place)
+    productions = Production.objects.filter(places=place).order_by('play__title')
+    return render(request, 'places/productions.html', {
+        'productions': productions,
+        'place': place,
+    })
 
 @login_required
 def place_edit(request, place_id, place):

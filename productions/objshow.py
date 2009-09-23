@@ -9,19 +9,6 @@ from places.models import Place
 from people.models import Person
 from aggregates import Concatenate
 
-#def productions_past(places):
-#    o = Production.objects.filter(
-#        Q(place__end_date__lt=datetime.now) | Q(place__end_date='', place__press_date__lt=datetime.now),
-#        place__place__in=places,
-#    )
-#    return o.order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))')
-#
-#def productions_future(places):
-#    return Production.objects.filter(
-#        Q(place__end_date__gte=datetime.now) | Q(place__end_date='', place__press_date__gte=datetime.now),
-#        place__place__in=places,
-#    ).order_by('place__start_date', 'place__press_date')
-
 # object is Place, Person, or Play
 # type will be blank, or 'places' for multiple place search
 def productions_filter(object, type, date_filter):

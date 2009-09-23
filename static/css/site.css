@@ -698,40 +698,65 @@ ul#edit-parts li:nth-child(2n) {
 }
 
 #home #hello {
-    float: left;
-    width: 30%;
+    /* float: left;
+    width: 30%; */
     margin-top: 0;
 }
 
 #home #warning {
-    float: right;
-    width: 68%;
+    clear: both;
+    text-align: center;
+    width: 90%;
+    margin: 0 auto;
+    /* float: right;
+    width: 68%; */
 }
 #home #warning p {
-    margin-top:0;
     font-size: 87.5%;
     line-height: 1.715;
 }
 
-#home .col {
-    float: left;
-    width: 30%;
+#home .col ul {
+    margin-top: -1.5em;
 }
-#home .col h2 {
+
+#home #features {
+    float: left;
+    width: 28%;
+    clear: both;
+    margin-right: 1%;
+    padding-right: 1%;
+    border-right: dotted 1px #cc9999;
+}
+
+#home #status {
+    float: left;
+    width: 34%;
+}
+
+#home #status > p:first-child {
+    color: #92000a;
+    text-align: center;
     margin-top: 0;
 }
 
-#home #example {
-    clear: both;
-    margin-right: 2%;
+#home #latest {
+    float: right;
+    width: 33%;
 }
-
 #home #latest h2 {
     margin-top: 0;
 }
+#home #latest ul li {
+    background: none;
+    padding-left: 0;
+}
 
-#home #latest p {
-    margin-bottom: 0;
+#home h2 + p {
+    margin-top: 0em;
+}
+#home h2.no-descenders + p {
+    margin-top: -1.5em;
 }
 
 #byline {

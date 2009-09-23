@@ -18,7 +18,7 @@ def check_url(type, id, slug):
         mistyped = True
         id = e.args[0]
     except:
-        raise Http404('Could not match that id.')
+        raise Http404('Could not match id %s' % id)
     obj = get_object_or_404(type, id=id)
     if obj.slug != slug or mistyped:
         raise UnmatchingSlugException(obj)

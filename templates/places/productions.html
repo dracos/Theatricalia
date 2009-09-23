@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
-{% block title %}{{ object.get_name_display|prettify }}{% endblock %}
+{% block title %}All Productions | {{ place|prettify }}{% endblock %}
 
 {% block content %}
 
-<h1>{{ object.get_name_display|prettify }}</h1>
+<h1>{{ place.get_name_display|prettify }}</h1>
 
 <div id="primary">
 
-<h2>{{ type }}</h2>
+<h2>A&ndash;Z&nbsp; of all Productions</h2>
 
-{% if page_obj.object_list %}
+{% if productions %}
 <ul class="production_list">
-{% for production in page_obj.object_list %}
+{% for production in productions %}
 <li><a href="{{ production.get_absolute_url }}">{{ production.play|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
 <span>{{ production.date_summary|prettify }}.</span>
 {% endfor %}
@@ -22,13 +22,10 @@
 <p>There are no results to display.</p>
 {% endif %}
 
-{% include "pagination.html" %}
-
 </div>
 
 <div class="secondary">
-<p>{{ type }} at <a href="{{ object.get_absolute_url }}">{{ object|prettify }}</a>.</p>
-{% include "pagination.html" %}
+<p>All productions shown at <a href="{{ place.get_absolute_url }}">{{ place|prettify }}</a>.</p>
 </div>
 
 {% endblock %}

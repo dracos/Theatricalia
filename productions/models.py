@@ -117,12 +117,13 @@ class Production(models.Model):
         producer = ''
         if self.company:
             producer = "%s " % self.company
-        if self.places.count()>1:
-            places = 'On tour, '
-        elif self.places.count()==1:
-            places = '%s, ' % self.places.all()[0]
-        else:
+
+        places = self.place_summary()
+        if places == 'Unknown location':
             places = ''
+        else:
+            places = '%s, ' % places
+
         return "%sproduction of %s, %s%s" % (producer, self.play, places, self.date_summary())
 
     # Find min/max dates from the places of this production

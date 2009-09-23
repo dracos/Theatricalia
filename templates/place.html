@@ -97,6 +97,7 @@ $(function(){
 {% else %}
 <li><a href="{{ place.get_alert_add_url }}">Alert me to productions here</a>
 {% endif %}
+<li><a href="{{ place.get_productions_url }}">A&ndash;Z of all productions at this place</a></li>
 </ul>
 
 {% if place.photos.all %}
