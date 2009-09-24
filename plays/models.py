@@ -24,20 +24,27 @@ class Play(models.Model):
         ordering = ['title']
 
     def __unicode__(self):
-        m = re.search('^(.*),\s+(A|An|The)$(?i)', self.title)
-        if m:
-            return "%s %s" % (m.group(2), m.group(1))
-        return self.title
+        title = self.get_title_display()
+        authors = self.get_authors_display(html=False)
+        if authors != 'unknown':
+            title += ', by ' + authors
+        return title
 
     def save(self, **kwargs):
-        title = re.sub('^(.*), (A|An|The)$(?i)', r'\2 \1', self.title)
+        title = self.get_title_display()
         self.slug = slugify(title)
         self.title = re.sub('^(A|An|The) (.*)$(?i)', r'\2, \1', self.title)
         super(Play, self).save(**kwargs)
 
-    def get_authors_display(self):
+    def get_title_display(self):
+        return re.sub('^(.*),\s+(A|An|The)$(?i)', r'\2 \1', self.title)
+
+    def get_authors_display(self, html=True):
         num = self.authors.count()
-        authors = map(lambda x: '<a href="%s">%s</a>' % (x.get_absolute_url(), escape(x)), self.authors.all())
+        if html:
+            authors = map(lambda x: '<a href="%s">%s</a>' % (x.get_absolute_url(), escape(x)), self.authors.all())
+        else:
+            authors = [ escape(x) for x in self.authors.all() ]
         if num > 2:
             str = ', '.join(authors[:num-2]) + ', ' + ', and '.join(authors[num-2:])
         elif num == 2:

@@ -24,7 +24,7 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 <h2>Plays authored</h2>
 <ul>
 {% for play in plays %}
-<li><a href="{{ play.get_absolute_url }}">{{ play|prettify }}</a>
+<li><a href="{{ play.get_absolute_url }}">{{ play.get_title_display|prettify }}</a>
 {% endfor %}
 </ul>
 {% endif %}
@@ -36,7 +36,7 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 <li>
 {% if production.part__role__concatenate %}
 {{ production.part__role__concatenate }}, {% endif %}
-<a href="{{ production.get_absolute_url }}">{{ production.play|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
+<a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
 <span>{{ production.date_summary|prettify }},
 {% ifequal production.places.count 1 %}
 <a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
@@ -58,7 +58,7 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 <li>
 {% if production.part__role__concatenate %}
 {{ production.part__role__concatenate }}, {% endif %}
-<a href="{{ production.get_absolute_url }}">{{ production.play|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
+<a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
 <span>{{ production.date_summary|prettify }},
 {% ifequal production.places.count 1 %}
 <a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.

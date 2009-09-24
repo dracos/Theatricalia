@@ -68,7 +68,7 @@ at the <a href="/place/46/courtyard-theatre-stratford-upon-avon">Courtyard Theat
 <ul>
 <li><strong>&hellip;addition:</strong>
 {% if latest_production %}
-<a href="{{ latest_production.get_absolute_url }}">{{ latest_production.play|prettify }}</a>,
+<a href="{{ latest_production.get_absolute_url }}">{{ latest_production.play.get_title_display|prettify }}</a>,
 {% ifequal latest_production.places.count 1 %}
     at <a href="{{ latest_production.places.all.0.get_absolute_url }}">{{ latest_production.places.all.0|prettify }}</a>,
     {{ latest_production.date_summary|prettify }}.
@@ -103,7 +103,7 @@ Nothing in the system yet!
 On {{ latest_observation.submit_date|date:"jS F Y"|prettify }}
 at {{ latest_observation.submit_date|date:"g:i a" }},
 <a href="{{ latest_observation.user.get_profile.get_absolute_url }}">{{ latest_observation.user_name|title }}</a> noted,
-about a <a href="{{ latest_observation.content_object.get_absolute_url }}">production</a> of {{ latest_observation.content_object.play|prettify }}:</p>
+about a <a href="{{ latest_observation.content_object.get_absolute_url }}">production</a> of {{ latest_observation.content_object.play.get_title_display|prettify }}:</p>
 <blockquote><p>{{ latest_observation.comment|truncatewords:10|prettify }}
 <a href="{{ latest_observation.content_object.get_absolute_url }}#o{{ latest_observation.id }}">More &rarr;</a>
 </p></blockquote>

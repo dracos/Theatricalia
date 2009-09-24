@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load prettify %}{% load comments %}
 
-{% block title %}Production of {{ production.play|prettify }}{% endblock %}
+{% block title %}Production of {{ production.play.get_title_display|prettify }}{% endblock %}
 
 {% block content %}
 
-<h1>{{ production.play|prettify }}</h1>
+<h1>{{ production.play.get_title_display|prettify }}</h1>
 
 {% include 'includes/messages.html' %}
 
@@ -21,7 +21,7 @@
 <h3 class="hide">Cast</h3>
 {% endif %}
 
-{% if cast or crew %}
+{% if cast or crew or other %}
 <table class="parts">
 {% endif %}
 
@@ -43,7 +43,14 @@
 </td></tr>
 {% endfor %}
 
-{% if cast or crew %}
+{% for part in other %}
+<tr><th>{{ part.role_or_unknown }}</th>
+<td><a href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>
+{% if part.credited_as %}<br>&nbsp;&nbsp;<small>(credited as {{ part.credited_as|prettify }})</small>{% endif %}
+</td></tr>
+{% endfor %}
+
+{% if cast or crew or other %}
 </table>
 {% else %}
 <p>Currently unknown; if you can provide some information about this production, please
@@ -97,7 +104,7 @@ that you think others may be interested in, please
 <div id="sidebar_tulip" class="secondary"><div id="sidebar_tulip_r" role="contentinfo">
 
 <p>This is a production of the play
-<a href="{{ production.play.get_absolute_url }}">{{ production.play|prettify }}</a>{% if production.company %}
+<a href="{{ production.play.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.company %}
 by {{ production.company|prettify }}{% endif %},
 
 {% include 'productions/sidebar_bit.html' %}

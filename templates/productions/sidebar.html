@@ -3,7 +3,7 @@
 <div id="sidebar_tulip" class="secondary"><div id="sidebar_tulip_r">
 
 <p>This is a <a href="{{ production.get_absolute_url }}">production</a> of the play
-<a href="{{ production.play.get_absolute_url }}">{{ production.play|prettify }}</a>{% if production.company %}
+<a href="{{ production.play.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.company %}
 by {{ production.company|prettify }}{% endif %},
 
 {% include 'productions/sidebar_bit.html' %}

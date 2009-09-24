@@ -14,7 +14,7 @@
 {% if page_obj.object_list %}
 <ul class="production_list">
 {% for production in page_obj.object_list %}
-<li><a href="{{ production.get_absolute_url }}">{{ production.play|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
+<li><a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
 <span>{{ production.date_summary|prettify }}.</span>
 {% endfor %}
 </ul>

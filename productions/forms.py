@@ -148,7 +148,7 @@ class PlaceForm(forms.ModelForm):
         fields = (forms.CharField(), forms.ModelChoiceField(PlacePlace.objects.all())),
         widget = ForeignKeySearchInput(Place.place.field.rel, ('name',))
     )
-    start_date = ApproximateDateFormField(required=False, label='It ran here from')
+    start_date = ApproximateDateFormField(required=False, label='It was/is on from')
     press_date = PrettyDateField(required=False, label='Press night')
     end_date = ApproximateDateFormField(required=False, label='to')
 

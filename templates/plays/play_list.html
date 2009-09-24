@@ -31,7 +31,7 @@
 
 <ul id="play_list">
 {% for play in object_list %}
-<li><a href="{{ play.get_absolute_url }}">{{ play|prettify }}</a>, by {{ play.get_authors_display }}</li>
+<li><a href="{{ play.get_absolute_url }}">{{ play.get_title_display|prettify }}</a>, by {{ play.get_authors_display }}</li>
 {% empty %}
 <p>No results.</p>
 {% endfor %}

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
-{% block title %}{{ play|prettify }}{% endblock %}
+{% block title %}{{ play.get_title_display|prettify }}{% endblock %}
 
 {% block extra_head %}
 <link href="{{ play.get_feed_url }}" type="application/rss+xml" rel="alternate">
@@ -9,7 +9,7 @@
 
 {% block content %}
 
-<h1>{{ play|prettify }}</h1>
+<h1>{{ play.get_title_display|prettify }}</h1>
 
 {% include 'includes/messages.html' %}
 
@@ -78,7 +78,7 @@ please <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
 <h2 class="no-descenders">Same name</h2>
 <ul>
 {% for play in same_name %}
-<li><a href="{{ play.get_absolute_url }}">{{ play|prettify }}</a>, by {{ play.get_authors_display }}
+<li><a href="{{ play.get_absolute_url }}">{{ play.get_title_display|prettify }}</a>, by {{ play.get_authors_display }}
 {% endfor %}
 </ul>
 {% endif %}

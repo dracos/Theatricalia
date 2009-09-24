@@ -14,7 +14,7 @@
 {% if productions %}
 <ul class="production_list">
 {% for production in productions %}
-<li><a href="{{ production.get_absolute_url }}">{{ production.play|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
+<li><a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
 <span>{{ production.date_summary|prettify }}.</span>
 {% endfor %}
 </ul>

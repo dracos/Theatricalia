@@ -25,7 +25,7 @@ if (!window.location.hash)
 <h2>Plays</h2>
 <ul class="person_list">
 {% for play in plays %}
-<li><a href="{{ play.get_absolute_url }}">{{ play|prettify }}</a>
+<li><a href="{{ play.get_absolute_url }}">{{ play.get_title_display|prettify }}</a>
 {% endfor %}
 </ul>
 {% endif %}
@@ -113,7 +113,7 @@ if (!window.location.hash)
 {{ part.role|prettify }},
 {% if part.cast %}played by {% endif %}
 <a href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>, in
-<a href="{{ part.production.get_absolute_url }}">{{ part.production.play|prettify }}</a>{% if part.production.title %}, {{ part.production.title|prettify }}{% endif %}
+<a href="{{ part.production.get_absolute_url }}">{{ part.production.play.get_title_display|prettify }}</a>{% if part.production.title %}, {{ part.production.title|prettify }}{% endif %}
 <span>{{ part.production.date_summary|prettify }},
 {% ifequal part.production.places.count 1 %}
 <a href="{{ part.production.place_summary.get_absolute_url }}">{{ part.production.place_summary|prettify }}</a>.

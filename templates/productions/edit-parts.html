@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
-{% block title %}Editing {{ production.company|default:"" }} production of {{ production.play|prettify }}{% endblock %}
+{% block title %}Editing {{ production.company|default:"" }} production of {{ production.play.get_title_display|prettify }}{% endblock %}
 
 {% block content %}
 
@@ -74,6 +74,7 @@ pick from the <a href="#edit-head">list of parts to edit</a>.</p>
 <ul>
 <li><a href="../edit">Edit production details</a></li>
 <li><strong>Edit Cast &amp; Crew</strong></li>
+<li><a href="{{ production.get_absolute_url }}">Finish editing</a> (forget any changes made on this page)</li>
 </ul>
 
 </div>

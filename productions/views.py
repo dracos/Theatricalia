@@ -48,6 +48,7 @@ def production(request, play_id, play, production_id):
 #        'production_formset': formset,
         'cast': production.part_set.filter(cast=True).order_by('order', 'role', 'person__last_name', 'person__first_name'),
         'crew': production.part_set.filter(cast=False).order_by('order', 'role', 'person__last_name', 'person__first_name'),
+        'other': production.part_set.filter(cast__isnull=True).order_by('order', 'role', 'person__last_name', 'person__first_name'),
         'photo_form': photo_form,
         'seen': seen,
     })

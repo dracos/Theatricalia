@@ -1,5 +1,5 @@
 {% load prettify %}
-{{ obj.play|prettify }},
+{{ obj.play.get_title_display|prettify }},
 {% ifequal 1 obj.places.count %}
     {{ obj.places.all.0 }}
 {% else %}
