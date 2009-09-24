@@ -12,18 +12,21 @@ from aggregates import Concatenate
 # object is Place, Person, or Play
 # type will be blank, or 'places' for multiple place search
 def productions_filter(object, type, date_filter):
+    o = None
     if isinstance(object, Place) or isinstance(object, Person) or isinstance(object, Play):
-        return object.productions.filter(date_filter)
+        o = object.productions.filter(date_filter)
     elif type=='places':
-        return Production.objects.filter(date_filter, place__place__in=object)
-    raise Exception, 'Strange call to productions_filter'
+        o = Production.objects.filter(date_filter, place__place__in=object)
+    else:
+        raise Exception, 'Strange call to productions_filter'
+    if isinstance(object, Person):
+        o = o.annotate(Concatenate('part__role'))
+    return o
 
 def productions_past(object, type):
     o = productions_filter(object, type, 
         Q(place__end_date__lt=datetime.now) | Q(place__end_date='', place__press_date__lt=datetime.now)
     )
-    if isinstance(object, Person):
-        o = o.annotate(Concatenate('part__role'))
     return o.order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))')
 
 def productions_future(object, type):

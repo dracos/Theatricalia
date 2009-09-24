@@ -133,7 +133,11 @@ if (!window.location.hash)
 {% if plays or near.geonames or places or people or parts.object_list %}
 {% else %}
     <p>I&rsquo;m afraid we couldn&rsquo;t find any results. If you&rsquo;re searching for someone, try
-    just their first or last name.
+    just their first or last name.</p>
+    <p>Otherwise, it&rsquo;s very likely we simply don&rsquo;t yet hold any information for what you
+    searched for. The site relies upon user input to improve its coverage, so <strong>please</strong> do
+    <a href="/add">add a production</a> to the site, involving the play, person, or place you searched
+    for, so that future users of the site can benefit. They thank you in advance!
 {% endif %}
 
 </div>

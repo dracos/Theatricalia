@@ -33,6 +33,7 @@ class ForeignKeySearchInput(forms.MultiWidget):
 		}
 		js = (
 			'%sjs/jquery.js' % settings.MEDIA_URL,
+			'%sjs/jquery-ui.js' % settings.MEDIA_URL,
 			'%sjs/jquery.autocomplete.js' % settings.MEDIA_URL,
 			'%sautocomplete/AutocompleteObjectLookups.js ' % settings.MEDIA_URL,
 			'%sjs/global.js' % settings.MEDIA_URL,
@@ -102,6 +103,7 @@ class ManyToManySearchInput(forms.MultipleHiddenInput):
 		}
 		js = (
 			'%sjs/jquery.js' % settings.MEDIA_URL,
+			'%sjs/jquery-ui.js' % settings.MEDIA_URL,
 			'%sjs/jquery.autocomplete.js' % settings.MEDIA_URL,
 			'%sautocomplete/AutocompleteObjectLookups.js ' % settings.MEDIA_URL,
 			'%sjs/global.js' % settings.MEDIA_URL,

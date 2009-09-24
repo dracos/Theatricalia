@@ -2,7 +2,9 @@ from django.contrib import admin
 from django import forms
 from reversion.admin import VersionAdmin
 from models import Production, ProductionCompany, Part, Place
-from autocomplete.widgets import AutocompleteModelAdmin
+from forms import AutoCompleteMultiValueField
+from plays.models import Play
+from autocomplete.widgets import AutocompleteModelAdmin, ForeignKeySearchInput
 
 class CompanyAdmin(VersionAdmin):
     prepopulated_fields = {
@@ -29,9 +31,21 @@ class PartInline(admin.options.InlineModelAdmin):
     form = PartInlineForm
     extra = 1
 
+class ProductionForm(forms.ModelForm):
+    play = AutoCompleteMultiValueField(
+            Play, 'title',
+            fields = (forms.CharField(), forms.ModelChoiceField(Play.objects.all())),
+            widget = ForeignKeySearchInput(Production.play.field.rel, ('title',))
+    )
+
+    class Meta:
+        model = Production
+        #exclude = ('parts', 'places', 'seen_by', 'source')
+
 class ProductionAdmin(VersionAdmin, AutocompleteModelAdmin):
+    form = ProductionForm
     related_search_fields = {
-        'places': ('name',),
+        #'places': ('name',),
         'play': ('title',),
     }
     inlines = [
