@@ -1,8 +1,9 @@
 import re # , difflib
 import urllib
 from datetime import datetime
+from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.utils import simplejson
 from django.db.models import Q, get_model
 from shortcuts import render
@@ -86,7 +87,7 @@ def search_people(search, force_similar=False, use_distance=True):
             people = people.filter(
                 Q(first_name_metaphone=dm_) | Q(last_name_metaphone=dm_)
             )
-        elif not people:
+        elif not people and re.match('[a-z\s\'-]+$(?i)', names[0]):
             sounds_people = 1
             dm_, dm_alt = dm(names[0])
             people = Person.objects.filter(
@@ -111,7 +112,7 @@ def search_people(search, force_similar=False, use_distance=True):
             people = [ person for _, person in people ]
     elif len(names)==2:
         people = Person.objects.filter(first_name__icontains=names[0], last_name__iexact=names[1])
-        if not people or force_similar:
+        if (not people and re.match('[a-z\s\'-]+$(?i)', search)) or force_similar:
             sounds_people = 1
             dm_first, dm_first_alt = dm(names[0])
             dm_last, dm_last_alt = dm(names[1])
@@ -164,7 +165,7 @@ def search_people(search, force_similar=False, use_distance=True):
     return people, sounds_people
 
 def search_geonames(s):
-    r = urllib.urlopen('http://ws.geonames.org/searchJSON?isNameRequired=true&style=LONG&q=' + urllib.quote(s) + '&maxRows=20').read()
+    r = urllib.urlopen('http://ws.geonames.org/searchJSON?isNameRequired=true&style=LONG&q=' + urllib.quote(s.encode('utf-8')) + '&maxRows=20').read()
     r = simplejson.loads(r)
     return r
 
@@ -173,12 +174,25 @@ def search_parts(request, search):
     return productions_list(request, search, 'parts', 'search-parts.html')
 
 # For pagination of search around
-def search_around(request, latlon, type=''):
-    m = re.match('\s*([-\d.]+)\s*,\s*([-\d.]+)\s*$', latlon)
-    if not m:
+def search_around(request, search, type=''):
+    search = search.strip()
+    m = re.match('([-\d.]+)\s*,\s*([-\d.]+)$', search)
+
+    if m:
+        lat, lon = m.groups()
+        name = request.GET.get('name', '')
+    elif validate_postcode(search):
+        loc = urllib.urlopen('http://ernestmarples.com/?p=%s&f=csv' % urllib.quote(search)).read()
+        pc, lat, lon = loc.strip().split(',')
+        name = re.sub('(\d[A-Z]{2})', r' \1', search.upper())
+    elif validate_partial_postcode(search):
+        r = urllib.urlopen('http://ws.geonames.org/postalCodeSearchJSON?country=gb&postalcode=' + urllib.quote(search)).read()
+        r = simplejson.loads(r)
+        lat, lon = r['postalCodes'][0]['lat'], r['postalCodes'][0]['lng']
+        name = search.upper()
+    else:
         raise Exception, 'Bad request'
 
-    lat, lon = m.groups()
     places = Place.objects.around(float(lat), float(lon))
     if not type:
         past, future = productions_for(places, 'places')
@@ -190,7 +204,7 @@ def search_around(request, latlon, type=''):
             'lat': lat,
             'lon': lon,
             'latlon': '%s,%s' % (lat, lon),
-            'name': request.GET.get('name', ''),
+            'name': name,
             'alert': alert,
         })
     return productions_list(request, places, type, 'search-around-productions.html', {
@@ -198,21 +212,68 @@ def search_around(request, latlon, type=''):
         'lon': lon,
     })
 
+def validate_postcode(postcode):
+    end  = 'ABD-HJLNP-UW-Z';
+    fst = 'A-PR-UWYZ';
+    sec = 'A-HJ-Y';
+    thd = 'A-HJKSTUW';
+    fth = 'ABEHMNPRVWXY';
+
+    if (re.match("(?i)[%s][1-9]\s*[0-9][%s][%s]$" % (fst, end, end), postcode) or
+            re.match("(?i)[%s][1-9][0-9]\s*[0-9][%s][%s]$" % (fst, end, end), postcode) or
+            re.match("(?i)[%s][%s][0-9]\s*[0-9][%s][%s]$" % (fst, sec, end, end), postcode) or
+            re.match("(?i)[%s][%s][1-9][0-9]\s*[0-9][%s][%s]$" % (fst, sec, end, end), postcode) or
+            re.match("(?i)[%s][1-9][%s]\s*[0-9][%s][%s]$" % (fst, thd, end, end), postcode) or
+            re.match("(?i)[%s][%s][1-9][%s]\s*[0-9][%s][%s]$" % (fst, sec, fth, end, end), postcode)):
+        return True
+    else:
+        return False
+
+def validate_partial_postcode(postcode):
+    fst = 'A-PR-UWYZ';
+    sec = 'A-HJ-Y';
+    thd = 'A-HJKSTUW';
+    fth = 'ABEHMNPRVWXY';
+
+    if (re.match("(?i)[%s][1-9]$" % (fst), postcode) or
+            re.match("(?i)[%s][1-9][0-9]$" % (fst), postcode) or
+            re.match("(?i)[%s][%s][0-9]$" % (fst, sec), postcode) or
+            re.match("(?i)[%s][%s][1-9][0-9]$" % (fst, sec), postcode) or
+            re.match("(?i)[%s][1-9][%s]$" % (fst, thd), postcode) or
+            re.match("(?i)[%s][%s][1-9][%s]$" % (fst, sec, fth), postcode)):
+        return True
+    else:
+        return False
+
 def search(request):
-    search = request.GET.get('q', '')
+    search = request.GET.get('q', '').strip()
     people = plays = places = near = parts = []
     sounds_people = 0
 
-    # Searching round a point
-    m = re.match('\s*([-\d.]+)\s*,\s*([-\d.]+)\s*$', search)
-    if m:
-        return search_around(request, search)
+    # Searching round a point, or a postcode
+    m = re.match('([-\d.]+)\s*,\s*([-\d.]+)$', search)
+    if m or validate_postcode(search) or validate_partial_postcode(search):
+        return HttpResponseRedirect(reverse('search-around', args=[urllib.quote(search.encode('utf-8'))]))
+
+    if search and len(search)<3:
+        return render(request, 'search.html', {
+            'error': 'Length',
+            'search': search,
+        })
 
     if search:
+        m = re.match('^(A|An|The) (.*)$(?i)', search)
+        if m:
+            article, rest = m.groups()
+            title_q = Q(title__iendswith=' %s' % article, title__istartswith=rest)
+            name_q = Q(name__iendswith=' %s' % article, name__istartswith=rest)
+        else:
+            title_q = Q(title__icontains=search)
+            name_q = Q(name__icontains=search)
         people, sounds_people = search_people(search, force_similar=request.GET.get('similar'), use_distance=False)
         near = search_geonames(search)
-        places = Place.objects.filter(Q(name__icontains=search) | Q(town__icontains=search))
-        plays = Play.objects.filter(title__icontains=search)
+        places = Place.objects.filter(name_q | Q(town__icontains=search))
+        plays = Play.objects.filter(title_q)
         parts = Paginator(Part.objects.search(search), 10, orphans=2).page(1)
 
     return render(request, 'search.html', {

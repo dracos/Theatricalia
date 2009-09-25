@@ -32,7 +32,7 @@ def profile(request, username):
         | Q(app_label='productions', model='production')
         | Q(app_label='places', model='place')
     )
-    for l in Revision.objects.filter(user=user).order_by('-date_created')[:10]:
+    for l in Revision.objects.filter(user=user, version__content_type__in=content_types).order_by('-date_created')[:10]:
         versions = []
         for v in l.version_set.filter(content_type__in=content_types):
             obj = v.content_type.get_object_for_this_type(id=v.object_id)

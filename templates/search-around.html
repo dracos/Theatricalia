@@ -68,7 +68,7 @@
 {% endif %}
 </ul>
 
-<p>The following places are in this locality:</p>
+<p>The following places are known in this locality:</p>
 <script type="text/javascript">
 $(function(){
     function addMarker(point, name, link) {
@@ -104,13 +104,19 @@ $(function(){
 {% endfor %}
 </ul>
 
+<p>If your local theatre isn&rsquo;t here, it&rsquo;s possible it&rsquo;s not
+yet in our database, or is in our database but not yet geo-located &ndash; please
+do search for the theatre, or <a href="{% url production-add %}">add a production</a> and you can add a
+place along the way.
+</p>
+
 </div>
 
 {% else %}
 
-<p>No results have been found, I&rsquo;m afraid.
-It&rsquo;s possible theatres are present but not yet geo-located, or that they are
-not yet in our database &ndash; <a href="{% url production-add %}">add a production</a>
+<p>No results have been found, I&rsquo;m afraid. It&rsquo;s possible theatres
+are not yet in our database, or are present but not yet geo-located &ndash;
+please do search for a theatre, or <a href="{% url production-add %}">add a production</a>
 and you can add a place along the way.
 </p>
 

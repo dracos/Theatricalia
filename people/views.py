@@ -1,18 +1,22 @@
 import string
 from datetime import datetime
-from shortcuts import render, check_url, UnmatchingSlugException
+
 from django.shortcuts import get_object_or_404
 from django.views.generic.list_detail import object_list
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db import IntegrityError
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
+from django.utils import simplejson
+
+from shortcuts import render, check_url, UnmatchingSlugException
+from utils import int_to_base32
 from common.models import Alert
 from models import Person, first_letters
 from forms import PersonEditForm
 from photos.forms import PhotoForm
-from productions.objshow import productions_list, productions_for
-from django.core import serializers
+from productions.objshow import productions_list, productions_for, productions_past, productions_future
 
 def person_productions(request, person_id, person, type):
     try:
@@ -30,6 +34,7 @@ def person(request, person_id, person):
     plays = person.plays.all()
     photo_form = PhotoForm(person)
     alert = person.alerts.filter(user=request.user)
+    same_name = Person.objects.filter(first_name=person.first_name, last_name=person.last_name).exclude(id=person.id)
     return render(request, 'people/person.html', {
         'person': person,
         'past': past,
@@ -37,6 +42,7 @@ def person(request, person_id, person):
         'plays': plays,
         'photo_form': photo_form,
         'alert': alert,
+        'same_name': same_name,
     })
 
 def person_js(request, person_id, person):
@@ -44,8 +50,29 @@ def person_js(request, person_id, person):
         person = check_url(Person, person_id, person)
     except UnmatchingSlugException, e:
         return HttpResponseRedirect(e.args[0].get_absolute_url())
-    response = HttpResponse()
-    serializers.serialize("json", [ person ], ensure_ascii=False, stream=response)
+    plays = person.plays.all()
+
+    past   = [ {'id': int_to_base32(p.id), 'desc': unicode(p) } for p in productions_past(person, '') ]
+    future = [ {'id': int_to_base32(p.id), 'desc': unicode(p) } for p in productions_future(person, '') ]
+    plays  = [ {'id': int_to_base32(p.id), 'title': unicode(p) } for p in person.plays.all() ]
+    person = {
+        'id': int_to_base32(person.id),
+        'first_name': person.first_name,
+        'last_name': person.last_name,
+        'slug': person.slug,
+        'bio': person.bio,
+        'dob': person.dob,
+        'web': person.web,
+        'imdb': person.imdb,
+    }
+    out = {
+        'person': person,
+        'past': past,
+        'future': future,
+        'plays': plays,
+    }
+    response = HttpResponse(mimetype='application/json')
+    simplejson.dump(out, response, ensure_ascii=False)
     return response
 
 @login_required

@@ -47,7 +47,7 @@ def prettify(str):
 
     str = re.sub(r'\b(\d+)(st|nd|rd|th)\b', r'\1<sup>\2</sup>', str) # Nice ordinals
     str = re.sub(r'([A-Z]\.)\s+(?=[A-Z])', r'\1&#8201;', str) # Hair or thin spaces between intermediary periods
-    str = re.sub(r'\b([A-Z][A-Z0-9]{2,})\b', r'<abbr>\1</abbr>', str) # Letterspace strings of capitals, long strings of digits
+    str = re.sub(r'\b([A-Z]{3,})\b', r'<abbr>\1</abbr>', str) # Letterspace strings of capitals (no digits due to postcodes, for now)
 
     # Nice small numbers
     str = re.sub(r'\s1\s', ' one ', str)

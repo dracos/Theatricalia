@@ -24,7 +24,8 @@ def check_url(type, id, slug):
         raise UnmatchingSlugException(obj)
     return obj
     
-def render(request, template_name, context={}, base=None):
+def render(request, template_name, context=None, base=None):
+    if context is None: context = {}
 #    context['base'] = base or 'base.html'
 #    context['path'] = request.path
     context['connection'] = connection

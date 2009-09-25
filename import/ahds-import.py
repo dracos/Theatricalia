@@ -138,7 +138,7 @@ for n in range(1, 67):
             if c[0] == "Playgoers' Society":
                 company, created = ProductionCompany.objects.get_or_create(name="Playgoers' Society")
 
-        production = Production(play=play, company=company, source='AHDS Performing Arts (#' + data['id'] + ')')
+        production = Production(play=play, company=company, source='<a href="http://ahds.ac.uk/ahdscollections/docroot/birminghamrep/birminghamrepdetails.do?id=%s">AHDS Performing Arts</a>' % data['id'])
         production.save()
 
         if 'theatre' in data and data['theatre']:

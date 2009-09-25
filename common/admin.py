@@ -1,8 +1,7 @@
 from django.contrib import admin
-from reversion.admin import VersionAdmin
 from models import Alert, AlertLocal, AlertSent
 
-class AlertAdmin(VersionAdmin):
+class AlertAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Alert, AlertAdmin)
