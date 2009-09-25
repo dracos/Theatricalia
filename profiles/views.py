@@ -13,7 +13,7 @@ from django.contrib.comments.models import Comment
 from forms import RegistrationForm, AuthenticationForm, ProfileForm
 from shortcuts import render, send_email
 from utils import int_to_base32, base32_to_int
-from common.models import Alert
+from common.models import Alert, AlertLocal
 from reversion.models import Revision
 from productions.models import Part
 
@@ -32,7 +32,7 @@ def profile(request, username):
         | Q(app_label='productions', model='production')
         | Q(app_label='places', model='place')
     )
-    for l in Revision.objects.filter(user=user, version__content_type__in=content_types).order_by('-date_created')[:10]:
+    for l in Revision.objects.filter(user=user, version__content_type__in=content_types).distinct().order_by('-date_created')[:10]:
         versions = []
         for v in l.version_set.filter(content_type__in=content_types):
             obj = v.content_type.get_object_for_this_type(id=v.object_id)
@@ -146,8 +146,12 @@ def profile_edit(request):
 @login_required
 def profile_alert(request, id):
     profile = request.user.get_profile()
-    alert = get_object_or_404(Alert, id=id)
+    if id[0]=='l':
+        alert = get_object_or_404(AlertLocal, id=id[1:])
+    else:
+        alert = get_object_or_404(Alert, id=id)
     if request.user != alert.user:
         raise Exception("Trying to unsubscribe someone else's alert?")
     alert.delete()
+    request.user.message_set.create(message="Your alert has been removed.")
     return HttpResponseRedirect(profile.get_edit_url())

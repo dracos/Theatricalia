@@ -20,6 +20,8 @@
 
 <div class="secondary">
 
+{% include 'includes/messages.html' %}
+
 <h2 class="no-descenders">Your alerts</h2>
 {% if user.alerts.all or user.local_alerts.all %}
 <ul>
@@ -27,7 +29,7 @@
 <li>{{ alert }} &ndash; <a href="{{ profile.get_alert_remove_url }}/{{ alert.id }}">remove</a>
 {% endfor %}
 {% for alert in user.local_alerts.all %}
-<li>{{ alert }} &ndash; <a href="{{ profile.get_alert_remove_url }}/{{ alert.id }}">remove</a>
+<li>{{ alert }} &ndash; <a href="{{ profile.get_alert_remove_url }}/l{{ alert.id }}">remove</a>
 {% endfor %}
 </ul>
 {% else %}
