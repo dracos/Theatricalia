@@ -77,6 +77,11 @@ pick from the <a href="#edit-head">list of parts to edit</a>.</p>
 <li><a href="{{ production.get_absolute_url }}">Finish editing</a> (forget any changes made on this page)</li>
 </ul>
 
+<p>Unlike the main production editing page, Person does not use an
+auto-complete, so that we can perform homophone matching when you submit (so we
+can match Katie to Katy, for example).
+</p>
+
 </div>
 
 {% endblock %}

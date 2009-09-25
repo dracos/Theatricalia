@@ -88,7 +88,6 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 </ul>
 {% endif %}
 
-{% if user.is_authenticated %}
 <ul>
 <li><a href="{{ person.get_edit_url }}">Edit this person</a>
 {% if alert %}
@@ -104,11 +103,8 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
         <li><a href="{{ person.get_alert_add_url }}">Alert me to productions involving this person</a>
     {% endif %}
 {% endif %}
+<li><a href="/add?person={{ person.id32 }}">Add a new production involving this person</a></li>
 </ul>
-{% else %}
-    <p>To edit this person, or to set up an email alert for them, please
-    <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
-{% endif %}
 
 <h2>Photographs</h2>
 
@@ -123,8 +119,8 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 </div>
 
 {% if user.is_authenticated %}
-    <p class="clear before_form">If you have a photograph of this person, and you
-    have permission to do so, please upload it here.</p>
+    <p class="clear before_form">If you have a photograph of this person,
+    please upload it here.</p>
     {% include 'includes/photo-form.html' %}
 {% else %}
     <p class="clear">If you have a photograph of this person you wish

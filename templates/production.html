@@ -168,8 +168,8 @@ by {{ production.company|prettify }}{% endif %},
 </div>
 
 {% if user.is_authenticated %}
-    <p class="clear before_form">If you have a photograph or picture that illustrates this production and you
-    have permission to do so, please upload it here.</p>
+    <p class="clear before_form">If you have a photograph or picture that illustrates this production,
+    please upload it here.</p>
     {% include 'includes/photo-form.html' %}
 {% else %}
     <p class="clear">If you have a photograph or picture that illustrates this production that you wish

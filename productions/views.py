@@ -156,7 +156,10 @@ def production_edit(request, play_id, play, production_id):
 def production_edit_cast(request, play_id, play, production_id):
     """For picking someone to edit, or adding a new Part"""
     production = check_parameters(play_id, play, production_id)
-    part_form = PartForm(data=request.POST or None, editing=False)
+    initial = {}
+    if request.GET.get('person'):
+        initial['person'] = Person.objects.get(id=base32_to_int(request.GET.get('person')))
+    part_form = PartForm(data=request.POST or None, editing=False, initial=initial)
 
     if request.method == 'POST':
         if part_form.is_valid():
@@ -210,7 +213,10 @@ def production_add(request, play=None, place=None):
                 form.cleaned_data['production'] = production
             formset.save()
             request.user.message_set.create(message="Your addition has been stored; thank you. If you know members of the cast or crew, please feel free to add them now.")
-            return HttpResponseRedirect(production.get_edit_cast_url())
+            url = production.get_edit_cast_url()
+            if request.POST.get('initial_person'):
+                url += '?person=' + request.POST.get('initial_person')
+            return HttpResponseRedirect(url)
 
     return render(request, 'productions/add.html', {
         'place': place,

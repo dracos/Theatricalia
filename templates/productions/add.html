@@ -18,6 +18,7 @@
 </p>
 
 <form method="post" id="edit">
+<input type="hidden" name="initial_person" value="{{ request.GET.person }}">
 
 {{ form.errors }}
 
@@ -60,6 +61,9 @@ Don&rsquo;t worry if you don&rsquo;t have all the information asked for &ndash;
 just let us have what you know, and perhaps someone else will fill in the blanks.
 </p>
 {% endif %}
+<p>Play, Production company, and Place all use an auto-complete box to
+compare what you enter against existing entries in the database &ndash; please
+pick something from the list if you see it is already there.</p>
 
 </div></div>
 

@@ -35,6 +35,9 @@ class Person(models.Model):
     def name(self):
         return unicode(self)
 
+    def id32(self):
+        return int_to_base32(self.id)
+
     def make_url(self, name, *args):
         params = (int_to_base32(self.id), self.slug) + args
         return (name, params)

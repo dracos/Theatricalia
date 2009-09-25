@@ -237,12 +237,12 @@ class PartForm(forms.ModelForm):
         person = self.cleaned_data['person_choice']
         if re.match('[0-9]+$', person):
             return Person.objects.get(id=person)
-        if person == 'new' or (person == '' and 'person' not in self.changed_data):
+        if person == 'new' or (person == '' and 'person' not in self.changed_data and self.fields['production'].required == True):
             return person
         raise forms.ValidationError('Please select one of the choices below:')
 
     def clean_person(self):
-        if not 'person' in self.changed_data:
+        if not 'person' in self.changed_data and self.fields['production'].required == True:
             # The person hasn't altered, so use the Person object we already know about
             return self.instance.person
 
