@@ -35,9 +35,12 @@ def profile(request, username):
     for l in Revision.objects.filter(user=user, version__content_type__in=content_types).distinct().order_by('-date_created')[:10]:
         versions = []
         for v in l.version_set.filter(content_type__in=content_types):
-            obj = v.content_type.get_object_for_this_type(id=v.object_id)
-            url = obj.get_absolute_url()
-            versions.append((obj, url))
+            try:
+                obj = v.content_type.get_object_for_this_type(id=v.object_id)
+                url = obj.get_absolute_url()
+                versions.append((obj, url))
+            except:
+                pass
         latest.append(versions)
 
     seen = user.visit_set.all()

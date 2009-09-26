@@ -116,15 +116,15 @@ class Production(models.Model):
     def __unicode__(self):
         producer = ''
         if self.company:
-            producer = "%s " % self.company
+            producer = u"%s " % self.company
 
         places = self.place_summary()
         if places == 'Unknown location':
-            places = ''
+            places = u''
         else:
-            places = '%s, ' % places
+            places = u'%s, ' % places
 
-        return "%sproduction of %s, %s%s" % (producer, self.play, places, self.date_summary())
+        return u"%sproduction of %s, %s%s" % (producer, self.play, places, self.date_summary())
 
     # Find min/max dates from the places of this production
     def get_min_max_dates(self):
@@ -156,11 +156,11 @@ class Production(models.Model):
 
     def place_summary(self):
         if self.places.count()>1:
-            place = 'On tour'
+            place = u'On tour'
         elif self.places.count()==1:
             place = self.places.all()[0]
         else:
-            place = 'Unknown location'
+            place = u'Unknown location'
         return place
         
     def title(self):
@@ -198,7 +198,7 @@ class Place(models.Model):
     end_date = ApproximateDateField(blank=True)
 
     def __unicode__(self):
-        return "The part of production %d at %s, %s" % (self.production.id, self.place, self.date_summary())
+        return u"The part of production %d at %s, %s" % (self.production.id, self.place, self.date_summary())
 
     def date_summary(self):
         return pretty_date_range(self.start_date, self.press_date, self.end_date)
@@ -223,7 +223,7 @@ class Part(models.Model):
         return self.role or 'Unknown'
 
     def __unicode__(self):
-        return '%s, %s in %s' % (self.person, self.role, self.production)
+        return u'%s, %s in %s' % (self.person, self.role, self.production)
 
     def cast_string(self):
         if self.cast == 1:
@@ -242,8 +242,8 @@ class Visit(models.Model):
         unique_together = (('user', 'production'),)
     
     def __unicode__(self):
-        out = '%s saw %s' % (self.user, self.production)
+        out = u'%s saw %s' % (self.user, self.production)
         if self.recommend:
-            out += ', recommended'
+            out += u', recommended'
         return out
 

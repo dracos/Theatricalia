@@ -44,7 +44,7 @@ class Place(models.Model):
 
     def __unicode__(self):
         out = self.get_name_display()
-        if self.town: out += ", " + self.town
+        if self.town: out += u", " + self.town
         return out
 
     def save(self, **kwargs):

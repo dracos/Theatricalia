@@ -25,6 +25,8 @@
 {{ s.production.place_summary|prettify }},
 {{ s.production.company|prettify }},
 {{ s.production.date_summary|prettify }}
+{% empty %}
+<li>This user has not listed any production as yet.</li>
 {% endfor %}
 </ul>
 

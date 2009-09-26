@@ -26,7 +26,7 @@ class Person(models.Model):
 
     def __unicode__(self):
         if self.first_name and self.last_name:
-            return '%s %s' % (self.first_name, self.last_name)
+            return u'%s %s' % (self.first_name, self.last_name)
         elif self.last_name:
             return self.last_name
         else:

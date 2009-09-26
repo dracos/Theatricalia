@@ -87,10 +87,10 @@ at the <a href="/place/46/courtyard-theatre-stratford-upon-avon">Courtyard Theat
 {% endifequal %}
 {% endifequal %}
 {% ifnotequal latest_production.last_modifier latest_production.creator %}
-Added by {{ latest_production.creator.name }}, last modified by {{ latest_production.last_modifier.name }}.
+Added by <a href="{{ latest_production.creator.get_profile.get_absolute_url }}">{{ latest_production.creator.name }}</a>, last modified by <a href="{{ latest_production.last_modifier.get_profile.get_absolute_url }}">{{ latest_production.last_modifier.name }}</a>.
 {% else %}
 {% if latest_production.creator.name %}
-Added by {{ latest_production.creator.name }}.
+Added by <a href="{{ latest_production.creator.get_profile.get_absolute_url }}">{{ latest_production.creator.name }}</a>.
 {% endif %}
 {% endifnotequal %}
 {% else %}

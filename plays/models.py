@@ -27,7 +27,7 @@ class Play(models.Model):
         title = self.get_title_display()
         authors = self.get_authors_display(html=False)
         if authors != 'unknown':
-            title += ', by ' + authors
+            title += u', by ' + authors
         return title
 
     def save(self, **kwargs):
@@ -42,17 +42,17 @@ class Play(models.Model):
     def get_authors_display(self, html=True):
         num = self.authors.count()
         if html:
-            authors = map(lambda x: '<a href="%s">%s</a>' % (x.get_absolute_url(), escape(x)), self.authors.all())
+            authors = map(lambda x: u'<a href="%s">%s</a>' % (x.get_absolute_url(), escape(x)), self.authors.all())
         else:
             authors = [ escape(x) for x in self.authors.all() ]
         if num > 2:
-            str = ', '.join(authors[:num-2]) + ', ' + ', and '.join(authors[num-2:])
+            str = u', '.join(authors[:num-2]) + u', ' + u', and '.join(authors[num-2:])
         elif num == 2:
-            str = ' and '.join(authors)
+            str = u' and '.join(authors)
         elif num == 1:
             str = authors[0]
         else:
-            str = 'unknown'
+            str = u'unknown'
         return mark_safe(str)
             
     def construct_url(self, name, *args):
