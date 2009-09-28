@@ -749,6 +749,9 @@ ul#edit-parts li:nth-child(2n) {
 #home #latest h2 {
     margin-top: 0;
 }
+#home #latest h2:first-child {
+    margin-top: -1em;
+}
 #home #latest ul li {
     background: none;
     padding-left: 0;

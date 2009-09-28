@@ -67,7 +67,7 @@ def search_autocomplete(request):
         name, town = query.rsplit(',', 1)
         q = q | Q(name__icontains=name, town__icontains=town)
 
-    qs = model.objects.filter( q )
+    qs = model.objects.filter( q )[:20]
     data = ''.join([u'%s|%s\n' % (f.__unicode__(), f.pk) for f in qs])
     return HttpResponse(data)
 

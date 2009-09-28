@@ -11,5 +11,6 @@ class PlayAdmin(VersionAdmin, AutocompleteModelAdmin):
     prepopulated_fields = {
         'slug': ('title',),
     }
+    search_fields = [ 'title', 'authors__first_name', 'authors__last_name' ]
 
 admin.site.register(Play, PlayAdmin)
