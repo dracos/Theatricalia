@@ -71,6 +71,7 @@ class Person(models.Model):
         verbose_name_plural = 'people'
 
     def save(self, **kwargs):
+        self.last_name = self.last_name.replace(u'\u2019', "'") # I know, but store it like this anyway.
         self.slug = slugify(self.name())
         first_name_metaphone = dm(self.first_name)
         last_name_metaphone = dm(self.last_name)

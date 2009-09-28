@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block title %}Advanced Search{% endblock %}
+
+{% block content %}
+
+<h1>Advanced Search</h1>
+
+<p></p>
+
+<form id="edit">
+{{ form.as_p }}
+<p><input type="submit" value="Search"></p>
+</form>
+
+{% endblock %}

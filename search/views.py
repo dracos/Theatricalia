@@ -1,6 +1,5 @@
 import re # , difflib
 import urllib
-from datetime import datetime
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
@@ -16,7 +15,7 @@ from sounds.jarowpy import jarow
 #from levenshtein import damerau, qnum
 from productions.objshow import productions_for, productions_list
 from common.models import AlertLocal
-from common.templatetags.prettify import prettify
+from forms import SearchForm
 
 distance = jarow
 threshold = 0.8
@@ -77,6 +76,7 @@ def search_people(search, force_similar=False, use_distance=True):
     sounds_people = 0
     names = search.split(None, 3)
     if len(names)==1:
+        names[0] = names[0].replace(u'\u2019', "'")
         if force_similar:
             people = Person.objects.exclude(first_name__icontains=names[0]).exclude(last_name__iexact=names[0])
         else:
@@ -111,6 +111,7 @@ def search_people(search, force_similar=False, use_distance=True):
             people.sort()
             people = [ person for _, person in people ]
     elif len(names)==2:
+        names[1] = names[1].replace(u'\u2019', "'")
         people = Person.objects.filter(first_name__icontains=names[0], last_name__iexact=names[1])
         if (not people and re.match('[a-z\s\'-]+$(?i)', search)) or force_similar:
             sounds_people = 1
@@ -158,6 +159,8 @@ def search_people(search, force_similar=False, use_distance=True):
             people = people + people2 + people3
             people = [ person for _, person in people ]
     elif len(names)==3:
+        names[1] = names[1].replace(u'\u2019', "'")
+        names[2] = names[2].replace(u'\u2019', "'")
         people = Person.objects.filter(
             Q(first_name__icontains=' '.join(names[0:2]), last_name__iexact=names[2]) |
             Q(first_name__icontains=names[0], last_name__iexact=' '.join(names[1:3]))
@@ -247,8 +250,6 @@ def validate_partial_postcode(postcode):
 
 def search(request):
     search = request.GET.get('q', '').strip()
-    people = plays = places = near = parts = []
-    sounds_people = 0
 
     # Searching round a point, or a postcode
     m = re.match('([-\d.]+)\s*,\s*([-\d.]+)$', search)
@@ -276,12 +277,17 @@ def search(request):
         plays = Play.objects.filter(title_q)
         parts = Paginator(Part.objects.search(search), 10, orphans=2).page(1)
 
-    return render(request, 'search.html', {
-        'people': people,
-        'plays': plays,
-        'places': places,
-        'parts': parts,
-        'near': near,
-        'sounds_people': sounds_people,
-        'search': search,
+        return render(request, 'search.html', {
+            'people': people,
+            'plays': plays,
+            'places': places,
+            'parts': parts,
+            'near': near,
+            'sounds_people': sounds_people,
+            'search': search,
+        })
+
+    form = SearchForm(request.POST or None)
+    return render(request, 'search-advanced.html', {
+        'form': form,
     })

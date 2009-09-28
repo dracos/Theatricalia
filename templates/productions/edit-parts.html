@@ -13,7 +13,9 @@
 
 <p>Thank you for taking the time to add or correct some information on this site.
 Here, you can either <a href="#add">add a new part</a>, or
-pick from the <a href="#edit-head">list of parts to edit</a>.</p>
+pick from the <a href="#edit-head">list of parts to edit</a>.
+By <em>part</em>, I mean anyone involved in a production, from cast or crew to
+the translator for this production or anyone else involved.</p>
 
 <h2 id="add" class="no-descenders">Add new Part</h2>
 
@@ -51,7 +53,7 @@ pick from the <a href="#edit-head">list of parts to edit</a>.</p>
 {% for part in parts.all %}
 <li>
   <a href="./{{ part.id }}">Edit</a>
-  {{ part.person.name }}, {{ part.role }} <small>({{ part.cast_string }})</small>
+  {{ part.person.name|prettify }}, {{ part.role|prettify }} <small>({{ part.cast_string }})</small>
   {% if part.order or part.start_date or part.end_date %}
   <small>{{ part.order|default:'' }}
   {% if part.start_date %}, {{ part.start_date|default:'' }}{% endif %}
