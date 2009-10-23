@@ -20,7 +20,10 @@
 <form method="post" id="edit">
 <input type="hidden" name="initial_person" value="{{ request.GET.person }}">
 
-{{ form.errors }}
+{% if form.play_choice.errors or form.play_choice.is_hidden %}
+{{ form.play_choice.errors }}
+{{ form.play_choice }}
+{% endif %}
 
 <p>{{ form.play.label_tag }} {{ form.play }}</p>
 <p class="help_text"><small>Enter the title of the play of this production.
@@ -62,6 +65,10 @@ page after you have finished entering this production.</small></p>
 <p>You are adding a brand new production to Theatricalia.
 Don&rsquo;t worry if you don&rsquo;t have all the information asked for &ndash;
 just let us have what you know, and perhaps someone else will fill in the blanks.
+If you don&rsquo;t have time to enter any information, but you have a theatre
+programme, please at least upload a photo of the cast list to
+<a href="http://www.flickr.com/groups/theatricalia/">our Theatricalia Flickr group</a>
+and hopefully it&rsquo;ll get added by another helpful soul.
 </p>
 {% endif %}
 <p>Play, Production company, and Place all use an auto-complete box to

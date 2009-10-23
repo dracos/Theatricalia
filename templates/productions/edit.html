@@ -16,7 +16,10 @@
 
 <form method="post" id="edit">
 
-{{ form.errors }}
+{% if form.play_choice.errors or form.play_choice.is_hidden %}
+{{ form.play_choice.errors }}
+{{ form.play_choice }}
+{% endif %}
 
 <p>{{ form.play.label_tag }} {{ form.play }}</p>
 <p class="help_text"><small>If you need to change the play&rsquo;s author

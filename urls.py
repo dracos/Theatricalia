@@ -45,7 +45,7 @@ urlpatterns = patterns('',
     url('^$', home, name='home'),
 
     url('^about$', static_about, name='about'),
-    url('^help$', static_help, name='help'),
+    url('^assistance$', static_help, name='help'),
     url('^criticism$', static_contact, name='criticism'),
     url('^colophon$', static_colophon, name='colophon'),
     url('^moo$', static_moocards, name='moo'),

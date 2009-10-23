@@ -1,4 +1,4 @@
-import re
+import re, sys
 from django import forms
 from django.utils.safestring import mark_safe
 from django.forms.formsets import BaseFormSet
@@ -41,6 +41,7 @@ class ProductionForm(forms.ModelForm):
         fields = (forms.CharField(), forms.ModelChoiceField(Play.objects.all())),
         widget = ForeignKeySearchInput(Production.play.field.rel, ('title',))
     )
+    play_choice = forms.ChoiceField(label='Play', widget=forms.RadioSelect(), required=False)
     company = AutoCompleteMultiValueField(
         ProductionCompany, 'name',
         required = False,
@@ -54,24 +55,51 @@ class ProductionForm(forms.ModelForm):
         exclude = ('parts', 'places', 'seen_by', 'source')
 
     def __init__(self, last_modified=None, *args, **kwargs):
-#        self.db_last_modified = last_modified
-#        kwargs.setdefault('initial', {}).update({ 'last_modified': last_modified })
         super(ProductionForm, self).__init__(*args, **kwargs)
+        if 'play_choice' in self.data and 'play_0' in self.data:
+            choices = self.play_radio_choices(self.data['play_0'])
+            self.fields['play_choice'].choices = choices
 
-#    def clean(self):
-#        super(ProductionForm, self).clean()
-#
-#        # Not clean_last_modified, as I want it as a generic error
-#        last_mod = self.cleaned_data.get('last_modified')
-#        if last_mod < self.db_last_modified:
-#            raise forms.ValidationError('I am afraid that this production has been edited since you started editing.')
-#
-#        return self.cleaned_data
+    def clean(self):
+        if isinstance(self.cleaned_data.get('play_choice'), Play):
+            self.cleaned_data['play'] = self.cleaned_data['play_choice']
+            del self.cleaned_data['play_choice']
+        return self.cleaned_data
 
+    def play_radio_choices(self, s):
+        choices = []
+        p = ''
+        for p in Play.objects.filter(title__icontains=s):
+            choices.append( (p.id, str(p)) )
+        if len(choices) > 1:
+            choices.append( ( 'new', prettify('None of these, a new play called \'' + s + '\'') ) )
+        elif str(p) == s:
+            choices.append( ( 'new', prettify('A new play also called \'' + s + '\'') ) )
+        else:
+            choices.append( ( 'new', prettify('A new play called \'' + s + '\'') ) )
+        choices.append( ( 'back', 'I misspelled, and will enter a new title below:' ) )
+        return choices
+
+    # play_choice is either blank, an ID, 'new' or 'back'
+    def clean_play_choice(self):
+        play = self.cleaned_data['play_choice']
+        if re.match('[0-9]+$', play):
+            return Play.objects.get(id=play)
+        if play == 'new' or (play == '' and self.cleaned_data['play'].id):
+            return play
+        raise forms.ValidationError('Please select one of the choices below:')
+
+    # play is either empty, or a Play object (perhaps new, perhaps existing)
     def clean_play(self):
         if not self.cleaned_data['play']:
             raise forms.ValidationError('You must specify a play.')
-        return self.cleaned_data['play']
+        play = self.cleaned_data['play']
+        if play.id:
+            return play
+        if not self.fields['play_choice'].choices:
+            choices = self.play_radio_choices(play.title)
+            self.fields['play_choice'].choices = choices
+        return play
 
     def save(self, **kwargs):
         if not self.cleaned_data['play'].id:
@@ -184,7 +212,7 @@ class PlaceFormNoJS(PlaceForm):
         # But anyway, put the choices in the *right* widget.
         self.fields['place'].widget.widgets[0].choices = self.fields['place'].fields[0].choices
 
-# person is the ext box where someone enters a name, and always will be
+# person is the text box where someone enters a name, and always will be
 # person_choice is the selection of someone from that, or the creation of a new person
 class PartForm(forms.ModelForm):
     person = forms.CharField(error_messages = {'required':'You have to specify a person.'})
