@@ -44,6 +44,10 @@ def search_autocomplete(request):
     if not search_fields or not app_label or not model_name or not query:
         return HttpResponseNotFound()
 
+    # Ignore author part of field for lookup
+    if app_label == 'plays':
+        query = re.sub(', by .*', '', query)
+
     # For database order of articles
     m = re.match('^(A|An|The) (.*)$(?i)', query)
     if m:
