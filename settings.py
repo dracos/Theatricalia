@@ -92,7 +92,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.csrf.middleware.CsrfMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'theatricalia.middleware.AlphaMiddleware',
+    #'theatricalia.middleware.AlphaMiddleware',
     'theatricalia.middleware.OnlyLowercaseUrls',
     'django.middleware.transaction.TransactionMiddleware',
     'reversion.middleware.RevisionMiddleware',
@@ -115,7 +115,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.humanize', # Ordinals
     'django.contrib.webdesign', # Lorem
-    #'django.contrib.sites',
+    'django.contrib.sites',
     'django.contrib.admin',
     'sorl.thumbnail',
     'reversion',
