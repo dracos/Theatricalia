@@ -3,6 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.contrib.auth.models import User
 from sorl.thumbnail.fields import ImageWithThumbnailsField
+from utils import int_to_base32
 
 def get_upload_to(instance, filename):
     return 'photos/%s/%s/%s' % (instance.content_type, instance.object_id, filename)
@@ -30,7 +31,7 @@ class Photo(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('photo-view', (), { 'photo_id': self.id })
+        return ('photo-view', (), { 'photo_id': int_to_base32(self.id) })
 
     def get_attached(self):
         return self.content_object

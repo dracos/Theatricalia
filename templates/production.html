@@ -160,7 +160,7 @@ by {{ production.company|prettify }}{% endif %},
 {% if production.photos.all %}
 <ul>
 {% for photo in production.photos.all %}
-<li><a href="{{ photo.photo.extra_thumbnails.larger }}">{{ photo.photo.thumbnail_tag }}</a>
+<li><a href="{{ photo.get_absolute_url }}">{{ photo.photo.thumbnail_tag }}</a>
 {% endfor %}
 </ul>
 {% endif %}

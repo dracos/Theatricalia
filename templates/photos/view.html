@@ -5,13 +5,13 @@
 
 {% block content %}
 
-<h1>{{ photo.content_object.name|prettify }}</h1>
-
-<div id="primary">
+<h1>{{ attached_title|prettify }}</h1>
 
 <h2 id="photo-title">{{ photo.title|prettify }}</h2>
 
-<p aria-labelledby="photo-title" id="photo"><img src="{% thumbnail photo.photo 720x720 %}" alt="{{ photo.title }}"></p>
+<div id="primary">
+
+<p aria-labelledby="photo-title" id="photo"><img style="max-width: 100%" src="{% thumbnail photo.photo 720x720 %}" alt="{{ photo.title }}"></p>
 
 </div>
 

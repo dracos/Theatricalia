@@ -62,7 +62,7 @@
 
 {% if place.address or place.town or place.postcode %}
 <li>
-<address>{{ place.address }}{% if place.address and place.town %}, {% endif %}{{ place.town }}{% if place.address or place.town %}{% if place.postcode %}, {% endif %}{% endif %}{{ place.postcode }}
+<address>{{ place.address|prettify }}{% if place.address and place.town %}, {% endif %}{{ place.town|prettify }}{% if place.address or place.town %}{% if place.postcode %}, {% endif %}{% endif %}{{ place.postcode|prettify }}
 </address>
 </li>
 {% endif %}

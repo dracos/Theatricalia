@@ -112,7 +112,7 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 
 <ul>
 {% for photo in person.photos.all %}
-<li><a href="{{ photo.photo.extra_thumbnails.larger }}">{{ photo.photo.thumbnail_tag }}</a>
+<li><a href="{{ photo.get_absolute_url }}">{{ photo.photo.thumbnail_tag }}</a>
 {% endfor %}
 </ul>
 
