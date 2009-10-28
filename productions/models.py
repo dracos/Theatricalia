@@ -60,7 +60,7 @@ def pretty_date_range(start_date, press_date, end_date):
 
 class ProductionCompany(models.Model):
     name = models.CharField(max_length=100)
-    slug = models.SlugField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100)
     description = models.TextField(blank=True)
 
     class Meta:
@@ -132,9 +132,9 @@ class Production(models.Model):
         end_date = None
         press_date = None
         for place in self.place_set.all():
-            if not start_date or place.start_date < start_date: start_date = place.start_date
-            if not press_date or place.press_date < press_date: press_date = place.press_date
-            if not   end_date or place.end_date   >   end_date:   end_date = place.end_date
+            if not start_date or (place.start_date and place.start_date < start_date): start_date = place.start_date
+            if not press_date or (place.press_date and place.press_date < press_date): press_date = place.press_date
+            if not   end_date or (place.end_date   and place.end_date   >   end_date):   end_date = place.end_date
         return start_date, press_date, end_date
 
     def date_summary(self):

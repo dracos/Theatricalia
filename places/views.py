@@ -4,7 +4,7 @@ from datetime import datetime
 from django.views.generic.list_detail import object_list
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
 
 from common.models import Alert
 from forms import PlaceForm
@@ -15,11 +15,17 @@ from productions.models import Production
 from photos.forms import PhotoForm
 
 def place_productions(request, place_id, place, type):
-    place = check_url(Place, place_id, place)
+    try:
+        place = check_url(Place, place_id, place)
+    except UnmatchingSlugException, e:
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     return productions_list(request, place, type, 'places/production_list.html')
 
 def productions(request, place_id, place):
-    place = check_url(Place, place_id, place)
+    try:
+        place = check_url(Place, place_id, place)
+    except UnmatchingSlugException, e:
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     productions = Production.objects.filter(places=place).order_by('play__title')
     return render(request, 'places/productions.html', {
         'productions': productions,
@@ -28,7 +34,10 @@ def productions(request, place_id, place):
 
 @login_required
 def place_edit(request, place_id, place):
-    place = check_url(Place, place_id, place)
+    try:
+        place = check_url(Place, place_id, place)
+    except UnmatchingSlugException, e:
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 
     form = PlaceForm(request.POST or None, instance=place)
     if request.method == 'POST':
@@ -49,7 +58,7 @@ def place(request, place_id, place):
     try:
         place = check_url(Place, place_id, place)
     except UnmatchingSlugException, e:
-        return HttpResponseRedirect(e.args[0].get_absolute_url())
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     past, future = productions_for(place)
     photo_form = PhotoForm(place)
     alert = place.alerts.filter(user=request.user)
@@ -66,7 +75,7 @@ def place_alert(request, place_id, place, type):
     try:
         place = check_url(Place, place_id, place)
     except UnmatchingSlugException, e:
-        return HttpResponseRedirect(e.args[0].get_absolute_url())
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 
     if type == 'add':
         alert = Alert(user=request.user, content_object=place)

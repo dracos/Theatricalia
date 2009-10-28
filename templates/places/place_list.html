@@ -7,11 +7,13 @@
 
 <ul id="atoz">
     {% for l in letters %}
+        {% if l %}
         <li>{% ifequal l letter %}
             <strong>{{ l|upper }}</strong>
         {% else %}
             <a href="{% url places l|lower %}">{{ l }}</a>
         {% endifequal %}
+        {% endif %}
     {% endfor %}
 <!--
     <li>{% ifequal "0-9" letter %}

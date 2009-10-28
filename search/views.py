@@ -69,7 +69,7 @@ def search_autocomplete(request):
         q = q | Q(first_name__icontains=first, last_name__icontains=last)
     if app_label == 'places' and ',' in query:
         name, town = query.rsplit(',', 1)
-        q = q | Q(name__icontains=name, town__icontains=town)
+        q = q | Q(name__icontains=name.strip(), town__icontains=town.strip())
 
     qs = model.objects.filter( q )[:20]
     data = ''.join([u'%s|%s\n' % (f.__unicode__(), f.pk) for f in qs])
@@ -172,8 +172,12 @@ def search_people(search, force_similar=False, use_distance=True):
     return people, sounds_people
 
 def search_geonames(s):
-    r = urllib.urlopen('http://ws.geonames.org/searchJSON?isNameRequired=true&style=LONG&q=' + urllib.quote(s.encode('utf-8')) + '&maxRows=20').read()
-    r = simplejson.loads(r)
+    try:
+        r = urllib.urlopen('http://ws.geonames.org/searchJSON?isNameRequired=true&style=LONG&q=' + urllib.quote(s.encode('utf-8')) + '&maxRows=20').read()
+    except:
+        r = ''
+    if r:
+        r = simplejson.loads(r)
     return r
 
 # For pagination of parts search
@@ -193,9 +197,13 @@ def search_around(request, search, type=''):
         pc, lat, lon = loc.strip().split(',')
         name = re.sub('(\d[A-Z]{2})', r' \1', search.upper())
     elif validate_partial_postcode(search):
-        r = urllib.urlopen('http://ws.geonames.org/postalCodeSearchJSON?country=gb&postalcode=' + urllib.quote(search)).read()
-        r = simplejson.loads(r)
-        lat, lon = r['postalCodes'][0]['lat'], r['postalCodes'][0]['lng']
+        try:
+            r = urllib.urlopen('http://ws.geonames.org/postalCodeSearchJSON?country=gb&postalcode=' + urllib.quote(search)).read()
+        except:
+            r = ''
+        if r:
+            r = simplejson.loads(r)
+            lat, lon = r['postalCodes'][0]['lat'], r['postalCodes'][0]['lng']
         name = search.upper()
     else:
         raise Exception, 'Bad request'

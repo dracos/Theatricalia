@@ -128,6 +128,7 @@ INSTALLED_APPS = (
     'theatricalia.people',
     'theatricalia.profiles',
     'theatricalia.news',
+    'theatricalia.merged',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
