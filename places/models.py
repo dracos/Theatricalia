@@ -60,8 +60,11 @@ class Place(models.Model):
             out = "%s %s" % (m.group(2), m.group(1))
         return out
     
+    def id32(self):
+        return int_to_base32(self.id)
+
     def make_url(self, name, *args):
-        return (name, (int_to_base32(self.id), self.slug) + args)
+        return (name, (self.id32(), self.slug) + args)
 
     @models.permalink
     def get_absolute_url(self):

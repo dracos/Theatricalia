@@ -120,11 +120,13 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 
 {% if user.is_authenticated %}
     <p class="clear before_form">If you have a photograph of this person,
-    please upload it here.</p>
+    please either upload it here, or add it to Flickr and tag it with
+    <kbd>theatricalia:person={{ person.id32 }}</kbd>.</p>
     {% include 'includes/photo-form.html' %}
 {% else %}
-    <p class="clear">If you have a photograph of this person you wish
-    to upload, please <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
+    <p class="clear">If you have a photograph of this person,
+    please <a href="{% url login %}?next={{ request.path }}">sign in</a> to upload it, or
+    add it to Flickr and tag it with <kbd>theatricalia:person={{ person.id32 }}</kbd>.</p>
 {% endif %}
 
 {% if same_name %}

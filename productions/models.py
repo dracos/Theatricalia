@@ -85,6 +85,9 @@ class Production(models.Model):
     seen_by = models.ManyToManyField(User, through='Visit', related_name='seen', blank=True)
     source = models.TextField(blank=True)
 
+    def id32(self):
+        return int_to_base32(self.id)
+
     def url_components(self, name, **kwargs):
         kwargs.update({
             'play': self.play.slug,
