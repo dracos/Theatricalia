@@ -1,11 +1,13 @@
 import os
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response
 from django.template import RequestContext, loader, Context
 from django.core.mail import send_mail
+from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from django.http import Http404
 from django.db import connection
 from utils import base32_to_int, MistypedIDException
+from merged.models import Redirect
 
 class UnmatchingSlugException(Exception):
     pass
@@ -19,7 +21,16 @@ def check_url(type, id, slug):
         id = e.args[0]
     except:
         raise Http404('Could not match id %s' % id)
-    obj = get_object_or_404(type, id=id)
+    try:
+        obj = type.objects.get(id=id)
+    except:
+        content_type = ContentType.objects.get_for_model(type)
+        try:
+            redir = Redirect.objects.get(old_object_id=id, content_type=content_type)
+            obj = redir.new_object
+            mistyped = True
+        except:
+            raise Http404('No %s matches the given query.' % type._meta.object_name)
     if obj.slug != slug or mistyped:
         raise UnmatchingSlugException(obj)
     return obj
