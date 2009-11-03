@@ -1,0 +1,38 @@
+#!/usr/bin/python
+
+import urllib, time
+import os, errno
+from django.utils import simplejson
+
+DIR = os.path.dirname(__file__) + '/../data/flickr'
+
+def call_api(method, **params):
+    eval = params.pop('eval', True)
+    url = 'http://api.flickr.com/services/rest/?format=json&nojsoncallback=1&api_key=b9381c2043820728ff59f1198dda7319&method=' + method
+    for k,v in params.items():
+        url += '&' + urllib.quote(k) + '=' + urllib.quote(v)
+    out = urllib.urlopen(url).read()
+    if eval:
+        out = simplejson.loads(out)
+    time.sleep(1)
+    return out
+
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError, exc:
+        if exc.errno == errno.EEXIST: pass
+        else: raise
+
+predicates = call_api('flickr.machinetags.getPredicates', namespace='theatricalia')
+for predicate in predicates['predicates']['predicate']:
+    predicate = predicate['_content']
+    values = call_api('flickr.machinetags.getValues', namespace='theatricalia', predicate=predicate)
+    for value in values['values']['value']:
+        value = value['_content']
+        photos = call_api('flickr.photos.search', machine_tags='theatricalia:%s=%s' % (predicate, value), eval=False)
+        mkdir_p("%s/%s" % (DIR, predicate))
+        fp = open("%s/%s/%s" % (DIR, predicate, value), 'w')
+        fp.write(photos)
+        fp.close()
+
