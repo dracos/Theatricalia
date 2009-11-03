@@ -1,4 +1,5 @@
 import re
+import urllib
 
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -6,6 +7,8 @@ from django.forms.models import modelformset_factory, inlineformset_factory
 from django.db import IntegrityError
 from django.contrib.comments.views.comments import post_comment
 from django.http import Http404, HttpResponseRedirect
+from django.utils import simplejson
+from django.conf import settings
 
 from utils import base32_to_int
 from shortcuts import render, check_url
@@ -38,6 +41,14 @@ def production(request, play_id, play, production_id):
 #    )
 
     try:
+        fp = open(settings.OUR_ROOT + '/data/flickr/production/' + production_id)
+        flickr = fp.read()
+        fp.close()
+        flickr = simplejson.loads(flickr)
+    except:
+        flickr = ''
+
+    try:
         seen = production.visit_set.get(user=request.user)
     except:
         seen = None
@@ -51,6 +62,7 @@ def production(request, play_id, play, production_id):
         'other': production.part_set.filter(cast__isnull=True).order_by('order', 'role', 'person__last_name', 'person__first_name'),
         'photo_form': photo_form,
         'seen': seen,
+        'flickr': flickr,
     })
 
 @login_required

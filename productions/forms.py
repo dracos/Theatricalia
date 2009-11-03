@@ -85,7 +85,7 @@ class ProductionForm(forms.ModelForm):
         play = self.cleaned_data['play_choice']
         if re.match('[0-9]+$', play):
             return Play.objects.get(id=play)
-        if play == 'new' or (play == '' and self.cleaned_data['play'].id):
+        if play == 'new' or (play == '' and 'play' in self.cleaned_data and self.cleaned_data['play'].id):
             return play
         raise forms.ValidationError('Please select one of the choices below:')
 
