@@ -1,0 +1,30 @@
+#!/usr/bin/python
+
+# XXX Not finished!
+
+import os.path, sys
+OUR_ROOT = os.path.realpath(os.path.dirname(__file__))
+sys.path.insert(0, os.path.join(OUR_ROOT, '..'))
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+
+from django.db.models import Q
+from django.contrib.auth.models import User
+
+from common.models import Alert
+from plays.models import Play
+from places.models import Place
+from profiles.models import Profile
+from productions.models import Production
+
+for user in User.objects.filter(Q(alerts__isnull=False) | Q(local_alerts__isnull=False)).distinct():
+    print user
+    p = user.get_profile()
+    productions = Production.objects.filter(
+        created__gt=p.last_alert_sent,
+        play__in=user.alerts.filter(content_type=Play)
+    )
+    print productions
+
+from django.db import connection
+for q in connection.queries:
+    print q['sql'].replace('`','')
