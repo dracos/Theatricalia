@@ -10,12 +10,16 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'theatricalia.settings'
 from utils import base32_to_int
 from plays.models import Play
 from productions.models import Production
+from merged.models import Redirect
 
 thing, main, alt = sys.argv[1:4]
 
 if thing == 'play':
     main = Play.objects.get(id=base32_to_int(main)) 
-    alt = Play.objects.get(id=base32_to_int(alt)) 
+    alt_id = base32_to_int(alt)
+    alt = Play.objects.get(id=alt_id)
     print "Merging %s into %s" % (alt, main)
     Production.objects.filter(play=alt).update(play=main)
+    Redirect.objects.create(old_object_id=alt_id, new_object=main)
     alt.delete()
+
