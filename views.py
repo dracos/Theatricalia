@@ -7,6 +7,7 @@ from places.models import Place
 from places.models import Place
 from people.models import Person
 from news.models import Article
+from photos.models import Photo
 
 def home(request):
     try:
@@ -24,6 +25,9 @@ def home(request):
     except:
         latest_comment = {}
 
+    random_photo = Photo.objects.filter(content_type=22).order_by('?')[0]
+    if random.randint(1, 10) == 1: random_photo = None
+
     return render(request, 'home.html', {
         'latest_production': latest,
         'latest_observation': latest_comment,
@@ -33,6 +37,7 @@ def home(request):
         'plays': Play.objects.count(),
         'people': Person.objects.count(),
         'parts': Part.objects.count(),
+        'random_photo': random_photo,
     })
 
 def static_colophon(request):

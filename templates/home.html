@@ -37,6 +37,34 @@ or search for a location to find things near you.
 
 <h2>For example&hellip;</h2>
 
+{% if random_photo %}
+
+{% with random_photo.content_object as production %}
+<p><img align="right" src="{{ random_photo.photo.extra_thumbnails.feature }}" alt="" style="margin-left:0.5em">
+<a href="{{ production.play.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.company %}
+by {{ production.company|prettify }}{% endif %},
+
+{% ifequal production.places.count 1 %}
+    {{ production.date_summary|prettify }},
+    at <a href="{{ production.places.all.0.get_absolute_url }}">{{ production.places.all.0.get_name_display|prettify }}</a>.</p>
+{% else %}
+    {% ifequal production.places.count 0 %}
+                at an unknown location.
+    {% else %}
+                       at
+        {% for place in production.place_set.all %}
+            {% if forloop.last and not forloop.first %} and {% endif %}
+            <a href="{{ place.place.get_absolute_url }}">{{ place.place.get_name_display|prettify }}</a>
+            <small>({{ place.date_summary|prettify }})</small>{% ifequal forloop.revcounter0 0 %}{% else %}{% ifequal forloop.revcounter0 1 %}{% ifnotequal forloop.counter0 0 %},{% endifnotequal %}{% else %},{% endifequal %}{% endifequal %}{% endfor %}.
+    {% endifequal %}
+{% endifequal %}
+
+<p align="right"><a href="{{ production.get_absolute_url }}">More &rarr;</a></p>
+
+{% endwith %}
+
+{% else %}
+
 <p><img align="right" width=115 height=155 src="/static/i/hamlet.jpg" alt="" style="margin-left:0.5em">
 <a href="/person/7xk/david-tennant">David Tennant</a>
 played the title role in the
@@ -48,6 +76,8 @@ at the <a href="/place/46/courtyard-theatre-stratford-upon-avon">Courtyard Theat
 <a href="/play/3/as-you-like-it/production/2y8">production of As You Like It</a>, alongside
 <a href="/person/7rg/colin-farrell">Colin Farrell</a> and
 <a href="/person/7sm/joseph-fiennes">Joseph Fiennes</a>.
+
+{% endif %}
 
 </div>
 
