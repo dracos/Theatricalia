@@ -2,6 +2,7 @@ import re, sys
 from django import forms
 from django.utils.safestring import mark_safe
 from django.forms.formsets import BaseFormSet
+from django.db.models import Q
 
 from models import Production, Part, Place, ProductionCompany
 from plays.models import Play
@@ -69,8 +70,17 @@ class ProductionForm(forms.ModelForm):
     def play_radio_choices(self, s):
         choices = []
         p = ''
-        for p in Play.objects.filter(title__icontains=s):
-            choices.append( (p.id, str(p)) )
+
+        # For database order of articles
+        m = re.match('^(A|An|The) (.*)$(?i)', s)
+        if m:
+            article, rest = m.groups()
+            q = Q(title__iendswith=' %s' % article, title__istartswith=rest)
+        else:
+            q = Q(title__icontains=s)
+
+        for p in Play.objects.filter(q):
+            choices.append( ( p.id, prettify(str(p)) ) )
         if len(choices) > 1:
             choices.append( ( 'new', prettify('None of these, a new play called \'' + s + '\'') ) )
         elif str(p) == s:
