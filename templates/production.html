@@ -110,12 +110,34 @@ by {{ production.company|prettify }}{% endif %},
 {% include 'productions/sidebar_bit.html' %}
 
 {% if production.source %}
-<p><small>Source: {{ production.source|safe }}</small></p>
+    <p><small>Source: {{ production.source|safe }}</small></p>
+{% else %}
+    {% ifnotequal production.last_modifier production.creator %}
+    <p>Added by <a href="{{ production.creator.get_profile.get_absolute_url }}">{{ production.creator.name }}</a>, last modified by <a href="{{ production.last_modifier.get_profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</p>
+    {% else %}
+        {% if production.creator.name %}
+            <p>Added by <a href="{{ production.creator.get_profile.get_absolute_url }}">{{ production.creator.name }}</a>.</p>
+        {% endif %}
+    {% endifnotequal %}
 {% endif %}
 
 </div></div>
 
 <div class="secondary" id="production-stuff">
+
+{% if production.photos.all %}
+    {% with production.photos.all|random as photo %}
+    <div id="photograph-feature">
+    <a href="{{ photo.get_absolute_url }}">{{ photo.photo.extra_thumbnails_tag.feature }}</a>
+    </div>
+    {% endwith %}
+{% else %}{% if flickr %}
+    {% with flickr.photos.photo|random as photo %}
+    <div id="photograph-feature">
+    <a href="http://www.flickr.com/photos/{{ photo.owner }}/{{ photo.id }}/"><img src="http://farm{{ photo.farm }}.static.flickr.com/{{ photo.server }}/{{ photo.id }}_{{ photo.secret }}_s.jpg" alt="{{ photo.title }}"></a>
+    </div>
+    {% endwith %}
+{% endif %}{% endif %}
 
 <ul>
 <li><a href="#observations">{% if comment_count %}Observations ({{ comment_count }}){% else %}Add observation{% endif %}</a>
