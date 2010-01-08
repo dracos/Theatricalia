@@ -11,7 +11,7 @@ class PlayEditForm(forms.ModelForm):
 
 	class Meta:
 		model = Play
-		exclude = ('title', 'slug', 'parent')
+		exclude = ('slug', 'parent')
 
 class PlayAuthorForm(forms.Form):
     person = forms.CharField(label='Author', max_length=101, required=False)
@@ -51,11 +51,11 @@ class PlayAuthorForm(forms.Form):
         return self.cleaned_data
 
     def clean_person_choice(self):
-        person = self.cleaned_data['person_choice']
-        if re.match('[0-9]+$', person):
-            return Person.objects.get(id=person)
-        if person == 'new' or (person == '' and 'person' not in self.changed_data):
-            return person
+        person_choice = self.cleaned_data['person_choice']
+        if re.match('[0-9]+$', person_choice):
+            return Person.objects.get(id=person_choice)
+        if person_choice == 'new' or (person_choice == '' and 'person' not in self.changed_data) or (person_choice == '' and 'person' in self.changed_data and self.cleaned_data['person']==''):
+            return person_choice
         raise forms.ValidationError('Please select one of the choices below:')
 
     def clean_person(self):
@@ -64,10 +64,9 @@ class PlayAuthorForm(forms.Form):
             return self.initial['person']
 
         person = self.cleaned_data['person']
-        if not self.fields['person_choice'].choices:
+        if not self.fields['person_choice'].choices and person:
             # Okay, so we have a search string
             choices = self.radio_choices(person)
             self.fields['person_choice'].choices = choices # = forms.ChoiceField( label='Person', choices=choices, widget = forms.RadioSelect() )
         return person
-
 
