@@ -11,7 +11,13 @@
 </blockquote>
 
 <p>Unfortunately, whatever you were looking for could not be found.
-<br>Try searching using the form above, or browse our plays, people, and places.</p>
+<br>You could try <a href="/search?q={{ request.META.REQUEST_URI|cut:"/" }}">searching for &ldquo;{{ request.META.REQUEST_URI|cut:"/" }}&rdquo;</a>,
+use the search form above,
+<br>or browse our
+<a href="/plays">plays</a>,
+<a href="/people">people</a>, and
+<a href="/places">places</a>.
+</p>
 
 {% endblock %}
 
