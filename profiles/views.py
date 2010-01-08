@@ -43,7 +43,7 @@ def profile(request, username):
                 pass
         latest.append(versions)
 
-    seen = user.visit_set.all()
+    seen = user.visit_set.order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))', 'production__place__press_date')
 
     return render(request, 'profile.html', {
         'view': user,
@@ -66,10 +66,11 @@ def register(request):
     return render(request, 'registration/register.html', { 'form': form })
 
 def login(request, template_name='registration/login.html', redirect_field_name=REDIRECT_FIELD_NAME):
-    if request.user.is_authenticated():
-        return HttpResponseRedirect(request.REQUEST.get(redirect_field_name, '/'))
-
     redirect_to = request.REQUEST.get(redirect_field_name, '')
+    if not redirect_to: redirect_to = settings.LOGIN_REDIRECT_URL
+
+    if request.user.is_authenticated():
+        return HttpResponseRedirect(redirect_to)
 
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
