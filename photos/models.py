@@ -14,9 +14,9 @@ class Photo(models.Model):
     title = models.CharField(max_length=255)
     photo = ImageWithThumbnailsField('Photograph',
         upload_to = get_upload_to,
-        thumbnail = { 'size': (80, 80), 'options': ('crop', 'upscale') },
+        thumbnail = { 'size': (80, 80), 'options': ('crop', ) },
         extra_thumbnails = {
-            'feature': { 'size': (108, 108), 'options': ('crop', 'upscale') },
+            'feature': { 'size': (108, 108), 'options': ('crop', ) },
             'larger': { 'size': (400, 400), 'options': ['upscale'] },
         },
         thumbnail_tag = '<img src="%(src)s" width="%(width)s" height="%(height)s">'

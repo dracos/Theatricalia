@@ -539,19 +539,19 @@ td {
 	margin-bottom: 0;
 	margin-right: 0.66667em;
 	float: left;
+	height: 7.33333em; /* 6.66667 + 0.25+0.25 padding + 0.083333+0.083333 border */
+	width: 7.33333em;
+	margin-bottom: 0.66667em;
 }
 /* In a 75% ul */
 #photographs img {
-	height: 6.66667em;
-	width: 6.66667em;
-	margin-bottom: 0.66667em;
 	border: solid 0.083333em #999999;
 	padding: 0.25em;
 }
 /* Not */
 #photograph-feature img {
-	height: 6.75em;
-	width: 6.75em;
+	/* height: 6.75em;
+	width: 6.75em; */
     margin-bottom: 0.125em;
 	border: solid 0.0625em #999999;
 	padding: 0.25em;
@@ -796,4 +796,6 @@ ul#edit-parts li:nth-child(2n) {
     margin-bottom: 0;
 }
 
-
+#thin {
+    margin: 0 20%;
+}
