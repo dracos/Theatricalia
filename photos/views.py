@@ -13,6 +13,7 @@ from shortcuts import render
 from productions.models import Production
 from plays.models import Play
 from places.models import Place
+from people.models import Person
 import settings
 
 @login_required
@@ -69,6 +70,8 @@ def view(request, photo_id):
     elif isinstance(photo.content_object, Play):
         attached_title = photo.content_object.get_title_display()
     elif isinstance(photo.content_object, Place):
+        attached_title = str(photo.content_object)
+    elif isinstance(photo.content_object, Person):
         attached_title = str(photo.content_object)
 
     return render(request, 'photos/view.html', {
