@@ -9,5 +9,5 @@ class Redirect(models.Model):
     new_object = generic.GenericForeignKey('content_type', 'new_object_id')
 
     def __unicode__(self):
-        return 'ID %s -> %s' % (self.old_object_id, self.new_object)
+        return u'ID %s -> %s' % (self.old_object_id, self.new_object)
 
