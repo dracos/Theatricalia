@@ -12,7 +12,7 @@ from merged.models import Redirect
 class UnmatchingSlugException(Exception):
     pass
 
-def check_url(type, id, slug):
+def check_url(type, id, slug=None):
     mistyped = False
     try:
         id = base32_to_int(id)
@@ -31,7 +31,7 @@ def check_url(type, id, slug):
             mistyped = True
         except:
             raise Http404('No %s matches the given query.' % type._meta.object_name)
-    if obj.slug != slug or mistyped:
+    if (slug is not None and obj.slug != slug) or mistyped:
         raise UnmatchingSlugException(obj)
     return obj
     
