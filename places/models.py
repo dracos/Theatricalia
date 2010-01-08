@@ -28,8 +28,9 @@ class Place(models.Model):
     town = models.CharField(blank=True, max_length=50)
     country = models.ForeignKey(Country, blank=True, null=True)
     postcode = models.CharField(blank=True, max_length=10)
+    telephone = models.CharField(blank=True, max_length=50)
     type = models.CharField(blank=True, max_length=100, choices=(('proscenium', 'Proscenium Arch'), ('thrust', 'Thrust'), ('multiple', 'Multiple'), ('other', 'Other')))
-    size = models.CharField(blank=True, max_length=100)
+    size = models.CharField('Seats', blank=True, max_length=100)
     opening_date = ApproximateDateField(blank=True)
     url = models.URLField('URL', blank=True)
     wikipedia = models.URLField(blank=True)
@@ -44,13 +45,13 @@ class Place(models.Model):
 
     def __unicode__(self):
         out = self.get_name_display()
-        if self.town: out += u", " + self.town
+        if self.town and self.town not in out: out += u", " + self.town
         return out
 
     def save(self, **kwargs):
-        name = re.sub('^(.*), (A|An|The)$(?i)', r'\2 \1', self.name)
+        name = re.sub('^(.*), (A|An|The)$(?i)', r'\2 \1', self.name.strip())
         self.slug = slugify('%s %s' % (name, self.town))
-        self.name = re.sub('^(A|An|The) (.*)$(?i)', r'\2, \1', self.name)
+        self.name = re.sub('^(A|An|The) (.*)$(?i)', r'\2, \1', self.name.strip())
         super(Place, self).save(**kwargs)
 
     def get_name_display(self):
