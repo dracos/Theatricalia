@@ -1,46 +1,64 @@
 from datetime import datetime
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, InvalidPage
 from django.db.models import Q
 from django.http import Http404
 from shortcuts import render
-from models import Production, Part
+from models import Production, Part, ProductionCompany
 from plays.models import Play
 from places.models import Place
 from people.models import Person
 from aggregates import Concatenate
 
-# object is Place, Person, or Play
+# object is Place, Person, Play, or ProductionCompany
 # type will be blank, or 'places' for multiple place search
 def productions_filter(object, type, date_filter):
     o = None
-    if isinstance(object, Place) or isinstance(object, Person) or isinstance(object, Play):
-        o = object.productions.filter(date_filter)
+    if isinstance(object, Place):
+        filter = ( ~Q(end_date='') & Q(end_date__lt=datetime.now) ) | Q(end_date='', press_date__lt=datetime.now) | Q(end_date='', press_date__isnull=True, start_date__lt=datetime.now)
+        if date_filter == 'past':
+            o = object.productions_here.filter(filter).distinct()
+        else:
+            o = object.productions_here.exclude(filter).distinct()
+    elif isinstance(object, Person) or isinstance(object, Play) or isinstance(object, ProductionCompany):
+        filter = ( ~Q(place__end_date='') & Q(place__end_date__lt=datetime.now) ) | Q(place__end_date='', place__press_date__lt=datetime.now) | Q(place__end_date='', place__press_date__isnull=True, place__start_date__lt=datetime.now)
+        if date_filter == 'past':
+            o = object.productions.filter(filter).distinct()
+        else:
+            o = object.productions.exclude(filter).distinct()
     elif type=='places':
-        o = Production.objects.filter(date_filter, place__place__in=object)
+        filter = ( ~Q(place__end_date='') & Q(place__end_date__lt=datetime.now) ) | Q(place__end_date='', place__press_date__lt=datetime.now) | Q(place__end_date='', place__press_date__isnull=True, place__start_date__lt=datetime.now)
+        if date_filter == 'past':
+            o = Production.objects.filter(filter, place__place__in=object)
+        else:
+            o = Production.objects.exclude(filter).filter(place__place__in=object)
     else:
         raise Exception, 'Strange call to productions_filter'
     if isinstance(object, Person):
         o = o.annotate(Concatenate('part__role'))
-    return o
+
+    if date_filter == 'past':
+        if isinstance(object, Place):
+            return o.order_by('-IFNULL(press_date, IF(end_date!="", end_date, start_date))')
+        else:
+            return o.order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))')
+    else:
+        if isinstance(object, Place):
+            return o.order_by('start_date', 'press_date')
+        else:
+            return o.order_by('place__start_date', 'place__press_date')
+    #.order_by('-IFNULL(press_date, IF(productions_production.end_date!="", productions_production.end_date, productions_production.start_date))')
 
 def productions_past(object, type):
-    o = productions_filter(object, type, 
-        Q(place__end_date__lt=datetime.now) | Q(place__end_date='', place__press_date__lt=datetime.now)
-    )
-    return o.order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))')
+    return productions_filter(object, type, 'past')
 
 def productions_future(object, type):
-    o = productions_filter(object, type, 
-        Q(place__end_date__gte=datetime.now) | Q(place__end_date='', place__press_date__gte=datetime.now)
-    )
-    return o.order_by('place__start_date', 'place__press_date')
-    #.order_by('-IFNULL(press_date, IF(productions_production.end_date!="", productions_production.end_date, productions_production.start_date))')
+    return productions_filter(object, type, 'future')
 
 def productions_list(request, object, dir, template, context={}):
     """Given an object, such as a Person, Place, or Play, return a page of productions for it."""
 
     type = ''
-    if not (isinstance(object, Place) or isinstance(object, Person) or isinstance(object, Play)):
+    if not (isinstance(object, Place) or isinstance(object, Person) or isinstance(object, Play) or isinstance(object, ProductionCompany)):
         type = 'places' # Assume it's around search at the mo
 
     if dir == 'future':
