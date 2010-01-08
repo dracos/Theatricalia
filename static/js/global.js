@@ -209,6 +209,7 @@ function autocomplete_add(params) {
             $(params.id).val( data[1] );
         }
     }).blur(function(){
+        if (!$(params.lookup).val()) return;
         $(params.lookup).search(function (result) {
             if (result && result.data) {
                 // $(params.id).val( result.data[1] );
