@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block content %}
+
+<div id="thin">
+<p>Thanks for helping improve the accuracy of the site.
+We&rsquo;ve noted what item you were on; please now visit the web page of the
+<strong>duplicate</strong> of <em>{{ object|prettify }}</em>
+and <strong>click the button</strong> that will have appeared there.</p>
+
+<p>If they have the exact same name, a <a href="/search?q={{ object|urlencode }}">search
+for {{ object|prettify }}</a> will probably help.</p>
+</div>
+
+{% endblock %}

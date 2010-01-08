@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block content %}
+
+<div id=thin>
+<p>Okay, we&rsquo;ve logged your request to merge
+<em>{{ other }}</em> and <em>{{ object }}</em>.
+
+<p>Thanks again for helping improve the accuracy of the site.</p>
+
+<ul>
+<li><a href="{{ other.get_absolute_url }}">Return to {{ other }}</a>
+<li><a href="{{ object.get_absolute_url }}">Return to {{ object }}</a>
+</ul>
+
+</div>
+
+{% endblock %}

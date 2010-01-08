@@ -1,0 +1,8 @@
+{% ifnotequal object.id duplicate.id %}
+<div class="secondary">
+<form action="{{ object.get_absolute_url }}/merge" method="post">
+<p align="center"><input type="submit" name="dupe" value="This is a duplicate of {{ duplicate }}" id="edit-form-submit">
+<br><input type="submit" name="stop" value="Stop looking for duplicates"></p>
+</form>
+</div>
+{% endifnotequal %}

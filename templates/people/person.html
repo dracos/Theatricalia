@@ -9,7 +9,13 @@
 
 {% block content %}
 
-<h1>{{ person.name }}</h1>
+{% if request.session.merging_person %}
+{% with person as object %}{% with request.session.merging_person as duplicate %}
+{% include 'merged/buttons.html' %}
+{% endwith %}{% endwith %}
+{% endif %}
+
+<h1>{{ person|prettify }}</h1>
 
 <div id="primary">
 
@@ -36,7 +42,7 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 <li>
 {% if production.part__role__concatenate %}
 {{ production.part__role__concatenate }}, {% endif %}
-<a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
+<a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.company %}, <a href="{{ production.company.get_absolute_url }}">{{ production.company|prettify }}</a>{% endif %}
 <span>{{ production.date_summary|prettify }},
 {% ifequal production.places.count 1 %}
 <a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
@@ -58,7 +64,7 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 <li>
 {% if production.part__role__concatenate %}
 {{ production.part__role__concatenate }}, {% endif %}
-<a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
+<a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.company %}, <a href="{{ production.company.get_absolute_url }}">{{ production.company|prettify }}</a>{% endif %}
 <span>{{ production.date_summary|prettify }},
 {% ifequal production.places.count 1 %}
 <a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
@@ -79,9 +85,10 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 
 {% include 'includes/messages.html' %}
 
-{% if person.dob or person.web or person.imdb or person.wikipedia %}
+{% if person.dob or person.died or person.web or person.imdb or person.wikipedia %}
 <ul role="contentinfo">
 {% if person.dob %} <li>Date of birth: {{ person.dob }} {% endif %}
+{% if person.died %} <li>Died: {{ person.died }} {% endif %}
 {% if person.web %} <li><a href="{{ person.web }}">Website</a> {% endif %}
 {% if person.imdb %} <li><a href="{{ person.imdb }}">IMDb</a> {% endif %}
 {% if person.wikipedia %} <li><a href="{{ person.wikipedia }}">Wikipedia</a> {% endif %}
@@ -104,6 +111,9 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
     {% endif %}
 {% endif %}
 <li><a href="/add?person={{ person.id32 }}">Add a new production involving this person</a></li>
+{% if not request.session.merging_person %}
+<li><a href="{{ person.get_absolute_url }}/merge">This is a duplicate of another person</a>
+{% endif %}
 </ul>
 
 <h2>Photographs</h2>

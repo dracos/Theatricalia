@@ -1,13 +1,19 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
-{% block title %}{{ play.get_title_display|prettify }}{% endblock %}
+{% block title %}{{ play.get_title_display|prettify|striptags }}{% endblock %}
 
 {% block extra_head %}
 <link href="{{ play.get_feed_url }}" type="application/rss+xml" rel="alternate">
 {% endblock %}
 
 {% block content %}
+
+{% if request.session.merging_play %}
+{% with play as object %}{% with request.session.merging_play as duplicate %}
+{% include 'merged/buttons.html' %}
+{% endwith %}{% endwith %}
+{% endif %}
 
 <h1>{{ play.get_title_display|prettify }}</h1>
 
@@ -19,7 +25,7 @@
 <h2>Current &amp; Upcoming productions</h2>
 <ul class="production_list">
 {% for production in future.object_list %}
-<li><a href="{{ production.get_absolute_url }}">{% if production.title %}{{ production.title|prettify }}, {% endif %}
+<li><a href="{{ production.get_absolute_url }}">{% if production.company %}{{ production.company|prettify }}, {% endif %}
 {{ production.place_summary|prettify }}</a>
 <span>{{ production.date_summary|prettify }}.</span>
 {% endfor %}
@@ -33,7 +39,7 @@
 <h2>Past productions</h2>
 <ul class="production_list">
 {% for production in past.object_list %}
-<li><a href="{{ production.get_absolute_url }}">{% if production.title %}{{ production.title|prettify }}, {% endif %}
+<li><a href="{{ production.get_absolute_url }}">{% if production.company %}{{ production.company|prettify }}, {% endif %}
 {{ production.place_summary|prettify }}</a>
 <span>{{ production.date_summary|prettify }}.</span>
 {% endfor %}
@@ -58,6 +64,9 @@
 <li><a href="{{ play.get_alert_remove_url }}">Stop alerting me to productions of this play</a>
 {% else %}
 <li><a href="{{ play.get_alert_add_url }}">Alert me to productions of this play</a>
+{% endif %}
+{% if not request.session.merging_play %}
+<li><a href="{{ play.get_absolute_url }}/merge">This is a duplicate of another play</a>
 {% endif %}
 </ul>
 

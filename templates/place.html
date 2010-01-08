@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
-{% block title %}{{ place|prettify }}{% endblock %}
+{% block title %}{{ place|prettify|striptags }}{% endblock %}
 
 {% block extra_head %}
 <link href="{{ place.get_feed_url }}" type="application/rss+xml" rel="alternate">
@@ -9,6 +9,12 @@
 {% endblock %}
 
 {% block content %}
+
+{% if request.session.merging_place %}
+{% with place as object %}{% with request.session.merging_place as duplicate %}
+{% include 'merged/buttons.html' %}
+{% endwith %}{% endwith %}
+{% endif %}
 
 <h1>{{ place.get_name_display|prettify }}</h1>
 
@@ -23,9 +29,8 @@
 {% if future.object_list %}
 <h2>Current &amp; Upcoming productions</h2>
 <ul class="production_list">
-{% for production in future.object_list %}
-<li><a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
-<span>{{ production.date_summary|prettify }}.</span>
+{% for production_part in future.object_list %}
+{% include 'places/production_line.html' %}
 {% endfor %}
 </ul>
 {% if future.has_other_pages %}
@@ -36,9 +41,8 @@
 {% if past.object_list %}
 <h2>Past productions</h2>
 <ul class="production_list">
-{% for production in past.object_list %}
-<li><a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
-<span>{{ production.date_summary|prettify }}.</span>
+{% for production_part in past.object_list %}
+{% include 'places/production_line.html' %}
 {% endfor %}
 </ul>
 {% if past.has_other_pages %}
@@ -67,6 +71,10 @@
 </li>
 {% endif %}
 
+{% if place.telephone %}
+<li>Telephone: {{ place.telephone|prettify }}</li>
+{% endif %}
+
 {% if place.type or place.size %}
     <li>
     {% if place.type %}{% ifequal place.type "multiple" %}An adaptable theatre{% else %}A {{ place.type }} theatre{% endifequal %}{% endif %}{% if place.size and place.type %},
@@ -92,6 +100,9 @@ $(function(){
 <ul class="clear">
 <li><a href="{{ place.get_edit_url }}">Edit this place&rsquo;s information</a></li>
 <li><a href="{{ place.get_add_production_url }}">Add a production here</a></li>
+{% if not request.session.merging_place %}
+<li><a href="{{ place.get_absolute_url }}/merge">This is a duplicate of another place</a>
+{% endif %}
 {% if alert %}
 <li><a href="{{ place.get_alert_remove_url }}">Stop alerting me to productions here</a>
 {% else %}
@@ -114,7 +125,6 @@ $(function(){
 {% if user.is_authenticated %}
     <p class="clear before_form">If you have a photograph or picture of this place,
     please either upload it here, or add it to <a href="http://flickr.com/">Flickr</a> and tag it with
-    <kbd>theatricalia:place={{ place.id32 }}</kbd>.</p>
     <input type="text" value="theatricalia:place={{ place.id32 }}" onclick="this.focus();this.select();" readonly size=25>.</p>
     {% include 'includes/photo-form.html' %}
 {% else %}
