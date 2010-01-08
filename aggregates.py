@@ -7,7 +7,7 @@ from django.db.models import DecimalField
 class ConcatenateSQL(AggregateSQL):
     sql_function = 'GROUP_CONCAT'
     def __init__(self, col, separator='|', source=None, **extra):
-	self.sql_template = "%%(function)s(%%(field)s ORDER BY %%(field)s SEPARATOR '%s')" % separator
+        self.sql_template = "%%(function)s(%%(field)s ORDER BY %%(field)s SEPARATOR '%s')" % separator
         c = DecimalField() # XXX
         super(ConcatenateSQL, self).__init__(col, source=c, **extra)
 
