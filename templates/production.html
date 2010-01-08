@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load prettify %}{% load comments %}
 
-{% block title %}Production of {{ production.play.get_title_display|prettify }}{% endblock %}
+{% block title %}Production of {{ production.play.get_title_display|prettify|striptags }}{% endblock %}
 
 {% block content %}
 
@@ -28,7 +28,8 @@
 {% for part in cast %}
 <tr><th>{{ part.role_or_unknown|prettify }}</th>
 <td><a href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>
-{% if part.credited_as %}<br>&nbsp;&nbsp;<small>(credited as {{ part.credited_as|prettify }})</small>{% endif %}
+{% if part.credited_as %}<br>&nbsp;&nbsp;<small>({% ifnotequal part.credited_as "uncredited" %}credited as {% endifnotequal %}{{ part.credited_as|prettify }})</small>{% endif %}
+{% if part.start_date or part.end_date %}<br>&nbsp;&nbsp;<small>({{ part.date_summary|prettify }})</small>{% endif %}
 </td></tr>
 {% endfor %}
 
@@ -40,6 +41,7 @@
 <tr><th>{{ part.role_or_unknown|prettify }}</th>
 <td><a href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>
 {% if part.credited_as %}<br>&nbsp;&nbsp;<small>(credited as {{ part.credited_as|prettify }})</small>{% endif %}
+{% if part.start_date or part.end_date %}<br>&nbsp;&nbsp;<small>({{ part.date_summary|prettify }})</small>{% endif %}
 </td></tr>
 {% endfor %}
 
@@ -47,6 +49,7 @@
 <tr><th>{{ part.role_or_unknown|prettify }}</th>
 <td><a href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>
 {% if part.credited_as %}<br>&nbsp;&nbsp;<small>(credited as {{ part.credited_as|prettify }})</small>{% endif %}
+{% if part.start_date or part.end_date %}<br>&nbsp;&nbsp;<small>({{ part.date_summary|prettify }})</small>{% endif %}
 </td></tr>
 {% endfor %}
 
@@ -105,21 +108,29 @@ that you think others may be interested in, please
 
 <p>This is a production of the play
 <a href="{{ production.play.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.company %}
-by {{ production.company|prettify }}{% endif %},
+by <a href="{{ production.company.get_absolute_url }}">{{ production.company|prettify }}</a>{% endif %},
 
 {% include 'productions/sidebar_bit.html' %}
 
 {% if production.source %}
     <p><small>Source: {{ production.source|safe }}</small></p>
-{% else %}
-    {% ifnotequal production.last_modifier production.creator %}
-    <p>Added by <a href="{{ production.creator.get_profile.get_absolute_url }}">{{ production.creator.name }}</a>, last modified by <a href="{{ production.last_modifier.get_profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</p>
-    {% else %}
-        {% if production.creator.name %}
-            <p>Added by <a href="{{ production.creator.get_profile.get_absolute_url }}">{{ production.creator.name }}</a>.</p>
-        {% endif %}
-    {% endifnotequal %}
 {% endif %}
+
+{% ifnotequal production.last_modifier production.creator %}
+    {% if production.creator.name %}
+        <p>Added by <a href="{{ production.creator.get_profile.get_absolute_url }}">{{ production.creator.name }}</a>, last modified by <a href="{{ production.last_modifier.get_profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</p>
+    {% else %}
+        <p>Last modified by <a href="{{ production.last_modifier.get_profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</p>
+    {% endif %}
+{% else %}
+    {% if production.creator.name %}
+        <p>Added by <a href="{{ production.creator.get_profile.get_absolute_url }}">{{ production.creator.name }}</a>.</p>
+    {% else %}
+        {% if production.last_modifier.name %}
+            <p>Last modified by <a href="{{ production.last_modifier.get_profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</p>
+        {% endif %}
+    {% endif %}
+{% endifnotequal %}
 
 </div></div>
 
@@ -145,12 +156,12 @@ by {{ production.company|prettify }}{% endif %},
 
 {% if seen %}
     {% if production.finished %}
-        <li>You saw this production &ndash; <a href="{{ production.get_seen_no_url }}">correct inaccuracy</a>
+        <li>You saw this production &ndash; <a href="{{ production.get_seen_no_url }}">oh no I didn&rsquo;t</a>
     {% else %}
         {% if production.started %}
-            <li>You saw or are going to see this production &ndash; <a href="{{ production.get_seen_no_url }}">correct inaccuracy</a>
+            <li>You saw or are going to see this production &ndash; <a href="{{ production.get_seen_no_url }}">oh no I&rsquo;m not</a>
         {% else %}
-            <li>You are going to see this production &ndash; <a href="{{ production.get_seen_no_url }}">correct inaccuracy</a>
+            <li>You are going to see this production &ndash; <a href="{{ production.get_seen_no_url }}">oh no I&rsquo;m not</a>
         {% endif %}
     {% endif %}
 {% else %}
@@ -168,7 +179,11 @@ by {{ production.company|prettify }}{% endif %},
 </ul>
 
 {% if production.seen_by.count %}
-<h2>Seen by</h2>
+{% if production.finished %}<h2>Seen by</h2>{% else %}
+{% if production.started %}<h2>Seen, or going to see</h2>
+{% else %}<h2>Going to see</h2>
+{% endif %}
+{% endif %}
 <ul id="seen_by">
 {% for u in production.seen_by.all %}
 <li><a href="{{ u.get_profile.get_absolute_url }}">{% firstof u.name u.username %}</a>
