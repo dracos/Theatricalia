@@ -1,13 +1,42 @@
 import re
+
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.syndication.feeds import Feed
+from django.contrib.syndication.feeds import Feed, FeedDoesNotExist
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.db.models import Count
+
 from people.models import Person
 from plays.models import Play
 from places.models import Place
 from productions.models import Production
-from shortcuts import check_url
+from shortcuts import check_url, UnmatchingSlugException
 from productions.objshow import productions_past
+
+# Copy of django.contrib.syndication.views.feed changed to support URL redirects
+def view(request, url, feed_dict):
+    if not feed_dict:
+        raise Http404, "No feeds are registered."
+
+    try:
+        slug, param = url.split('/', 1)
+    except ValueError:
+        slug, param = url, ''
+
+    try:
+        f = feed_dict[slug]
+    except KeyError:
+        raise Http404, "Slug %r isn't registered." % slug
+
+    try:
+        feedgen = f(slug, request).get_feed(param)
+    except UnmatchingSlugException, e:
+        return HttpResponseRedirect(e.args[0].get_absolute_url() + '/feed')
+    except FeedDoesNotExist:
+        raise Http404, "Invalid feed parameters. Slug %r is valid, but other parameters, or lack thereof, are not." % slug
+
+    response = HttpResponse(mimetype=feedgen.mime_type)
+    feedgen.write(response, 'utf-8')
+    return response
 
 class NearbyFeed(Feed):
     def get_object(self, bits):
@@ -36,7 +65,10 @@ class PlaceFeed(Feed):
     def get_object(self, bits):
         if len(bits) != 2:
             raise ObjectDoesNotExist
-        place = check_url(Place, bits[0], bits[1])
+        try:
+            place = check_url(Place, bits[0], bits[1])
+        except:
+            raise ObjectDoesNotExist
         return place
 
     def title(self, obj):
