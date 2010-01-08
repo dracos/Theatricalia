@@ -5,6 +5,7 @@ sys.path.append('../../')
 sys.path.append('../')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
+from functions import add_theatre
 from plays.models import Play
 from productions.models import Production, Part, Place as ProductionPlace, ProductionCompany
 from people.models import Person
@@ -142,16 +143,7 @@ for n in range(1, 67):
         production.save()
 
         if 'theatre' in data and data['theatre']:
-            theatre = re.sub('^(A|An|The) (.*)$', r'\2, \1', data['theatre'])
-            theatre_no_the = re.sub(', (A|An|The)$', '', theatre)
-            theatre_with_the = '%s, The' % theatre_no_the
-            try:
-                location = Place.objects.get(name=theatre_with_the)
-            except:
-                try:
-                    location = Place.objects.get(name=theatre_no_the)
-                except:
-                    location, created = Place.objects.get_or_create(name=theatre)
+            location = add_theatre(data['theatre'])
             ProductionPlace.objects.get_or_create(production=production, place=location, start_date=data['first'], end_date=data['last'])
         else:
             location, created = Place.objects.get_or_create(name='Unknown')
