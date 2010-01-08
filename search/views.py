@@ -9,7 +9,7 @@ from shortcuts import render
 from people.models import Person
 from places.models import Place
 from plays.models import Play
-from productions.models import Part, Production
+from productions.models import Part, Production, ProductionCompany
 from sounds.metaphone import dm
 from sounds.jarowpy import jarow
 #from levenshtein import damerau, qnum
@@ -44,18 +44,31 @@ def search_autocomplete(request):
     if not search_fields or not app_label or not model_name or not query:
         return HttpResponseNotFound()
 
+    query = query.strip()
+
     # Ignore author part of field for lookup
     if app_label == 'plays':
         query = re.sub(', by .*', '', query)
 
+    q = None
+    if app_label == 'places' and ',' in query:
+        name, town = query.rsplit(',', 1)
+        q = Q(name__icontains=name.strip(), town__icontains=town.strip())
+        m = re.match('(A|An|The) (.*)$(?i)', name)
+        if m:
+            article, rest = m.groups()
+            q = q | Q(name__iendswith=' %s' % article, name__istartswith=rest, town__icontains=town.strip())
+
     # For database order of articles
-    m = re.match('^(A|An|The) (.*)$(?i)', query)
+    m = re.match('(A|An|The) (.*)$(?i)', query)
     if m:
         article, rest = m.groups()
         field_name = search_fields.split(',')[0]
-        q = Q( **{ str('%s__iendswith' % field_name):' %s' % article, str('%s__istartswith' % field_name):rest } )
-    else:
-        q = None
+        qq = Q( **{ str('%s__iendswith' % field_name):' %s' % article, str('%s__istartswith' % field_name):rest } )
+        if q:
+            q = q | qq
+        else:
+            q = qq
 
     model = get_model(app_label, model_name)
     for field_name in search_fields.split(','):
@@ -67,9 +80,6 @@ def search_autocomplete(request):
     if search_fields == 'first_name,last_name' and ' ' in query:
         first, last = query.split(' ')
         q = q | Q(first_name__icontains=first, last_name__icontains=last)
-    if app_label == 'places' and ',' in query:
-        name, town = query.rsplit(',', 1)
-        q = q | Q(name__icontains=name.strip(), town__icontains=town.strip())
 
     qs = model.objects.filter( q )[:20]
     data = ''.join([u'%s|%s\n' % (f.__unicode__(), f.pk) for f in qs])
@@ -169,15 +179,20 @@ def search_people(search, force_similar=False, use_distance=True):
             Q(first_name__icontains=' '.join(names[0:2]), last_name__iexact=names[2]) |
             Q(first_name__icontains=names[0], last_name__iexact=' '.join(names[1:3]))
         )
+    elif len(names)==4:
+        names[3] = names[3].replace(u'\u2019', "'")
+        people = Person.objects.filter(
+            Q(first_name__icontains=' '.join(names[0:3]), last_name__iexact=names[3]) |
+            Q(first_name__icontains=names[0], last_name__iexact=' '.join(names[1:4]))
+        )
     return people, sounds_people
 
 def search_geonames(s):
     try:
         r = urllib.urlopen('http://ws.geonames.org/searchJSON?isNameRequired=true&style=LONG&q=' + urllib.quote(s.encode('utf-8')) + '&maxRows=20').read()
+        r = simplejson.loads(r)
     except:
         r = ''
-    if r:
-        r = simplejson.loads(r)
     return r
 
 # For pagination of parts search
@@ -199,11 +214,10 @@ def search_around(request, search, type=''):
     elif validate_partial_postcode(search):
         try:
             r = urllib.urlopen('http://ws.geonames.org/postalCodeSearchJSON?country=gb&postalcode=' + urllib.quote(search)).read()
-        except:
-            r = ''
-        if r:
             r = simplejson.loads(r)
             lat, lon = r['postalCodes'][0]['lat'], r['postalCodes'][0]['lng']
+        except:
+            r, lat, lon = '', None, None
         name = search.upper()
     else:
         raise Exception, 'Bad request'
@@ -230,15 +244,16 @@ def search_around(request, search, type=''):
 def validate_postcode(postcode):
     end  = 'ABD-HJLNP-UW-Z';
     fst = 'A-PR-UWYZ';
+    fst_noO = 'A-NPR-UWYZ';
     sec = 'A-HJ-Y';
     thd = 'A-HJKSTUW';
     fth = 'ABEHMNPRVWXY';
 
-    if (re.match("(?i)[%s][1-9]\s*[0-9][%s][%s]$" % (fst, end, end), postcode) or
-            re.match("(?i)[%s][1-9][0-9]\s*[0-9][%s][%s]$" % (fst, end, end), postcode) or
+    if (re.match("(?i)[%s][1-9]\s*[0-9][%s][%s]$" % (fst_noO, end, end), postcode) or
+            re.match("(?i)[%s][1-9][0-9]\s*[0-9][%s][%s]$" % (fst_noO, end, end), postcode) or
             re.match("(?i)[%s][%s][0-9]\s*[0-9][%s][%s]$" % (fst, sec, end, end), postcode) or
             re.match("(?i)[%s][%s][1-9][0-9]\s*[0-9][%s][%s]$" % (fst, sec, end, end), postcode) or
-            re.match("(?i)[%s][1-9][%s]\s*[0-9][%s][%s]$" % (fst, thd, end, end), postcode) or
+            re.match("(?i)[%s][1-9][%s]\s*[0-9][%s][%s]$" % (fst_noO, thd, end, end), postcode) or
             re.match("(?i)[%s][%s][1-9][%s]\s*[0-9][%s][%s]$" % (fst, sec, fth, end, end), postcode)):
         return True
     else:
@@ -246,15 +261,16 @@ def validate_postcode(postcode):
 
 def validate_partial_postcode(postcode):
     fst = 'A-PR-UWYZ';
+    fst_noO = 'A-NPR-UWYZ';
     sec = 'A-HJ-Y';
     thd = 'A-HJKSTUW';
     fth = 'ABEHMNPRVWXY';
 
-    if (re.match("(?i)[%s][1-9]$" % (fst), postcode) or
-            re.match("(?i)[%s][1-9][0-9]$" % (fst), postcode) or
+    if (re.match("(?i)[%s][1-9]$" % (fst_noO), postcode) or
+            re.match("(?i)[%s][1-9][0-9]$" % (fst_noO), postcode) or
             re.match("(?i)[%s][%s][0-9]$" % (fst, sec), postcode) or
             re.match("(?i)[%s][%s][1-9][0-9]$" % (fst, sec), postcode) or
-            re.match("(?i)[%s][1-9][%s]$" % (fst, thd), postcode) or
+            re.match("(?i)[%s][1-9][%s]$" % (fst_noO, thd), postcode) or
             re.match("(?i)[%s][%s][1-9][%s]$" % (fst, sec, fth), postcode)):
         return True
     else:
@@ -275,24 +291,46 @@ def search(request):
         })
 
     if search:
+        title_q = Q(title__icontains=search)
+        name_q = Q(name__icontains=search)
         m = re.match('^(A|An|The) (.*)$(?i)', search)
         if m:
             article, rest = m.groups()
-            title_q = Q(title__iendswith=' %s' % article, title__istartswith=rest)
-            name_q = Q(name__iendswith=' %s' % article, name__istartswith=rest)
-        else:
-            title_q = Q(title__icontains=search)
-            name_q = Q(name__icontains=search)
+            title_q = title_q | Q(title__iendswith=' %s' % article, title__istartswith=rest)
+            name_q = name_q | Q(name__iendswith=' %s' % article, name__istartswith=rest)
         people, sounds_people = search_people(search, force_similar=request.GET.get('similar'), use_distance=False)
         near = search_geonames(search)
         places = Place.objects.filter(name_q | Q(town__icontains=search))
+        companies = ProductionCompany.objects.filter(name_q | Q(description__icontains=search))
         plays = Play.objects.filter(title_q)
-        parts = Paginator(Part.objects.search(search), 10, orphans=2).page(1)
+        parts = Paginator(Part.objects.search(search), 10, orphans=2)
+
+        try:
+            near_length = len(near.geonames)
+        except:
+            near_length = 0
+        if parts.count + companies.count() + plays.count() + places.count() + people.count() + near_length == 1:
+            if companies.count():
+                return HttpResponseRedirect(companies[0].get_absolute_url())
+            if plays.count():
+                return HttpResponseRedirect(plays[0].get_absolute_url())
+            if places.count():
+                return HttpResponseRedirect(places[0].get_absolute_url())
+            if people.count():
+                return HttpResponseRedirect(people[0].get_absolute_url())
+            if len(near.geonames):
+                place = near.geonames[0]
+                return HttpResponseRedirect('/search/around/%s,%s?name=%s' % (place.lat, place.lng, place.name) )
+            if parts.count:
+                return HttpResponseRedirect(parts.page(1).object_list[0].production.get_absolute_url())
+
+        parts = parts.page(1)
 
         return render(request, 'search.html', {
             'people': people,
             'plays': plays,
             'places': places,
+            'companies': companies,
             'parts': parts,
             'near': near,
             'sounds_people': sounds_people,
