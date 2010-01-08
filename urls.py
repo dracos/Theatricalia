@@ -13,13 +13,14 @@ from places import views as places
 from search import views as search
 from photos import views as photos
 from common import views as common
+from merged import views as merged
 from news import views as news
 from news.models import Article
 
 from django.contrib import admin
 admin.autodiscover()
 
-from feeds import PersonFeed, PlayFeed, PlaceFeed, NearbyFeed
+from feeds import PersonFeed, PlayFeed, PlaceFeed, NearbyFeed, view as feeds_view
 
 urlpatterns = patterns('',
     # Example:
@@ -50,15 +51,23 @@ urlpatterns = patterns('',
     url('^colophon$', static_colophon, name='colophon'),
     url('^moo$', static_moocards, name='moo'),
 
-    url('^(?P<url>(play|person|place|around)/.*)/feed$', 'django.contrib.syndication.views.feed',
+    url('^(?P<url>(play|person|place|around)/.*)/feed$', feeds_view,
         { 'feed_dict': {
-		'person': PersonFeed,
-		'play': PlayFeed,
-		'place': PlaceFeed,
-		'around': NearbyFeed,
-	} },
+        'person': PersonFeed,
+        'play': PlayFeed,
+        'place': PlaceFeed,
+        'around': NearbyFeed,
+    } },
     ),
     url('^around/(.*?)/alert/(add|remove)$', common.alert, name='around-alert'),
+
+    url('^(?P<url>(play|person|place|company)/.*)/merge$', merged.merge),
+
+    url('^d/(?P<production_id>.+)$', productions.production_short_url),
+    url('^c/(?P<company_id>.+)$', productions.production_company_short_url),
+    #url('^p/(?P<play_id>.+)$', ),
+    #url('^t/(?P<place_id>.+)$', ),
+    url('^a/(?P<person_id>.+)$', people.person_short_url),
 
     url('^plays$', plays.list, name='plays_all'),
     url('^plays/(?P<letter>[a-z0*])$', plays.list, name='plays'),
@@ -95,7 +104,11 @@ urlpatterns = patterns('',
     url('^place/(?P<place_id>[^/]+)/(?P<place>.*)/productions$', places.productions, name='place-productions'),
     url('^place/(?P<place_id>[^/]+)/(?P<place>[^/]*)$', places.place, name='place'),
 
-    url('^productions/(?P<production>.*)$', productions.by_company, name='company'),
+    url('^company/(?P<company_id>[^/]+)/(?P<company>.*)/future$', productions.company_productions, {'type':'future'}, name='company-productions-future'),
+    url('^company/(?P<company_id>[^/]+)/(?P<company>.*)/past$', productions.company_productions, {'type':'past'}, name='company-productions-past'),
+    url('^company/(?P<company_id>[^/]+)/(?P<company>.*)/edit$', productions.company_edit, name='company-edit'),
+    url('^company/(?P<company_id>[^/]+)/(?P<company>.*)/add$', productions.add_from_company, name='company-production-add'),
+    url('^company/(?P<company_id>[^/]+)/(?P<company>[^/]*)$', productions.company, name='company'),
 
     url('^observations/post/', productions.post_comment_wrapper),
     url('^observations/', include('django.contrib.comments.urls')),
