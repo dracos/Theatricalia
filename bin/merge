@@ -1,25 +1,153 @@
 #!/usr/bin/env python
 
-# Needs to move things such as photos, comments, reversions?
+# Needs to move things such as reversions?
 
 import os, sys
 sys.path.insert(0, '../..')
 sys.path.insert(0, '..')
+sys.path.insert(0, '.')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'theatricalia.settings'
+
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.comments.models import Comment
 
 from utils import base32_to_int
 from plays.models import Play
-from productions.models import Production
+from productions.models import Production, Visit, Part, Place as ProductionPlace, ProductionCompany
+from photos.models import Photo
+from places.models import Place
+from people.models import Person
 from merged.models import Redirect
+from common.models import Alert
 
-thing, main, alt = sys.argv[1:4]
+try:
+    thing, main, alt = sys.argv[1:4]
+except:
+    print "Usage:\n  merge (play|production|place|person|company) <main ID> <alt ID>"
+    sys.exit()
 
 if thing == 'play':
     main = Play.objects.get(id=base32_to_int(main)) 
     alt_id = base32_to_int(alt)
     alt = Play.objects.get(id=alt_id)
     print "Merging %s into %s" % (alt, main)
-    Production.objects.filter(play=alt).update(play=main)
+    confirm = raw_input('Are you sure? ')
+    if confirm in ('Y','y','Yes','yes'):
+        ctype = ContentType.objects.get_for_model(alt)
+        Alert.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
+        Production.objects.filter(play=alt).update(play=main)
+        for attr in ('url', 'wikipedia', 'description'):
+            if alt.__dict__[attr] and not main.__dict__[attr]:
+                main.__dict__[attr] = alt.__dict__[attr]
+                main.save()
+        for author in alt.authors.all():
+            main.authors.add(author)
+        Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
+        Redirect.objects.create(old_object_id=alt_id, new_object=main)
+        alt.delete()
+        print "Done"
+
+elif thing == 'company':
+    main = ProductionCompany.objects.get(id=base32_to_int(main)) 
+    alt_id = base32_to_int(alt)
+    alt = ProductionCompany.objects.get(id=alt_id)
+    print "Merging %s into %s" % (alt, main)
+    confirm = raw_input('Are you sure? ')
+    if confirm in ('Y','y','Yes','yes'):
+        Production.objects.filter(company=alt).update(company=main)
+        for attr in ('description',):
+            if alt.__dict__[attr] and not main.__dict__[attr]:
+                main.__dict__[attr] = alt.__dict__[attr]
+                main.save()
+        ctype = ContentType.objects.get_for_model(alt)
+        Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
+        Redirect.objects.create(old_object_id=alt_id, new_object=main)
+        alt.delete()
+        print "Done"
+
+elif thing == 'place':
+    main = Place.objects.get(id=base32_to_int(main)) 
+    alt_id = base32_to_int(alt)
+    alt = Place.objects.get(id=alt_id)
+    print "Merging %s into %s" % (alt, main)
+    confirm = raw_input('Are you sure? ')
+    if confirm in ('Y','y','Yes','yes'):
+        ctype = ContentType.objects.get_for_model(alt)
+        Alert.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
+        Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
+        ProductionPlace.objects.filter(place=alt).update(place=main)
+        for attr in ('description', 'latitude', 'longitude', 'address', 'town', 'country_id', 'postcode', 'type', 'size', 'opening_date', 'url', 'wikipedia'):
+            if alt.__dict__[attr] and not main.__dict__[attr]:
+                main.__dict__[attr] = alt.__dict__[attr]
+                main.save()
+        Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
+        Redirect.objects.create(old_object_id=alt_id, new_object=main)
+        alt.delete()
+        print "Done"
+
+elif thing == 'person':
+    main = Person.objects.get(id=base32_to_int(main)) 
+    alt_id = base32_to_int(alt)
+    alt = Person.objects.get(id=alt_id)
+    print "Merging %s into %s" % (alt, main)
+    confirm = raw_input('Are you sure? ')
+    if confirm in ('Y','y','Yes','yes'):
+        ctype = ContentType.objects.get_for_model(alt)
+        Alert.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
+        Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
+        Part.objects.filter(person=alt).update(person=main)
+        for attr in ('bio', 'dob', 'died', 'imdb', 'web', 'wikipedia'):
+            if alt.__dict__[attr] and not main.__dict__[attr]:
+                main.__dict__[attr] = alt.__dict__[attr]
+                main.save()
+        for play in alt.plays.all():
+            main.plays.add(play)
+        Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
+        Redirect.objects.create(old_object_id=alt_id, new_object=main)
+        alt.delete()
+        print "Done"
+
+elif thing == 'production':
+    main = Production.objects.get(id=base32_to_int(main)) 
+    alt_id = base32_to_int(alt)
+    alt = Production.objects.get(id=alt_id)
+    print "Merging %s into %s" % (alt, main)
+    if main.play != alt.play:
+        raise Exception, 'Productions do not have the same play: %s vs %s' % (main.play, alt.play)
+    if main.company != alt.company:
+        raise Exception, 'Productions do not have the same company: %s vs %s' % (main.company, alt.company)
+    if len(main.places.all()) != 1 or len(alt.places.all()) != 1:
+        raise Exception, 'Currently only works for things at one location'
+    if main.places.all()[0] != alt.places.all()[0]:
+        raise Exception, 'Productions do not have the same places: %s vs %s' % (main.places, alt.places)
+
+    confirm = raw_input('Are you sure? ')
+    if confirm not in ('Y','y','Yes','yes'):
+        sys.exit()
+
+    ctype = ContentType.objects.get_for_model(alt)
+    Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
+    Visit.objects.filter(production=alt).update(production=main)
+    Comment.objects.filter(production=alt).update(production=main)
+    main.description += "\n\n" + alt.description
+    main.source += "\n\n" + alt.source
+
+    main_place = main.place_set.all()[0]
+    alt_place = alt.place_set.all()[0]
+    #Part.objects.filter(production=main, start_date='', end_date='').update(start_date=main_place.start_date, end_date=main_place.end_date)
+    #Part.objects.filter(production=alt, start_date='', end_date='').update(production=main, start_date=alt_place.start_date, end_date=alt_place.end_date)
+    Part.objects.filter(production=alt).update(production=main)
+
+    if alt_place.start_date < main_place.start_date:
+        main_place.start_date = alt_place.start_date
+        main_place.save()
+    if alt_place.end_date > main_place.end_date:
+        main_place.end_date = alt_place.end_date
+        main_place.save()
+
+    Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
     Redirect.objects.create(old_object_id=alt_id, new_object=main)
     alt.delete()
+    main.save()
+    print "Done"
 
