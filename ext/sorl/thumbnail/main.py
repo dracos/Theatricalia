@@ -2,6 +2,7 @@ import os
 
 from django.conf import settings
 from django.utils.encoding import iri_to_uri, force_unicode
+from django.utils.http import urlquote
 
 from sorl.thumbnail.base import Thumbnail
 from sorl.thumbnail.processors import dynamic_import
@@ -59,7 +60,7 @@ class DjangoThumbnail(Thumbnail):
 
         # Set the relative & absolute url to the thumbnail
         self.relative_url = \
-            iri_to_uri('/'.join(self.relative_dest.split(os.sep)))
+            iri_to_uri('/'.join(urlquote(self.relative_dest).split(os.sep)))
         self.absolute_url = '%s%s' % (settings.MEDIA_URL, self.relative_url)
 
     def _get_relative_thumbnail(self, relative_source,
