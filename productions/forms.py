@@ -95,7 +95,7 @@ class ProductionForm(forms.ModelForm):
         play = self.cleaned_data['play_choice']
         if re.match('[0-9]+$', play):
             return Play.objects.get(id=play)
-        if play == 'new' or (play == '' and 'play' in self.cleaned_data and self.cleaned_data['play'].id):
+        if play == 'new' or (play in ('','back') and 'play' in self.cleaned_data and self.cleaned_data['play'].id):
             return play
         raise forms.ValidationError('Please select one of the choices below:')
 
@@ -227,8 +227,8 @@ class PlaceFormNoJS(PlaceForm):
 class PartForm(forms.ModelForm):
     person = forms.CharField(error_messages = {'required':'You have to specify a person.'})
     person_choice = forms.ChoiceField(label='Person', widget=forms.RadioSelect(), required=False)
-    start_date = PrettyDateField(required=False, help_text='if they were only in this production for part of its run')
-    end_date = PrettyDateField(required=False)
+    start_date = ApproximateDateFormField(required=False, help_text='if they were only in this production for part of its run')
+    end_date = ApproximateDateFormField(required=False)
 
     class Meta:
         model = Part
@@ -290,4 +290,9 @@ class PartForm(forms.ModelForm):
             choices = self.radio_choices(person)
             self.fields['person_choice'].choices = choices # = forms.ChoiceField( label='Person', choices=choices, widget = forms.RadioSelect() )
         return person
+
+class ProductionCompanyForm(forms.ModelForm):
+    class Meta:
+        model = ProductionCompany
+        exclude = ('slug')
 

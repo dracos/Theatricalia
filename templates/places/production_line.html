@@ -1,0 +1,3 @@
+{% load prettify %}
+<li><a href="{{ production_part.production.get_absolute_url }}">{{ production_part.production.play.get_title_display|prettify }}</a>{% if production_part.production.company %}, <a href="{{ production_part.production.company.get_absolute_url }}">{{ production_part.production.company|prettify }}</a>{% endif %}
+<span>{{ production_part.date_summary|prettify }}.</span>

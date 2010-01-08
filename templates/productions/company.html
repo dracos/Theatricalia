@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block title %}{{ company|prettify|striptags }}{% endblock %}
+
+{% block content %}
+
+{% if request.session.merging_company %}
+{% with company as object %}{% with request.session.merging_company as duplicate %}
+{% include 'merged/buttons.html' %}
+{% endwith %}{% endwith %}
+{% endif %}
+
+<h1>{{ company|prettify }}</h1>
+
+<div id="primary">
+
+{% if future.object_list %}
+<h2>Current &amp; Upcoming productions</h2>
+<ul class="production_list">
+{% for production in future.object_list %}
+<li><a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>,
+{% ifequal production.places.count 1 %}
+<a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
+{% else %}
+{{ production.place_summary|prettify }}.
+{% endifequal %}
+<span>{{ production.date_summary|prettify }}.</span>
+{% endfor %}
+</ul>
+{% if future.has_other_pages %}
+<p align="right"><a href="{{ company.get_future_url }}?page=2">More &rarr;</a></p>
+{% endif %}
+{% endif %}
+
+{% if past.object_list %}
+<h2>Past productions</h2>
+<ul class="production_list">
+{% for production in past.object_list %}
+<li><a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>,
+{% ifequal production.places.count 1 %}
+<a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
+{% else %}
+{{ production.place_summary|prettify }}.
+{% endifequal %}
+<span>{{ production.date_summary|prettify }}.</span>
+{% endfor %}
+</ul>
+{% if past.has_other_pages %}
+<p align="right"><a href="{{ company.get_past_url }}?page=2">More &rarr;</a></p>
+{% endif %}
+{% endif %}
+
+</div>
+
+<div class="secondary">
+
+{% if company.description %}
+{{ company.description|prettify|linebreaks }}
+{% endif %}
+
+<ul>
+{% if company.url %}<li><a href="{{ company.url }}">Official website</a>{% endif %}
+<li><a href="{{ company.get_edit_url }}">Edit this production company</a></li>
+<li><a href="{{ company.get_add_production_url }}">Add a production by this company</a></li>
+{% if not request.session.merging_company %}
+<li><a href="{{ company.get_absolute_url }}/merge">This is a duplicate of another company</a>
+{% endif %}
+</ul>
+
+</div>
+
+{% endblock %}
+

@@ -4,6 +4,7 @@
 {% block title %}Adding production
 {% if play %}of {{ play|prettify }}{% endif %}
 {% if place %}at {{ place|prettify }}{% endif %}
+{% if company %}by {{ company|prettify }}{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -56,10 +57,11 @@ page after you have finished entering this production.</small></p>
 
 <div id="sidebar_tulip" class="secondary"><div id="sidebar_tulip_r">
 
-{% if play or place %}
+{% if play or place or company %}
 <p>A production
 {% if play %}of the play <a href="{{ play.get_absolute_url }}">{{ play|prettify }}</a>.{% endif %}
 {% if place %}at <a href="{{ place.get_absolute_url }}">{{ place|prettify }}</a>.{% endif %}
+{% if company %}by <a href="{{ company.get_absolute_url }}">{{ company|prettify }}</a>.{% endif %}
 </p>
 {% else %}
 <p>You are adding a brand new production to Theatricalia.

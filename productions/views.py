@@ -6,30 +6,45 @@ from django.contrib.auth.decorators import login_required
 from django.forms.models import modelformset_factory, inlineformset_factory
 from django.db import IntegrityError
 from django.contrib.comments.views.comments import post_comment
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.utils import simplejson
 from django.conf import settings
 
 from utils import base32_to_int
-from shortcuts import render, check_url
-from models import Production, Part, Place as ProductionPlace, Visit
-from forms import ProductionForm, ProductionFormNoJS, PartForm, PlaceForm, PlaceFormNoJS
+from shortcuts import render, check_url, UnmatchingSlugException
+from models import Production, Part, Place as ProductionPlace, Visit, ProductionCompany
+from forms import ProductionForm, ProductionFormNoJS, PartForm, PlaceForm, PlaceFormNoJS, ProductionCompanyForm
 from plays.models import Play
 from places.models import Place
 from photos.forms import PhotoForm
 from people.models import Person
+from objshow import productions_list, productions_for
 
 def check_parameters(play_id, play, production_id):
-    production_id = base32_to_int(production_id)
-    production = get_object_or_404(Production, id=production_id)
-
-    play = check_url(Play, play_id, play)
+    production = check_url(Production, production_id)
+    try:
+        play = check_url(Play, play_id, play)
+    except UnmatchingSlugException, e:
+        raise UnmatchingSlugException(production)
     if play != production.play:
         raise Http404()
     return production
 
+def production_short_url(request, production_id):
+    production_id = base32_to_int(production_id)
+    production = get_object_or_404(Production, id=production_id)
+    return HttpResponsePermanentRedirect(production.get_absolute_url())
+
+def production_company_short_url(request, company_id):
+    company_id = base32_to_int(company_id)
+    company = get_object_or_404(ProductionCompany, id=company_id)
+    return HttpResponsePermanentRedirect(company.get_absolute_url())
+
 def production(request, play_id, play, production_id):
-    production = check_parameters(play_id, play, production_id)
+    try:
+        production = check_parameters(play_id, play, production_id)
+    except UnmatchingSlugException, e:
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     photo_form = PhotoForm(production)
 #    production_form = ProductionForm(instance=production)
 #
@@ -55,11 +70,12 @@ def production(request, play_id, play, production_id):
 
     return render(request, 'production.html', {
         'production': production,
+        'places': production.place_set.order_by('start_date', 'press_date'),
 #        'production_form': production_form,
 #        'production_formset': formset,
-        'cast': production.part_set.filter(cast=True).order_by('order', 'role', 'person__last_name', 'person__first_name'),
-        'crew': production.part_set.filter(cast=False).order_by('order', 'role', 'person__last_name', 'person__first_name'),
-        'other': production.part_set.filter(cast__isnull=True).order_by('order', 'role', 'person__last_name', 'person__first_name'),
+        'cast': production.part_set.filter(cast=True).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name'),
+        'crew': production.part_set.filter(cast=False).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name'),
+        'other': production.part_set.filter(cast__isnull=True).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name'),
         'photo_form': photo_form,
         'seen': seen,
         'flickr': flickr,
@@ -83,15 +99,54 @@ def production_seen(request, play_id, play, production_id, type):
     return HttpResponseRedirect(production.get_absolute_url())
 
 
-def by_company(request, production):
-    pass
+def company(request, company_id, company):
+    try:
+        company = check_url(ProductionCompany, company_id, company)
+    except UnmatchingSlugException, e:
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
+
+    past, future = productions_for(company)
+    return render(request, 'productions/company.html', {
+        'company': company,
+        'past': past,
+        'future': future,
+    })
+
+def company_productions(request, company_id, company, type):
+    try:
+        company = check_url(ProductionCompany, company_id, company)
+    except UnmatchingSlugException, e:
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
+    return productions_list(request, company, type, 'productions/company_production_list.html')
+
+@login_required
+def company_edit(request, company_id, company):
+    try:
+        company = check_url(ProductionCompany, company_id, company)
+    except UnmatchingSlugException, e:
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
+
+    form = ProductionCompanyForm(request.POST or None, instance=company)
+    if request.method == 'POST':
+        if request.POST.get('disregard'):
+            request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
+            return HttpResponseRedirect(company.get_absolute_url())
+        if form.is_valid():
+            form.save()
+            request.user.message_set.create(message="Your changes have been stored; thank you.")
+            return HttpResponseRedirect(company.get_absolute_url())
+
+    return render(request, 'productions/company_edit.html', {
+        'company': company,
+        'form': form,
+    })
 
 def part_add(name):
     names = name.split(None, 1)
     if len(names)==2:
         first_name, last_name = names
     else:
-        first_name, last_name = '', name
+        first_name, last_name = u'', name
     new_person = Person(first_name=first_name, last_name=last_name)
     new_person.save()
     return new_person
@@ -126,6 +181,7 @@ def part_edit(request, play_id, play, production_id, part_id):
         'id': part_id,
         'form': part_form,
         'production': production,
+        'places': production.place_set.order_by('start_date', 'press_date'),
     })
 
 @login_required
@@ -162,6 +218,7 @@ def production_edit(request, play_id, play, production_id):
         'form': production_form,
         'formset': formset,
         'production': production,
+        'places': production.place_set.order_by('start_date', 'press_date'),
     })
 
 @login_required
@@ -184,15 +241,17 @@ def production_edit_cast(request, play_id, play, production_id):
 
     return render(request, 'productions/edit-parts.html', {
         'production': production,
+        'places': production.place_set.order_by('start_date', 'press_date'),
         'form': part_form,
         'parts': production.part_set.order_by('-cast', 'order', 'role', 'person__last_name', 'person__first_name'),
     })
 
 @login_required
-def production_add(request, play=None, place=None):
+def production_add(request, play=None, place=None, company=None):
 
     initial = {}
     if play: initial['play'] = play.id
+    if company: initial['company'] = company.id
 
     if request.GET.get('js', '1')=='1':
         production_form = ProductionForm
@@ -218,6 +277,7 @@ def production_add(request, play=None, place=None):
         if request.POST.get('disregard'):
             request.user.message_set.create(message=u"All right, we\u2019ve ignored what you had done.")
             if play: return HttpResponseRedirect(play.get_absolute_url())
+            if company: return HttpResponseRedirect(company.get_absolute_url())
             if place: return HttpResponseRedirect(place.get_absolute_url())
         if production_form.is_valid() and formset.is_valid():
             production = production_form.save()
@@ -234,6 +294,7 @@ def production_add(request, play=None, place=None):
         'place': place,
         'formset': formset,
         'play': play,
+        'company': company,
         'form': production_form,
     })
 
@@ -242,13 +303,18 @@ def add_from_play(request, play_id, play):
     try:
         play = check_url(Play, play_id, play)
     except UnmatchingSlugException, e:
-        return HttpResponseRedirect(e.args[0].get_absolute_url())
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     return production_add(request, play=play)
 
 @login_required
 def add_from_place(request, place_id, place):
     place = check_url(Place, place_id, place)
     return production_add(request, place=place)
+
+@login_required
+def add_from_company(request, company_id, company):
+    company = check_url(ProductionCompany, company_id, company)
+    return production_add(request, company=company)
 
 def post_comment_wrapper(request):
     if not request.user.is_authenticated():

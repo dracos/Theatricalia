@@ -17,7 +17,7 @@
 <h2>{{ type }}</h2>
 <ul class="production_list">
 {% for production in page_obj.object_list %}
-<li><a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>, {{ production.title|prettify }}
+<li><a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.company %}, <a href="{{ production.company.get_absolute_url }}">{{ production.company|prettify }}</a>{% endif %}
 <span>{{ production.date_summary|prettify }},
 {% ifequal production.places.count 1 %}
 <a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block title %}Editing {{ company|prettify }}{% endblock %}
+
+{% block content %}
+
+<h1>Editing {{ company|prettify }}</h1>
+
+<div class="secondary">
+
+<p>Thank you for taking the time to add or correct some information on this site.
+All information is optional, just provide us with what you know.</p>
+
+</div>
+
+<div id="primary">
+
+{% for error in form.errors.values %}
+{{ error }}
+{% endfor %}
+
+<form method="post" id="edit">
+{% for field in form.hidden_fields %} {{ field }} {% endfor %}
+{% for field in form.visible_fields %}
+<p>{{ field.label_tag }} {{ field }}</p>
+{% if field.help_text %}
+<p class="help_text"><small>{{ field.help_text }}</small></p>
+{% endif %}
+{% endfor %}
+
+<p><input id="submit" type="submit" value="Record changes">
+<input type="submit" name="disregard" id="cancel" value="Disregard"></p>
+
+</form>
+
+</div>
+
+{% endblock %}

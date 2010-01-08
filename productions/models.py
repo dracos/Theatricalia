@@ -57,11 +57,13 @@ def pretty_date_range(start_date, press_date, end_date):
     else:
         date = u'%s%s - %s' % (start_date, press, end_date)
     return date
+    return date.replace(' ', u'\xa0').replace(u'\xa0-\xa0', ' - ')
 
 class ProductionCompany(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100)
     description = models.TextField(blank=True)
+    url = models.URLField(blank=True, verbose_name='Website')
 
     class Meta:
         ordering = ['name']
@@ -73,6 +75,33 @@ class ProductionCompany(models.Model):
     def save(self, **kwargs):
         self.slug = slugify(self.name)
         super(ProductionCompany, self).save(**kwargs)
+
+    def id32(self):
+        return int_to_base32(self.id)
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('company', (), {
+            'company_id': self.id32(),
+            'company': self.slug
+        })
+
+    @models.permalink
+    def get_edit_url(self):
+        return ('company-edit', (), {
+            'company_id': self.id32(),
+            'company': self.slug
+        })
+
+    @models.permalink
+    def get_add_production_url(self):
+        return ('company-production-add', (self.id32(), self.slug))
+
+    def get_past_url(self):
+        return '%s/past' % self.get_absolute_url()
+
+    def get_future_url(self):
+        return '%s/future' % self.get_absolute_url()
 
 class Production(models.Model):
     play = models.ForeignKey(Play, related_name='productions')
@@ -134,10 +163,10 @@ class Production(models.Model):
         start_date = None
         end_date = None
         press_date = None
-        for place in self.place_set.all():
-            if not start_date or (place.start_date and place.start_date < start_date): start_date = place.start_date
-            if not press_date or (place.press_date and place.press_date < press_date): press_date = place.press_date
-            if not   end_date or (place.end_date   and place.end_date   >   end_date):   end_date = place.end_date
+        for place in self.place_set.order_by('start_date', 'press_date', 'end_date'):
+            if not start_date: start_date = place.start_date
+            if not press_date: press_date = place.press_date
+            end_date = place.end_date
         return start_date, press_date, end_date
 
     def date_summary(self):
@@ -158,8 +187,10 @@ class Production(models.Model):
         return False
 
     def place_summary(self):
-        if self.places.count()>1:
+        if self.places.count()>2:
             place = u'On tour'
+        elif self.places.count()==2:
+            place = '%s and %s' % (self.places.all()[0], self.places.all()[1])
         elif self.places.count()==1:
             place = self.places.all()[0]
         else:
@@ -170,6 +201,7 @@ class Production(models.Model):
         return self.company or ''
 
     def creator(self):
+        if self.source: return ''
         try:
             latest_version = Version.objects.get_for_object(self)[0]
             return latest_version.revision.user
@@ -195,7 +227,7 @@ class Production(models.Model):
 
 class Place(models.Model):
     production = models.ForeignKey(Production)
-    place = models.ForeignKey(Place)
+    place = models.ForeignKey(Place, related_name='productions_here')
     start_date = ApproximateDateField(blank=True)
     press_date = models.DateField(blank=True, null=True)
     end_date = ApproximateDateField(blank=True)
@@ -214,11 +246,12 @@ class Part(models.Model):
     production = models.ForeignKey(Production)
     person = models.ForeignKey(Person)
     role = models.CharField(u'R\u00f4le', max_length=100, blank=True, help_text=u'e.g. \u201cRomeo\u201d or \u201cDirector\u201d')
-    cast = models.NullBooleanField(null=True, blank=True, verbose_name='Cast/Crew')
-    credited_as = models.CharField(max_length=100, blank=True, help_text='if they were credited differently to their name')
+    cast = models.NullBooleanField(null=True, blank=True, verbose_name='Cast/Crew',
+        help_text=u'Crew includes all non-cast, from director to musicians to producers')
+    credited_as = models.CharField(max_length=100, blank=True, help_text=u'if they were credited differently to their name, or \u201cuncredited\u201d')
     order = models.IntegerField(blank=True, null=True)
-    start_date = models.DateField(blank=True, null=True)
-    end_date = models.DateField(blank=True, null=True)
+    start_date = ApproximateDateField(blank=True)
+    end_date = ApproximateDateField(blank=True)
 
     objects = PartManager()
 
@@ -235,6 +268,9 @@ class Part(models.Model):
             return 'Crew'
         else:
             return 'Unknown'
+
+    def date_summary(self):
+        return pretty_date_range(self.start_date, None, self.end_date)
 
 class Visit(models.Model):
     production = models.ForeignKey(Production)

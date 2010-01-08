@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
-{% block title %}All Productions | {{ place|prettify }}{% endblock %}
+{% block title %}All Productions | {{ place|prettify|striptags }}{% endblock %}
 
 {% block content %}
 
@@ -14,7 +14,7 @@
 {% if productions %}
 <ul class="production_list">
 {% for production in productions %}
-<li><a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.title %}, {{ production.title|prettify }}{% endif %}
+<li><a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.company %}, <a href="{{ production.company.get_absolute_url }}">{{ production.company|prettify }}</a>{% endif %}
 <span>{{ production.date_summary|prettify }}.</span>
 {% endfor %}
 </ul>

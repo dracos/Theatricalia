@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
-{% block title %}{{ object.name|prettify }}{% endblock %}
+{% block title %}{{ object|prettify|striptags }}{% endblock %}
 
 {% block content %}
 
-<h1>{{ object.name|prettify }}</h1>
+<h1>{{ object|prettify }}</h1>
 
 <div id="primary">
 
@@ -14,17 +14,13 @@
 {% if page_obj.object_list %}
 <ul class="production_list">
 {% for production in page_obj.object_list %}
-<li>
-{% if production.part__role__concatenate %}
-{{ production.part__role__concatenate }}, {% endif %}
-<a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.company %}, <a href="{{ production.company.get_absolute_url }}">{{ production.company|prettify }}</a>{% endif %}
-<span>{{ production.date_summary|prettify }},
+<li><a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>,
 {% ifequal production.places.count 1 %}
 <a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
 {% else %}
 {{ production.place_summary|prettify }}.
 {% endifequal %}
-</span>
+<span>{{ production.date_summary|prettify }}.</span>
 {% endfor %}
 </ul>
 {% else %}
@@ -36,7 +32,7 @@
 </div>
 
 <div class="secondary">
-<p>{{ type }} featuring <a href="{{ object.get_absolute_url }}">{{ object.name|prettify }}</a>.</p>
+<p>{{ type }} by <a href="{{ object.get_absolute_url }}">{{ object|prettify }}</a>.</p>
 {% include "pagination.html" %}
 </div>
 
