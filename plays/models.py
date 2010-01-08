@@ -2,12 +2,13 @@ import re
 #from sorl.thumbnail.fields import ImageWithThumbnailsField
 from django.db import models
 from people.models import Person
-from django.utils.html import escape
+#from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import slugify
 from django.contrib.contenttypes import generic
 from utils import int_to_base32
 from common.models import Alert
+from common.templatetags.prettify import prettify
 
 class Play(models.Model):
     title = models.CharField(max_length=255)
@@ -42,9 +43,9 @@ class Play(models.Model):
     def get_authors_display(self, html=True):
         num = self.authors.count()
         if html:
-            authors = map(lambda x: u'<a href="%s">%s</a>' % (x.get_absolute_url(), escape(x)), self.authors.all())
+            authors = map(lambda x: u'<a href="%s">%s</a>' % (x.get_absolute_url(), prettify(x)), self.authors.all())
         else:
-            authors = [ escape(x) for x in self.authors.all() ]
+            authors = [ unicode(x) for x in self.authors.all() ]
         if num > 2:
             str = u', '.join(authors[:num-2]) + u', ' + u', and '.join(authors[num-2:])
         elif num == 2:
