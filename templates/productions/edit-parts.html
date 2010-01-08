@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
-{% block title %}Editing {{ production.company|default:"" }} production of {{ production.play.get_title_display|prettify }}{% endblock %}
+{% block title %}Editing {{ production.company|default:"" }} production of {{ production.play.get_title_display|prettify|striptags }}{% endblock %}
 
 {% block content %}
 
@@ -11,11 +11,13 @@
 
 <div id="primary">
 
+{% if not request.POST %}
 <p>Thank you for taking the time to add or correct some information on this site.
 Here, you can either <a href="#add">add a new part</a>, or
 pick from the <a href="#edit-head">list of parts to edit</a>.
 By <em>part</em>, I mean anyone involved in a production, from cast or crew to
 the translator for this production or anyone else involved.</p>
+{% endif %}
 
 <h2 id="add" class="no-descenders">Add new Part</h2>
 
@@ -55,9 +57,7 @@ the translator for this production or anyone else involved.</p>
   <a href="./{{ part.id }}">Edit</a>
   {{ part.person.name|prettify }}, {{ part.role|prettify }} <small>({{ part.cast_string }})</small>
   {% if part.order or part.start_date or part.end_date %}
-  <small>{{ part.order|default:'' }}
-  {% if part.start_date %}, {{ part.start_date|default:'' }}{% endif %}
-  {% if part.end_date %}, {{ part.end_date|default:'' }}{% endif %}</small>
+  <small>({% if part.order %}{{ part.order|default:'' }}; {% endif %}{% if part.start_date or part.end_date %}{{ part.date_summary|prettify }}{% endif %})</small>
   {% endif %}
 </li>
 {% empty %}

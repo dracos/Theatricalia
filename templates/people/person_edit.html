@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
-{% block title %}Editing {{ person.name|prettify }}{% endblock %}
+{% block title %}Editing {{ person|prettify }}{% endblock %}
 
 {% block extra_head %}
 <link href="{{ person.get_absolute_url }}/feed" type="application/rss+xml" rel="alternate">
@@ -9,7 +9,7 @@
 
 {% block content %}
 
-<h1>Editing {{ person.name|prettify }}</h1>
+<h1>Editing {{ person|prettify }}</h1>
 
 <div class="secondary">
 

@@ -7,9 +7,9 @@
 
 <h1>{{ attached_title|prettify }}</h1>
 
-<h2 id="photo-title">{{ photo.title|prettify }}</h2>
-
 <div id="primary">
+
+<h2 id="photo-title">{{ photo.title|prettify }}</h2>
 
 <p aria-labelledby="photo-title" id="photo"><img style="max-width: 100%" src="{% thumbnail photo.photo 720x720 %}" alt="{{ photo.title }}"></p>
 
@@ -17,7 +17,7 @@
 
 <div class="secondary">
 
-<p>A photo of <a href="{{ photo.content_object.get_absolute_url }}">{{ photo.content_object }}</a>.</p>
+<p>A photograph or picture of <a href="{{ photo.content_object.get_absolute_url }}">{{ photo.content_object|prettify }}</a>.</p>
 
 <p class="pagination">
 {% if previous_photo %}

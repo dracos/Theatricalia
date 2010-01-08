@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
-{% block title %}Editing {{ play|prettify }}{% endblock %}
+{% block title %}Editing {{ play|prettify|striptags }}{% endblock %}
 
 {% block content %}
 

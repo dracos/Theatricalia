@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
-{% block title %}Editing {{ place|prettify }}{% endblock %}
+{% block title %}Editing {{ place|prettify|striptags }}{% endblock %}
 
 {% block extra_head %}
 <script type="text/javascript" src="/static/js/web-maps-lite.js"></script>
