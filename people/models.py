@@ -17,6 +17,7 @@ class Person(models.Model):
     slug = models.SlugField(max_length=100)
     bio = models.TextField(blank=True, verbose_name='Biography')
     dob = ApproximateDateField(blank=True, verbose_name='Date of birth')
+    died = ApproximateDateField(blank=True, verbose_name='Date of death')
     imdb = models.URLField(blank=True, verbose_name='IMDb URL')
     wikipedia = models.URLField(blank=True, verbose_name='Wikipedia URL')
     web = models.URLField(blank=True, verbose_name='Personal website')
@@ -29,6 +30,8 @@ class Person(models.Model):
             return u'%s %s' % (self.first_name, self.last_name)
         elif self.last_name:
             return self.last_name
+        elif self.first_name:
+            return self.first_name
         else:
             return u'Unknown'
 
