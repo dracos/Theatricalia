@@ -61,10 +61,10 @@
 
 <ul>
 {% if company.url %}<li><a href="{{ company.url }}">Official website</a>{% endif %}
-<li><a href="{{ company.get_edit_url }}">Edit this production company</a></li>
-<li><a href="{{ company.get_add_production_url }}">Add a production by this company</a></li>
+<li><a rel="nofollow" href="{{ company.get_edit_url }}">Edit this production company</a></li>
+<li><a rel="nofollow" href="{{ company.get_add_production_url }}">Add a production by this company</a></li>
 {% if not request.session.merging_company %}
-<li><a href="{{ company.get_absolute_url }}/merge">This is a duplicate of another company</a>
+<li><a rel="nofollow" href="{{ company.get_absolute_url }}/merge">This is a duplicate of another company</a>
 {% endif %}
 </ul>
 

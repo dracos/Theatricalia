@@ -102,17 +102,17 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 {% else %}
     {% if plays %}
         {% if future.object_list or past.object_list %}
-            <li><a href="{{ person.get_alert_add_url }}">Alert me to productions involving, or of plays by, this person</a>
+            <li><a rel="nofollow" href="{{ person.get_alert_add_url }}">Alert me to productions involving, or of plays by, this person</a>
         {% else %}
-            <li><a href="{{ person.get_alert_add_url }}">Alert me to productions of plays by this person</a>
+            <li><a rel="nofollow" href="{{ person.get_alert_add_url }}">Alert me to productions of plays by this person</a>
         {% endif %}
     {% else %}
-        <li><a href="{{ person.get_alert_add_url }}">Alert me to productions involving this person</a>
+        <li><a rel="nofollow" href="{{ person.get_alert_add_url }}">Alert me to productions involving this person</a>
     {% endif %}
 {% endif %}
-<li><a href="/add?person={{ person.id32 }}">Add a new production involving this person</a></li>
+<li><a rel="nofollow" href="/add?person={{ person.id32 }}">Add a new production involving this person</a></li>
 {% if not request.session.merging_person %}
-<li><a href="{{ person.get_absolute_url }}/merge">This is a duplicate of another person</a>
+<li><a rel="nofollow" href="{{ person.get_absolute_url }}/merge">This is a duplicate of another person</a>
 {% endif %}
 </ul>
 
