@@ -32,7 +32,8 @@ def merge(request, url):
         raise Http404
 
     if request.POST.get('stop'):
-        del request.session['merging_' + type]
+        if 'merging_' + type in request.session:
+            del request.session['merging_' + type]
         if request.user.is_authenticated():
             request.user.message_set.create(message=u"We have forgotten your search for a duplicate.")
         return HttpResponseRedirect(object.get_absolute_url())
