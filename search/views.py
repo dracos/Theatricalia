@@ -92,9 +92,9 @@ def search_people(search, force_similar=False, use_distance=True):
     if len(names)==1:
         names[0] = names[0].replace(u'\u2019', "'")
         if force_similar:
-            people = Person.objects.exclude(first_name__icontains=names[0]).exclude(last_name__iexact=names[0])
+            people = Person.objects.exclude(first_name__icontains=names[0]).exclude(last_name__icontains=names[0])
         else:
-            people = Person.objects.filter(Q(first_name__icontains=names[0]) | Q(last_name__iexact=names[0]))
+            people = Person.objects.filter(Q(first_name__icontains=names[0]) | Q(last_name__icontains=names[0]))
         if force_similar:
             sounds_people = 2
             dm_, dm_alt = dm(names[0])
@@ -126,16 +126,16 @@ def search_people(search, force_similar=False, use_distance=True):
             people = [ person for _, person in people ]
     elif len(names)==2:
         names[1] = names[1].replace(u'\u2019', "'")
-        people = Person.objects.filter(first_name__icontains=names[0], last_name__iexact=names[1])
+        people = Person.objects.filter(first_name__icontains=names[0], last_name__icontains=names[1])
         if (not people and re.match('[a-z\s\'-]+$(?i)', search)) or force_similar:
             sounds_people = 1
             dm_first, dm_first_alt = dm(names[0])
             dm_last, dm_last_alt = dm(names[1])
             people = Person.objects.filter(
                 # First name homophone, Last name match
-                Q(first_name_metaphone=dm_first,     last_name__iexact=names[1]) |
-                Q(first_name_metaphone=dm_first_alt, last_name__iexact=names[1]) |
-                Q(first_name_metaphone_alt=dm_first, last_name__iexact=names[1]) |
+                Q(first_name_metaphone=dm_first,     last_name__icontains=names[1]) |
+                Q(first_name_metaphone=dm_first_alt, last_name__icontains=names[1]) |
+                Q(first_name_metaphone_alt=dm_first, last_name__icontains=names[1]) |
                 # First name match, last name homophone
                 Q(first_name__icontains=names[0],    last_name_metaphone=dm_last) |
                 Q(first_name__icontains=names[0],    last_name_metaphone_alt=dm_last) |
@@ -176,14 +176,14 @@ def search_people(search, force_similar=False, use_distance=True):
         names[1] = names[1].replace(u'\u2019', "'")
         names[2] = names[2].replace(u'\u2019', "'")
         people = Person.objects.filter(
-            Q(first_name__icontains=' '.join(names[0:2]), last_name__iexact=names[2]) |
-            Q(first_name__icontains=names[0], last_name__iexact=' '.join(names[1:3]))
+            Q(first_name__icontains=' '.join(names[0:2]), last_name__icontains=names[2]) |
+            Q(first_name__icontains=names[0], last_name__icontains=' '.join(names[1:3]))
         )
     elif len(names)==4:
         names[3] = names[3].replace(u'\u2019', "'")
         people = Person.objects.filter(
-            Q(first_name__icontains=' '.join(names[0:3]), last_name__iexact=names[3]) |
-            Q(first_name__icontains=names[0], last_name__iexact=' '.join(names[1:4]))
+            Q(first_name__icontains=' '.join(names[0:3]), last_name__icontains=names[3]) |
+            Q(first_name__icontains=names[0], last_name__icontains=' '.join(names[1:4]))
         )
     return people, sounds_people
 
