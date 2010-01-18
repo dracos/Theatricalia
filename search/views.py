@@ -318,7 +318,7 @@ def search(request):
                 return HttpResponseRedirect(places[0].get_absolute_url())
             if people.count():
                 return HttpResponseRedirect(people[0].get_absolute_url())
-            if len(near.geonames):
+            if near_length:
                 place = near.geonames[0]
                 return HttpResponseRedirect('/search/around/%s,%s?name=%s' % (place.lat, place.lng, place.name) )
             if parts.count:
