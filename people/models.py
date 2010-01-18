@@ -8,7 +8,7 @@ from sounds.metaphone import dm
 from common.models import Alert
 
 class Person(models.Model):
-    first_name = models.CharField(max_length=50, blank=True)
+    first_name = models.CharField(max_length=50, blank=True, verbose_name='Forenames')
     last_name = models.CharField(max_length=50)
     first_name_metaphone = models.CharField(max_length=50, editable=False)
     first_name_metaphone_alt = models.CharField(max_length=50, editable=False)
