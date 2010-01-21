@@ -245,7 +245,7 @@ class PartManager(models.Manager):
 class Part(models.Model):
     production = models.ForeignKey(Production)
     person = models.ForeignKey(Person)
-    role = models.CharField(u'R\u00f4le', max_length=100, blank=True, help_text=u'e.g. \u201cRomeo\u201d or \u201cDirector\u201d')
+    role = models.CharField(u'R\u00f4le', max_length=200, blank=True, help_text=u'e.g. \u201cRomeo\u201d or \u201cDirector\u201d')
     cast = models.NullBooleanField(null=True, blank=True, verbose_name='Cast/Crew',
         help_text=u'Crew includes all non-cast, from director to musicians to producers')
     credited_as = models.CharField(max_length=100, blank=True, help_text=u'if they were credited differently to their name, or \u201cuncredited\u201d')
