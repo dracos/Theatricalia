@@ -186,7 +186,10 @@ def part_edit(request, play_id, play, production_id, part_id):
 
 @login_required
 def production_edit(request, play_id, play, production_id):
-    production = check_parameters(play_id, play, production_id)
+    try:
+        production = check_parameters(play_id, play, production_id)
+    except UnmatchingSlugException, e:
+        return HttpResponsePermanentRedirect(e.args[0].get_edit_url())
 
     if request.GET.get('js', '1')=='1':
         production_form = ProductionForm
@@ -224,7 +227,10 @@ def production_edit(request, play_id, play, production_id):
 @login_required
 def production_edit_cast(request, play_id, play, production_id):
     """For picking someone to edit, or adding a new Part"""
-    production = check_parameters(play_id, play, production_id)
+    try:
+        production = check_parameters(play_id, play, production_id)
+    except UnmatchingSlugException, e:
+        return HttpResponsePermanentRedirect(e.args[0].get_edit_cast_url())
     initial = {}
     if request.GET.get('person'):
         initial['person'] = Person.objects.get(id=base32_to_int(request.GET.get('person')))
