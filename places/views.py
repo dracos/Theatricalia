@@ -14,6 +14,13 @@ from productions.objshow import productions_list, productions_for
 from productions.models import Production
 from photos.forms import PhotoForm
 
+def place_short_url(request, place_id):
+    try:
+        place = check_url(Place, place_id)
+    except UnmatchingSlugException, e:
+        place = e.args[0]
+    return HttpResponsePermanentRedirect(place.get_absolute_url())
+
 def place_productions(request, place_id, place, type):
     try:
         place = check_url(Place, place_id, place)

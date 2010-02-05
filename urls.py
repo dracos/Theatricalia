@@ -64,10 +64,13 @@ urlpatterns = patterns('',
     url('^(?P<url>(play|person|place|company)/.*)/merge$', merged.merge),
 
     url('^d/(?P<production_id>.+)$', productions.production_short_url),
+    url('^production/(?P<production_id>.+)$', productions.production_short_url),
     url('^c/(?P<company_id>.+)$', productions.production_company_short_url),
-    #url('^p/(?P<play_id>.+)$', ),
-    #url('^t/(?P<place_id>.+)$', ),
+    url('^p/(?P<play_id>.+)$', plays.play_short_url),
+    url('^t/(?P<place_id>.+)$', places.place_short_url),
     url('^a/(?P<person_id>.+)$', people.person_short_url),
+
+    url('^api/(?P<type>production|play|place|company|person)/(?P<id>[^/]+)/flickr$', common.api_flickr),
 
     url('^plays$', plays.list, name='plays_all'),
     url('^plays/(?P<letter>[a-z0*])$', plays.list, name='plays'),
@@ -82,6 +85,7 @@ urlpatterns = patterns('',
     url('^play/(?P<play_id>.*?)/(?P<play>.*)/edit$', plays.play_edit, name='play-edit'),
     url('^play/(?P<play_id>.*?)/(?P<play>.*)/add$', productions.add_from_play, name='play-production-add'),
     url('^play/(?P<play_id>.*?)/(?P<play>.*)$', plays.play, name='play'),
+    url('^play/(?P<play_id>.+)$', plays.play_short_url),
 
     # url('^play/(?P<play>.*?)/part/(?P<part>.*)$', productions.by_part),
 
@@ -93,6 +97,7 @@ urlpatterns = patterns('',
     url('^person/(?P<person_id>.*?)/(?P<person>.*)/alert/(?P<type>add|remove)$', people.person_alert, name='person-alert'),
     url('^person/(?P<person_id>.*?)/(?P<person>.*)\.js$', people.person_js, name='person-json'),
     url('^person/(?P<person_id>.*?)/(?P<person>.*)$', people.person, name='person'),
+    url('^person/(?P<person_id>.+)$', people.person_short_url),
 
     url('^places$', places.list, name='places_all'),
     url('^places/(?P<letter>[a-z0*])$', places.list, name='places'),
@@ -103,12 +108,14 @@ urlpatterns = patterns('',
     url('^place/(?P<place_id>[^/]+)/(?P<place>.*)/add$', productions.add_from_place, name='place-production-add'),
     url('^place/(?P<place_id>[^/]+)/(?P<place>.*)/productions$', places.productions, name='place-productions'),
     url('^place/(?P<place_id>[^/]+)/(?P<place>[^/]*)$', places.place, name='place'),
+    url('^place/(?P<place_id>[^/]+)$', places.place_short_url),
 
     url('^company/(?P<company_id>[^/]+)/(?P<company>.*)/future$', productions.company_productions, {'type':'future'}, name='company-productions-future'),
     url('^company/(?P<company_id>[^/]+)/(?P<company>.*)/past$', productions.company_productions, {'type':'past'}, name='company-productions-past'),
     url('^company/(?P<company_id>[^/]+)/(?P<company>.*)/edit$', productions.company_edit, name='company-edit'),
     url('^company/(?P<company_id>[^/]+)/(?P<company>.*)/add$', productions.add_from_company, name='company-production-add'),
     url('^company/(?P<company_id>[^/]+)/(?P<company>[^/]*)$', productions.company, name='company'),
+    url('^company/(?P<company_id>[^/]+)$', productions.production_company_short_url),
 
     url('^observations/post/', productions.post_comment_wrapper),
     url('^observations/', include('django.contrib.comments.urls')),
@@ -137,6 +144,11 @@ urlpatterns = patterns('',
     url('^publicity/(?P<year>\d{4})/(?P<month>\w+)$', news.month, name='news-month'),
     url('^publicity/(?P<year>\d{4})/(?P<month>\w+)/(?P<slug>[-\w]+)$',
         news.article, name='news-entry'),
+
+    #url('forums/forum/', include('forums.django-forum.forum.urls')),
+    #url('forums/simple/', include('forums.django-simpleforum.forum.urls')),
+    #url('forums/bb/', include('forums.djangobb.djangobb.urls')),
+    #url('forums/counterpoint/', include('forums.counterpoint.counterpoint.urls')),
 )
 
 if settings.DEBUG:

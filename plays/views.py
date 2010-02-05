@@ -3,13 +3,20 @@ from datetime import datetime
 from django.views.generic.list_detail import object_list
 from django.forms.formsets import formset_factory
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect 
 from shortcuts import render, check_url, UnmatchingSlugException
 from models import Play, first_letters
 from people.models import Person
 from forms import PlayEditForm, PlayAuthorForm
 from productions.objshow import productions_list, productions_for
 from common.models import Alert
+
+def play_short_url(request, play_id):
+    try:
+        play = check_url(Play, play_id)
+    except UnmatchingSlugException, e:
+        play = e.args[0]
+    return HttpResponsePermanentRedirect(play.get_absolute_url())
 
 def play_productions(request, play_id, play, type):
     try:

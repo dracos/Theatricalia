@@ -1,7 +1,6 @@
 import string
 from datetime import datetime
 
-from django.shortcuts import get_object_or_404
 from django.views.generic.list_detail import object_list
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.db import IntegrityError
@@ -9,9 +8,10 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.utils import simplejson
+from django.conf import settings
 
 from shortcuts import render, check_url, UnmatchingSlugException
-from utils import int_to_base32, base32_to_int
+from utils import int_to_base32
 from common.models import Alert
 from models import Person, first_letters
 from forms import PersonEditForm
@@ -26,8 +26,10 @@ def person_productions(request, person_id, person, type):
     return productions_list(request, person, type, 'people/production_list.html')
 
 def person_short_url(request, person_id):
-    person_id = base32_to_int(person_id)
-    person = get_object_or_404(Person, id=person_id)
+    try:
+        person = check_url(Person, person_id)
+    except UnmatchingSlugException, e:
+        person = e.args[0]
     return HttpResponsePermanentRedirect(person.get_absolute_url())
 
 def person(request, person_id, person):
@@ -36,8 +38,16 @@ def person(request, person_id, person):
     except UnmatchingSlugException, e:
         return HttpResponseRedirect(e.args[0].get_absolute_url())
 
-    if person.productions.count() == 0:
-        raise Http404()
+    #if person.productions.count() == 0:
+    #    raise Http404()
+
+    try:
+        fp = open(settings.OUR_ROOT + '/data/flickr/person/' + person_id)
+        flickr = fp.read()
+        fp.close()
+        flickr = simplejson.loads(flickr)
+    except:
+        flickr = ''
 
     past, future = productions_for(person)
     plays = person.plays.all()
@@ -50,6 +60,7 @@ def person(request, person_id, person):
         'future': future,
         'plays': plays,
         'photo_form': photo_form,
+        'flickr': flickr,
         'alert': alert,
         'same_name': same_name,
     })

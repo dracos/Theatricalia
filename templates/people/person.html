@@ -85,6 +85,20 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 
 {% include 'includes/messages.html' %}
 
+{% if production.photos.all %}
+    {% with production.photos.all|random as photo %}
+    <div id="photograph-feature">
+    <a href="{{ photo.get_absolute_url }}">{{ photo.photo.extra_thumbnails_tag.feature }}</a>
+    </div>
+    {% endwith %}
+{% else %}{% if flickr %}
+    {% with flickr.photos.photo|random as photo %}
+    <div id="photograph-feature">
+    <a href="http://www.flickr.com/photos/{{ photo.owner }}/{{ photo.id }}/"><img src="http://farm{{ photo.farm }}.static.flickr.com/{{ photo.server }}/{{ photo.id }}_{{ photo.secret }}_s.jpg" alt="{{ photo.title }}"></a>
+    </div>
+    {% endwith %}
+{% endif %}{% endif %}
+
 {% if person.dob or person.died or person.web or person.imdb or person.wikipedia %}
 <ul role="contentinfo">
 {% if person.dob %} <li>Date of birth: {{ person.dob }} {% endif %}
@@ -120,12 +134,16 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 
 <div id="photographs">
 
+{% if person.photos.all or flickr %}
 <ul>
 {% for photo in person.photos.all %}
 <li><a href="{{ photo.get_absolute_url }}">{{ photo.photo.thumbnail_tag }}</a>
 {% endfor %}
+{% for photo in flickr.photos.photo %}
+<li><a href="http://www.flickr.com/photos/{{ photo.owner }}/{{ photo.id }}/"><img src="http://farm{{ photo.farm }}.static.flickr.com/{{ photo.server }}/{{ photo.id }}_{{ photo.secret }}_s.jpg" alt="{{ photo.title }}"></a>
+{% endfor %}
 </ul>
-
+{% endif %}
 </div>
 
 {% if user.is_authenticated %}

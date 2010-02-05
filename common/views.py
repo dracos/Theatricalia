@@ -1,12 +1,16 @@
 import re
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect, Http404, HttpResponse
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 
 from common.models import AlertLocal
 from places.models import Place
+from people.models import Person
+from productions.models import Production, ProductionCompany
+from plays.models import Play
 from shortcuts import check_url, UnmatchingSlugException
+from utils import base32_to_int
 
 @login_required
 def alert(request, latlon, type):
@@ -32,4 +36,26 @@ def alert(request, latlon, type):
     if request.GET.get('name', ''):
         url += '?name=%s' % request.GET['name']
     return HttpResponseRedirect(url)
+
+type_dict = {
+    'play': Play,
+    'place': Place,
+    'person': Person,
+    'production': Production,
+    'company': ProductionCompany,
+}
+
+def api_flickr(request, type, id):
+    if type in type_dict:
+        obj_type = type_dict[type]
+    else:
+        raise Http404
+
+    try:
+        object = check_url(obj_type, id)
+    except UnmatchingSlugException, e:
+        url = '/api/%s/%s/flickr' % (type, e.args[0].id)
+        return HttpResponsePermanentRedirect(url)
+
+    return HttpResponse('%s' % object)
 

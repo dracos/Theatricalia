@@ -31,13 +31,17 @@ def check_parameters(play_id, play, production_id):
     return production
 
 def production_short_url(request, production_id):
-    production_id = base32_to_int(production_id)
-    production = get_object_or_404(Production, id=production_id)
+    try:
+        production = check_url(Production, production_id)
+    except UnmatchingSlugException, e:
+        production = e.args[0]
     return HttpResponsePermanentRedirect(production.get_absolute_url())
 
 def production_company_short_url(request, company_id):
-    company_id = base32_to_int(company_id)
-    company = get_object_or_404(ProductionCompany, id=company_id)
+    try:
+        company = check_url(ProductionCompany, company_id)
+    except UnmatchingSlugException, e:
+        company = e.args[0]
     return HttpResponsePermanentRedirect(company.get_absolute_url())
 
 def production(request, play_id, play, production_id):
