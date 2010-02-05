@@ -8,6 +8,10 @@ from utils import int_to_base32
 def get_upload_to(instance, filename):
     return 'photos/%s/%s/%s' % (instance.content_type, instance.object_id, filename)
 
+class PhotoManager(models.Manager):
+    def get_query_set(self):
+        return super(PhotoManager, self).get_query_set().filter(is_visible=True)
+
 class Photo(models.Model):
     is_visible = models.BooleanField(default=True)
 
@@ -25,6 +29,8 @@ class Photo(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
+
+    objects = PhotoManager()
 
     def __unicode__(self):
         return self.title
