@@ -103,6 +103,12 @@ class ProductionCompany(models.Model):
     def get_future_url(self):
         return '%s/future' % self.get_absolute_url()
 
+class ProductionManager(models.Manager):
+    def get_query_set(self):
+        # return super(ProductionManager, self).get_query_set().exclude(source__endswith='RSC Performance Database</a>').exclude(source__endswith='National Theatre Performance Database</a>').exclude(source__endswith='University of Bristol Theatre Collection</a>').exclude(source__endswith='AHDS Performing Arts</a>')
+        # return super(ProductionManager, self).get_query_set().exclude(source__endswith='RSC Performance Database</a>').exclude(source__endswith='National Theatre Performance Database</a>')
+        return super(ProductionManager, self).get_query_set()
+
 class Production(models.Model):
     play = models.ForeignKey(Play, related_name='productions')
     company = models.ForeignKey(ProductionCompany, related_name='productions', blank=True, null=True)
@@ -113,6 +119,8 @@ class Production(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     seen_by = models.ManyToManyField(User, through='Visit', related_name='seen', blank=True)
     source = models.TextField(blank=True)
+
+    objects = ProductionManager()
 
     def id32(self):
         return int_to_base32(self.id)
