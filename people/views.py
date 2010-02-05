@@ -3,7 +3,7 @@ from datetime import datetime
 
 from django.shortcuts import get_object_or_404
 from django.views.generic.list_detail import object_list
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.db import IntegrityError
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -35,6 +35,10 @@ def person(request, person_id, person):
         person = check_url(Person, person_id, person)
     except UnmatchingSlugException, e:
         return HttpResponseRedirect(e.args[0].get_absolute_url())
+
+    if person.productions.count() == 0:
+        raise Http404()
+
     past, future = productions_for(person)
     plays = person.plays.all()
     photo_form = PhotoForm(person)
