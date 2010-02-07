@@ -15,14 +15,14 @@
 {{ formset.management_form }}
 
 {% for form in formset.forms %}
-
+<div class="author">
 {% if form.person_choice.errors or form.person_choice.is_hidden %}
 {{ form.person_choice.errors }}
 {{ form.person_choice }}
 {% endif %}
 
 {{ form.person.errors }}
-<p>{{ form.person.label_tag }} {{ form.person }}</p>
+{{ form.person.label_tag }} {{ form.person }}
 
 {% for field in form %}
 {% ifnotequal field.label 'Author' %}
@@ -30,11 +30,11 @@
 {{ field }}
 {% else %}
 {{ field.errors }}
-<p>{{ field.label_tag }} {{ field }}</p>
+{{ field.label_tag }} {{ field }}
 {% endif %}
 {% endifnotequal %}
 {% endfor %}
-
+</div>
 {% endfor %}
 
 <p><input id="submit" type="submit" value="Record changes">
