@@ -187,6 +187,14 @@ def search_people(search, force_similar=False, use_distance=True):
         )
     return people, sounds_people
 
+def search_places(name_q, search):
+    query = name_q
+    query = query | Q(town__icontains=search)
+    words = search.rsplit(None, 1)
+    if len(words) == 2:
+        query = query | Q(name__icontains=words[0], town__icontains=words[1])
+    return Place.objects.filter(query)
+  
 def search_geonames(s):
     try:
         r = urllib.urlopen('http://ws.geonames.org/searchJSON?isNameRequired=true&style=LONG&q=' + urllib.quote(s.encode('utf-8')) + '&maxRows=20').read()
@@ -300,7 +308,7 @@ def search(request):
             name_q = name_q | Q(name__iendswith=' %s' % article, name__istartswith=rest)
         people, sounds_people = search_people(search, force_similar=request.GET.get('similar'), use_distance=False)
         near = search_geonames(search)
-        places = Place.objects.filter(name_q | Q(town__icontains=search))
+        places = search_places(name_q, search)
         companies = ProductionCompany.objects.filter(name_q | Q(description__icontains=search))
         plays = Play.objects.filter(title_q)
         parts = Paginator(Part.objects.search(search), 10, orphans=2)
