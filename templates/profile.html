@@ -42,7 +42,8 @@
         {% else %}
             <li>Administrator.
         {% endifequal %}
-    {% else %}{% if view.is_staff %} <li>Stagehand. {% endif %}{% endif %}
+    {% else %}{% ifequal view.username "Deborah" %} <li>Wardrobe mistress.
+    {% else %}{% if view.is_staff %} <li>Stagehand. {% endif %}{% endifequal %}{% endif %}
     {% if profile.url %}
     <li><a rel="nofollow" href="{{ profile.url }}">Personal website</a>.
     {% endif %}
