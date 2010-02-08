@@ -10,7 +10,7 @@ class Profile(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('profile', (self.user,))
+        return ('profile', (self.user.username.lower(),))
 
     @models.permalink
     def get_edit_url(self):

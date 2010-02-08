@@ -3,6 +3,10 @@
 
 {% block title %}{{ view.name|prettify }}&rsquo;{% ifnotequal view.name|last 's' %}s{% endifnotequal %} profile{% endblock %}
 
+{% block extra_head %}
+<link href="{{ profile.get_absolute_url }}/feed/seen" title="Feed of seen productions" type="application/rss+xml" rel="alternate">
+{% endblock %}
+
 {% block content %}
 
 <h1>{{ view.name|prettify }}&rsquo;{% ifnotequal view.name|last 's' %}s{% endifnotequal %} profile</h1>

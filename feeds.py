@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.syndication.feeds import Feed, FeedDoesNotExist
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.db.models import Count
+from django.contrib.auth.models import User
 
 from people.models import Person
 from plays.models import Play
@@ -130,4 +131,24 @@ class PlayFeed(Feed):
     def items(self, obj):
         return obj.productions.order_by('-id')[:20]
 
+class UserSeenFeed(Feed):
+    def get_object(self, bits):
+        if len(bits) != 1:
+            raise ObjectDoesNotExist
+        profile = User.objects.get(username=bits[0])
+        return profile
+
+    def title(self, obj):
+        return 'Theatricalia: Productions seen by %s' % obj
+
+    def link(self, obj):
+        if not obj:
+            raise FeedDoesNotExist
+        return obj.get_absolute_url().lower()
+
+    def description(self, obj):
+        return 'The latest productions seen by %s from Theatricalia' % obj
+
+    def items(self, user):
+        return user.visit_set.order_by('-id')[:20]
 

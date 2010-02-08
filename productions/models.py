@@ -294,3 +294,7 @@ class Visit(models.Model):
             out += u', recommended'
         return out
 
+    # Might as well just return the URL for the production for now
+    def get_absolute_url(self):
+        return self.production.get_absolute_url()
+

@@ -20,7 +20,7 @@ from news.models import Article
 from django.contrib import admin
 admin.autodiscover()
 
-from feeds import PersonFeed, PlayFeed, PlaceFeed, NearbyFeed, view as feeds_view
+from feeds import PersonFeed, PlayFeed, PlaceFeed, NearbyFeed, UserSeenFeed, view as feeds_view
 
 urlpatterns = patterns('',
     # Example:
@@ -57,7 +57,12 @@ urlpatterns = patterns('',
         'play': PlayFeed,
         'place': PlaceFeed,
         'around': NearbyFeed,
-    } },
+        } },
+    ),
+    url('^(?P<url>profile/.*)/feed/seen$', feeds_view,
+        { 'feed_dict': {
+        'profile': UserSeenFeed,
+        } },
     ),
     url('^around/(.*?)/alert/(add|remove)$', common.alert, name='around-alert'),
 
