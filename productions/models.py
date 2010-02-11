@@ -119,6 +119,7 @@ class Production(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     seen_by = models.ManyToManyField(User, through='Visit', related_name='seen', blank=True)
     source = models.TextField(blank=True)
+    url = models.URLField(blank=True, verbose_name='Web page')
 
     objects = ProductionManager()
 

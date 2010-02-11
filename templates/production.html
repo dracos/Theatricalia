@@ -151,6 +151,9 @@ by <a href="{{ production.company.get_absolute_url }}">{{ production.company|pre
 {% endif %}{% endif %}
 
 <ul>
+{% if production.url %}
+<li><a rel="nofollow" href="{{ production.url }}">Production website</a></li>
+{% endif %}
 <li><a href="#observations">{% if comment_count %}Observations ({{ comment_count }}){% else %}Add observation{% endif %}</a>
 <li id="edit-link"><a href="{{ production.get_edit_url }}?js=0">Edit this production</a>
 

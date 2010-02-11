@@ -50,6 +50,7 @@ class ProductionForm(forms.ModelForm):
         widget = ForeignKeySearchInput(Production.company.field.rel, ('name',))
     )
     description = forms.CharField(required=False, widget=forms.Textarea(attrs={'cols': 40, 'rows':5}))
+    url = forms.URLField(required=False, widget=forms.TextInput(attrs={'size': 40}))
 
     class Meta:
         model = Production
