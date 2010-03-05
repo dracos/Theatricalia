@@ -8,7 +8,7 @@ from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
 
 from common.models import Alert
 from forms import PlaceForm
-from models import Place, first_letters
+from models import Place
 from shortcuts import render, check_url, UnmatchingSlugException
 from productions.objshow import productions_list, productions_for
 from productions.models import Production
@@ -98,7 +98,7 @@ def place_alert(request, place_id, place, type):
 
     return HttpResponseRedirect(place.get_absolute_url())
 
-def list(request, letter='a'):
+def list_places(request, letter='a'):
     if letter == '0':
         places = Place.objects.filter(name__regex=r'^[0-9]')
         letter = '0-9'
@@ -108,7 +108,6 @@ def list(request, letter='a'):
     else:
         places = Place.objects.filter(name__istartswith=letter)
         letter = letter.upper()
-    letters = [ x[0] for x in first_letters() ]
-    letters.sort()
+    letters = list(string.ascii_uppercase)
     return object_list(request, queryset=places, extra_context={ 'letter': letter, 'letters': letters })
 

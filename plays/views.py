@@ -4,8 +4,9 @@ from django.views.generic.list_detail import object_list
 from django.forms.formsets import formset_factory
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect 
+from django.db.models import Q
 from shortcuts import render, check_url, UnmatchingSlugException
-from models import Play, first_letters
+from models import Play
 from people.models import Person
 from forms import PlayEditForm, PlayAuthorForm
 from productions.objshow import productions_list, productions_for
@@ -99,17 +100,16 @@ def play_edit(request, play_id, play):
     })
 
 
-def list(request, letter='a'):
+def list_plays(request, letter='a'):
 	if letter == '0':
 		plays = Play.objects.filter(title__regex=r'^[0-9]')
 		letter = '0-9'
 	elif letter == '*':
-		plays = Play.objects.exclude(title__regex=r'^[A-Za-z0-9]')
+		plays = Play.objects.exclude(title__regex=r'^[A-Za-z0-9]').exclude(title__regex=r'^(\'|")[A-Za-z]')
 		letter = 'Symbols'
 	else:
-		plays = Play.objects.filter(title__istartswith=letter)
+		plays = Play.objects.filter( Q(title__istartswith=letter) | Q(title__istartswith="'%s" % letter) | Q(title__istartswith='"%s' % letter) )
 		letter = letter.upper()
-	letters = [ x[0] for x in first_letters() if x[0]>='A' and x[0]<='Z' ]
-	letters.sort()
+	letters = list(string.ascii_uppercase)
 	return object_list(request, queryset=plays, extra_context={ 'letter': letter, 'letters': letters })
 

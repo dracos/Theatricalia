@@ -20,13 +20,11 @@
 {% else %}
 <a href="{% url people "0" %}">0&ndash;9</a>
 {% endifequal %}
-<!--
 <li>{% ifequal "Symbols" letter %}
 <strong>Symbols</strong>
 {% else %}
 <a href="{% url people "*" %}">Symbols</a>
 {% endifequal %}
--->
 </ul>
 
 <h1>People &ndash; {{ letter }}</h1>

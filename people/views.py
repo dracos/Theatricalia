@@ -13,7 +13,7 @@ from django.conf import settings
 from shortcuts import render, check_url, UnmatchingSlugException
 from utils import int_to_base32
 from common.models import Alert
-from models import Person, first_letters
+from models import Person
 from forms import PersonEditForm
 from photos.forms import PhotoForm
 from productions.objshow import productions_list, productions_for, productions_past, productions_future
@@ -139,7 +139,7 @@ def person_edit(request, person_id, person):
         'form': form,
     })
 
-def list(request, letter='a'):
+def list_people(request, letter='a'):
     if letter == '0':
         people = Person.objects.filter(last_name__regex=r'^[0-9]')
         letter = '0-9'
@@ -149,7 +149,6 @@ def list(request, letter='a'):
     else:
         people = Person.objects.filter(last_name__istartswith=letter)
         letter = letter.upper()
-    letters = [ x[0] for x in first_letters() if x[0]>='A' and x[0]<='Z' ]
-    letters.sort()
+    letters = list(string.ascii_uppercase)
     return object_list(request, queryset=people, paginate_by=30, extra_context={ 'letter': letter, 'letters': letters, 'request':request })
 
