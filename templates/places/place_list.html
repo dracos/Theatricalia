@@ -13,12 +13,12 @@
             <a href="{% url places l|lower %}">{{ l }}</a>
         {% endifequal %}
     {% endfor %}
-<!--
     <li>{% ifequal "0-9" letter %}
         <strong>0&ndash;9</strong>
     {% else %}
         <a href="{% url places "0" %}">0&ndash;9</a>
     {% endifequal %}
+<!--
     <li>{% ifequal "Symbols" letter %}
         <strong>Symbols</strong>
     {% else %}

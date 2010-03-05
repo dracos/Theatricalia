@@ -53,7 +53,7 @@
 
 <div class="secondary">
 
-<p>A play by {{ play.get_authors_display }}</p>
+<p>A play by {{ play.get_authors_display|default:"unknown" }}</p>
 
 <ul>
 {% if play.url %}<li><a href="{{ play.url }}">Official website</a>{% endif %}
@@ -87,7 +87,7 @@ please <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
 <h2 class="no-descenders">Same name</h2>
 <ul>
 {% for play in same_name %}
-<li><a href="{{ play.get_absolute_url }}">{{ play.get_title_display|prettify }}</a>, by {{ play.get_authors_display }}
+<li><a href="{{ play.get_absolute_url }}">{{ play.get_title_display|prettify }}</a>, by {{ play.get_authors_display|default:"unknown" }}
 {% endfor %}
 </ul>
 {% endif %}

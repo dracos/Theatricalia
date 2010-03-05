@@ -26,7 +26,7 @@ if (!window.location.hash)
 <h2>Plays</h2>
 <ul class="person_list">
 {% for play in plays %}
-<li><a href="{{ play.get_absolute_url }}">{{ play.get_title_display|prettify }}</a>, by {{ play.get_authors_display }}</li>
+<li><a href="{{ play.get_absolute_url }}">{{ play.get_title_display|prettify }}</a>, by {{ play.get_authors_display|default:"unknown" }}</li>
 {% endfor %}
 </ul>
 {% endif %}

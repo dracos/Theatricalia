@@ -27,7 +27,7 @@ class Play(models.Model):
     def __unicode__(self):
         title = self.get_title_display()
         authors = self.get_authors_display(html=False)
-        if authors != 'unknown':
+        if authors:
             title += u', by ' + authors
         return title
 
@@ -53,7 +53,7 @@ class Play(models.Model):
         elif num == 1:
             str = authors[0]
         else:
-            str = u'unknown'
+            str = u''
         return mark_safe(str)
             
     def construct_url(self, name, *args):
