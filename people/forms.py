@@ -23,8 +23,8 @@ class PersonEditForm(forms.ModelForm):
         #if last_mod < self.db_last_modified:
         #    raise forms.ValidationError('I am afraid that this person has been edited since you started editing.')
 
-        if not self.errors and not (self.cleaned_data.get('first_name') or not self.cleaned_data.get('last_name')):
-            raise forms.ValidationError('Please specify the person&rsquo;s name')
+        if not self.errors and not self.cleaned_data.get('last_name'):
+            raise forms.ValidationError('Please specify the person\u2019s name')
 
         #dob = self.cleaned_data.get('dob')
         #died = self.cleaned_data.get('died')
