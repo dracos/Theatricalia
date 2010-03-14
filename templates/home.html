@@ -132,7 +132,7 @@ Nothing in the system yet!
 {% if latest_observation %}
 On {{ latest_observation.submit_date|date:"jS F Y"|prettify }}
 at {{ latest_observation.submit_date|date:"g:i a" }},
-<a href="{{ latest_observation.user.get_profile.get_absolute_url }}">{{ latest_observation.user_name|title }}</a> noted,
+<a href="{{ latest_observation.user.get_profile.get_absolute_url }}">{{ latest_observation.user_name|title|prettify }}</a> noted,
 about a <a href="{{ latest_observation.content_object.get_absolute_url }}">production</a> of {{ latest_observation.content_object.play.get_title_display|prettify }}:</p>
 <blockquote><p>{{ latest_observation.comment|truncatewords:10|prettify }}
 <a href="{{ latest_observation.content_object.get_absolute_url }}#o{{ latest_observation.id }}">More &rarr;</a>
