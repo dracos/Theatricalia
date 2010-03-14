@@ -46,7 +46,9 @@ if (!window.location.hash)
 <p>The following places matched your search:</p>
 <ul class="place_list">
 {% for place in places %}
-<li><a href="{{ place.get_absolute_url }}">{{ place|prettify }}</a>
+    {% if place.productions.count %}
+        <li><a href="{{ place.get_absolute_url }}">{{ place|prettify }}</a></li>
+    {% endif %}
 {% endfor %}
 </ul>
 {% endif %}
