@@ -104,10 +104,14 @@ class ProductionCompany(models.Model):
         return '%s/future' % self.get_absolute_url()
 
 class ProductionManager(models.Manager):
+    # use_for_related_fields = True
     def get_query_set(self):
-        # return super(ProductionManager, self).get_query_set().exclude(source__endswith='RSC Performance Database</a>').exclude(source__endswith='National Theatre Performance Database</a>').exclude(source__endswith='University of Bristol Theatre Collection</a>').exclude(source__endswith='AHDS Performing Arts</a>')
-        # return super(ProductionManager, self).get_query_set().exclude(source__endswith='RSC Performance Database</a>').exclude(source__endswith='National Theatre Performance Database</a>')
-        return super(ProductionManager, self).get_query_set()
+        qs = super(ProductionManager, self).get_query_set()
+        qs = qs.exclude(source__startswith='<a href="http://wo')
+        # qs = qs.exclude(source__endswith='University of Bristol Theatre Collection</a>')
+        # qs = qs.exclude(source__endswith='AHDS Performing Arts</a>')
+        # qs = qs.exclude(source__endswith='RSC Performance Database</a>')
+        return qs
 
 class Production(models.Model):
     play = models.ForeignKey(Play, related_name='productions')
@@ -234,12 +238,21 @@ class Production(models.Model):
 #    def __unicode__(self):
 #        return '%s %s performance of %s at %s' % (self.date, self.time, self.production, self.place)
 
+class ProductionPlaceManager(models.Manager):
+    # use_for_related_fields = True
+    def get_query_set(self):
+        qs = super(ProductionPlaceManager, self).get_query_set()
+        qs = qs.exclude(production__source__startswith='<a href="http://wo')
+        return qs
+
 class Place(models.Model):
     production = models.ForeignKey(Production)
     place = models.ForeignKey(Place, related_name='productions_here')
     start_date = ApproximateDateField(blank=True)
     press_date = models.DateField(blank=True, null=True)
     end_date = ApproximateDateField(blank=True)
+
+    objects = ProductionPlaceManager()
 
     def __unicode__(self):
         return u"The part of production %d at %s, %s" % (self.production.id, self.place, self.date_summary())
@@ -250,6 +263,11 @@ class Place(models.Model):
 class PartManager(models.Manager):
     def search(self, search):
         return self.get_query_set().filter(role__icontains=search).order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))', 'production__place__press_date')
+    # use_for_related_fields = True
+    def get_query_set(self):
+        qs = super(PartManager, self).get_query_set()
+        qs = qs.exclude(production__source__startswith='<a href="http://wo')
+        return qs
 
 class Part(models.Model):
     production = models.ForeignKey(Production)
