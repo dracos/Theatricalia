@@ -1,5 +1,6 @@
 import random
 from django.contrib.comments.models import Comment
+from django.contrib.auth.models import User
 from shortcuts import render
 from productions.models import Production, Part
 from plays.models import Play
@@ -10,8 +11,10 @@ from news.models import Article
 from photos.models import Photo
 
 def home(request):
+    matthew = User.objects.get(id=1)
+
     try:
-        latest_news = Article.objects.latest()
+        latest_news = Article.objects.visible().latest()
     except:
         latest_news = {}
 
@@ -21,7 +24,7 @@ def home(request):
         latest = {}
 
     try:
-        latest_comment = Comment.objects.all().order_by('-id')[0]
+        latest_comment = Comment.objects.exclude(user=matthew).order_by('-id')[0]
     except:
         latest_comment = {}
 
