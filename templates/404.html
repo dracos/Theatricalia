@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load prettify %}
 
 {% block title %}Not Found (404){% endblock %}
 
@@ -11,7 +12,7 @@
 </blockquote>
 
 <p>Unfortunately, whatever you were looking for could not be found.
-<br>You could try <a href="/search?q={{ request.META.REQUEST_URI|cut:"/" }}">searching for &ldquo;{{ request.META.REQUEST_URI|cut:"/" }}&rdquo;</a>,
+<br>You could try <a href="/search?q={{ request.META.REQUEST_URI|replace:"/ "|urlencode }}">searching for &ldquo;{{ request.META.REQUEST_URI|replace:"/ " }}&rdquo;</a>,
 use the search form above,
 <br>or browse our
 <a href="/plays">plays</a>,

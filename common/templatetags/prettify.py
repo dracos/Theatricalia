@@ -99,3 +99,9 @@ def prettify_list(list):
     else:
         s = ''
     return s
+
+@register.filter
+@stringfilter
+def replace(s, v):
+    return s.replace(v[0], v[1])
+    
