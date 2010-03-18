@@ -12,6 +12,7 @@ from places.models import Place
 from productions.models import Production
 from shortcuts import check_url, UnmatchingSlugException
 from productions.objshow import productions_past
+from news.models import Article
 
 # Copy of django.contrib.syndication.views.feed changed to support URL redirects
 def view(request, url, feed_dict):
@@ -151,4 +152,12 @@ class UserSeenFeed(Feed):
 
     def items(self, user):
         return user.visit_set.order_by('-id')[:20]
+
+class NewsFeed(Feed):
+    title = 'Theatricalia: News articles'
+    link = 'http://theatricalia.com/publicity'
+    description = 'The latest news articles from Theatricalia'
+
+    def items(self):
+        return Article.objects.visible().order_by('-created')[:20]
 

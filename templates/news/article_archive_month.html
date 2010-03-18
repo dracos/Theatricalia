@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block extra_head %}
+<link href="/publicity/feed" type="application/rss+xml" rel="alternate">
+{% endblock %}
+
 {% block title %}{{ month|date:"F Y" }} &ndash; Publicity{% endblock %}
 
 {% block content %}

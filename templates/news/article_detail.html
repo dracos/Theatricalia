@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
+{% block extra_head %}
+<link href="/publicity/feed" type="application/rss+xml" rel="alternate">
+{% endblock %}
+
 {% block title %}{{ object.title }} &ndash; Publicity{% endblock %}
 
 {% block content %}
@@ -15,9 +19,9 @@
 
 <div id="sidebar_tulip" class="secondary"><div id="sidebar_tulip_r">
 
-<p>An article written by <a href="{{ object.author.get_profile.get_absolute_url }}">{{ object.author.name }}</a>
+<p>A news article written by <a href="{{ object.author.get_profile.get_absolute_url }}">{{ object.author.name }}</a>
 at {{ object.created|date:"g:i" }}&nbsp;{{ object.created|date:"a" }}
-on {{ object.created|date:"jS F Y" }}.</p>
+on {{ object.created|date:"jS F Y"|prettify }}.</p>
 
 </div></div>
 

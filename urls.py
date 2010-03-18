@@ -20,7 +20,7 @@ from news.models import Article
 from django.contrib import admin
 admin.autodiscover()
 
-from feeds import PersonFeed, PlayFeed, PlaceFeed, NearbyFeed, UserSeenFeed, view as feeds_view
+from feeds import PersonFeed, PlayFeed, PlaceFeed, NearbyFeed, UserSeenFeed, NewsFeed, view as feeds_view
 
 urlpatterns = patterns('',
     # Example:
@@ -144,6 +144,11 @@ urlpatterns = patterns('',
     url('^profile/(?P<username>.*)$', profiles.profile, name='profile'),
     url('^profile$', profiles.profile_user, name='profile-user'),
 
+    url('^(?P<url>publicity)/feed$', 'django.contrib.syndication.views.feed',
+        { 'feed_dict': {
+        'publicity': NewsFeed,
+        } },
+    ),
     url('^publicity$', news.index, name='news-index'),
     url('^publicity/(?P<year>\d{4})$', news.year, name='news-year'),
     url('^publicity/(?P<year>\d{4})/(?P<month>\w+)$', news.month, name='news-month'),

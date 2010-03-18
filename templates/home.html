@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
+{% block extra_head %}
+<link href="/publicity/feed" type="application/rss+xml" rel="alternate">
+{% endblock %}
+
 {% block fulltitle %}Theatricalia{% endblock %}
 
 {% block extra_body %} id="home"{% endblock %}

@@ -1,7 +1,8 @@
-<h2 class="no-descenders">All articles</h2>
+{% load prettify %}
+<h2 class="no-descenders">All news articles</h2>
 <ul>
 {% for article in all %}
 <li><a href="{{ article.get_absolute_url }}">{{ article.title }}</a>,
-{{ article.created|date:"jS F Y" }}
+{{ article.created|date:"jS F Y"|prettify }}
 {% endfor %}
 </ul>
