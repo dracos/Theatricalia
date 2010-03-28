@@ -6,7 +6,7 @@ class PlaceAdmin(VersionAdmin):
     list_filter = ['town','country']
     search_fields = ['name', 'town']
     prepopulated_fields = {
-        'slug': ('name',),
+        'slug': ('name','town'),
     }
 
 admin.site.register(Place, PlaceAdmin)
