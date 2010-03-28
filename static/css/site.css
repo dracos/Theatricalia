@@ -799,3 +799,22 @@ ul#edit-parts li:nth-child(2n) {
 #thin {
     margin: 0 20%;
 }
+
+p#book-tickets {
+    text-align: center;
+    margin-top: 1.5em;
+}
+
+p#book-tickets a {
+    background-color: #cc3333;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    -moz-border-radius: 4px;
+    padding: 0.166667em 0.5em;
+    border: none;
+}
+p#book-tickets a:hover {
+    background-color: #990000;
+}
+

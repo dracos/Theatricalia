@@ -5,6 +5,12 @@
 
 {% block content %}
 
+{% if production.book_tickets and not production.finished %}
+<div class="secondary">
+<p id="book-tickets"><a rel="nofollow" href="{{ production.book_tickets }}">Book tickets</a></p>
+</div>
+{% endif %}
+
 <h1>{{ production.play.get_title_display|prettify }}</h1>
 
 {% include 'includes/messages.html' %}
