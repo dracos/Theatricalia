@@ -51,10 +51,11 @@ class ProductionForm(forms.ModelForm):
     )
     description = forms.CharField(required=False, widget=forms.Textarea(attrs={'cols': 40, 'rows':5}))
     url = forms.URLField(label='Web page', required=False, widget=forms.TextInput(attrs={'size': 40}))
+    book_tickets = forms.URLField(label='Booking URL', required=False, widget=forms.TextInput(attrs={'size': 40}))
 
     class Meta:
         model = Production
-        exclude = ('parts', 'places', 'seen_by', 'source')
+        exclude = ('parts', 'places', 'seen_by', 'source', 'companies')
 
     def __init__(self, last_modified=None, *args, **kwargs):
         super(ProductionForm, self).__init__(*args, **kwargs)

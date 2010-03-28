@@ -107,7 +107,7 @@ class ProductionManager(models.Manager):
     # use_for_related_fields = True
     def get_query_set(self):
         qs = super(ProductionManager, self).get_query_set()
-        qs = qs.exclude(source__startswith='<a href="http://wo')
+        qs = qs.exclude(source__startswith='<a href="http://wo') # National
         # qs = qs.exclude(source__endswith='University of Bristol Theatre Collection</a>')
         # qs = qs.exclude(source__endswith='AHDS Performing Arts</a>')
         # qs = qs.exclude(source__endswith='RSC Performance Database</a>')
@@ -116,6 +116,7 @@ class ProductionManager(models.Manager):
 class Production(models.Model):
     play = models.ForeignKey(Play, related_name='productions')
     company = models.ForeignKey(ProductionCompany, related_name='productions', blank=True, null=True)
+    #companies = models.ManyToManyField(ProductionCompany, related_name='productions_new', blank=True, null=True)
     places = models.ManyToManyField(Place, through='Place', related_name='productions', blank=True)
     parts = models.ManyToManyField(Person, through='Part', related_name='productions', blank=True)
     photos = generic.GenericRelation(Photo)
@@ -124,6 +125,7 @@ class Production(models.Model):
     seen_by = models.ManyToManyField(User, through='Visit', related_name='seen', blank=True)
     source = models.TextField(blank=True)
     url = models.URLField(blank=True, verbose_name='Web page')
+    book_tickets = models.URLField(blank=True, verbose_name='Booking URL')
 
     objects = ProductionManager()
 

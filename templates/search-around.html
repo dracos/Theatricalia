@@ -100,7 +100,7 @@ $(function(){
 
 <ul class="place_list">
 {% for place in places %}
-<li><a href="{% url search-around-past latlon %}">{{ place|prettify }}</a>
+<li><a href="{{ place.get_absolute_url }}">{{ place|prettify }}</a>
 {% endfor %}
 </ul>
 
