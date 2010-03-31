@@ -129,7 +129,8 @@ elif thing == 'production':
     Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
     Visit.objects.filter(production=alt).update(production=main)
     Comment.objects.filter(content_type=ctype, object_pk=alt.id).update(object_pk=main.id)
-    main.description += "\n\n" + alt.description
+    if alt.description != main.description:
+        main.description += "\n\n" + alt.description
     main.source += "\n\n" + alt.source
 
     main_place = main.place_set.all()[0]

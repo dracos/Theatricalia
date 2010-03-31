@@ -29,12 +29,16 @@ class PlayAuthorForm(forms.Form):
         choices = []
         p = ''
         for p in people:
-            last_production = p.productions.order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))', 'place__press_date')
+            last_production = p.productions.order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))', 'place__press_date')[:1]
             if len(last_production):
-                last_production = last_production[0]
+                last = 'last in %s' % last_production[0]
             else:
-                last_production = 'nothing yet on this site'
-            choices.append( (p.id, prettify(mark_safe('<a target="_blank" href="' + p.get_absolute_url() + '">' + str(p) + '</a> <small>(new window)</small>, last in ' + str(last_production))) ) )
+                last_play = p.plays.order_by('-id')[:1]
+                if len(last_play):
+                    last = 'author of %s' % last_play[0].get_title_display()
+                else:
+                    last = 'nothing yet on this site'
+            choices.append( (p.id, prettify(mark_safe('<a target="_blank" href="' + p.get_absolute_url() + '">' + str(p) + '</a> <small>(new window)</small>, ' + str(last))) ) )
         if len(choices) > 1:
             choices.append( ( 'new', prettify('None of these, a new person called \'' + s + '\'') ) )
         elif str(p) == s:

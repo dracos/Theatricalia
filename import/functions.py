@@ -24,18 +24,20 @@ def add_photo(url, object, title=''):
         u = urllib.urlopen(url).read()
         logo.photo.save(basename(url), ContentFile(u))
 
+# Only works without authors at present
 def add_play(title, force_insert=False):
+    title = re.sub('^(A|An|The) (.*)$', r'\2, \1', title)
     if force_insert:
         play = Play(title=title)
         if not dry_run:
             play.save()
         return play
-    try:
-        play = Play.objects.get(title__iexact=title, authors=None)
-    except:
-        play = Play(title=title)
-        if not dry_run:
-            play.save()
+    play = Play.objects.filter(title__iexact=title).order_by('id')
+    if play:
+        return play[0]
+    play = Play(title=title)
+    if not dry_run:
+        play.save()
     return play
 
 def add_theatre(theatre, town=''):
