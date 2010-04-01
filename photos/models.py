@@ -23,6 +23,7 @@ class Photo(models.Model):
             'feature': { 'size': (108, 108), 'options': ('crop', ) },
             'larger': { 'size': (400, 400), 'options': ['upscale'] },
         },
+        max_length = 255,
         thumbnail_tag = '<img src="%(src)s" width="%(width)s" height="%(height)s">'
     )
 
