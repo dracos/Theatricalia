@@ -77,7 +77,7 @@
 <p class="posted-by">
 <span class="meta">On {{ observation.submit_date|date:"jS F Y"|prettify }}
 at <a title="Permanent link to this observation" href="{{ request.path }}#o{{ observation.id }}">{{ observation.submit_date|date:"g:i a" }}</a>,
-<a href="{{ observation.user.get_profile.get_absolute_url }}">{{ observation.user_name|title }}</a> noted:</p>
+<a href="{{ observation.user.get_profile.get_absolute_url }}">{{ observation.user_name|title|prettify }}</a> noted:</p>
 <blockquote>{{ observation.comment|prettify|urlize|linebreaks }}</blockquote>
 </li>
 {% endfor %}
@@ -162,7 +162,9 @@ by <a href="{{ production.company.get_absolute_url }}">{{ production.company|pre
 <li><a rel="nofollow" href="{{ production.url }}">Production website</a></li>
 {% endif %}
 <li><a href="#observations">{% if comment_count %}Observations ({{ comment_count }}){% else %}Add observation{% endif %}</a>
+{% ifequal production.source_type "Other" %}
 <li id="edit-link"><a href="{{ production.get_edit_url }}?js=0">Edit this production</a>
+{% endifequal %}
 
 {% if seen %}
     {% if production.finished %}

@@ -230,6 +230,11 @@ class Production(models.Model):
         except:
             return ''
 
+    def source_type(self):
+        if 'Birmingham Libraries' in self.source:
+            return 'Birmingham Libraries'
+        return 'Other'
+
 #class Performance(models.Model):
 #    production = models.ForeignKey(Production)
 #    date = models.DateField()
