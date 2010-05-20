@@ -81,6 +81,7 @@ def production(request, play_id, play, production_id, okay=False):
         # Have to use revisions, magic number, to show what it was at the start...
         # Sorting has to be done yucky, as it's all serialized. Lucky there won't be many objects to a page ever hopefully!
         def fetch_from_history(q):
+            changes = Version.objects.exclude(revision=19230).filter(object_id__in=q).count()
             originals = Version.objects.filter(revision=19230, object_id__in=q)
             parts = []
             for o in originals:
@@ -89,16 +90,18 @@ def production(request, play_id, play, production_id, okay=False):
                     parts.append( (part.start_date, part.order, part.role, part.person.last_name, part.person.first_name, part) )
             parts.sort()
             parts = [ p[5] for p in parts ]
-            return parts
-        cast = fetch_from_history( production.part_set.filter(cast=True) )
-        crew = fetch_from_history( production.part_set.filter(cast=False) )
-        other = fetch_from_history( production.part_set.filter(cast__isnull=True) )
-        corrected = False
+            return parts, changes
+        cast, c1 = fetch_from_history( production.part_set.filter(cast=True) )
+        crew, c2 = fetch_from_history( production.part_set.filter(cast=False) )
+        other, c3 = fetch_from_history( production.part_set.filter(cast__isnull=True) )
+        initial_only = True
+        changes = c1 or c2 or c3
     else:
         cast = production.part_set.filter(cast=True).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name')
         crew = production.part_set.filter(cast=False).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name')
         other = production.part_set.filter(cast__isnull=True).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name')
-        corrected = True
+        initial_only = False
+        changes = False
         
     return render(request, 'production.html', {
         'production': production,
@@ -111,7 +114,8 @@ def production(request, play_id, play, production_id, okay=False):
         'photo_form': photo_form,
         'seen': seen,
         'flickr': flickr,
-        'corrected': corrected,
+        'initial_only': initial_only,
+        'changes': changes,
     })
 
 @login_required

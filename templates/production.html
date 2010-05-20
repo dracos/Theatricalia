@@ -172,12 +172,15 @@ by <a href="{{ production.company.get_absolute_url }}">{{ production.company|pre
 <li><a href="#observations">{% if comment_count %}Observations ({{ comment_count }}){% else %}Add observation{% endif %}</a>
 <li id="edit-link"><a href="{{ production.get_edit_url }}?js=0">Edit this production</a>
 {% ifequal production.source_type "Birmingham Libraries" %}
-{% if corrected %}
+{% if initial_only %}
+<li>Production data sourced from Birmingham Libraries will show their initial data
+by default.
+{% if changes %}
+<a href="{{ production.get_absolute_url }}/corrected">View user corrections and additions to this production</a>
+{% endif %}
+{% else %}
 <li>Viewing additions and corrections to this production.
 <a href="{{ production.get_absolute_url }}">View original Birmingham Library data</a>
-{% else %}
-<li>Production data sourced from Birmingham Libraries will always show their initial data
-by default. <a href="{{ production.get_absolute_url }}/corrected">View user corrections and additions to this production</a>
 {% endif %}
 {% endifequal %}
 
