@@ -29,6 +29,7 @@ def prettify(str):
     str = str.replace('``', '&ldquo;').replace("''", '&rdquo;')
     if str.find('<') == -1:
         str = re.sub('"([^"]*)"', r'&ldquo;\1&rdquo;', str)
+        #str = re.sub("(?P<closetext>[^\ \t\r\n\[\{\(\-])?'((?P=closetext)|(?=\s|s\b))", r'\1&rsquo;', str)
         str = re.sub("'(.*?)'(?=[^\w]|$)", r'&lsquo;\1&rsquo;', str)
         str = str.replace('"', '&quot;').replace("'", '&rsquo;')
     else:

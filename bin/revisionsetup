@@ -1,0 +1,56 @@
+#!/usr/bin/env python
+#
+# Noddy script to try and fix Brum Rep initial import to add Version entries for the initial data
+
+import os, sys
+sys.path.insert(0, '../..')
+sys.path.insert(0, '..')
+sys.path.insert(0, '.')
+os.environ['DJANGO_SETTINGS_MODULE'] = 'theatricalia.settings'
+
+from django.core import serializers
+from django.contrib.contenttypes.models import ContentType
+from productions.models import Part
+from reversion.models import Version, Revision
+from reversion import revision
+import reversion
+
+reversion.register(Part)
+
+revisions = {}
+versions = Version.objects.filter(content_type=24)
+for v in versions:
+    revisions.setdefault(int(v.object_id), []).append(v)
+
+MASTER_REVISION = Revision.objects.get(id=19230)
+PART_CT = ContentType.objects.get(id=24)
+
+#@revision.create_on_success
+def do_nothing():
+    parts = Part.objects.filter(production__source__contains='AHDS')
+    for part in parts:
+        r = revisions.get(part.id, [])
+        if len(r)>0 and r[0].revision.comment == 'Initial import': continue
+        if len(r)>1 and r[1].revision.comment == 'Initial import': continue
+        if len(r)>2 and r[2].revision.comment == 'Initial import': continue
+        if len(r)>3 and r[3].revision.comment == 'Initial import': continue
+        if part.role not in ('Director', 'Designer'): continue
+        if part.id > 240000: continue
+        print part.id
+        for rr in r:
+            print '  ', rr.revision.date_created, rr
+        if part.role in ('Director', 'Designer'):
+            part.cast = False
+        else:
+            part.cast = True
+            part.role = ''
+        serialized_data = serializers.serialize('xml', [part])
+        Version.objects.create(
+            revision = MASTER_REVISION,
+            object_id = unicode(part.pk),
+            content_type = PART_CT,
+            format = 'xml',
+            serialized_data = serialized_data,
+            object_repr = unicode(part)
+        )
+do_nothing()

@@ -289,11 +289,13 @@ class Part(models.Model):
 
     objects = PartManager()
 
-    def role_or_unknown(self):
-        return self.role or 'Unknown'
+    def role_or_unknown(self, lowercase=False):
+        if self.role: return self.role
+        if lowercase: return 'unknown'
+        return 'Unknown'
 
     def __unicode__(self):
-        return u'%s, %s in %s' % (self.person, self.role, self.production)
+        return u'%s, %s in %s' % (self.person, self.role_or_unknown(True), self.production)
 
     def cast_string(self):
         if self.cast == 1:

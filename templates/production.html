@@ -62,8 +62,16 @@
 {% if cast or crew or other %}
 </table>
 {% else %}
+
+{% ifequal production.source_type "Birmingham Libraries" %}
+<p>No cast initially in the data from Birmingham Libraries; do check to see if someone has
+<a href="{{ production.get_absolute_url }}/corrected">added some information</a>,
+or please <a href="{{ production.get_edit_url }}">do add it to the site</a>.</p>
+{% else %}
 <p>Currently unknown; if you can provide some information about this production, please
 <a href="{{ production.get_edit_url }}">do add it to the site</a>.</p>
+{% endifequal %}
+
 {% endif %}
 
 <h2 id="observations" class="no-descenders"><!-- Anecdotes &amp; -->Observations</h2>
@@ -162,8 +170,15 @@ by <a href="{{ production.company.get_absolute_url }}">{{ production.company|pre
 <li><a rel="nofollow" href="{{ production.url }}">Production website</a></li>
 {% endif %}
 <li><a href="#observations">{% if comment_count %}Observations ({{ comment_count }}){% else %}Add observation{% endif %}</a>
-{% ifequal production.source_type "Other" %}
 <li id="edit-link"><a href="{{ production.get_edit_url }}?js=0">Edit this production</a>
+{% ifequal production.source_type "Birmingham Libraries" %}
+{% if corrected %}
+<li>Viewing additions and corrections to this production.
+<a href="{{ production.get_absolute_url }}">View original Birmingham Library data</a>
+{% else %}
+<li>Production data sourced from Birmingham Libraries will always show their initial data
+by default. <a href="{{ production.get_absolute_url }}/corrected">View user corrections and additions to this production</a>
+{% endif %}
 {% endifequal %}
 
 {% if seen %}

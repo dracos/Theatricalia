@@ -1,6 +1,7 @@
 import re
 import urllib
 
+from django.core import serializers
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.forms.models import modelformset_factory, inlineformset_factory
@@ -10,6 +11,7 @@ from django.http import Http404, HttpResponseRedirect, HttpResponsePermanentRedi
 from django.utils import simplejson
 from django.conf import settings
 
+from reversion.models import Version
 from utils import base32_to_int
 from shortcuts import render, check_url, UnmatchingSlugException
 from models import Production, Part, Place as ProductionPlace, Visit, ProductionCompany
@@ -44,7 +46,10 @@ def production_company_short_url(request, company_id):
         company = e.args[0]
     return HttpResponsePermanentRedirect(company.get_absolute_url())
 
-def production(request, play_id, play, production_id):
+def production_corrected(request, play_id, play, production_id):
+    return production(request, play_id, play, production_id, okay=True)
+
+def production(request, play_id, play, production_id, okay=False):
     try:
         production = check_parameters(play_id, play, production_id)
     except UnmatchingSlugException, e:
@@ -72,17 +77,41 @@ def production(request, play_id, play, production_id):
     except:
         seen = None
 
+    if production.source_type() == 'Birmingham Libraries' and not okay:
+        # Have to use revisions, magic number, to show what it was at the start...
+        # Sorting has to be done yucky, as it's all serialized. Lucky there won't be many objects to a page ever hopefully!
+        def fetch_from_history(q):
+            originals = Version.objects.filter(revision=19230, object_id__in=q)
+            parts = []
+            for o in originals:
+                for object in serializers.deserialize('xml', o.serialized_data):
+                    part = object.object
+                    parts.append( (part.start_date, part.order, part.role, part.person.last_name, part.person.first_name, part) )
+            parts.sort()
+            parts = [ p[5] for p in parts ]
+            return parts
+        cast = fetch_from_history( production.part_set.filter(cast=True) )
+        crew = fetch_from_history( production.part_set.filter(cast=False) )
+        other = fetch_from_history( production.part_set.filter(cast__isnull=True) )
+        corrected = False
+    else:
+        cast = production.part_set.filter(cast=True).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name')
+        crew = production.part_set.filter(cast=False).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name')
+        other = production.part_set.filter(cast__isnull=True).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name')
+        corrected = True
+        
     return render(request, 'production.html', {
         'production': production,
         'places': production.place_set.order_by('start_date', 'press_date'),
 #        'production_form': production_form,
 #        'production_formset': formset,
-        'cast': production.part_set.filter(cast=True).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name'),
-        'crew': production.part_set.filter(cast=False).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name'),
-        'other': production.part_set.filter(cast__isnull=True).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name'),
+        'cast': cast,
+        'crew': crew,
+        'other': other,
         'photo_form': photo_form,
         'seen': seen,
         'flickr': flickr,
+        'corrected': corrected,
     })
 
 @login_required
