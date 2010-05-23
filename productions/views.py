@@ -16,6 +16,7 @@ from utils import base32_to_int
 from shortcuts import render, check_url, UnmatchingSlugException
 from models import Production, Part, Place as ProductionPlace, Visit, ProductionCompany
 from forms import ProductionForm, ProductionFormNoJS, PartForm, PlaceForm, PlaceFormNoJS, ProductionCompanyForm
+from common.models import Alert
 from plays.models import Play
 from places.models import Place
 from photos.forms import PhotoForm
@@ -142,11 +143,13 @@ def company(request, company_id, company):
     except UnmatchingSlugException, e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 
+    alert = company.alerts.filter(user=request.user)
     past, future = productions_for(company)
     return render(request, 'productions/company.html', {
         'company': company,
         'past': past,
         'future': future,
+        'alert': alert,
     })
 
 def company_productions(request, company_id, company, type):
@@ -177,6 +180,27 @@ def company_edit(request, company_id, company):
         'company': company,
         'form': form,
     })
+
+@login_required
+def company_alert(request, company_id, company, type):
+    try:
+        company = check_url(ProductionCompany, company_id, company)
+    except UnmatchingSlugException, e:
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
+
+    if type == 'add':
+        alert = Alert(user=request.user, content_object=company)
+        try:
+            alert.save()
+        except IntegrityError, e:
+            if e.args[0] != 1062: # Duplicate
+                raise
+        request.user.message_set.create(message=u"Your alert has been added.")
+    elif type == 'remove':
+        company.alerts.filter(user=request.user).delete()
+        request.user.message_set.create(message=u"Your alert has been removed.")
+
+    return HttpResponseRedirect(company.get_absolute_url())
 
 @login_required
 def part_edit(request, play_id, play, production_id, part_id):

@@ -6,6 +6,7 @@ from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 from reversion.models import Version
 
+from common.models import Alert
 from utils import int_to_base32
 from places.models import Place
 from people.models import Person
@@ -65,6 +66,8 @@ class ProductionCompany(models.Model):
     description = models.TextField(blank=True)
     url = models.URLField(blank=True, verbose_name='Website')
 
+    alerts = generic.GenericRelation(Alert)
+
     class Meta:
         ordering = ['name']
         verbose_name_plural = 'production companies'
@@ -79,23 +82,28 @@ class ProductionCompany(models.Model):
     def id32(self):
         return int_to_base32(self.id)
 
+    def construct_url(self, name, *args):
+        return (name, (int_to_base32(self.id), self.slug) + args)
+
     @models.permalink
     def get_absolute_url(self):
-        return ('company', (), {
-            'company_id': self.id32(),
-            'company': self.slug
-        })
+        return self.construct_url('company')
 
     @models.permalink
     def get_edit_url(self):
-        return ('company-edit', (), {
-            'company_id': self.id32(),
-            'company': self.slug
-        })
+        return self.construct_url('company-edit')
 
     @models.permalink
     def get_add_production_url(self):
-        return ('company-production-add', (self.id32(), self.slug))
+        return self.construct_url('company-production-add')
+
+    @models.permalink
+    def get_alert_add_url(self):
+        return self.construct_url('company-alert', 'add')
+
+    @models.permalink
+    def get_alert_remove_url(self):
+        return self.construct_url('company-alert', 'remove')
 
     def get_past_url(self):
         return '%s/past' % self.get_absolute_url()
