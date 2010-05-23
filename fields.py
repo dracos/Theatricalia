@@ -6,6 +6,8 @@ from django import forms
 from django.forms import ValidationError
 from django.utils import dateformat
 
+from south.modelsinspector import add_introspection_rules
+
 class ApproximateDate(object):
     """A date that accepts 0 for month or day to mean we don't know when it is within that month/year"""
     def __init__(self, year, month=0, day=0):
@@ -106,6 +108,17 @@ class ApproximateDateField(models.CharField):
 
 #    def get_db_prep_lookup(self, lookup_type, value):
 #        pass
+
+# South
+add_introspection_rules([
+    (
+        [ ApproximateDateField ],
+        [],
+        {
+            "max_length": ["max_length", {"default": 10}],
+        },
+    ),
+], ["^fields\.ApproximateDateField"])
 
 DATE_INPUT_FORMATS = (
     '%Y-%m-%d', '%d/%m/%Y', '%d/%m/%y', # '2006-10-25', '25/10/2006', '25/10/06'

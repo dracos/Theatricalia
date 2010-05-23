@@ -120,6 +120,7 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     'reversion',
     'countries',
+    'south',
     'theatricalia.common',
     'theatricalia.places',
     'theatricalia.plays',
