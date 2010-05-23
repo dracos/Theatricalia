@@ -178,16 +178,6 @@ def company_edit(request, company_id, company):
         'form': form,
     })
 
-def part_add(name):
-    names = name.split(None, 1)
-    if len(names)==2:
-        first_name, last_name = names
-    else:
-        first_name, last_name = u'', name
-    new_person = Person(first_name=first_name, last_name=last_name)
-    new_person.save()
-    return new_person
-
 @login_required
 def part_edit(request, play_id, play, production_id, part_id):
     production = check_parameters(play_id, play, production_id)
@@ -209,7 +199,7 @@ def part_edit(request, play_id, play, production_id, part_id):
             return HttpResponseRedirect(production.get_edit_cast_url())
         if part_form.is_valid():
             if part_form.cleaned_data.get('person_choice') == 'new':
-                part_form.cleaned_data['person'] = part_add(part_form.cleaned_data['person'])
+                part_form.cleaned_data['person'] = Person.objects.create_from_name(part_form.cleaned_data['person'])
             part_form.save()
             request.user.message_set.create(message="Your changes have been stored; thank you.")
             return HttpResponseRedirect(production.get_edit_cast_url())
@@ -276,7 +266,7 @@ def production_edit_cast(request, play_id, play, production_id):
     if request.method == 'POST':
         if part_form.is_valid():
             if part_form.cleaned_data.get('person_choice') == 'new':
-                part_form.cleaned_data['person'] = part_add(part_form.cleaned_data['person'])
+                part_form.cleaned_data['person'] = Person.objects.create_from_name(part_form.cleaned_data['person'])
             part_form.cleaned_data['production'] = production
             part_form.save()
             request.user.message_set.create(message="Your new part has been added; thank you.")

@@ -7,6 +7,17 @@ from photos.models import Photo
 from sounds.metaphone import dm
 from common.models import Alert
 
+class PersonManager(models.Manager):
+    def create_from_name(self, name):
+        names = name.split(None, 1)
+        if len(names)==2:
+            first_name, last_name = names
+        else:
+            first_name, last_name = u'', name
+        new_person = Person(first_name=first_name, last_name=last_name)
+        new_person.save()
+        return new_person
+
 class Person(models.Model):
     first_name = models.CharField(max_length=50, blank=True, verbose_name='Forenames')
     last_name = models.CharField(max_length=50)
@@ -24,6 +35,7 @@ class Person(models.Model):
     photos = generic.GenericRelation(Photo)
 
     alerts = generic.GenericRelation(Alert)
+    objects = PersonManager()
 
     def __unicode__(self):
         if self.first_name and self.last_name:

@@ -83,10 +83,7 @@ def play_edit(request, play_id, play):
             for author in formset.cleaned_data:
                 if author and author['person']:
                     if author.get('person_choice') == 'new':
-                        first_name, last_name = author['person'].split(None, 1)
-                        new_person = Person(first_name=first_name, last_name=last_name)
-                        new_person.save()
-                        author['person'] = new_person
+                        author['person'] = Person.objects.create_from_name(author['person'])
                     authors.append(author['person'])
             form.cleaned_data['authors'] = authors
             form.save()
