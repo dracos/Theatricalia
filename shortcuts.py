@@ -8,6 +8,7 @@ from django.http import Http404
 from django.db import connection
 from utils import base32_to_int, MistypedIDException
 from merged.models import Redirect
+from people.models import Person
 
 class UnmatchingSlugException(Exception):
     pass
@@ -22,7 +23,10 @@ def check_url(type, id, slug=None):
     except:
         raise Http404('Could not match id %s' % id)
     try:
-        obj = type.objects.get(id=id)
+        if type == Person:
+            obj = type.objects.get(id=id, deleted=False)
+        else:
+            obj = type.objects.get(id=id)
     except:
         content_type = ContentType.objects.get_for_model(type)
         try:

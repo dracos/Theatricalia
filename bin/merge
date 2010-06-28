@@ -104,7 +104,8 @@ elif thing == 'person':
             main.plays.add(play)
         Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
         Redirect.objects.create(old_object_id=alt_id, new_object=main)
-        alt.delete()
+        alt.deleted = True
+        alt.save()
         print "Done"
 
 elif thing == 'production':

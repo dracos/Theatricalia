@@ -33,6 +33,7 @@ class Person(models.Model):
     wikipedia = models.URLField(blank=True, verbose_name='Wikipedia URL')
     web = models.URLField(blank=True, verbose_name='Personal website')
     photos = generic.GenericRelation(Photo)
+    deleted = models.BooleanField(default=False)
 
     alerts = generic.GenericRelation(Alert)
     objects = PersonManager()
