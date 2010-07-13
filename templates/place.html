@@ -4,6 +4,7 @@
 {% block title %}{{ place|prettify|striptags }}{% endblock %}
 
 {% block extra_head %}
+<link rev="canonical" type="text/html" href="http://theatricalia.com/t/{{ place.id32 }}">
 <link href="{{ place.get_feed_url }}" type="application/rss+xml" rel="alternate">
 <script type="text/javascript" src="/static/js/web-maps-lite.js"></script>
 {% endblock %}

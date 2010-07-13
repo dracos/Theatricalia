@@ -5,6 +5,7 @@
 
 {% block extra_head %}
 <link href="{{ play.get_feed_url }}" type="application/rss+xml" rel="alternate">
+<link rev="canonical" type="text/html" href="http://theatricalia.com/p/{{ play.id32 }}">
 {% endblock %}
 
 {% block content %}

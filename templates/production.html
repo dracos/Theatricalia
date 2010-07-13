@@ -3,6 +3,10 @@
 
 {% block title %}Production of {{ production.play.get_title_display|prettify|striptags }}{% endblock %}
 
+{% block extra_head %}
+<link rev="canonical" type="text/html" href="http://theatricalia.com/d/{{ production.id32 }}">
+{% endblock %}
+
 {% block content %}
 
 {% if production.book_tickets and not production.finished %}
