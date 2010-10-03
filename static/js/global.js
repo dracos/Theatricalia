@@ -105,15 +105,26 @@ $(function() {
     $('#map').show();
     $('#map-nojs').hide();
 
-    var cloudmade = new CM.Tiles.CloudMade.Web({key: '28fad93380975f22a60c0f855ce380ca', styleId:5950});
-    map = new CM.Map('map', cloudmade);
-    map.setCenter(new CM.LatLng(53.5, -1.7), 5);
+    //var cloudmade = new CM.Tiles.CloudMade.Web({key: '28fad93380975f22a60c0f855ce380ca', styleId:5950});
+    var os_map = new CM.Tiles.OpenStreetMap.Mapnik({
+        title: 'OS StreetView (GB)',
+        tileUrlTemplate: 'http://#{subdomain}.os.openstreetmap.org/sv/#{zoom}/#{x}/#{y}.png',
+        copyright: 'Ordnance Survey data &copy; Crown<br>copyright and database right 2010.',
+        minZoomLevel: 8,
+        maxZoomLevel: 16
+    });
+    var cloudmade = new CM.Tiles.OpenStreetMap.Mapnik({
+        title: 'OpenStreetMap'
+    });
+    map = new CM.Map('map', [ cloudmade, os_map ]);
+    map.setCenter(new CM.LatLng(53.5, -1.7), 8);
     map.enableScrollWheelZoom();
     map.enableDoubleClickZoom();
     map.enableShiftDragZoom();
-    var topRight = new CM.ControlPosition(CM.TOP_RIGHT, new CM.Size(2, 2));
+    var topRight = new CM.ControlPosition(CM.TOP_RIGHT, new CM.Size(2, 40));
     map.addControl(new CM.LargeMapControl(), topRight);
     map.addControl(new CM.ScaleControl());
+    map.addControl(new CM.TileLayerControl());
 
     tinyIcon = new CM.Icon();
     tinyIcon.image = '/static/i/pin-red.png';
