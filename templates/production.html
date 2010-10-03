@@ -161,7 +161,7 @@ by <a href="{{ production.company.get_absolute_url }}">{{ production.company|pre
     <a href="{{ photo.get_absolute_url }}">{{ photo.photo.extra_thumbnails_tag.feature }}</a>
     </div>
     {% endwith %}
-{% else %}{% if flickr %}
+{% else %}{% if flickr.photos.photo %}
     {% with flickr.photos.photo|random as photo %}
     <div id="photograph-feature">
     <a href="http://www.flickr.com/photos/{{ photo.owner }}/{{ photo.id }}/"><img src="http://farm{{ photo.farm }}.static.flickr.com/{{ photo.server }}/{{ photo.id }}_{{ photo.secret }}_s.jpg" alt="{{ photo.title }}"></a>
@@ -210,6 +210,10 @@ by default.
     {% endif %}
 {% endif %}
 
+{% if user.is_superuser %}
+<li><a href="/admin/productions/production/{{ production.id }}">Admin</a>
+{% endif %}
+
 </ul>
 
 {% if production.seen_by.count %}
@@ -228,7 +232,7 @@ by default.
 <div id="photographs">
 <h2>Photographs</h2>
 
-{% if production.photos.all or flickr %}
+{% if production.photos.all or flickr.photos.photo %}
 <ul>
 {% for photo in production.photos.all %}
 <li><a href="{{ photo.get_absolute_url }}">{{ photo.photo.thumbnail_tag }}</a>

@@ -102,7 +102,7 @@
   <div><a href="{% url home %}"><span></span>Theatricalia</a></div>
 	<form action="/search" method="GET" accept-charset="utf-8" role="search">
 		<label for="search_term">Search:</label>
-		<input type="search" name="q" id="search_term" value="{{ request.GET.q }}">
+		<input type="search" name="q" id="search_term" value="{{ request.GET.q }}" placeholder="Name, postcode, title, ...">
 		<input type="submit" value="Search">
 	</form>
 	<ul id="navigation" role="navigation">

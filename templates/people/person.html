@@ -86,8 +86,8 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 
 {% include 'includes/messages.html' %}
 
-{% if production.photos.all %}
-    {% with production.photos.all|random as photo %}
+{% if person.photos.all %}
+    {% with person.photos.all|random as photo %}
     <div id="photograph-feature">
     <a href="{{ photo.get_absolute_url }}">{{ photo.photo.extra_thumbnails_tag.feature }}</a>
     </div>
