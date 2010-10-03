@@ -8,6 +8,11 @@ from sounds.metaphone import dm
 from common.models import Alert
 
 class PersonManager(models.Manager):
+    def get_query_set(self):
+        qs = super(PersonManager, self).get_query_set()
+        qs = qs.exclude(deleted=True)
+        return qs
+
     def create_from_name(self, name):
         names = name.split(None, 1)
         if len(names)==2:

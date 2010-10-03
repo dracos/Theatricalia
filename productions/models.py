@@ -136,6 +136,7 @@ class Production(models.Model):
     book_tickets = models.URLField(blank=True, verbose_name='Booking URL')
 
     objects = ProductionManager()
+    all_objects = models.Manager()
 
     def id32(self):
         return int_to_base32(self.id)

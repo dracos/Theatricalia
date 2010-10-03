@@ -4,6 +4,7 @@ from reversion.admin import VersionAdmin
 from models import Production, ProductionCompany, Part, Place
 from forms import AutoCompleteMultiValueField
 from plays.models import Play
+from people.models import Person
 from autocomplete.widgets import AutocompleteModelAdmin, ForeignKeySearchInput
 
 class CompanyAdmin(VersionAdmin):
@@ -11,7 +12,23 @@ class CompanyAdmin(VersionAdmin):
         'slug': ('name',),
     }
 
+class PartForm(forms.ModelForm):
+    production = AutoCompleteMultiValueField(
+        Production, '???',
+        fields = (forms.CharField(), forms.ModelChoiceField(Production.objects.all())),
+        widget = ForeignKeySearchInput(Part.production.field.rel, ('title',))
+    )
+    person = AutoCompleteMultiValueField(
+        Person, '???',
+        fields = (forms.CharField(), forms.ModelChoiceField(Person.objects.all())),
+        widget = ForeignKeySearchInput(Part.person.field.rel, ('first_name', 'last_name'))
+    )
+    class Meta:
+        model = Part
+
 class PartAdmin(VersionAdmin, AutocompleteModelAdmin):
+    form = PartForm
+    search_fields = ['person__first_name', 'person__last_name']
     related_search_fields = {
         'production': ('play__title', 'company__name'),
         'person': ('first_name','last_name'),
