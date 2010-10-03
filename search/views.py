@@ -197,6 +197,7 @@ def search_places(name_q, search):
   
 def search_geonames(s):
     try:
+        splurgle
         r = urllib.urlopen('http://ws.geonames.org/searchJSON?isNameRequired=true&style=LONG&q=' + urllib.quote(s.encode('utf-8')) + '&maxRows=20').read()
         r = simplejson.loads(r)
     except:
@@ -216,14 +217,15 @@ def search_around(request, search, type=''):
         lat, lon = m.groups()
         name = request.GET.get('name', '')
     elif validate_postcode(search):
-        loc = urllib.urlopen('http://ernestmarples.com/?p=%s&f=csv' % urllib.quote(search)).read()
-        pc, lat, lon = loc.strip().split(',')
+        r = urllib.urlopen('http://mapit.mysociety.org/postcode/%s' % urllib.quote(search)).read()
+        loc = simplejson.loads(r)
+        pc, lat, lon = loc['postcode'], loc['wgs84_lat'], loc['wgs84_lon']
         name = re.sub('(\d[A-Z]{2})', r' \1', search.upper())
     elif validate_partial_postcode(search):
         try:
-            r = urllib.urlopen('http://ws.geonames.org/postalCodeSearchJSON?country=gb&postalcode=' + urllib.quote(search)).read()
+            r = urllib.urlopen('http://mapit.mysociety.org/postcode/partial/' + urllib.quote(search)).read()
             r = simplejson.loads(r)
-            lat, lon = r['postalCodes'][0]['lat'], r['postalCodes'][0]['lng']
+            lat, lon = r['wgs84_lat'], r['wgs84_lon']
         except:
             r, lat, lon = '', None, None
         name = search.upper()
