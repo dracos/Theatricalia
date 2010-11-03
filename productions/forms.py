@@ -55,7 +55,7 @@ class ProductionForm(forms.ModelForm):
 
     class Meta:
         model = Production
-        exclude = ('parts', 'places', 'seen_by', 'source', 'companies')
+        exclude = ('parts', 'places', 'seen_by', 'source')
 
     def __init__(self, last_modified=None, *args, **kwargs):
         super(ProductionForm, self).__init__(*args, **kwargs)
@@ -181,6 +181,20 @@ class ProductionFormNoJS(ProductionForm):
         self.fields['company'].fields[0].queryset = ProductionCompany.objects
         self.fields['company'].widget.widgets[0].choices = self.fields['company'].fields[0].choices
 
+class CompanyInlineForm(forms.Form):
+    company = AutoCompleteMultiValueField(
+        ProductionCompany, 'name',
+        required = False,
+        fields = (forms.CharField(), forms.ModelChoiceField(ProductionCompany.objects.all())),
+        #widget = ForeignKeySearchInput(Production.company.field.rel, ('name',))
+        #widget = ForeignKeySearchInput(ProductionPlace.place.field.rel, ('name',))
+    )
+
+    def save(self, **kwargs):
+        if not self.cleaned_data['company'].id:
+            self.cleaned_data['company'].save()
+        return super(CompanyInlineForm, self).save(**kwargs)
+
 class PlaceForm(forms.ModelForm):
     place = AutoCompleteMultiValueField(
         PlacePlace, 'name',
@@ -254,7 +268,12 @@ class PartForm(forms.ModelForm):
         for p in people:
             last_production = p.productions.order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))', 'place__press_date')[:1]
             if len(last_production):
-                last = 'last in %s' % last_production[0]
+                part = last_production[0].part_set.filter(person=p)[:1]
+                if len(part):
+                    part = part[0].role
+                else:
+                    part = 'unknown'
+                last = 'last in %s as %s' % (last_production[0], part)
             else:
                 last_play = p.plays.order_by('-id')[:1]
                 if len(last_play):

@@ -31,7 +31,12 @@ class PlayAuthorForm(forms.Form):
         for p in people:
             last_production = p.productions.order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))', 'place__press_date')[:1]
             if len(last_production):
-                last = 'last in %s' % last_production[0]
+                part = last_production[0].part_set.filter(person=p)[:1]
+                if len(part):
+                    part = part[0].role
+                else:
+                    part = 'unknown'
+                last = 'last in %s as %s' % (last_production[0], part)
             else:
                 last_play = p.plays.order_by('-id')[:1]
                 if len(last_play):
