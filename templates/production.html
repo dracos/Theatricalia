@@ -9,6 +9,12 @@
 
 {% block content %}
 
+{% if request.session.merging_production %}
+{% with production as object %}{% with request.session.merging_production as duplicate %}
+{% include 'merged/buttons.html' %}
+{% endwith %}{% endwith %}
+{% endif %}
+
 {% if production.book_tickets and not production.finished %}
 <div class="secondary">
 <p id="book-tickets"><a rel="nofollow" href="{{ production.book_tickets }}">Book tickets</a></p>
@@ -212,6 +218,10 @@ by default.
 
 {% if user.is_superuser %}
 <li><a href="/admin/productions/production/{{ production.id }}">Admin</a>
+{% endif %}
+
+{% if not request.session.merging_production %}
+<li><a rel="nofollow" href="{{ production.get_absolute_url }}/merge">This is a duplicate of another production</a>
 {% endif %}
 
 </ul>

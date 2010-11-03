@@ -5,7 +5,7 @@ from django.core.mail import mail_admins
 from shortcuts import render, check_url
 from places.models import Place
 from people.models import Person
-from productions.models import ProductionCompany
+from productions.models import ProductionCompany, Production
 from plays.models import Play
 from utils import int_to_base32
 
@@ -14,13 +14,16 @@ type_dict = {
     'place': Place,
     'person': Person,
     'company': ProductionCompany,
+    'production': Production,
 }
 
 def merge(request, url):
     try:
         type, id, slug = url.split('/', 2)
+        if type == 'production' and slug == 'merge':
+            slug = None
     except ValueError:
-        raise Http404
+        raise Exception, url
 
     if type in type_dict:
         obj_type = type_dict[type]
@@ -30,7 +33,7 @@ def merge(request, url):
     try:
         object = check_url(obj_type, id, slug)
     except:
-        raise Http404
+        raise Exception
 
     if request.POST.get('stop'):
         if 'merging_' + type in request.session:

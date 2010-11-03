@@ -66,6 +66,7 @@ urlpatterns = patterns('',
     ),
     url('^around/(.*?)/alert/(add|remove)$', common.alert, name='around-alert'),
 
+    url('^play/.*?/(?P<url>production/.*/merge)$', merged.merge),
     url('^(?P<url>(play|person|place|company)/.*)/merge$', merged.merge),
 
     url('^d/(?P<production_id>.+)$', productions.production_short_url),
