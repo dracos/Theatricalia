@@ -82,10 +82,10 @@ class ProductionForm(forms.ModelForm):
             q = Q(title__icontains=s)
 
         for p in Play.objects.filter(q):
-            choices.append( ( p.id, prettify(str(p)) ) )
+            choices.append( ( p.id, prettify(unicode(p)) ) )
         if len(choices) > 1:
             choices.append( ( 'new', prettify('None of these, a new play called \'' + s + '\'') ) )
-        elif str(p) == s:
+        elif unicode(p) == s:
             choices.append( ( 'new', prettify('A new play also called \'' + s + '\'') ) )
         else:
             choices.append( ( 'new', prettify('A new play called \'' + s + '\'') ) )
@@ -273,17 +273,17 @@ class PartForm(forms.ModelForm):
                     part = part[0].role
                 else:
                     part = 'unknown'
-                last = 'last in %s as %s' % (last_production[0], part)
+                last = u'last in %s as %s' % (last_production[0], part)
             else:
                 last_play = p.plays.order_by('-id')[:1]
                 if len(last_play):
                     last = 'author of %s' % last_play[0].get_title_display()
                 else:
                     last = 'nothing yet on this site'
-            choices.append( (p.id, prettify(mark_safe('<a target="_blank" href="' + p.get_absolute_url() + '">' + str(p) + '</a> <small>(new window)</small>, ' + str(last))) ) )
+            choices.append( (p.id, prettify(mark_safe('<a target="_blank" href="' + p.get_absolute_url() + '">' + unicode(p) + '</a> <small>(new window)</small>, ' + unicode(last))) ) )
         if len(choices) > 1:
             choices.append( ( 'new', prettify('None of these, a new person called \'' + s + '\'') ) )
-        elif str(p) == s:
+        elif unicode(p) == s:
             choices.append( ( 'new', prettify('A new person also called \'' + s + '\'') ) )
         else:
             choices.append( ( 'new', prettify('A new person called \'' + s + '\'') ) )
