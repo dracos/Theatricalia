@@ -15,11 +15,13 @@
 {{ formset.management_form }}
 
 {% for form in formset.forms %}
-<div class="author">
+<div class="author_errors">
 {% if form.person_choice.errors or form.person_choice.is_hidden %}
 {{ form.person_choice.errors }}
 {{ form.person_choice }}
 {% endif %}
+</div>
+<div class="author">
 
 {{ form.person.errors }}
 {{ form.person.label_tag }} {{ form.person }}
