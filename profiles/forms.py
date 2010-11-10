@@ -14,7 +14,7 @@ class ProfileForm(forms.ModelForm):
 
 class RegistrationForm(forms.ModelForm):
     name = forms.CharField(label="Name", max_length=100, error_messages = {'required':'Please provide your name.'})
-    email = forms.EmailField(label="Email", error_messages = {'required': 'Please enter your email address.'} )
+    unicorn = forms.EmailField(label="Email", error_messages = {'required': 'Please enter your email address.'} )
     username = forms.RegexField(label="Username", max_length=30, regex=r'^\w+$',
         #help_text = "Required. 30 characters or fewer. Alphanumeric characters only (letters, digits and underscores).",
         error_message = "This value must contain only letters, numbers and underscores.")
@@ -30,12 +30,12 @@ class RegistrationForm(forms.ModelForm):
         model = User
         fields = ("username", "name", "email", "password")
 
-    def clean_email(self):
-        email = self.cleaned_data["email"]
+    def clean_unicorn(self):
+        unicorn = self.cleaned_data["unicorn"]
         try:
-            User.objects.get(email=email)
+            User.objects.get(email=unicorn)
         except User.DoesNotExist:
-            return email
+            return unicorn
         raise forms.ValidationError("Someone is already registered with the box office with that email address.")
 
     def clean_username(self):
@@ -47,10 +47,11 @@ class RegistrationForm(forms.ModelForm):
         raise forms.ValidationError("A user with that username already exists.")
 
     def save(self):
+        self.cleaned_data['email'] = self.cleaned_data['unicorn']
         user = super(RegistrationForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password"])
         user.save()
-        Profile.objects.create(user=user)
+        Profile.objects.create(user=user, url=self.cleaned_data['website'])
         return user
 
 class AuthenticationForm(DjangoAuthenticationForm):
