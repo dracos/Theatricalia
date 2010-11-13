@@ -1,0 +1,73 @@
+#!/usr/bin/python
+#
+# all-brum imports all the theatre information from allbrum.co.uk, yay
+# I used a db dump so this hasn't been tested/used yet.
+
+sys.exit()
+
+import urllib, re, os, md5, time
+from datetime import date, datetime
+from xml.dom import minidom
+
+def cache_get(url):
+    """Fetches a URL and caches it for a day"""
+    cache_file = '../data/all-brum/%s' % md5.new(url).hexdigest()
+    if os.path.exists(cache_file) and time.time()-os.path.getmtime(cache_file)<86400:
+        page = open(cache_file).read()
+    else:
+        page = urllib.urlopen(url).read()
+        open(cache_file, 'w').write(page)
+    return page
+
+def xml_elt(node, str):
+    return node.getElementsByTagName(str)[0].firstChild.data
+
+# Fetch first page to find out last page
+page = cache_get('http://www.allbrum.co.uk/genres/theatre')
+last = re.findall('<a href="/genres/theatre/page/\d+">(\d+)</a>', page)[-1]
+
+# Fetch last page to see how far in the future it currently goes
+page = cache_get('http://www.allbrum.co.uk/genres/theatre/page/' + last)
+last_date = re.findall('<h2 class="listing">.*?<a href="/(.*?)">', page)[-1]
+last_date = datetime.strptime(last_date, "%Y/%m/%d")
+
+today = date.today()
+
+for year in range(today.year, last_date.year + 1):
+    start_month = 1 # today.month if year == today.year else 1
+    end_month = last_date.month if year == last_date.year else 12
+    for month in range(start_month, end_month + 1):
+        page = cache_get('http://www.allbrum.co.uk/%d/%02d/theatre.rss' % (year, month))
+        xml = minidom.parseString(page)
+        for item in xml.getElementsByTagName('item'):
+            pubDate = xml_elt(item, 'pubDate')
+            link = xml_elt(item, 'link')
+
+            title = xml_elt(item, 'title')
+            title, dates = title.rsplit(',', 1)
+            if '-' in dates:
+                m = re.match('\s*(.*?)\s*-\s*(.*?)\s*$', dates)
+                start_date, end_date = m.groups()
+            else:
+                start_date = end_date = dates.strip()
+
+            try:
+                start_date = datetime.strptime(start_date, '%d %B %Y').date()
+            except:
+                start_date = datetime.strptime('%s %d' % (start_date, today.year), '%d %B %Y').date()
+            if start_date.year != year or start_date.month != month:
+                continue
+            try:
+                end_date = datetime.strptime(end_date, '%d %B %Y').date()
+            except:
+                end_date = datetime.strptime('%s %d' % (end_date, today.year), '%d %B %Y').date()
+
+            desc = xml_elt(item, 'description')
+            m = re.match('<h3>.*?Theatre</a> at <a href="(.*?)">(.*?)</a>', desc)
+            venue_url, venue = m.groups()
+            desc = re.sub('<h3>.*?</h3>', '', desc)
+            desc = re.sub('<p></p>', '', desc)
+        
+            print ('%s %s-%s %s' % (title, start_date, end_date, link)).encode('utf-8')
+            print ('%s %s' % (venue, venue_url)).encode('utf-8')
+            print
