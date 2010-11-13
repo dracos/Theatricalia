@@ -1,4 +1,5 @@
 import time, re, datetime
+import copy
 from datetime import date
 from widgets import PrettyDateInput
 from django.db import models
@@ -9,16 +10,22 @@ from django.utils import dateformat
 from south.modelsinspector import add_introspection_rules
 
 class ApproximateDate(object):
-    """A date that accepts 0 for month or day to mean we don't know when it is within that month/year"""
+    """A date that accepts 0 for month or day to mean we don't know when it is within that month/year.
+       Also works with BC dates."""
     def __init__(self, year, month=0, day=0):
+        self.bc = False
+        absyear = year
+        if year < 0:
+            absyear = -year
+            self.bc = True
         if year and month and day:
-            d = date(year, month, day)
+            d = date(absyear, month, day)
         elif year and month:
-            d = date(year, month, 1)
+            d = date(absyear, month, 1)
         elif year and day:
             raise ValueError("You cannot specify just a year and a day")
         elif year:
-            d = date(year, 1, 1)
+            d = date(absyear, 1, 1)
         else:
             raise ValueError("You must specify a year")
         self.year = year
@@ -31,15 +38,21 @@ class ApproximateDate(object):
         elif self.year and self.month:
             return "%04d-%02d-00" % (self.year, self.month)
         elif self.year:
-            return "%04d-00-00" % self.year
+            return "%04d-00-00" % (self.year)
 
     def __str__(self):
+        absself = copy.copy(self)
+        if absself.year < 0:
+            absself.year = -absself.year
         if self.year and self.month and self.day:
-            return dateformat.format(self, "jS F Y")
+            out = dateformat.format(absself, "jS F Y")
         elif self.year and self.month:
-            return dateformat.format(self, "F Y")
+            out = dateformat.format(absself, "F Y")
         elif self.year:
-            return dateformat.format(self, "Y")
+            out = dateformat.format(absself, "Y")
+        if self.bc:
+            out += " BC"
+        return out
 
     def __lt__(self, other):
         if other is None or (self.year, self.month, self.day) >= (other.year, other.month, other.day):
@@ -61,7 +74,7 @@ class ApproximateDate(object):
             return False
         return True
 
-ansi_date_re = re.compile(r'^\d{4}-\d{1,2}-\d{1,2}$')
+ansi_date_re = re.compile(r'^-?\d{4}-\d{1,2}-\d{1,2}$')
 
 class ApproximateDateField(models.CharField):
     __metaclass__ = models.SubfieldBase
@@ -79,7 +92,7 @@ class ApproximateDateField(models.CharField):
         if not ansi_date_re.search(value):
             raise ValidationError('Enter a valid date in YYYY-MM-DD format.')
 
-        year, month, day = map(int, value.split('-'))
+        year, month, day = map(int, value.rsplit('-', 2))
         try:
             return ApproximateDate(year, month, day)
         except ValueError, e:
@@ -136,6 +149,14 @@ YEAR_INPUT_FORMATS = (
     '%Y',                               # '2006'
 )
 
+BC_DATE_INPUT_FORMATS =  [ i.replace('%Y', '%Y BC') for i in DATE_INPUT_FORMATS ]
+BC_MONTH_INPUT_FORMATS = [ i.replace('%Y', '%Y BC') for i in MONTH_INPUT_FORMATS ]
+BC_YEAR_INPUT_FORMATS =  [ i.replace('%Y', '%Y BC') for i in YEAR_INPUT_FORMATS ]
+
+BC_DATE_INPUT_FORMATS.extend(  [ i.replace('%Y', '-%Y') for i in DATE_INPUT_FORMATS ] )
+BC_MONTH_INPUT_FORMATS.extend( [ i.replace('%Y', '-%Y') for i in MONTH_INPUT_FORMATS ] )
+BC_YEAR_INPUT_FORMATS.extend(  [ i.replace('%Y', '-%Y') for i in YEAR_INPUT_FORMATS ] )
+
 class ApproximateDateFormField(forms.fields.Field):
     def __init__(self, max_length=10, *args, **kwargs):
         super(ApproximateDateFormField, self).__init__(*args, **kwargs)
@@ -149,7 +170,8 @@ class ApproximateDateFormField(forms.fields.Field):
         value = re.sub('(?<=\d)(st|nd|rd|th)', '', value.strip())
         for format in DATE_INPUT_FORMATS:
             try:
-                return ApproximateDate(*time.strptime(value, format)[:3])
+                match = time.strptime(value, format)
+                return ApproximateDate(match[0], match[1], match[2])
             except ValueError:
                 continue
         for format in MONTH_INPUT_FORMATS:
@@ -160,7 +182,26 @@ class ApproximateDateFormField(forms.fields.Field):
                 continue
         for format in YEAR_INPUT_FORMATS:
             try:
-                return ApproximateDate(time.strptime(value, format)[0], 0, 0)
+                match = time.strptime(value, format)
+                return ApproximateDate(match[0], 0, 0)
+            except ValueError:
+                continue
+        for format in BC_DATE_INPUT_FORMATS:
+            try:
+                match = time.strptime(value, format)
+                return ApproximateDate(-match[0], match[1], match[2])
+            except ValueError:
+                continue
+        for format in BC_MONTH_INPUT_FORMATS:
+            try:
+                match = time.strptime(value, format)
+                return ApproximateDate(-match[0], match[1], 0)
+            except ValueError:
+                continue
+        for format in BC_YEAR_INPUT_FORMATS:
+            try:
+                match = time.strptime(value, format)
+                return ApproximateDate(-match[0], 0, 0)
             except ValueError:
                 continue
         raise ValidationError('Please enter a valid date.')
