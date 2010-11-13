@@ -8,6 +8,7 @@ from common.templatetags.prettify import prettify
 
 class PlayEditForm(forms.ModelForm):
 	authors = forms.CharField(widget=forms.HiddenInput)
+    #description = forms.CharField(widget=forms.Textarea(attrs={'cols':50, 'rows':10}))
 
 	class Meta:
 		model = Play
