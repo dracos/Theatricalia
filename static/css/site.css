@@ -42,6 +42,19 @@ div#banner {
     color: #ffffff;
 }
 
+div#banner_big {
+    position: absolute;
+    top: 0; right: 0; left: 0;
+    background-color: #6782dc;
+    background-color: #3752ac;
+    background-color: #dc5237;
+    text-align: center;
+    font-weight: bold;
+    font-size: 75%;
+    padding: 2px 5px;
+    color: #ffffff;
+}
+
 p {
 	margin: 1.5em 0;
 	line-height: 1.5;

@@ -27,7 +27,10 @@ AUTH_PROFILE_MODULE = 'profiles.profile'
 
 APPEND_SLASH = False
 
-DEBUG = False
+if 'staging' in OUR_ROOT:
+    DEBUG = True
+else:
+    DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
