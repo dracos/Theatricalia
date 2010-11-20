@@ -14,8 +14,8 @@ from django.conf import settings
 from reversion.models import Version
 from utils import base32_to_int
 from shortcuts import render, check_url, UnmatchingSlugException
-from models import Production, Part, Place as ProductionPlace, Visit, ProductionCompany
-from forms import ProductionForm, ProductionFormNoJS, PartForm, PlaceForm, PlaceFormNoJS, ProductionCompanyForm
+from models import Production, Part, Place as ProductionPlace, Visit, ProductionCompany, Production_Companies
+from forms import ProductionForm, PartForm, CompanyInlineForm, PlaceForm, ProductionCompanyForm
 from common.models import Alert
 from plays.models import Play
 from places.models import Place
@@ -242,19 +242,19 @@ def production_edit(request, play_id, play, production_id):
     except UnmatchingSlugException, e:
         return HttpResponsePermanentRedirect(e.args[0].get_edit_url())
 
-    if request.GET.get('js', '1')=='1':
-        production_form = ProductionForm
-        place_form = PlaceForm
-    else:
-        production_form = ProductionFormNoJS
-        place_form = PlaceFormNoJS
+    production_form = ProductionForm(data=request.POST or None, instance=production)
 
-    production_form = production_form(data=request.POST or None, instance=production)
-
-    ProductionPlaceFormSet = inlineformset_factory( Production, ProductionPlace, extra=1, form=place_form )
-    formset = ProductionPlaceFormSet(
+    ProductionPlaceFormSet = inlineformset_factory( Production, ProductionPlace, extra=1, form=PlaceForm )
+    place_formset = ProductionPlaceFormSet(
         data = request.POST or None,
         prefix = 'place',
+        instance = production,
+    )
+
+    ProductionCompanyFormSet = inlineformset_factory( Production, Production_Companies, extra=1, form=CompanyInlineForm )
+    companies_formset = ProductionCompanyFormSet(
+        data = request.POST or None,
+        prefix = 'company',
         instance = production,
     )
 
@@ -262,15 +262,17 @@ def production_edit(request, play_id, play, production_id):
         if request.POST.get('disregard'):
             request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
             return HttpResponseRedirect(production.get_absolute_url())
-        if production_form.is_valid() and formset.is_valid():
+        if production_form.is_valid() and place_formset.is_valid() and companies_formset.is_valid():
             production_form.save()
-            formset.save()
+            place_formset.save()
+            companies_formset.save()
             request.user.message_set.create(message="Your changes have been stored; thank you.")
             return HttpResponseRedirect(production.get_absolute_url())
 
     return render(request, 'productions/edit.html', {
         'form': production_form,
-        'formset': formset,
+        'place_formset': place_formset,
+        'companies_formset': companies_formset,
         'production': production,
         'places': production.place_set.order_by('start_date', 'press_date'),
     })
@@ -308,27 +310,28 @@ def production_add(request, play=None, place=None, company=None):
 
     initial = {}
     if play: initial['play'] = play.id
-    if company: initial['company'] = company.id
 
-    if request.GET.get('js', '1')=='1':
-        production_form = ProductionForm
-        place_form = PlaceForm
-    else:
-        production_form = ProductionFormNoJS
-        place_form = PlaceFormNoJS
+    production_form = ProductionForm(data=request.POST or None, initial=initial)
 
-    production_form = production_form(data=request.POST or None, initial=initial)
-
-    ProductionPlaceFormSet = modelformset_factory( ProductionPlace, form=place_form )
-    formset = ProductionPlaceFormSet(
+    ProductionPlaceFormSet = modelformset_factory( ProductionPlace, form=PlaceForm )
+    place_formset = ProductionPlaceFormSet(
         data = request.POST or None,
         prefix = 'place',
         queryset = ProductionPlace.objects.none()
     )
 
+    ProductionCompanyFormSet = modelformset_factory( Production_Companies, form=CompanyInlineForm )
+    companies_formset = ProductionCompanyFormSet(
+        data = request.POST or None,
+        prefix = 'company',
+        queryset = Production_Companies.objects.none()
+    )
+
     # Yucky, but no way to pass initial to a model formset XXX
     if place:
-        formset.forms[0].initial['place'] = place.id
+        place_formset.forms[0].initial['place'] = place.id
+    if company:
+        companies_formset.forms[0].initial['productioncompany'] = company.id
 
     if request.method == 'POST':
         if request.POST.get('disregard'):
@@ -336,11 +339,14 @@ def production_add(request, play=None, place=None, company=None):
             if play: return HttpResponseRedirect(play.get_absolute_url())
             if company: return HttpResponseRedirect(company.get_absolute_url())
             if place: return HttpResponseRedirect(place.get_absolute_url())
-        if production_form.is_valid() and formset.is_valid():
+        if production_form.is_valid() and place_formset.is_valid() and companies_formset.is_valid():
             production = production_form.save()
-            for form in formset.forms:
+            for form in place_formset.forms:
                 form.cleaned_data['production'] = production
-            formset.save()
+            for form in companies_formset.forms:
+                form.cleaned_data['production'] = production
+            place_formset.save()
+            companies_formset.save()
             request.user.message_set.create(message="Your addition has been stored; thank you. If you know members of the cast or crew, please feel free to add them now.")
             url = production.get_edit_cast_url()
             if request.POST.get('initial_person'):
@@ -349,7 +355,8 @@ def production_add(request, play=None, place=None, company=None):
 
     return render(request, 'productions/add.html', {
         'place': place,
-        'formset': formset,
+        'place_formset': place_formset,
+        'companies_formset': companies_formset,
         'play': play,
         'company': company,
         'form': production_form,

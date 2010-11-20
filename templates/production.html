@@ -132,9 +132,8 @@ that you think others may be interested in, please
 
 <p>This is a production of the play
 <a href="{{ production.play.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.play.get_authors_display %}
-(by {{ production.play.get_authors_display }}){%endif %}{% if production.company %}
-by <a href="{{ production.company.get_absolute_url }}">{{ production.company|prettify }}</a>{% endif %},
-
+(by {{ production.play.get_authors_display }}){%endif %}
+{% if production.get_companies_display %} by {{ production.get_companies_display }}{% endif %},
 {% include 'productions/sidebar_bit.html' %}
 
 {% if production.source %}

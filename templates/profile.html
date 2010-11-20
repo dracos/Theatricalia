@@ -27,7 +27,7 @@
 {% for s in seen %}
 <li><a href="{{ s.production.get_absolute_url }}">{{ s.production.play.get_title_display|prettify }}</a>,
 {{ s.production.place_summary|prettify }},
-{{ s.production.company|prettify }},
+{{ s.production.get_companies_display }},
 {{ s.production.date_summary|prettify }}
 {% empty %}
 <li>This user has not listed any production as yet.</li>

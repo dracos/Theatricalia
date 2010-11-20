@@ -7,7 +7,7 @@ from django.db import models
 class Migration(DataMigration):
 
     def forwards(self, orm):
-        for production in orm.Production.objects.exclude(company__isnull):
+        for production in orm.Production.objects.exclude(company__isnull=True):
             production.companies.add(production.company)
             production.company = None
             production.save()

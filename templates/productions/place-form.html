@@ -1,5 +1,5 @@
-{{ formset.management_form }}
-{% for f in formset.forms %}
+{{ place_formset.management_form }}
+{% for f in place_formset.forms %}
 <div class="place">
     <p>{{ f.place.label_tag }} {{ f.place }}</p>
     <p>{{ f.start_date.label_tag }} {{ f.start_date }}

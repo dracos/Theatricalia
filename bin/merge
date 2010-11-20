@@ -54,7 +54,8 @@ elif thing == 'company':
     print "Merging %s into %s" % (alt, main)
     confirm = raw_input('Are you sure? ')
     if confirm in ('Y','y','Yes','yes'):
-        Production.objects.filter(company=alt).update(company=main)
+        for company in alt.companies.all():
+            main.companies.add(company)
         for attr in ('description',):
             if alt.__dict__[attr] and not main.__dict__[attr]:
                 main.__dict__[attr] = alt.__dict__[attr]

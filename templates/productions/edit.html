@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
-{% block title %}Editing {{ production.company|default:"" }} production of {{ production.play.get_title_display|prettify|striptags }}{% endblock %}
+{% block title %}Editing {{ production.get_companies_display|striptags }} production of {{ production.play.get_title_display|prettify|striptags }}{% endblock %}
 
 {% block content %}
 
@@ -26,7 +26,12 @@
 or description, you can do that from the
 <a href="{{ production.play.get_edit_url }}">play&rsquo;s edit page</a>
 (you&rsquo;ll lose any changes you&rsquo;ve made to this page).</small></p>
-<p>{{ form.company.label_tag }} {{ form.company }}</p>
+
+{% for err in companies_formset.errors %}
+{{ err }}
+{% endfor %}
+{% include 'productions/company-form.html' %}
+
 <p>{{ form.description.label_tag }} {{ form.description }}</p>
 <p class="help_text"><small>This should be about the <em>production</em>;
 to give a description of the <em>play</em>, please visit the play&rsquo;s edit
@@ -44,7 +49,7 @@ if possible.</small></p>
 
 <p>Use the empty form to add a new place for this production.</p>
 
-{% for err in formset.errors %}
+{% for err in place_formset.errors %}
 {{ err }}
 {% endfor %}
 

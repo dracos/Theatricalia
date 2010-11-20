@@ -17,7 +17,7 @@
 <li>
 {% if production.part__role__concatenate %}
 {{ production.part__role__concatenate }}, {% endif %}
-<a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.company %}, <a href="{{ production.company.get_absolute_url }}">{{ production.company|prettify }}</a>{% endif %}
+<a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.get_companies_display %}, {{ production.get_companies_display }}{% endif %}
 <span>{{ production.date_summary|prettify }},
 {% ifequal production.places.count 1 %}
 <a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.

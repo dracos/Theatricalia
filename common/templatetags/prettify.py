@@ -92,13 +92,13 @@ def prettify_list(list):
     num = len(list)
     list = [ prettify(x) for x in list ]
     if num > 2:
-        s = ', '.join(list[:num-2]) + ', ' + ', and '.join(list[num-2:])
+        s = u', '.join(list[:num-2]) + u', ' + u', and '.join(list[num-2:])
     elif num == 2:
-        s = ' and '.join(list)
+        s = u' and '.join(list)
     elif num == 1:
         s = list[0]
     else:
-        s = ''
+        s = u''
     return s
 
 @register.filter

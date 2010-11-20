@@ -1,0 +1,13 @@
+{{ companies_formset.management_form }}
+{% for f in companies_formset.forms %}
+<div class="company">
+    {{ f.productioncompany.label_tag }} {{ f.productioncompany }}
+    {% if f.DELETE %}
+    {{ f.DELETE }} <small>&ndash; select to remove</small>
+    {% endif %}
+    {{ f.production }}
+    {{ f.id }}
+</div>
+{% endfor %}
+
+

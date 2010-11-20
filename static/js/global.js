@@ -72,6 +72,37 @@ $(function() {
         })
     );
 
+    $('form#edit .company:last').after(
+        $('<p style="margin-left:7.5em"><small><a href="">Add another company</a></small></p>').click(function(){
+            var last_form = $('form#edit .company:last');
+            var newRow = last_form.clone().insertAfter(last_form);
+            var total = $('#id_company-TOTAL_FORMS').val();
+            var old_id = '-' + (total-1) + '-';
+            var new_id = '-' + total + '-';
+            newRow.find(':input').each(function(){
+                var name = $(this).attr('name').replace(old_id, new_id);
+                var id = 'id_' + name;
+                $(this).attr({'name': name, 'id': id}).val('');
+            });
+            newRow.find('label').each(function(){
+                var newFor = $(this).attr('for').replace(old_id, new_id);
+                $(this).attr('for', newFor);
+            });
+            total++;
+            $('#id_company-TOTAL_FORMS').val(total);
+
+            autocomplete_add({
+                lookup: "#id_company-" + (total-1) + "-company_0",
+                id: '#id_company-' + (total-1) + '-company_1',
+                search_fields: 'name',
+                app_label: 'productions',
+                model_name: 'productioncompany'
+            });
+
+            return false;
+        })
+    );
+
     // Add another author when editing play
     $('form#edit .author:last').after(
         $('<p style="margin-left:7.5em"><small><a href="">Add another author</a></small></p>').click(function(){

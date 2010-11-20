@@ -1,12 +1,14 @@
 from datetime import date
 from django.db import models
 from django.utils import dateformat
+from django.utils.safestring import mark_safe
 from django.contrib.contenttypes import generic
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 from reversion.models import Version
 
 from common.models import Alert
+from common.templatetags.prettify import prettify
 from utils import int_to_base32
 from places.models import Place
 from people.models import Person
@@ -123,8 +125,7 @@ class ProductionManager(models.Manager):
 
 class Production(models.Model):
     play = models.ForeignKey(Play, related_name='productions')
-    company = models.ForeignKey(ProductionCompany, related_name='productions', blank=True, null=True)
-    companies = models.ManyToManyField(ProductionCompany, related_name='productions_new', blank=True, null=True)
+    companies = models.ManyToManyField(ProductionCompany, through='Production_Companies', related_name='productions', blank=True, null=True)
     places = models.ManyToManyField(Place, through='Place', related_name='productions', blank=True)
     parts = models.ManyToManyField(Person, through='Part', related_name='productions', blank=True)
     photos = generic.GenericRelation(Photo)
@@ -170,9 +171,7 @@ class Production(models.Model):
         return self.url_components('production-seen', type='remove')
 
     def __unicode__(self):
-        producer = ''
-        if self.company:
-            producer = u"%s " % self.company
+        producer = self.get_companies_display(html=False)
 
         places = self.place_summary()
         if places == 'Unknown location':
@@ -221,8 +220,24 @@ class Production(models.Model):
             place = u'Unknown location'
         return place
         
+    def get_companies_display(self, html=True):
+        num = self.companies.count()
+        if html:
+            companies = map(lambda x: u'<a href="%s">%s</a>' % (x.get_absolute_url(), prettify(x)), self.companies.all())
+        else:
+            companies = [ unicode(x) for x in self.companies.all() ]
+        if num > 2:
+            str = u', '.join(companies[:num-2]) + u', ' + u', and '.join(companies[num-2:])
+        elif num == 2:
+            str = u' and '.join(companies)
+        elif num == 1:
+            str = companies[0]
+        else:
+            str = u''
+        return mark_safe(str)
+        
     def title(self):
-        return self.company or ''
+        return self.get_companies_display() or ''
 
     def creator(self):
         if self.source: return ''
@@ -243,6 +258,10 @@ class Production(models.Model):
         if 'Birmingham Libraries' in self.source:
             return 'Birmingham Libraries'
         return 'Other'
+
+class Production_Companies(models.Model):
+    production = models.ForeignKey(Production)
+    productioncompany = models.ForeignKey(ProductionCompany, verbose_name='company')
 
 #class Performance(models.Model):
 #    production = models.ForeignKey(Production)

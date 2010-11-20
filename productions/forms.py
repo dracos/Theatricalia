@@ -4,7 +4,7 @@ from django.utils.safestring import mark_safe
 from django.forms.formsets import BaseFormSet
 from django.db.models import Q
 
-from models import Production, Part, Place, ProductionCompany
+from models import Production, Part, Place, ProductionCompany, Production_Companies
 from plays.models import Play
 from places.models import Place as PlacePlace
 from people.models import Person
@@ -43,19 +43,19 @@ class ProductionForm(forms.ModelForm):
         widget = ForeignKeySearchInput(Production.play.field.rel, ('title',))
     )
     play_choice = forms.ChoiceField(label='Play', widget=forms.RadioSelect(), required=False)
-    company = AutoCompleteMultiValueField(
-        ProductionCompany, 'name',
-        required = False,
-        fields = (forms.CharField(), forms.ModelChoiceField(ProductionCompany.objects.all())),
-        widget = ForeignKeySearchInput(Production.company.field.rel, ('name',))
-    )
+    #company = AutoCompleteMultiValueField(
+    #    ProductionCompany, 'name',
+    #    required = False,
+    #    fields = (forms.CharField(), forms.ModelChoiceField(ProductionCompany.objects.all())),
+    #    widget = ForeignKeySearchInput(Production.company.field.rel, ('name',))
+    #)
     description = forms.CharField(required=False, widget=forms.Textarea(attrs={'cols': 40, 'rows':5}))
     url = forms.URLField(label='Web page', required=False, widget=forms.TextInput(attrs={'size': 40}))
     book_tickets = forms.URLField(label='Booking URL', required=False, widget=forms.TextInput(attrs={'size': 40}))
 
     class Meta:
         model = Production
-        exclude = ('parts', 'places', 'seen_by', 'source')
+        exclude = ('parts', 'places', 'seen_by', 'source', 'companies')
 
     def __init__(self, last_modified=None, *args, **kwargs):
         super(ProductionForm, self).__init__(*args, **kwargs)
@@ -116,83 +116,29 @@ class ProductionForm(forms.ModelForm):
     def save(self, **kwargs):
         if not self.cleaned_data['play'].id:
             self.cleaned_data['play'].save()
-        if self.cleaned_data['company'] and not self.cleaned_data['company'].id:
-            self.cleaned_data['company'].save()
+        #if self.cleaned_data['company'] and not self.cleaned_data['company'].id:
+        #    self.cleaned_data['company'].save()
         return super(ProductionForm, self).save(**kwargs)
 
-# All the non-JavaScript drop-down stuff
-
-class ForeignKeySearchInputNoJS(forms.MultiWidget):
-    """
-    A Widget for NOT displaying ForeignKeys in an autocomplete search input 
-    instead in a <select> box.
-    """
-    #def __init__(self, choices=(), model=None, attrs=None):
-    def __init__(self, model=None, attrs=None):
-        self.model = model
-        #widgets = (forms.Select(choices=choices), forms.TextInput(attrs={'size':40}))
-        widgets = (forms.Select, forms.TextInput(attrs={'size':40}))
-        super(ForeignKeySearchInputNoJS, self).__init__(widgets, attrs)
-
-    def decompress(self, value):
-        if value is None:
-            return [ value, '' ]
-        return [ value, '' ]
-
-    def format_output(self, list):
-        name = self.model.__name__
-        name = re.sub('([A-Z])', r' \1', name).lower().strip()
-        return ('<br>Or if it&rsquo;s a new %s, enter it here: ' % name).join(list)
-
-class AutoCompleteNoJSMultiValueField(forms.MultiValueField):
-    def __init__(self, model, column, fields, *args, **kwargs):
-        self.model = model
-        self.column = column
-        #choices = fields[0].choices
-        #widget = ForeignKeySearchInputNoJS(choices=choices, model=model)
-        widget = ForeignKeySearchInputNoJS(model=model)
-        super(AutoCompleteNoJSMultiValueField, self).__init__(fields, widget=widget, *args, **kwargs)
-
-    def compress(self, data_list):
-        if not data_list:
-            return None
-        if data_list[1]:
-            data_list[0] = self.model(**{self.column: data_list[1]})
-        return data_list[0]
-
-class ProductionFormNoJS(ProductionForm):
-    play = AutoCompleteNoJSMultiValueField(
-        Play, 'title',
-        required = False, # It is required, but will be spotted in the clean function
-        fields = (forms.ModelChoiceField(Play.objects.none()), forms.CharField()),
-    )
-    company = AutoCompleteNoJSMultiValueField(
+class CompanyInlineForm(forms.ModelForm):
+    productioncompany = AutoCompleteMultiValueField(
         ProductionCompany, 'name',
-        required = False,
-        fields = (forms.ModelChoiceField(ProductionCompany.objects.none()), forms.CharField()),
+        required = False, label='Company',
+        fields = (forms.CharField(), forms.ModelChoiceField(ProductionCompany.objects.all())),
+        widget = ForeignKeySearchInput(Production_Companies.productioncompany.field.rel, ('name',))
     )
+
+    class Meta:
+        model = Production_Companies
 
     def __init__(self, *args, **kwargs):
-        super(ProductionFormNoJS, self).__init__(*args, **kwargs)
-        self.fields['play'].fields[0].queryset = Play.objects
-        # The above line sets some Select widget that is *not* the one actually printed. I don't understand this yet.
-        # But anyway, put the choices in the *right* widget.
-        self.fields['play'].widget.widgets[0].choices = self.fields['play'].fields[0].choices
-        self.fields['company'].fields[0].queryset = ProductionCompany.objects
-        self.fields['company'].widget.widgets[0].choices = self.fields['company'].fields[0].choices
-
-class CompanyInlineForm(forms.Form):
-    company = AutoCompleteMultiValueField(
-        ProductionCompany, 'name',
-        required = False,
-        fields = (forms.CharField(), forms.ModelChoiceField(ProductionCompany.objects.all())),
-        #widget = ForeignKeySearchInput(Production.company.field.rel, ('name',))
-        #widget = ForeignKeySearchInput(ProductionPlace.place.field.rel, ('name',))
-    )
+        super(CompanyInlineForm, self).__init__(*args, **kwargs)
+        self.fields['production'].required = False
+        self.fields['production'].widget = forms.HiddenInput()
 
     def save(self, **kwargs):
-        if not self.cleaned_data['company'].id:
-            self.cleaned_data['company'].save()
+        if not self.cleaned_data['productioncompany'].id:
+            self.cleaned_data['productioncompany'].save()
         return super(CompanyInlineForm, self).save(**kwargs)
 
 class PlaceForm(forms.ModelForm):
@@ -223,20 +169,6 @@ class PlaceForm(forms.ModelForm):
         if not self.cleaned_data['place'].id:
             self.cleaned_data['place'].save()
         return super(PlaceForm, self).save(**kwargs)
-
-class PlaceFormNoJS(PlaceForm):
-    place = AutoCompleteNoJSMultiValueField(
-        PlacePlace, 'name',
-        required = False, # It is required, but will be spotted in the clean function
-        fields = (forms.ModelChoiceField(PlacePlace.objects.none()), forms.CharField()),
-    )
-
-    def __init__(self, *args, **kwargs):
-        super(PlaceFormNoJS, self).__init__(*args, **kwargs)
-        self.fields['place'].fields[0].queryset = PlacePlace.objects
-        # The above line sets some Select widget that is *not* the one actually printed. I don't understand this yet.
-        # But anyway, put the choices in the *right* widget.
-        self.fields['place'].widget.widgets[0].choices = self.fields['place'].fields[0].choices
 
 # person is the text box where someone enters a name, and always will be
 # person_choice is the selection of someone from that, or the creation of a new person

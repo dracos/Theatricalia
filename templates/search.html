@@ -116,7 +116,7 @@ if (!window.location.hash)
 {{ part.role|prettify }},
 {% if part.cast %}played by {% endif %}
 <a href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>, in
-<a href="{{ part.production.get_absolute_url }}">{{ part.production.play.get_title_display|prettify }}</a>{% if part.production.company %}, <a href="{{ part.production.company.get_absolute_url }}">{{ part.production.company|prettify }}</a>{% endif %}
+<a href="{{ part.production.get_absolute_url }}">{{ part.production.play.get_title_display|prettify }}</a>{% if part.production.get_companies_display %}, {{ part.production.get_companies_display }}{% endif %}
 <span>{{ part.production.date_summary|prettify }},
 {% ifequal part.production.places.count 1 %}
 <a href="{{ part.production.place_summary.get_absolute_url }}">{{ part.production.place_summary|prettify }}</a>.
