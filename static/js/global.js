@@ -92,8 +92,8 @@ $(function() {
             $('#id_company-TOTAL_FORMS').val(total);
 
             autocomplete_add({
-                lookup: "#id_company-" + (total-1) + "-company_0",
-                id: '#id_company-' + (total-1) + '-company_1',
+                lookup: "#id_company-" + (total-1) + "-productioncompany_0",
+                id: '#id_company-' + (total-1) + '-productioncompany_1',
                 search_fields: 'name',
                 app_label: 'productions',
                 model_name: 'productioncompany'

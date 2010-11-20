@@ -172,6 +172,7 @@ class Production(models.Model):
 
     def __unicode__(self):
         producer = self.get_companies_display(html=False)
+        if producer: producer += ' '
 
         places = self.place_summary()
         if places == 'Unknown location':
