@@ -115,12 +115,12 @@ elif thing == 'production':
     print "Merging %s into %s" % (alt, main)
     if main.play != alt.play:
         raise Exception, 'Productions do not have the same play: %s vs %s' % (main.play, alt.play)
-    if main.company != alt.company:
-        raise Exception, 'Productions do not have the same company: %s vs %s' % (main.company, alt.company)
-    if len(main.places.all()) != 1 or len(alt.places.all()) != 1:
-        raise Exception, 'Currently only works for things at one location'
-    if main.places.all()[0] != alt.places.all()[0]:
-        raise Exception, 'Productions do not have the same places: %s vs %s' % (main.places, alt.places)
+    if list(main.companies.all()) != list(alt.companies.all()):
+        raise Exception, 'Productions do not have the same companies: %s vs %s' % (main.companies.all(), alt.companies.all())
+    #if len(main.places.all()) != 1 or len(alt.places.all()) != 1:
+    #    raise Exception, 'Currently only works for things at one location'
+    #if main.places.all()[0] != alt.places.all()[0]:
+    #    raise Exception, 'Productions do not have the same places: %s vs %s' % (main.places, alt.places)
 
     confirm = raw_input('Are you sure? ')
     if confirm not in ('Y','y','Yes','yes'):
@@ -130,22 +130,17 @@ elif thing == 'production':
     Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
     Visit.objects.filter(production=alt).update(production=main)
     Comment.objects.filter(content_type=ctype, object_pk=alt.id).update(object_pk=main.id)
+    Production_Companies.objects.filter(production=alt).delete()
     if alt.description != main.description:
         main.description += "\n\n" + alt.description
     main.source += "\n\n" + alt.source
 
-    main_place = main.place_set.all()[0]
-    alt_place = alt.place_set.all()[0]
+    ProductionPlace.objects.filter(production=alt).update(production=main)
+    #main_place = main.place_set.all()[0]
+    #alt_place = alt.place_set.all()[0]
     #Part.objects.filter(production=main, start_date='', end_date='').update(start_date=main_place.start_date, end_date=main_place.end_date)
     #Part.objects.filter(production=alt, start_date='', end_date='').update(production=main, start_date=alt_place.start_date, end_date=alt_place.end_date)
     Part.objects.filter(production=alt).update(production=main)
-
-    if alt_place.start_date < main_place.start_date:
-        main_place.start_date = alt_place.start_date
-        main_place.save()
-    if alt_place.end_date > main_place.end_date:
-        main_place.end_date = alt_place.end_date
-        main_place.save()
 
     Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
     Redirect.objects.create(old_object_id=alt_id, new_object=main)
