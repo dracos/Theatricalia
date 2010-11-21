@@ -264,6 +264,12 @@ class Production_Companies(models.Model):
     production = models.ForeignKey(Production)
     productioncompany = models.ForeignKey(ProductionCompany, verbose_name='company')
 
+    class Meta:
+        verbose_name = 'production-company many-to-many'
+
+    def __unicode__(self):
+        return u"%s's bit in %s" % (self.productioncompany, self.production)
+
 #class Performance(models.Model):
 #    production = models.ForeignKey(Production)
 #    date = models.DateField()

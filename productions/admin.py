@@ -12,40 +12,18 @@ class CompanyAdmin(VersionAdmin):
         'slug': ('name',),
     }
 
-class PartForm(forms.ModelForm):
-    production = AutoCompleteMultiValueField(
-        Production, '???',
-        fields = (forms.CharField(), forms.ModelChoiceField(Production.objects.all())),
-        widget = ForeignKeySearchInput(Part.production.field.rel, ('title',))
-    )
-    person = AutoCompleteMultiValueField(
-        Person, '???',
-        fields = (forms.CharField(), forms.ModelChoiceField(Person.objects.all())),
-        widget = ForeignKeySearchInput(Part.person.field.rel, ('first_name', 'last_name'))
-    )
-    class Meta:
-        model = Part
-
-class PartAdmin(VersionAdmin, AutocompleteModelAdmin):
-    form = PartForm
+class PartAdmin(VersionAdmin):
     search_fields = ['person__first_name', 'person__last_name']
-    related_search_fields = {
-        'production': ('play__title', 'company__name'),
-        'person': ('first_name','last_name'),
-    }
+    raw_id_fields = ('production', 'person')
 
-class PartInlineForm(forms.ModelForm):
-    lookup_person = forms.CharField(label='LookupPerson')
-    def __init__(self, *args, **kwargs):
-        if 'instance' in kwargs:
-            kwargs.setdefault('initial', {})['lookup_person'] = kwargs['instance'].person.name()
-        super(PartInlineForm, self).__init__(*args, **kwargs)
-        self.fields['person'].widget = forms.HiddenInput()
-
-class PartInline(admin.options.InlineModelAdmin):
-    template = 'admin/edit_part_inline.html' # To have auto-complete for the inline Part
+class PartInline(admin.TabularInline): # options.InlineModelAdmin):
     model = Part
-    form = PartInlineForm
+    raw_id_fields = ('person',)
+    extra = 1
+
+class CompanyInline(admin.TabularInline): # options.InlineModelAdmin):
+    model = Production_Companies
+    raw_id_fields = ('productioncompany',)
     extra = 1
 
 class ProductionForm(forms.ModelForm):
@@ -57,24 +35,28 @@ class ProductionForm(forms.ModelForm):
 
     class Meta:
         model = Production
-        #exclude = ('parts', 'places', 'seen_by', 'source')
 
 class ProductionAdmin(VersionAdmin, AutocompleteModelAdmin):
     form = ProductionForm
+    search_fields = ['play__title', 'places__name', 'companies__name']
     related_search_fields = {
         #'places': ('name',),
         'play': ('title',),
     }
     inlines = [
         PartInline,
+        CompanyInline,
     ]
 
 class PlaceAdmin(VersionAdmin):
     pass
 
+class Production_CompaniesAdmin(VersionAdmin):
+    raw_id_fields = ('production', 'productioncompany')
+
 admin.site.register(Production, ProductionAdmin)
 admin.site.register(ProductionCompany, CompanyAdmin)
 admin.site.register(Part, PartAdmin)
-admin.site.register(Production_Companies, VersionAdmin)
+admin.site.register(Production_Companies, Production_CompaniesAdmin)
 admin.site.register(Place, PlaceAdmin)
 
