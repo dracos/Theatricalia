@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django import forms
 from reversion.admin import VersionAdmin
-from models import Production, ProductionCompany, Part, Place
+from models import Production, ProductionCompany, Part, Place, Production_Companies
 from forms import AutoCompleteMultiValueField
 from plays.models import Play
 from people.models import Person
@@ -75,5 +75,6 @@ class PlaceAdmin(VersionAdmin):
 admin.site.register(Production, ProductionAdmin)
 admin.site.register(ProductionCompany, CompanyAdmin)
 admin.site.register(Part, PartAdmin)
+admin.site.register(Production_Companies, VersionAdmin)
 admin.site.register(Place, PlaceAdmin)
 
