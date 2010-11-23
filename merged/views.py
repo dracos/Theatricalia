@@ -2,7 +2,7 @@
 from django.http import Http404, HttpResponseRedirect
 from django.core.mail import mail_admins
 
-from shortcuts import render, check_url
+from shortcuts import render, check_url, UnmatchingSlugException
 from places.models import Place
 from people.models import Person
 from productions.models import ProductionCompany, Production
@@ -32,6 +32,8 @@ def merge(request, url):
 
     try:
         object = check_url(obj_type, id, slug)
+    except UnmatchingSlugException, e:
+        return HttpResponseRedirect(e.args[0].get_absolute_url() + "/merge")
     except:
         raise Exception
 
