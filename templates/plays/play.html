@@ -26,7 +26,7 @@
 <h2>Current &amp; Upcoming productions</h2>
 <ul class="production_list">
 {% for production in future.object_list %}
-<li><a href="{{ production.get_absolute_url }}">{% if production.get_companies_display %}{{ production.get_companies_display }}, {% endif %}
+<li><a href="{{ production.get_absolute_url }}">{% if production.get_companies_display %}{{ production.get_companies_display|striptags }}, {% endif %}
 {{ production.place_summary|prettify }}</a>
 <span>{{ production.date_summary|prettify }}.</span>
 {% endfor %}
@@ -40,7 +40,7 @@
 <h2>Past productions</h2>
 <ul class="production_list">
 {% for production in past.object_list %}
-<li><a href="{{ production.get_absolute_url }}">{% if production.get_companies_display %}{{ production.get_companies_display }}, {% endif %}
+<li><a href="{{ production.get_absolute_url }}">{% if production.get_companies_display %}{{ production.get_companies_display|striptags }}, {% endif %}
 {{ production.place_summary|prettify }}</a>
 <span>{{ production.date_summary|prettify }}.</span>
 {% endfor %}
