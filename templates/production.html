@@ -29,6 +29,16 @@
 
 {% if production.description %}
 {{ production.description|prettify|linebreaks }}
+{% else %}
+{% if production.play.description %}
+<p><em>This specific production does not yet have a description, but the play itself does:</em></p>
+{{ production.play.description|prettify|linebreaks }}
+{% else %}
+{% if user.is_authenticated %}
+<p>If you have a description of this production, please do
+<a href="{{ production.get_edit_url }}">add it</a>.
+{% endif %}
+{% endif %}
 {% endif %}
 
 <h2 class="no-descenders">Cast &amp; Crew</h2>
@@ -132,8 +142,7 @@ that you think others may be interested in, please
 
 <p>This is a production of the play
 <a href="{{ production.play.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.play.get_authors_display %}
-(by {{ production.play.get_authors_display }}){%endif %}
-{% if production.get_companies_display %} by {{ production.get_companies_display }}{% endif %},
+(by {{ production.play.get_authors_display }}){% endif %}{% if production.get_companies_display %} by {{ production.get_companies_display }}{% endif %},
 {% include 'productions/sidebar_bit.html' %}
 
 {% if production.source %}
@@ -182,7 +191,7 @@ that you think others may be interested in, please
 {% if production.url %}
 <li><a rel="nofollow" href="{{ production.url }}">Production website</a></li>
 {% endif %}
-<li><a href="#observations">{% if comment_count %}Observations ({{ comment_count }}){% else %}Add observation{% endif %}</a>
+<li><a href="#observations">{% if comment_count %}Observations ({{ comment_count }}){% else %}Add an observation{% endif %}</a>
 <li id="edit-link"><a href="{{ production.get_edit_url }}?js=0">Edit this production</a>
 {% ifequal production.source_type "Birmingham Libraries" %}
 {% if initial_only %}
@@ -267,6 +276,11 @@ by default.
     please <a href="{% url login %}?next={{ request.path }}">sign in</a> to upload it, or
     add it to <a href="http://flickr.com/">Flickr</a> and tag it with
     <input type="text" value="theatricalia:production={{ production.id32 }}" onclick="this.focus();this.select();" readonly size=25>.</p>
+{% endif %}
+
+{% if production.description and production.play.description %}
+<h2 class="no-descenders">Play description</h2>
+{{ production.play.description|prettify|linebreaks }}
 {% endif %}
 
 </div>
