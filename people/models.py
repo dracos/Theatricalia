@@ -36,6 +36,7 @@ class Person(models.Model):
     died = ApproximateDateField(blank=True, verbose_name='Date of death')
     imdb = models.URLField(blank=True, verbose_name='IMDb URL')
     wikipedia = models.URLField(blank=True, verbose_name='Wikipedia URL')
+    openplaques = models.URLField(blank=True, verbose_name='OpenPlaques URL', default='')
     web = models.URLField(blank=True, verbose_name='Personal website')
     photos = generic.GenericRelation(Photo)
     deleted = models.BooleanField(default=False)

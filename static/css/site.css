@@ -652,10 +652,10 @@ p#photo {
 
 form#edit label, #production_edit_inline_basic label {
     float: left;
-    width: 7.5em;
+    width: 8.5em;
 }
 form#edit .help_text {
-    margin-left: 7.5em;
+    margin-left: 8.5em;
     position: relative;
     top: -0.3em;
 }

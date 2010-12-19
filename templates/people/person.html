@@ -100,12 +100,13 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
     {% endwith %}
 {% endif %}{% endif %}
 
-{% if person.dob or person.died or person.web or person.imdb or person.wikipedia %}
+{% if person.dob or person.died or person.web or person.imdb or person.wikipedia or person.openplaques %}
 <ul role="contentinfo">
 {% if person.dob %} <li>Date of birth: {{ person.dob }} {% endif %}
 {% if person.died %} <li>Died: {{ person.died }} {% endif %}
 {% if person.web %} <li><a href="{{ person.web }}">Website</a> {% endif %}
 {% if person.imdb %} <li><a href="{{ person.imdb }}">IMDb</a> {% endif %}
+{% if person.openplaques %} <li><a href="{{ person.openplaques }}">OpenPlaques</a> {% endif %}
 {% if person.wikipedia %} <li><a href="{{ person.wikipedia }}">Wikipedia</a> {% endif %}
 </ul>
 {% endif %}

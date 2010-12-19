@@ -7,7 +7,7 @@ class PersonEditForm(forms.ModelForm):
 
     class Meta:
         model = Person
-        exclude = ('slug')
+        exclude = ('slug', 'deleted')
 
     def __init__(self, last_modified=None, *args, **kwargs):
         #self.db_last_modified = last_modified
