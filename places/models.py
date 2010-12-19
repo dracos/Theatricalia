@@ -32,6 +32,7 @@ class Place(models.Model):
     type = models.CharField(blank=True, max_length=100, choices=(('proscenium', 'Proscenium Arch'), ('thrust', 'Thrust'), ('multiple', 'Multiple'), ('other', 'Other')))
     size = models.CharField('Seats', blank=True, max_length=100)
     opening_date = ApproximateDateField(blank=True)
+    closing_date = ApproximateDateField(blank=True, default='')
     url = models.URLField('URL', blank=True)
     wikipedia = models.URLField(blank=True)
     photos = generic.GenericRelation(Photo)

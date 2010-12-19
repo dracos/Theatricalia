@@ -24,7 +24,7 @@
 <div id="primary">
 
 {% if place.description %}
-{{ place.description|prettify|linebreaks }}
+{{ place.description|prettify|urlize|linebreaks }}
 {% endif %}
 
 {% if future.object_list %}
@@ -82,6 +82,7 @@
     s{% else %}{% if place.size %}S{% endif %}{% endif %}{%if place.size %}eats {{ place.size }}{% endif %}.
 {% endif %}
 {% if place.opening_date %}<li>Opened {{ place.opening_date|prettify }}{% endif %}
+{% if place.closing_date %}<li>Closed {{ place.closing_date|prettify }}{% endif %}
 {% if place.url %}<li><a href="{{ place.url }}">Official website</a>{% endif %}
 {% if place.wikipedia %}<li><a href="{{ place.wikipedia }}">Wikipedia</a>{% endif %}
 </ul>
