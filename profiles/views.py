@@ -61,6 +61,7 @@ def register(request):
     if request.method == 'POST':
         if form.is_valid():
             user = form.save()
+            perform_login(request, user)
             send_confirmation_email(request, user)
             return render(request, 'registration/register-checkemail.html')
     return render(request, 'registration/register.html', { 'form': form })
@@ -96,6 +97,11 @@ login = never_cache(login)
 #def registration_complete(request):
 #    return render(request, 'accounts/registration_complete.html', {})
 
+def perform_login(request, user):
+    user.backend = 'theatricalia.profiles.backends.ModelBackend' # Needs backend to login?
+    from django.contrib.auth import login
+    login(request, user)
+
 def register_confirm(request, uidb32, token):
     try:
         uid_int = base32_to_int(uidb32)
@@ -107,9 +113,7 @@ def register_confirm(request, uidb32, token):
         p = user.get_profile()
         p.email_validated = True
         p.save()
-        user.backend = 'theatricalia.profiles.backends.ModelBackend' # Needs backend to login?
-        from django.contrib.auth import login
-        login(request, user)
+        perform_login(request, user)
         # Decide what to do with someone confirming registration
         return render(request, 'registration/validated.html', {
             'user': user,
