@@ -37,7 +37,7 @@ class PlayAuthorForm(forms.Form):
                     part = part[0].role
                 else:
                     part = 'unknown'
-                last = 'last in %s as %s' % (last_production[0], part)
+                last = u'last in %s as %s' % (last_production[0], part)
             else:
                 last_play = p.plays.order_by('-id')[:1]
                 if len(last_play):

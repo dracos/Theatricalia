@@ -21,6 +21,11 @@ class PartInline(admin.TabularInline): # options.InlineModelAdmin):
     raw_id_fields = ('person',)
     extra = 1
 
+class PlaceInline(admin.TabularInline):
+    model = Place
+    raw_id_fields = ('production', 'place')
+    extra = 1
+
 class CompanyInline(admin.TabularInline): # options.InlineModelAdmin):
     model = Production_Companies
     raw_id_fields = ('productioncompany',)
@@ -45,11 +50,12 @@ class ProductionAdmin(VersionAdmin, AutocompleteModelAdmin):
     }
     inlines = [
         PartInline,
+        PlaceInline,
         CompanyInline,
     ]
 
 class PlaceAdmin(VersionAdmin):
-    pass
+    raw_id_fields = ('production', 'place')
 
 class Production_CompaniesAdmin(VersionAdmin):
     raw_id_fields = ('production', 'productioncompany')

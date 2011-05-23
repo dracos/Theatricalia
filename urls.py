@@ -2,7 +2,7 @@ import os
 import settings
 
 from django.conf.urls.defaults import *
-from django.views.generic import date_based
+from django.views.generic import date_based, simple
 
 from views import *
 from profiles import views as profiles
@@ -86,6 +86,7 @@ urlpatterns = patterns('',
     url('^play/(?P<play_id>.*?)/(?P<play>.*?)/production/(?P<production_id>[0-9a-z]+)/edit/cast$', productions.production_edit_cast, name='production-edit-cast'),
     url('^play/(?P<play_id>.*?)/(?P<play>.*?)/production/(?P<production_id>[0-9a-z]+)/edit/(?P<part_id>[0-9]+)$', productions.part_edit, name='part-edit'),
     url('^play/(?P<play_id>.*?)/(?P<play>.*?)/production/(?P<production_id>[0-9a-z]+)/corrected$', productions.production_corrected, name='production-corrected'),
+    url('^play/(?P<play_id>.*?)/(?P<play>.*?)/production/(?P<production_id>[0-9a-z]+).(?P<format>json)$', productions.production, name='production-json'),
     url('^play/(?P<play_id>.*?)/(?P<play>.*?)/production/(?P<production_id>[0-9a-z]+)$', productions.production, name='production'),
     url('^play/(?P<play_id>.*?)/(?P<play>.*)/future$', plays.play_productions, {'type':'future'}, name='play-productions-future'),
     url('^play/(?P<play_id>.*?)/(?P<play>.*)/past$', plays.play_productions, {'type':'past'}, name='play-productions-past'),

@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.forms.models import modelformset_factory, inlineformset_factory
 from django.db import IntegrityError
 from django.contrib.comments.views.comments import post_comment
-from django.http import Http404, HttpResponseRedirect, HttpResponsePermanentRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.utils import simplejson
 from django.conf import settings
 
@@ -50,7 +50,7 @@ def production_company_short_url(request, company_id):
 def production_corrected(request, play_id, play, production_id):
     return production(request, play_id, play, production_id, okay=True)
 
-def production(request, play_id, play, production_id, okay=False):
+def production(request, play_id, play, production_id, okay=False, format='html'):
     try:
         production = check_parameters(play_id, play, production_id)
     except UnmatchingSlugException, e:
@@ -104,6 +104,23 @@ def production(request, play_id, play, production_id, okay=False):
         initial_only = False
         changes = False
         
+    if format == 'json':
+        py_serializer = serializers.get_serializer("python")()
+        json_serializer = serializers.get_serializer("json")()
+        out = {
+            'production': py_serializer.serialize([production], ensure_ascii=False),
+            'places': py_serializer.serialize(production.place_set.order_by('start_date', 'press_date'), ensure_ascii=False),
+            'cast': py_serializer.serialize(cast, ensure_ascii=False),
+            'crew': py_serializer.serialize(crew, ensure_ascii=False),
+            'other': py_serializer.serialize(other, ensure_ascii=False),
+            'flickr': flickr,
+            'initial_only': initial_only,
+            'changes': changes,
+        }
+        response = HttpResponse(mimetype='application/json')
+        simplejson.dump(out, response, ensure_ascii=False)
+        return response
+
     return render(request, 'production.html', {
         'production': production,
         'places': production.place_set.order_by('start_date', 'press_date'),

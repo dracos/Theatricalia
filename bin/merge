@@ -80,6 +80,8 @@ elif thing == 'place':
             if alt.__dict__[attr] and not main.__dict__[attr]:
                 main.__dict__[attr] = alt.__dict__[attr]
                 main.save()
+            elif alt.__dict__[attr] and main.__dict__[attr]:
+                print "%s: 1: %s, 2: %s" % (attr, main.__dict__[attr], alt.__dict__[attr])
         Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
         Redirect.objects.create(old_object_id=alt_id, new_object=main)
         alt.delete()
@@ -115,12 +117,6 @@ elif thing == 'production':
     print "Merging %s into %s" % (alt, main)
     if main.play != alt.play:
         raise Exception, 'Productions do not have the same play: %s vs %s' % (main.play, alt.play)
-    if list(main.companies.all()) != list(alt.companies.all()):
-        raise Exception, 'Productions do not have the same companies: %s vs %s' % (main.companies.all(), alt.companies.all())
-    #if len(main.places.all()) != 1 or len(alt.places.all()) != 1:
-    #    raise Exception, 'Currently only works for things at one location'
-    #if main.places.all()[0] != alt.places.all()[0]:
-    #    raise Exception, 'Productions do not have the same places: %s vs %s' % (main.places, alt.places)
 
     confirm = raw_input('Are you sure? ')
     if confirm not in ('Y','y','Yes','yes'):
@@ -130,7 +126,7 @@ elif thing == 'production':
     Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
     Visit.objects.filter(production=alt).update(production=main)
     Comment.objects.filter(content_type=ctype, object_pk=alt.id).update(object_pk=main.id)
-    Production_Companies.objects.filter(production=alt).delete()
+    Production_Companies.objects.filter(production=alt).update(production=main)
     if alt.description != main.description:
         main.description += "\n\n" + alt.description
     main.source += "\n\n" + alt.source

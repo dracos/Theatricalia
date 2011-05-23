@@ -131,26 +131,35 @@ def search_people(search, force_similar=False, use_distance=True):
             sounds_people = 1
             dm_first, dm_first_alt = dm(names[0])
             dm_last, dm_last_alt = dm(names[1])
-            people = Person.objects.filter(
+            qs = Q()
+            if dm_first:
+            #    # Both names homophones
+                if dm_last:
+                    qs |= Q(first_name_metaphone=dm_first, last_name_metaphone=dm_last) \
+                        | Q(first_name_metaphone=dm_first, last_name_metaphone_alt=dm_last) \
+                        | Q(first_name_metaphone_alt=dm_first, last_name_metaphone=dm_last) \
+                        | Q(first_name_metaphone_alt=dm_first, last_name_metaphone_alt=dm_last)
+                if dm_last_alt:
+                    qs |= Q(first_name_metaphone=dm_first, last_name_metaphone=dm_last_alt) \
+                        | Q(first_name_metaphone_alt=dm_first, last_name_metaphone=dm_last_alt)
                 # First name homophone, Last name match
-                Q(first_name_metaphone=dm_first,     last_name__icontains=names[1]) |
-                Q(first_name_metaphone=dm_first_alt, last_name__icontains=names[1]) |
-                Q(first_name_metaphone_alt=dm_first, last_name__icontains=names[1]) |
+                qs |= Q(first_name_metaphone=dm_first,     last_name__icontains=names[1]) \
+                    | Q(first_name_metaphone_alt=dm_first, last_name__icontains=names[1])
+            if dm_first_alt:
+                qs |= Q(first_name_metaphone=dm_first_alt, last_name__icontains=names[1])
+                if dm_last:
+                    qs |= Q(first_name_metaphone=dm_first_alt, last_name_metaphone=dm_last) \
+                        | Q(first_name_metaphone=dm_first_alt, last_name_metaphone_alt=dm_last)
+                if dm_last_alt:
+                    qs |= Q(first_name_metaphone=dm_first_alt, last_name_metaphone=dm_last_alt)
+            if dm_last:
                 # First name match, last name homophone
-                Q(first_name__icontains=names[0],    last_name_metaphone=dm_last) |
-                Q(first_name__icontains=names[0],    last_name_metaphone_alt=dm_last) |
-                Q(first_name__icontains=names[0],    last_name_metaphone=dm_last_alt) |
-                # Both names homophones
-                Q(first_name_metaphone=dm_first, last_name_metaphone=dm_last) |
-                Q(first_name_metaphone=dm_first, last_name_metaphone_alt=dm_last) |
-                Q(first_name_metaphone=dm_first, last_name_metaphone=dm_last_alt) |
-                Q(first_name_metaphone=dm_first_alt, last_name_metaphone=dm_last) |
-                Q(first_name_metaphone=dm_first_alt, last_name_metaphone_alt=dm_last) |
-                Q(first_name_metaphone=dm_first_alt, last_name_metaphone=dm_last_alt) |
-                Q(first_name_metaphone_alt=dm_first, last_name_metaphone=dm_last) |
-                Q(first_name_metaphone_alt=dm_first, last_name_metaphone_alt=dm_last) |
-                Q(first_name_metaphone_alt=dm_first, last_name_metaphone=dm_last_alt)
-            )
+                qs |= Q(first_name__icontains=names[0],    last_name_metaphone=dm_last) \
+                    | Q(first_name__icontains=names[0],    last_name_metaphone_alt=dm_last)
+            if dm_last_alt:
+                qs |= Q(first_name__icontains=names[0],    last_name_metaphone=dm_last_alt)
+            people = Person.objects.filter( qs )
+
         if not people and use_distance:
             people = []
             people2 = []
