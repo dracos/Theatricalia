@@ -587,7 +587,7 @@ p#photo {
 	margin-bottom: 0;
 }
 
-.production_list li span {
+.production_list li span.meta {
 	display: block;
 	font-size: 90%;
 	line-height: 1.6667;

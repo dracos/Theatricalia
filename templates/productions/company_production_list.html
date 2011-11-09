@@ -20,7 +20,7 @@
 {% else %}
 {{ production.place_summary|prettify }}.
 {% endifequal %}
-<span>{{ production.date_summary|prettify }}.</span>
+<span class="meta">{{ production.date_summary|prettify }}.</span>
 {% endfor %}
 </ul>
 {% else %}

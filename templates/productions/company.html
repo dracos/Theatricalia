@@ -11,7 +11,9 @@
 {% endwith %}{% endwith %}
 {% endif %}
 
-<h1>{{ company|prettify }}</h1>
+<div itemscope itemtype="http://schema.org/TheaterGroup">
+
+<h1 itemprop="name">{{ company|prettify }}</h1>
 
 <div id="primary">
 
@@ -19,13 +21,13 @@
 <h2>Current &amp; Upcoming productions</h2>
 <ul class="production_list">
 {% for production in future.object_list %}
-<li><a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>,
+<li itemprop="events" itemscope itemtype="http://schema.org/TheaterEvent"><a itemprop="url" href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>,
 {% ifequal production.places.count 1 %}
 <a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
 {% else %}
 {{ production.place_summary|prettify }}.
 {% endifequal %}
-<span>{{ production.date_summary|prettify }}.</span>
+<span class="meta">{{ production.date_summary|prettify }}.</span>
 {% endfor %}
 </ul>
 {% if future.has_other_pages %}
@@ -37,13 +39,13 @@
 <h2>Past productions</h2>
 <ul class="production_list">
 {% for production in past.object_list %}
-<li><a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>,
+<li itemprop="events" itemscope itemtype="http://schema.org/TheaterEvent"><a itemprop="url" href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>,
 {% ifequal production.places.count 1 %}
 <a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
 {% else %}
 {{ production.place_summary|prettify }}.
 {% endifequal %}
-<span>{{ production.date_summary|prettify }}.</span>
+<span class="meta">{{ production.date_summary|prettify }}.</span>
 {% endfor %}
 </ul>
 {% if past.has_other_pages %}
@@ -77,5 +79,6 @@
 
 </div>
 
+</div>
 {% endblock %}
 

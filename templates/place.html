@@ -10,6 +10,7 @@
 {% endblock %}
 
 {% block content %}
+<div itemscope itemtype="http://schema.org/PerformingArtsTheater">
 
 {% if request.session.merging_place %}
 {% with place as object %}{% with request.session.merging_place as duplicate %}
@@ -17,14 +18,14 @@
 {% endwith %}{% endwith %}
 {% endif %}
 
-<h1>{{ place.get_name_display|prettify }}</h1>
+<h1 itemprop="name">{{ place.get_name_display|prettify }}</h1>
 
 {% include 'includes/messages.html' %}
 
 <div id="primary">
 
 {% if place.description %}
-{{ place.description|prettify|urlize|linebreaks }}
+<div itemprop="description">{{ place.description|prettify|urlize|linebreaks }}</div>
 {% endif %}
 
 {% if future.object_list %}
@@ -63,17 +64,17 @@
     {% endwith %}
 {% endif %}
 
-<ul>
+<ul itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
 
 {% if place.address or place.town or place.postcode %}
 <li>
-<address>{{ place.address|prettify }}{% if place.address and place.town %}, {% endif %}{{ place.town|prettify }}{% if place.address or place.town %}{% if place.postcode %}, {% endif %}{% endif %}{{ place.postcode|prettify }}
+<address><span itemprop="streetAddress">{{ place.address|prettify }}</span>{% if place.address and place.town %}, {% endif %}<span itemprop="addressLocality">{{ place.town|prettify }}</span>{% if place.address or place.town %}{% if place.postcode %}, {% endif %}{% endif %}<span itemprop="postalCode">{{ place.postcode|prettify }}</span>
 </address>
 </li>
 {% endif %}
 
 {% if place.telephone %}
-<li>Telephone: {{ place.telephone|prettify }}</li>
+<li>Telephone: <span itemprop="telephone">{{ place.telephone|prettify }}</span></li>
 {% endif %}
 
 {% if place.type or place.size %}
@@ -88,6 +89,11 @@
 </ul>
 
 {% if place.latitude and place.longitude %}
+
+<div itemprop="geo" itemscope itemtype="http://schema.org/GeoCoordinates">
+    <meta itemprop="latitude" content="{{ place.latitude }}"> <meta itemprop="longitude" content="{{ place.longitude }}">
+</div>
+
 <script type="text/javascript">
 $(function(){
     map.setCenter(new CM.LatLng({{ place.latitude }}, {{ place.longitude }}), 14);
@@ -142,4 +148,5 @@ $(function(){
 
 </div>
 
+</div>
 {% endblock %}

@@ -16,7 +16,9 @@
 {% endwith %}{% endwith %}
 {% endif %}
 
-<h1>{{ play.get_title_display|prettify }}</h1>
+<div itemscope itemtype="http://schema.org/CreativeWork">
+
+<h1 itemprop="name">{{ play.get_title_display|prettify }}</h1>
 
 {% include 'includes/messages.html' %}
 
@@ -28,7 +30,7 @@
 {% for production in future.object_list %}
 <li><a href="{{ production.get_absolute_url }}">{% if production.get_companies_display %}{{ production.get_companies_display|striptags }}, {% endif %}
 {{ production.place_summary|prettify }}</a>
-<span>{{ production.date_summary|prettify }}.</span>
+<span class="meta">{{ production.date_summary|prettify }}.</span>
 {% endfor %}
 </ul>
 {% if future.has_other_pages %}
@@ -42,7 +44,7 @@
 {% for production in past.object_list %}
 <li><a href="{{ production.get_absolute_url }}">{% if production.get_companies_display %}{{ production.get_companies_display|striptags }}, {% endif %}
 {{ production.place_summary|prettify }}</a>
-<span>{{ production.date_summary|prettify }}.</span>
+<span class="meta">{{ production.date_summary|prettify }}.</span>
 {% endfor %}
 </ul>
 {% if past.has_other_pages %}
@@ -76,7 +78,7 @@
 </ul>
 
 {% if play.description %}
-{{ play.description|prettify|linebreaks }}
+<div itemprop="description">{{ play.description|prettify|linebreaks }}</div>
 <p align="right"><a href="{{ play.get_edit_url }}">Edit &rarr;</a></p>
 {% else %}
 {% if user.is_authenticated %}
@@ -99,4 +101,5 @@ please <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
 
 </div>
 
+</div>
 {% endblock %}

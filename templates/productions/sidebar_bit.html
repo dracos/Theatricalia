@@ -2,7 +2,7 @@
 
 {% ifequal production.places.count 1 %}
     {{ production.date_summary|prettify }},
-    at <a href="{{ production.places.all.0.get_absolute_url }}">{{ production.places.all.0|prettify }}</a>.</p>
+    at <span itemprop="location" itemscope itemtype="http://schema.org/PerformingArtsTheater"><a itemprop="url" href="{{ production.places.all.0.get_absolute_url }}">{{ production.places.all.0|prettify }}</a></span>.</p>
     {% if production.place_set.all.0.press_date and production.place_set.all.0.start_date %}
         <p>Press night was {{ production.place_set.all.0.press_date|date:"jS F Y"|prettify }}.</p>
     {% endif %}
@@ -13,7 +13,7 @@
     at
     {% for place in places %}
         {% if forloop.last and not forloop.first %} and {% endif %}
-        <a href="{{ place.place.get_absolute_url }}">{{ place.place|prettify }}</a>
+        <span itemprop="location" itemscope itemtype="http://schema.org/PerformingArtsTheater"><a itemprop="url" href="{{ place.place.get_absolute_url }}">{{ place.place|prettify }}</a></span>
         <small>({{ place.date_summary|prettify }})</small>{% ifequal forloop.revcounter0 0 %}{% else %}{% ifequal forloop.revcounter0 1 %}{% ifnotequal forloop.counter0 0 %},{% endifnotequal %}{% else %},{% endifequal %}{% endifequal %}{% endfor %}.
 {% endifequal %}
 {% endifequal %}

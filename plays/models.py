@@ -43,7 +43,7 @@ class Play(models.Model):
     def get_authors_display(self, html=True):
         num = self.authors.count()
         if html:
-            authors = map(lambda x: u'<a href="%s">%s</a>' % (x.get_absolute_url(), prettify(x)), self.authors.all())
+            authors = map(lambda x: u'<span itemprop="author" itemscope itemtype="http://schema.org/Person"><a itemprop="url" href="%s">%s</a></span>' % (x.get_absolute_url(), prettify(x)), self.authors.all())
         else:
             authors = [ unicode(x) for x in self.authors.all() ]
         if num > 2:

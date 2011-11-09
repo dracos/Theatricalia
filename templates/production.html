@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block content %}
+<div itemscope itemtype="http://schema.org/TheaterEvent">
 
 {% if request.session.merging_production %}
 {% with production as object %}{% with request.session.merging_production as duplicate %}
@@ -17,18 +18,18 @@
 
 {% if production.book_tickets and not production.finished %}
 <div class="secondary">
-<p id="book-tickets"><a rel="nofollow" href="{{ production.book_tickets }}">Book tickets</a></p>
+<p id="book-tickets"><a rel="nofollow" itemprop="offers" href="{{ production.book_tickets }}">Book tickets</a></p>
 </div>
 {% endif %}
 
-<h1>{{ production.play.get_title_display|prettify }}</h1>
+<h1 itemprop="name">{{ production.play.get_title_display|prettify }}</h1>
 
 {% include 'includes/messages.html' %}
 
 <div id="primary">
 
 {% if production.description %}
-{{ production.description|prettify|linebreaks }}
+<div itemprop="description">{{ production.description|prettify|linebreaks }}</div>
 {% else %}
 {% if production.play.description %}
 <p><em>This specific production does not yet have a description, but the play itself does:</em></p>
@@ -53,7 +54,7 @@
 
 {% for part in cast %}
 <tr><th>{{ part.role_or_unknown|prettify }}</th>
-<td><a href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>
+<td itemprop="performers" itemscope itemtype="http://schema.org/Person"><a itemprop="url" href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>
 {% if part.credited_as %}<br>&nbsp;&nbsp;<small>({% ifnotequal part.credited_as "uncredited" %}credited as {% endifnotequal %}{{ part.credited_as|prettify }})</small>{% endif %}
 {% if part.start_date or part.end_date %}<br>&nbsp;&nbsp;<small>({{ part.date_summary|prettify }})</small>{% endif %}
 </td></tr>
@@ -65,7 +66,7 @@
 
 {% for part in crew %}
 <tr><th>{{ part.role_or_unknown|prettify }}</th>
-<td><a href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>
+<td itemprop="performers" itemscope itemtype="http://schema.org/Person"><a itemprop="url" href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>
 {% if part.credited_as %}<br>&nbsp;&nbsp;<small>(credited as {{ part.credited_as|prettify }})</small>{% endif %}
 {% if part.start_date or part.end_date %}<br>&nbsp;&nbsp;<small>({{ part.date_summary|prettify }})</small>{% endif %}
 </td></tr>
@@ -73,7 +74,7 @@
 
 {% for part in other %}
 <tr><th>{{ part.role_or_unknown|prettify }}</th>
-<td><a href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>
+<td itemprop="performers" itemscope itemtype="http://schema.org/Person"><a itemprop="url" href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>
 {% if part.credited_as %}<br>&nbsp;&nbsp;<small>(credited as {{ part.credited_as|prettify }})</small>{% endif %}
 {% if part.start_date or part.end_date %}<br>&nbsp;&nbsp;<small>({{ part.date_summary|prettify }})</small>{% endif %}
 </td></tr>
@@ -193,17 +194,18 @@ that you think others may be interested in, please
 {% endif %}
 <li><a href="#observations">{% if comment_count %}Observations ({{ comment_count }}){% else %}Add an observation{% endif %}</a>
 <li id="edit-link"><a href="{{ production.get_edit_url }}?js=0">Edit this production</a>
+
 {% ifequal production.source_type "Birmingham Libraries" %}
-{% if initial_only %}
-<li>Production data sourced from Birmingham Libraries will show their initial data
-by default.
-{% if changes %}
-<a href="{{ production.get_absolute_url }}/corrected">View user corrections and additions to this production</a>
-{% endif %}
-{% else %}
-<li>Viewing additions and corrections to this production.
-<a href="{{ production.get_absolute_url }}">View original Birmingham Library data</a>
-{% endif %}
+    {% if initial_only %}
+        <li>Production data sourced from Birmingham Libraries will show their
+            initial data by default.
+        {% if changes %}
+            <a href="{{ production.get_absolute_url }}/corrected">View user corrections and additions to this production</a>
+        {% endif %}
+    {% else %}
+        <li>Viewing additions and corrections to this production.
+        <a href="{{ production.get_absolute_url }}">View original Birmingham Library data</a>
+    {% endif %}
 {% endifequal %}
 
 {% if seen %}
@@ -246,7 +248,7 @@ by default.
 {% endif %}
 <ul id="seen_by">
 {% for u in production.seen_by.all %}
-<li><a href="{{ u.get_profile.get_absolute_url }}">{% firstof u.name u.username %}</a>
+<li itemprop="attendees" itemscope itemtype="http://schema.org/Person"><a itemprop="url" href="{{ u.get_profile.get_absolute_url }}">{% firstof u.name u.username %}</a>
 {% endfor %}
 </ul>
 {% endif %}
@@ -285,4 +287,5 @@ by default.
 
 </div>
 
+</div>
 {% endblock %}

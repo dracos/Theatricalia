@@ -58,6 +58,12 @@ class Person(models.Model):
     def name(self):
         return unicode(self)
 
+    def dob_machine(self):
+        return repr(self.dob)
+
+    def died_machine(self):
+        return repr(self.died)
+
     def id32(self):
         return int_to_base32(self.id)
 

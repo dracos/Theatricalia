@@ -224,7 +224,7 @@ class Production(models.Model):
     def get_companies_display(self, html=True):
         num = self.companies.count()
         if html:
-            companies = map(lambda x: u'<a href="%s">%s</a>' % (x.get_absolute_url(), prettify(x)), self.companies.all())
+            companies = map(lambda x: u'<span itemscope itemtype="http://schema.org/TheaterGroup"><a itemprop="url" href="%s">%s</a></span>' % (x.get_absolute_url(), prettify(x)), self.companies.all())
         else:
             companies = [ unicode(x) for x in self.companies.all() ]
         if num > 2:

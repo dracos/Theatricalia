@@ -16,12 +16,14 @@
 {% endwith %}{% endwith %}
 {% endif %}
 
-<h1>{{ person|prettify }}</h1>
+<div itemscope itemtype="http://schema.org/Person">
+
+<h1 itemprop="name">{{ person|prettify }}</h1>
 
 <div id="primary">
 
 {% if person.bio %}
-{{ person.bio|prettify|linebreaks }}
+<div itemprop="description">{{ person.bio|prettify|linebreaks }}</div>
 {% else %}
 <p>This person doesn&rsquo;t appear to have a biography yet.
 Why not <a href="{{ person.get_edit_url }}">add one</a>?
@@ -40,11 +42,11 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 <h2>Current &amp; Upcoming productions</h2>
 <ul class="production_list">
 {% for production in future.object_list %}
-<li>
+<li itemprop="performerIn" itemscope itemtype="http://schema.org/TheaterEvent">
 {% if production.part__role__concatenate %}
 {{ production.part__role__concatenate }}, {% endif %}
-<a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.get_companies_display %}, {{ production.get_companies_display }}{% endif %}
-<span>{{ production.date_summary|prettify }},
+<a itemprop="url" href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.get_companies_display %}, {{ production.get_companies_display }}{% endif %}
+<span class="meta">{{ production.date_summary|prettify }},
 {% ifequal production.places.count 1 %}
 <a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
 {% else %}
@@ -62,11 +64,11 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 <h2>Past productions</h2>
 <ul class="production_list">
 {% for production in past.object_list %}
-<li>
+<li itemprop="performerIn" itemscope itemtype="http://schema.org/TheaterEvent">
 {% if production.part__role__concatenate %}
 {{ production.part__role__concatenate }}, {% endif %}
-<a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.get_companies_display %}, {{ production.get_companies_display }}{% endif %}
-<span>{{ production.date_summary|prettify }},
+<a itemprop="url" href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.get_companies_display %}, {{ production.get_companies_display }}{% endif %}
+<span class="meta">{{ production.date_summary|prettify }},
 {% ifequal production.places.count 1 %}
 <a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
 {% else %}
@@ -102,8 +104,8 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 
 {% if person.dob or person.died or person.web or person.imdb or person.musicbrainz or person.wikipedia or person.openplaques %}
 <ul role="contentinfo">
-{% if person.dob %} <li>Date of birth: {{ person.dob }} {% endif %}
-{% if person.died %} <li>Died: {{ person.died }} {% endif %}
+{% if person.dob %} <li>Date of birth: <time itemprop="birthDate" datetime="{{ person.dob_machine }}">{{ person.dob }}</time> {% endif %}
+{% if person.died %} <li>Died: <time itemprop="deathDate" datetime="{{ person.died_machine }}">{{ person.died }}</time> {% endif %}
 {% if person.web %} <li><a href="{{ person.web }}">Website</a> {% endif %}
 {% if person.imdb %} <li><a href="{{ person.imdb }}">IMDb</a> {% endif %}
 {% if person.musicbrainz %} <li><a href="{{ person.musicbrainz }}">MusicBrainz</a> {% endif %}
@@ -176,4 +178,5 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 
 </div>
 
+</div>
 {% endblock %}
