@@ -141,9 +141,18 @@ that you think others may be interested in, please
 
 <div id="sidebar_tulip" class="secondary"><div id="sidebar_tulip_r" role="contentinfo">
 
+{% if original_production %}
+{% with original_production as production %}
 <p>This is a production of the play
 <a href="{{ production.play.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.play.get_authors_display %}
 (by {{ production.play.get_authors_display }}){% endif %}{% if production.get_companies_display %} by {{ production.get_companies_display }}{% endif %},
+{% endwith %}
+{% else %}
+<p>This is a production of the play
+<a href="{{ production.play.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.play.get_authors_display %}
+(by {{ production.play.get_authors_display }}){% endif %}{% if production.get_companies_display %} by {{ production.get_companies_display }}{% endif %},
+{% endif %}
+
 {% include 'productions/sidebar_bit.html' %}
 
 {% if production.source %}

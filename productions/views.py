@@ -4,6 +4,7 @@ import urllib
 from django.core import serializers
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from django.forms.models import modelformset_factory, inlineformset_factory
 from django.db import IntegrityError
 from django.contrib.comments.views.comments import post_comment
@@ -78,12 +79,30 @@ def production(request, play_id, play, production_id, okay=False, format='html')
     except:
         seen = None
 
+    original_production = None
     if production.source_type() == 'Birmingham Libraries' and not okay:
+
         # Have to use revisions, magic number, to show what it was at the start...
         # Sorting has to be done yucky, as it's all serialized. Lucky there won't be many objects to a page ever hopefully!
+        production_type = ContentType.objects.get_for_model(Production)
+        c0 = Version.objects.exclude(revision=19230).filter(
+            object_id=production.id, content_type=production_type
+        ).count()
+        originals = Version.objects.filter(
+            revision=19230, object_id=production.id, content_type=production_type
+        )
+        for o in originals:
+            for object in serializers.deserialize('xml', o.serialized_data):
+                original_production = object.object
+
+        part_type = ContentType.objects.get_for_model(Part)
         def fetch_from_history(q):
-            changes = Version.objects.exclude(revision=19230).filter(object_id__in=q).count()
-            originals = Version.objects.filter(revision=19230, object_id__in=q)
+            changes = Version.objects.exclude(revision=19230).filter(
+                object_id__in=q, content_type=part_type
+            ).count()
+            originals = Version.objects.filter(
+                revision=19230, object_id__in=q, content_type=part_type
+            )
             parts = []
             for o in originals:
                 for object in serializers.deserialize('xml', o.serialized_data):
@@ -96,7 +115,7 @@ def production(request, play_id, play, production_id, okay=False, format='html')
         crew, c2 = fetch_from_history( production.part_set.filter(cast=False) )
         other, c3 = fetch_from_history( production.part_set.filter(cast__isnull=True) )
         initial_only = True
-        changes = c1 or c2 or c3
+        changes = c0 or c1 or c2 or c3
     else:
         cast = production.part_set.filter(cast=True).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name')
         crew = production.part_set.filter(cast=False).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name')
@@ -123,6 +142,7 @@ def production(request, play_id, play, production_id, okay=False, format='html')
 
     return render(request, 'production.html', {
         'production': production,
+        'original_production': original_production,
         'places': production.place_set.order_by('start_date', 'press_date'),
 #        'production_form': production_form,
 #        'production_formset': formset,
