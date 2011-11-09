@@ -45,17 +45,36 @@ def add_theatre(theatre, town=''):
     theatre_no_the = re.sub(', (A|An|The)$', '', theatre)
     theatre_with_the = '%s, The' % theatre_no_the
     town = town.strip()
-    try:
-        location = Place.objects.get(name=theatre_with_the, town=town)
+
+    def a_try(**attrs):
+        location = Place.objects.get(**attrs)
         log("Found place %s" % location)
+        return location
+
+    try:
+        return a_try(name=theatre_with_the, town=town)
     except:
-        try:
-            location = Place.objects.get(name=theatre_no_the, town=town)
-            log("Found place %s" % location)
-        except:
-            if dry_run:
-                print "Going to get_or_create place %s, %s" % (theatre, town)
-                location = Place(name=theatre, town=town)
-            else:
-                location, created = Place.objects.get_or_create(name=theatre, town=town)
+        pass
+
+    try:
+        return a_try(name=theatre_no_the, town=town)
+    except:
+        pass
+
+    try:
+        return a_try(name='%s, %s' % (theatre_no_the, town), town=town)
+    except:
+        pass
+
+    try:
+        return a_try(name='%s, %s' % (theatre_no_the, town))
+    except:
+        pass
+
+    if dry_run:
+        print "Going to get_or_create place %s, %s" % (theatre, town)
+        location = Place(name=theatre, town=town)
+    else:
+        location, created = Place.objects.get_or_create(name=theatre, town=town)
     return location
+
