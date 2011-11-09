@@ -85,6 +85,7 @@ def person_js(request, person_id, person):
         'died': person.died,
         'web': person.web,
         'imdb': person.imdb,
+        'musicbrainz': person.musicbrainz,
         'openplaques': person.openplaques,
     }
     out = {

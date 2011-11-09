@@ -35,6 +35,7 @@ class Person(models.Model):
     dob = ApproximateDateField(blank=True, verbose_name='Date of birth')
     died = ApproximateDateField(blank=True, verbose_name='Date of death')
     imdb = models.URLField(blank=True, verbose_name='IMDb URL')
+    musicbrainz = models.URLField(blank=True, verbose_name='MusicBrainz URL', default='')
     wikipedia = models.URLField(blank=True, verbose_name='Wikipedia URL')
     openplaques = models.URLField(blank=True, verbose_name='OpenPlaques URL', default='')
     web = models.URLField(blank=True, verbose_name='Personal website')

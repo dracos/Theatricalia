@@ -30,9 +30,10 @@ class PersonEditForm(forms.ModelForm):
         #died = self.cleaned_data.get('died')
         #bio = self.cleaned_data.get('bio')
         #imdb = self.cleaned_data.get('imdb')
+        #musicbrainz = self.cleaned_data.get('musicbrainz')
         #wikipedia = self.cleaned_data.get('wikipedia')
         #web = self.cleaned_data.get('web')
-        #if not self.errors and not dob and not died and not bio and not imdb and not wikipedia and not web:
+        #if not self.errors and not dob and not died and not bio and not imdb and not musicbrainz and not wikipedia and not web:
         #    raise forms.ValidationError('Please specify at least one item of data.')
         return self.cleaned_data
 

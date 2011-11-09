@@ -98,7 +98,7 @@ elif thing == 'person':
         Alert.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
         Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
         Part.objects.filter(person=alt).update(person=main)
-        for attr in ('bio', 'dob', 'died', 'imdb', 'web', 'wikipedia', 'openplaques'):
+        for attr in ('bio', 'dob', 'died', 'imdb', 'musicbrainz', 'web', 'wikipedia', 'openplaques'):
             if alt.__dict__[attr] and not main.__dict__[attr]:
                 main.__dict__[attr] = alt.__dict__[attr]
                 main.save()

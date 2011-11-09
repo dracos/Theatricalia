@@ -72,11 +72,12 @@ Why not <a href="{% url person-edit person.slug %}">add one</a>?
 </ul>
 {% endif %}
 
-{% if person.dob or person.web or person.imdb or person.wikipedia %}
+{% if person.dob or person.web or person.imdb or person.musicbrainz or person.wikipedia %}
 <ul>
 {% if person.dob %} <li>Date of birth: {{ person.dob }} {% endif %}
 {% if person.web %} <li><a href="{{ person.web }}">Website</a> {% endif %}
 {% if person.imdb %} <li><a href="{{ person.imdb }}">IMDb</a> {% endif %}
+{% if person.musicbrainz %} <li><a href="{{ person.musicbrainz }}">MusicBrainz</a> {% endif %}
 {% if person.wikipedia %} <li><a href="{{ person.wikipedia }}">Wikipedia</a> {% endif %}
 </ul>
 {% endif %}
