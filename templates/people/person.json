@@ -11,7 +11,7 @@
 
 <h1>{{ person.name }}</h1>
 
-<div id="primary">
+<div class="primary">
 
 {% if person.bio %}
 {{ person.bio|prettify|linebreaks }}

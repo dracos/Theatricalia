@@ -20,7 +20,7 @@
 
 <h1 itemprop="name">{{ person|prettify }}</h1>
 
-<div id="primary">
+<div class="primary">
 
 {% if person.bio %}
 <div itemprop="description">{{ person.bio|prettify|linebreaks }}</div>
@@ -117,6 +117,8 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 <div style="float: right">
 <a href="http://twitter.com/share" class="twitter-share-button" data-count="none" data-via="theatricalia" data-related="dracos">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
 </div>
+
+<h2 class="sm">Tools</h2>
 
 <ul>
 <li><a href="{{ person.get_edit_url }}">Edit this person</a>

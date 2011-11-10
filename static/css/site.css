@@ -3,13 +3,15 @@
  * 
  * We're working to a vertical rhythm of 1.5 whatever the user has set as their
  * default font size. People may say this is large, I say that is up to the
- * user and I quite like not going blind any time soon. I am right.
+ * user and I quite like not going blind any time soon. I am right :)
  *
- * Heading sizes are large, again deliberately. Zapfino means the line height
- * on headings has to be at least 3.41, which means e.g. 3.75 on a 2em font size
- * to take up five lines in total. Fear the whitespace. Actually, love the whitespace.
+ * At desktop resolution, heading sizes are large, again deliberately. Zapfino
+ * means the line height on headings has to be at least 3.41, which means e.g.
+ * 3.75 on a 2em font size to take up five lines in total. Fear the whitespace.
+ * Actually, love the whitespace. On smaller sizes, Zapfino is a bit too much
+ * of a luxury, sadly.
  *
- * Copyright Matthew Somerville 2009
+ * Copyright Matthew Somerville 2011
  *
  */
 
@@ -17,19 +19,19 @@
 
 /* body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td { */
 * {
-	margin: 0;
-	padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 body, input, select {
-	/* Hmm, whether to include Optima-clones such as Optane, Opulent, Ottawa, "CG Omega", Eterna, "URW Classico" */
-	font-family: Optima, "Zapf Humanist", "MgOpen Cosmetica", Candara, Myriad, "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Frutiger, "Trebuchet MS", sans-serif;
+    /* Hmm, whether to include Optima-clones such as Optane, Opulent, Ottawa, "CG Omega", Eterna, "URW Classico" */
+    font-family: Optima, "Zapf Humanist", "MgOpen Cosmetica", Candara, Myriad, "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Frutiger, "Trebuchet MS", sans-serif;
 }
 
 body {
-	color: #000000;
-	background-color: #ffffff;
-	padding: 0 1em;
+    color: #000000;
+    background-color: #ffffff;
+    padding: 0 0.5em;
 }
 
 div#banner {
@@ -43,6 +45,7 @@ div#banner {
 }
 
 div#banner_big {
+    display: none;
     position: absolute;
     top: 0; right: 0; left: 0;
     background-color: #6782dc;
@@ -56,29 +59,29 @@ div#banner_big {
 }
 
 p {
-	margin: 1.5em 0;
-	line-height: 1.5;
+    margin: 1.5em 0;
+    line-height: 1.5;
 }
 
 table {
-	border-collapse: collapse;
-	border-spacing: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
 }
 
 ul, ol, dl {
-	margin: 0;
-	line-height: 1.5;
+    margin: 0;
+    line-height: 1.5;
 }
 
 ul {
-	list-style-type: none;
+    list-style-type: none;
 }
 ul li {
-	background-image: url("/static/i/bullet.png");
-	background-repeat: no-repeat;
-	background-position: 0 3px;
-	padding-left: 32px;
-	margin-bottom: 1.5em;
+    background-image: url("/static/i/bullet.png");
+    background-repeat: no-repeat;
+    background-position: 0 3px;
+    padding-left: 32px;
+    margin-bottom: 1.5em;
 }
 
 dt {
@@ -91,27 +94,25 @@ dd {
 }
 
 fieldset {
-	border: 0;
+    border: 0;
 }
 
 sup {
-	font-size: 81.25%;
-	line-height: 1px;
+    font-size: 81.25%;
+    line-height: 1px;
 }
 
 input[type="submit"] {
     background-color: #666666;
     color: #ffffff;
     font-weight: bold;
+    -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
+    border-radius: 4px;
     font-size: 0.75em;
     padding: 0.166667em 0.5em;
     border: none;
     cursor: pointer;
-}
-
-#header input[type="submit"] {
-    font-size: 0.6em;
 }
 
 input[type="submit"]:hover {
@@ -129,13 +130,14 @@ input[type="submit"]:hover {
 }
 
 textarea {
-	font-family: inherit;
-	line-height: 1.5;
-	font-size: 0.75em;
-	max-width: 25em;
-	/* height: 14.675em; */
-	/* border-top-width: 0.1em;
-	border-bottom-width: 0.1em; */
+    width: 100%;
+    font-family: inherit;
+    line-height: 1.5;
+    font-size: 0.75em;
+    /* max-width: 25em; */
+    /* height: 14.675em; */
+    /* border-top-width: 0.1em;
+    border-bottom-width: 0.1em; */
 }
 textarea[rows='5'] {
     height: 7.66667em;
@@ -145,22 +147,22 @@ textarea[rows='10'] {
 }
 
 blockquote {
-	margin-left: 1.5em;
+    margin-left: 1.5em;
 }
 blockquote p {
-	margin-top: 0em;
+    margin-top: 0em;
 }
 
 blockquote.verse pre {
-	font-family: inherit;
-	display: table;
-	width: auto;
-	margin: 0 auto 0;
-	line-height: 1.5;
+    font-family: inherit;
+    display: table;
+    width: auto;
+    margin: 0 auto 0;
+    line-height: 1.5;
 }
 
 blockquote.large.verse {
-	font-size: 150%;
+    font-size: 150%;
     margin-top: 1em;
 }
 
@@ -169,70 +171,70 @@ blockquote div {
 }
 
 abbr, acronym {
-	letter-spacing: 0.1em;
+    letter-spacing: 0.1em;
 }
 abbr[title], acronym[title] {
-	border-bottom: 1px dotted #000000;
-	cursor: help;
+    border-bottom: 1px dotted #000000;
+    cursor: help;
 }
 
 label {
-	cursor: pointer;
+    cursor: pointer;
     vertical-align: top;
 }
 
 img {
-	vertical-align: bottom;
-	border: 0;
+    vertical-align: bottom;
+    border: 0;
 }
 
 a:link {
-	color: #0000ff;
+    color: #0000ff;
 }
 
 a:visited {
-	color: #000099;
+    color: #000099;
 }
 
 a:active, a:hover {
-	text-decoration: none;
+    text-decoration: none;
 }
 
 .hide {
-	display: none;
+    display: none;
 }
 
 .clear {
-	clear: both;
+    clear: both;
 }
 .before_form {
     margin-bottom: 0;
 }
 
 ul#messages {
-	background-color: #eeffee;
-	color: #009900;
-	padding: 0 0 0 0.5em;
-	margin-bottom: 2em;
+    background-color: #eeffee;
+    color: #009900;
+    padding: 0 0 0 0.5em;
+    margin-bottom: 2em;
 }
 ul#messages li {
-	background-image: none;
-	padding: 0;
-	margin: 0;
+    background-image: none;
+    padding: 0;
+    margin: 0;
 }
 
 #error {
-	color: #ff0000;
+    color: #ff0000;
 }
 
 ul.errorlist li {
-	color: #cc0000;
-	margin-bottom: 0;
+    color: #cc0000;
+    margin-bottom: 0;
 }
 
 #header, #main {
-	max-width: 60em;
-	margin: 0 auto;
+    max-width: 60em;
+    margin: 0 auto;
 }
 
 /*
@@ -242,48 +244,51 @@ ul.errorlist li {
 }
 */
 
-h1, h2, h3, h4, h5, h6, #header {
-	font-family: Zapfino, "Apple Chancery", "Zapf Chancery Italic", "Lucida Calligraphy", "Palatino Linotype", Palatino, "Book Antiqua", "Hoefler Text", Garamond, "Bookman Old Style", Bookman, serif;
-}
-
 h1 {
-	font-size: 200%;
-	line-height: 3.75;
+    font-size: 150%;
+    line-height: 2;
 }
 
 h2 {
-	font-size: 150%;
-	font-weight: normal;
-	line-height: 4;
+    font-size: 125%;
+    font-weight: normal;
+    line-height: 2.4;
 }
 h2.no-descenders + form p, h2.no-descenders + p {
-	margin-top: 0;
+    margin-top: 0;
 }
 
 h3 {
-	font-size: 125%;
-	font-weight: normal;
-	line-height: 3.6;
+    font-size: 120%;
+    font-weight: normal;
+    line-height: 2.5;
 }
 
 /* Header */
 
 #header {
-	padding-top: 1.5em;
-	padding-bottom: 3em;
-	margin-bottom: 1.5em;
-	background-image: url("/static/i/rule-trim.png");
-	background-repeat: no-repeat;
-	background-position: 50% 100%;
+    font-family: Zapfino, "Apple Chancery", "Zapf Chancery Italic", "Lucida Calligraphy", "Palatino Linotype", Palatino, "Book Antiqua", "Hoefler Text", Garamond, "Bookman Old Style", Bookman, serif;
+    padding-top: 0.75em;
+    padding-bottom: 1.5em;
+    margin-bottom: 0.75em;
+    background-image: url("/static/i/rule-trim.png");
+    background-repeat: no-repeat;
+    background-position: 50% 100%;
 }
 
 #header div, #header h1 {
-    font-size: 200%;
-    float: left;
-    line-height: 3.75;
-    width: 283px;
-    height: 76px;
-    position: relative;
+    font-size: 150%;
+    line-height: 2;
+}
+
+#header div img, #header h1 img {
+    vertical-align: top;
+    width: 141px;
+    height: 38px;
+    /*
+    -moz-transition: all 0.5s ease-in-out 0s;
+    -webkit-transition: all 0.5s ease-in-out 0s;
+    */
 }
 
 #header div a, #header h1 a {
@@ -291,162 +296,146 @@ h3 {
     color: #92000a;
 }
 
-#header div a span, #header h1 a span {
-    background: url("/static/i/title.png");
-    position: absolute;
-    width: 100%;
-    height: 100%;
+#header form {
+    line-height: 1.5;
 }
 
+/*
 #header h2 {
     position: relative;
     top: -0.7em;
     left: 0.5em;
 }
+*/
 
 #header div a:hover {
-	color: #cc3333;
-	background-image: url("/static/i/swash_nav_hover.png");
-	background-repeat: no-repeat;
-	background-position: 50% 100%;
+    color: #cc3333;
+    background-image: url("/static/i/swash_nav_hover.png");
+    background-repeat: no-repeat;
+    background-position: 50% 100%;
 }
 #header a {
-	text-decoration: none;
-	color: #000000;
+    text-decoration: none;
+    color: #000000;
 }
 
 #navigation a.greyed {
-	color: #999999;
+    color: #999999;
 }
 
 #navigation a:hover {
-	color: #000000;
-	background-image: url("/static/i/swash_nav_hover.png");
-	background-repeat: no-repeat;
-	background-position: 50% 100%;
-}
-
-#header form {
-	float: right;
-	line-height: 3.6;
-	font-size: 125%;
+    color: #000000;
+    background-image: url("/static/i/swash_nav_hover.png");
+    background-repeat: no-repeat;
+    background-position: 50% 100%;
 }
 
 ul#navigation {
-	list-style-type: none;
-	font-size: 125%;
-	line-height: 3.6;
-	text-decoration: none;
-	text-align: center;
+    list-style-type: none;
+    line-height: 3;
+    text-decoration: none;
+    text-align: center;
 }
 
 #navigation li {
-	background-image: none;
-	padding: 0;
-	display: inline;
-	margin: 0;
+    background-image: none;
+    padding: 0;
+    display: inline;
+    margin: 0;
 }
 
 #navigation li#nav-plays {
-	margin-right: 1em;
+    margin-right: 1em;
 }
 
 /*
 li#nav-plays a {
-	background: url("/static/i/swash_nav_hover.png") no-repeat 50% 80%;
+    background: url("/static/i/swash_nav_hover.png") no-repeat 50% 80%;
 }
 */
 
 #navigation li#nav-people {
-	margin-right: 1em;
+    margin-right: 1em;
 }
 
 #navigation li#nav-places {
 }
 
 #main {
-	clear: both;
-	overflow: hidden;
-	_zoom: 1;
+    clear: both;
+    overflow: hidden;
+    _zoom: 1;
 }
 
 #footer {
-	text-align: center;
-	clear: both;
-	background-image: url("/static/i/rule-trim.png");
-	background-repeat: no-repeat;
-	background-position: 50% 0%;
-	margin-top: 3em;
-	padding-top: 1.5em;
+    text-align: center;
+    clear: both;
+    background-image: url("/static/i/rule-trim.png");
+    background-repeat: no-repeat;
+    background-position: 50% 0%;
+    margin-top: 3em;
+    padding-top: 1.5em;
 }
 
-#primary {
-	float: left;
-	width: 62%;
+.primary {
+    margin-bottom: 1.5em;
 }
-#primary select {
+
+.primary select, .primary textarea {
     max-width: 74%;
 }
+
+.secondary {
+    color: #333333;
+}
+
 .secondary select {
     max-width: 70%;
 }
 
-.secondary {
-	float: right;
-    clear: right;
-	width: 35%;
-	color: #333333;
-}
-
 .secondary:hover {
-	color: #000000;
+    color: #000000;
 }
 
 .secondary ul {
-	font-size: 0.75em;
-	line-height: 2;
+    font-size: 0.75em;
+    line-height: 2;
 }
 .secondary ul li {
-	margin-bottom: 0;
+    margin-bottom: 0;
+}
+
+.secondary #production-meta {
+    margin-bottom: 2em;
 }
 
 h2 {
-	margin-top: 1em;
+    margin-top: 1em;
 }
 
-#primary > h2:first-child, .secondary > h2:first-child {
-	margin-top: 0em;
+.primary > h2:first-child, .secondary > h2:first-child {
+    margin-top: 0em;
 }
 
-#primary > p:first-child, .secondary > p:first-child {
-	margin-top: 0;
+.primary > p:first-child, .secondary > p:first-child, .secondary > #sidebar_tulip_r > p:first-child {
+    margin-top: 0;
 }
 
 /* A to Z pages */
 
 ul#atoz {
-	text-align: center;
-	margin-bottom: 1.5em;
+    text-align: center;
+    margin-bottom: 1.5em;
 }
 ul#atoz li {
-	background-image: none;
-	padding: 0;
-	display: inline;
-	margin: 0 0.5em;
-}
-
-.person_list {
-	-moz-column-count: 3;
-	column-count: 3;
-}
-
-#play_list, #places_list {
-	-moz-column-count: 2;
-	column-count: 2;
+    background-image: none;
+    padding: 0;
+    display: inline;
+    margin: 0 0.5em;
 }
 
 .greyed {
-	color: #999999;
+    color: #999999;
 }
 
 /* Play page */
@@ -454,47 +443,44 @@ ul#atoz li {
 /* Production page */
 
 #sidebar_tulip {
-	background-image: url("/static/i/tulip-left-small.png");
-	background-repeat: no-repeat;
-	background-position: 50% 0%;
-	text-align: center;
-	padding-top: 24px;
-	margin-bottom: 1.5em;
+    text-align: left;
+    margin-bottom: 1.5em;
 }
+
 #sidebar_tulip_r {
-	background-image: url("/static/i/tulip-right-small.png");
-	background-repeat: no-repeat;
-	background-position: 50% 100%;
-	padding-bottom: 24px;
+    background-image: url("/static/i/tulip-right-small.png");
+    background-repeat: no-repeat;
+    background-position: 50% 100%;
+    padding-bottom: 24px;
 }
 
 th {
-	font-weight: normal;
-	text-align: right;
-	padding-right: 0.5em;
-	line-height: 1.5;
-	vertical-align: top;
+    font-weight: normal;
+    text-align: right;
+    padding-right: 0.5em;
+    line-height: 1.5;
+    vertical-align: top;
 }
 th h3 {
-	text-align: left;
+    text-align: left;
 }
 
 /* Table of cast & crew */
 table.parts {
-	width: 100%;
+    width: 100%;
 }
 table.parts td:before {
-	content: "\b7"; /* Possible alternatives are \2013 \2026 and ~ */
-	padding-right: 0.5em;
+    content: "\b7"; /* Possible alternatives are \2013 \2026 and ~ */
+    padding-right: 0.5em;
 }
 table.parts.order {
-	cursor: move;
+    cursor: move;
 }
 table.parts.order td:before {
-	content: "\2195";
+    content: "\2195";
 }
 table.parts td {
-	width: 50%;
+    width: 50%;
 }
 
 .parts-drag-highlight {
@@ -512,27 +498,27 @@ table.parts td {
 
 /*
 tr.remove td {
-	color: #cc0000;
-	text-decoration: line-through;
+    color: #cc0000;
+    text-decoration: line-through;
 }
 tr.remove td.edit_status {
-	color: #000000;
-	text-decoration: none;
+    color: #000000;
+    text-decoration: none;
 }
 */
 
 td {
-	text-align: left;
-	line-height: 1.5;
+    text-align: left;
+    line-height: 1.5;
 }
 
 #feed {
-	float: right;
-	margin: 0;
+    float: right;
+    margin: 0;
 }
 
 .posted-by {
-	margin: 0;
+    margin: 0;
 }
 
 #photograph-feature {
@@ -542,32 +528,32 @@ td {
 }
 
 #photographs ul {
-	margin-top: 2em;
-	margin-bottom: 2em;
+    margin-top: 2em;
+    margin-bottom: 2em;
 }
 
 #photographs li {
-	background-image: none;
-	padding-left: 0;
-	margin-bottom: 0;
-	margin-right: 0.66667em;
-	float: left;
-	height: 7.33333em; /* 6.66667 + 0.25+0.25 padding + 0.083333+0.083333 border */
-	width: 7.33333em;
-	margin-bottom: 0.66667em;
+    background-image: none;
+    padding-left: 0;
+    margin-bottom: 0;
+    margin-right: 0.66667em;
+    float: left;
+    height: 7.33333em; /* 6.66667 + 0.25+0.25 padding + 0.083333+0.083333 border */
+    width: 7.33333em;
+    margin-bottom: 0.66667em;
 }
 /* In a 75% ul */
 #photographs img {
-	border: solid 0.083333em #999999;
-	padding: 0.25em;
+    border: solid 0.083333em #999999;
+    padding: 0.25em;
 }
 /* Not */
 #photograph-feature img {
-	/* height: 6.75em;
-	width: 6.75em; */
+    /* height: 6.75em;
+    width: 6.75em; */
     margin-bottom: 0.125em;
-	border: solid 0.0625em #999999;
-	padding: 0.25em;
+    border: solid 0.0625em #999999;
+    padding: 0.25em;
 }
 
 #photo_form p {
@@ -582,21 +568,21 @@ p#photo {
 /* Other */
 
 .pagination {
-	text-align: center;
-	margin-top: 3em;
-	margin-bottom: 0;
+    text-align: center;
+    margin-top: 3em;
+    margin-bottom: 1.5em;
 }
 
 .production_list li span.meta {
-	display: block;
-	font-size: 90%;
-	line-height: 1.6667;
+    display: block;
+    font-size: 90%;
+    line-height: 1.6667;
 }
 
 #zapfino {
-	margin-right: 0.5em;
-	font-family: Zapfino;
-	line-height: 4.5;
+    margin-right: 0.5em;
+    font-family: Zapfino;
+    line-height: 4.5;
 }
 
 /* Place page */
@@ -624,13 +610,13 @@ p#photo {
     display: inline;
 }
 .asmOptionDisabled {
-	color: #999; 
+    color: #999; 
 }
 .asmList {
-	margin-top: 0.25em;
+    margin-top: 0.25em;
 }
 .asmListItem {
-	margin: 0;
+    margin: 0;
 }
 .asmListItemRemove {
     padding-left: 1em;
@@ -734,34 +720,12 @@ ul#edit-parts li:nth-child(2n) {
     line-height: 1.715;
 }
 
-#home .col ul {
-    margin-top: -1.5em;
-}
-
-#home #features {
-    float: left;
-    width: 28%;
-    clear: both;
-    margin-right: 1%;
-    padding-right: 1%;
-    border-right: dotted 1px #cc9999;
-}
-
-#home #status {
-    float: left;
-    width: 34%;
-}
-
 #home #status > p:first-child {
     color: #92000a;
     text-align: center;
     margin-top: 0;
 }
 
-#home #latest {
-    float: right;
-    width: 33%;
-}
 #home #latest h2 {
     margin-top: 0;
 }
@@ -771,13 +735,6 @@ ul#edit-parts li:nth-child(2n) {
 #home #latest ul li {
     background: none;
     padding-left: 0;
-}
-
-#home h2 + p {
-    margin-top: 0em;
-}
-#home h2.no-descenders + p {
-    margin-top: -1.5em;
 }
 
 #byline {
@@ -823,11 +780,197 @@ p#book-tickets a {
     color: #ffffff;
     text-decoration: none;
     font-weight: bold;
+    -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
+    border-radius: 4px;
     padding: 0.166667em 0.5em;
     border: none;
 }
 p#book-tickets a:hover {
     background-color: #990000;
+}
+
+@media all and (min-width: 481px) {
+
+    body {
+        padding: 0 1em;
+    }
+
+    #main {
+        padding-top: 1.5em;
+    }
+
+    #header {
+        padding-bottom: 6em;
+        margin-bottom: 1.5em;
+        background-position: 25% 100%;
+    }
+
+    #header div, #header h1 { float: left; }
+
+    #header form {
+        float: right;
+        line-height: 4.5;
+    }
+
+    ul#navigation {
+        clear: right;
+        float: right;
+    }
+
+    h1, h2, h3, h4, h5, h6, #header {
+        font-family: Zapfino, "Apple Chancery", "Zapf Chancery Italic", "Lucida Calligraphy", "Palatino Linotype", Palatino, "Book Antiqua", "Hoefler Text", Garamond, "Bookman Old Style", Bookman, serif;
+    }
+
+    h1 {
+        font-size: 200%;
+        line-height: 3.75;
+    }
+
+    h2 {
+        font-size: 150%;
+        font-weight: normal;
+        line-height: 4;
+    }
+    h2.no-descenders + form p, h2.no-descenders + p {
+        margin-top: 0;
+    }
+
+    h3 {
+        font-size: 125%;
+        font-weight: normal;
+        line-height: 3.6;
+    }
+
+    #home .col ul {
+        margin-top: -1.5em;
+    }
+    #home h2 + p {
+        margin-top: 0em;
+    }
+    #home h2.no-descenders + p {
+        margin-top: -1.5em;
+    }
+
+}
+
+@media all and (min-width: 541px) {
+    #header div img, #header h1 img {
+        width: 212px;
+        height: 57px;
+    }
+}
+
+@media all and (min-width: 641px) {
+    #header div, #header h1 {
+        line-height: 3.75;
+    }
+    #header div img, #header h1 img {
+        width: 283px;
+        height: 76px;
+    }
+
+    #header {
+        padding-top: 1.5em;
+        padding-bottom: 7.5em;
+        margin-bottom: 1.5em;
+        background-position: 25% 100%;
+    }
+    ul#navigation {
+        line-height: 3.6;
+        font-size: 125%;
+        line-height: 3.6;
+    }
+
+    .primary {
+        float: left;
+        width: 62%;
+    }
+    .secondary {
+        float: right;
+        clear: right;
+        width: 35%;
+    }
+    .sm {
+        display: none;
+    }
+
+    #sidebar_tulip {
+        text-align: center;
+        background-image: url("/static/i/tulip-left-small.png");
+        background-repeat: no-repeat;
+        background-position: 50% 0%;
+        padding-top: 24px;
+    }
+    .secondary > #sidebar_tulip_r > p:first-child {
+        margin-top: 1.5em;
+    }
+
+    #home #features {
+        float: left;
+        width: 28%;
+        clear: both;
+        margin-right: 1%;
+        padding-right: 1%;
+        border-right: dotted 1px #cc9999;
+    }
+
+    #home #status {
+        float: left;
+        width: 34%;
+    }
+
+    #home #latest {
+        float: right;
+        width: 33%;
+    }
+
+}
+
+@media all and (min-width: 770px) {
+    #header {
+        background-position: 50% 100%;
+        padding-bottom: 4.5em;
+    }
+}
+
+@media all and (min-width: 900px) {
+    ul#navigation {
+        clear: none;
+        float: none;
+    }
+    #header {
+        padding-bottom: 3em;
+    }
+    #main {
+        padding-top: 0;
+    }
+
+}
+
+@media all and (min-width: 35em) {
+
+    .person_list {
+        -webkit-column-count: 2;
+        -moz-column-count: 2;
+        column-count: 2;
+    }
+
+}
+
+@media all and (min-width: 50em) {
+
+    #play_list, #places_list {
+        -webkit-column-count: 2;
+        -moz-column-count: 2;
+        column-count: 2;
+    }
+
+    .person_list {
+        -webkit-column-count: 3;
+        -moz-column-count: 3;
+        column-count: 3;
+    }
+
 }
 

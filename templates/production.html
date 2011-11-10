@@ -22,25 +22,58 @@
 </div>
 {% endif %}
 
+{% if production.photos.all %}
+    {% with production.photos.all|random as photo %}
+    <div id="photograph-feature">
+    <a href="{{ photo.get_absolute_url }}">{{ photo.photo.extra_thumbnails_tag.feature }}</a>
+    </div>
+    {% endwith %}
+{% else %}{% if flickr.photos.photo %}
+    {% with flickr.photos.photo|random as photo %}
+    <div id="photograph-feature">
+    <a href="http://www.flickr.com/photos/{{ photo.owner }}/{{ photo.id }}/"><img src="http://farm{{ photo.farm }}.static.flickr.com/{{ photo.server }}/{{ photo.id }}_{{ photo.secret }}_s.jpg" alt="{{ photo.title }}"></a>
+    </div>
+    {% endwith %}
+{% endif %}{% endif %}
+
 <h1 itemprop="name">{{ production.play.get_title_display|prettify }}</h1>
 
 {% include 'includes/messages.html' %}
 
-<div id="primary">
-
 {% if production.description %}
-<div itemprop="description">{{ production.description|prettify|linebreaks }}</div>
+<div class="primary" itemprop="description">{{ production.description|prettify|linebreaks }}</div>
 {% else %}
 {% if production.play.description %}
-<p><em>This specific production does not yet have a description, but the play itself does:</em></p>
+<div class="primary"><p><em>This specific production does not yet have a description, but the play itself does:</em></p>
 {{ production.play.description|prettify|linebreaks }}
+</div>
 {% else %}
 {% if user.is_authenticated %}
-<p>If you have a description of this production, please do
-<a href="{{ production.get_edit_url }}">add it</a>.
+<div class="primary"><p>If you have a description of this production, please do
+<a href="{{ production.get_edit_url }}">add it</a>.</div>
 {% endif %}
 {% endif %}
 {% endif %}
+
+<div id="sidebar_tulip" class="secondary"><div id="sidebar_tulip_r" role="contentinfo">
+
+{% if original_production %}
+{% with original_production as production %}
+<p>This is a production of the play
+<a href="{{ production.play.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.play.get_authors_display %}
+(by {{ production.play.get_authors_display }}){% endif %}{% if production.get_companies_display %} by {{ production.get_companies_display }}{% endif %},
+{% endwith %}
+{% else %}
+<p>This is a production of the play
+<a href="{{ production.play.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.play.get_authors_display %}
+(by {{ production.play.get_authors_display }}){% endif %}{% if production.get_companies_display %} by {{ production.get_companies_display }}{% endif %},
+{% endif %}
+
+{% include 'productions/sidebar_bit.html' %}
+
+</div></div>
+
+<div class="primary">
 
 <h2 class="no-descenders">Cast &amp; Crew</h2>
 
@@ -95,113 +128,52 @@ or please <a href="{{ production.get_edit_url }}">do add it to the site</a>.</p>
 
 {% endif %}
 
-<h2 id="observations" class="no-descenders"><!-- Anecdotes &amp; -->Observations</h2>
-
-{% get_comment_count for production as comment_count %}
-{% get_comment_list for production as observations %}
-{% if observations %}
-<ol id="observation_list">
-{% for observation in observations %}
-<li id="o{{ observation.id }}">
-<p class="posted-by">
-<span class="meta">On {{ observation.submit_date|date:"jS F Y"|prettify }}
-at <a title="Permanent link to this observation" href="{{ request.path }}#o{{ observation.id }}">{{ observation.submit_date|date:"g:i a" }}</a>,
-<a href="{{ observation.user.get_profile.get_absolute_url }}">{{ observation.user_name|prettify }}</a> noted:</p>
-<blockquote>{{ observation.comment|prettify|urlize|linebreaks }}</blockquote>
-</li>
-{% endfor %}
-</ol>
-{% endif %}
-
-{% if user.is_authenticated %}
-{% get_comment_form for production as form %}
-<form action="{% comment_form_target %}" method="post">
-        {{ form.comment.errors }} 
-        <p><label for="id_comment">If you have an interesting observation or anecdote about this production
-that you think others may be interested in, please feel free to record it here:</label></p>
-        <p>{{ form.comment }}</p>
-    <div class="hide">
-        {{ form.honeypot.errors }}
-        {{ form.honeypot.label_tag }} {{ form.honeypot }}
-    </div>
-    {{ form.content_type }}
-    {{ form.object_pk }}
-    {{ form.timestamp }}
-    {{ form.security_hash }}
-    <input type="hidden" name="next" value="{{ request.path }}#observations">
-    <p><input type="submit" value="Store"></p>
-</form>
-{% else %}
-<p>If you have an interesting observation or anecdote about this production
-that you think others may be interested in, please
-<a href="{% url login %}?next={{ request.path }}%23observations">sign in</a> in order to record it here.</p>
-{% endif %}
-        
 </div>
 
-<div id="sidebar_tulip" class="secondary"><div id="sidebar_tulip_r" role="contentinfo">
-
-{% if original_production %}
-{% with original_production as production %}
-<p>This is a production of the play
-<a href="{{ production.play.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.play.get_authors_display %}
-(by {{ production.play.get_authors_display }}){% endif %}{% if production.get_companies_display %} by {{ production.get_companies_display }}{% endif %},
-{% endwith %}
-{% else %}
-<p>This is a production of the play
-<a href="{{ production.play.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.play.get_authors_display %}
-(by {{ production.play.get_authors_display }}){% endif %}{% if production.get_companies_display %} by {{ production.get_companies_display }}{% endif %},
-{% endif %}
-
-{% include 'productions/sidebar_bit.html' %}
-
-{% if production.source %}
-    <p><small>Source: {{ production.source|safe }}</small></p>
-{% endif %}
-
-{% ifnotequal production.last_modifier production.creator %}
-    {% if production.creator.name %}
-        <p>Added by <a href="{{ production.creator.get_profile.get_absolute_url }}">{{ production.creator.name }}</a>, last modified by <a href="{{ production.last_modifier.get_profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</p>
-    {% else %}
-        <p>Last modified by <a href="{{ production.last_modifier.get_profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</p>
-    {% endif %}
-{% else %}
-    {% if production.creator.name %}
-        <p>Added by <a href="{{ production.creator.get_profile.get_absolute_url }}">{{ production.creator.name }}</a>.</p>
-    {% else %}
-        {% if production.last_modifier.name %}
-            <p>Last modified by <a href="{{ production.last_modifier.get_profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</p>
-        {% endif %}
-    {% endif %}
-{% endifnotequal %}
-
-</div></div>
-
 <div class="secondary" id="production-stuff">
-
-{% if production.photos.all %}
-    {% with production.photos.all|random as photo %}
-    <div id="photograph-feature">
-    <a href="{{ photo.get_absolute_url }}">{{ photo.photo.extra_thumbnails_tag.feature }}</a>
-    </div>
-    {% endwith %}
-{% else %}{% if flickr.photos.photo %}
-    {% with flickr.photos.photo|random as photo %}
-    <div id="photograph-feature">
-    <a href="http://www.flickr.com/photos/{{ photo.owner }}/{{ photo.id }}/"><img src="http://farm{{ photo.farm }}.static.flickr.com/{{ photo.server }}/{{ photo.id }}_{{ photo.secret }}_s.jpg" alt="{{ photo.title }}"></a>
-    </div>
-    {% endwith %}
-{% endif %}{% endif %}
 
 <div style="float: right">
 <a href="http://twitter.com/share" class="twitter-share-button" data-count="none" data-via="theatricalia" data-related="dracos">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
 </div>
 
-<ul>
+<ul id="production-meta">
+
 {% if production.url %}
 <li><a rel="nofollow" href="{{ production.url }}">Production website</a></li>
 {% endif %}
-<li><a href="#observations">{% if comment_count %}Observations ({{ comment_count }}){% else %}Add an observation{% endif %}</a>
+
+{% if comment_count %}
+<li><a href="#observations">Observations ({{ comment_count }})</a></li>
+{% endif %}
+
+{% if production.source %}
+    <li>Source: {{ production.source|safe }}</li>
+{% endif %}
+
+{% ifnotequal production.last_modifier production.creator %}
+    {% if production.creator.name %}
+        <li>Added by <a href="{{ production.creator.get_profile.get_absolute_url }}">{{ production.creator.name }}</a>, last modified by <a href="{{ production.last_modifier.get_profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</li>
+    {% else %}
+        <li>Last modified by <a href="{{ production.last_modifier.get_profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</li>
+    {% endif %}
+{% else %}
+    {% if production.creator.name %}
+        <li>Added by <a href="{{ production.creator.get_profile.get_absolute_url }}">{{ production.creator.name }}</a>.</li>
+    {% else %}
+        {% if production.last_modifier.name %}
+            <li>Last modified by <a href="{{ production.last_modifier.get_profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</li>
+        {% endif %}
+    {% endif %}
+{% endifnotequal %}
+
+</ul>
+
+<ul id="production-tools">
+
+{% if not comment_count %}
+<li><a href="#observations">Add an observation</a></li>
+{% endif %}
+
 <li id="edit-link"><a href="{{ production.get_edit_url }}?js=0">Edit this production</a>
 
 {% ifequal production.source_type "Birmingham Libraries" %}
@@ -296,5 +268,52 @@ that you think others may be interested in, please
 
 </div>
 
+<div class="primary">
+
+<h2 id="observations" class="no-descenders"><!-- Anecdotes &amp; -->Observations</h2>
+
+{% get_comment_count for production as comment_count %}
+{% get_comment_list for production as observations %}
+{% if observations %}
+<ol id="observation_list">
+{% for observation in observations %}
+<li id="o{{ observation.id }}">
+<p class="posted-by">
+<span class="meta">On {{ observation.submit_date|date:"jS F Y"|prettify }}
+at <a title="Permanent link to this observation" href="{{ request.path }}#o{{ observation.id }}">{{ observation.submit_date|date:"g:i a" }}</a>,
+<a href="{{ observation.user.get_profile.get_absolute_url }}">{{ observation.user_name|prettify }}</a> noted:</p>
+<blockquote>{{ observation.comment|prettify|urlize|linebreaks }}</blockquote>
+</li>
+{% endfor %}
+</ol>
+{% endif %}
+
+{% if user.is_authenticated %}
+{% get_comment_form for production as form %}
+<form action="{% comment_form_target %}" method="post">
+        {{ form.comment.errors }} 
+        <p><label for="id_comment">If you have an interesting observation or anecdote about this production
+that you think others may be interested in, please feel free to record it here:</label></p>
+        <p>{{ form.comment }}</p>
+    <div class="hide">
+        {{ form.honeypot.errors }}
+        {{ form.honeypot.label_tag }} {{ form.honeypot }}
+    </div>
+    {{ form.content_type }}
+    {{ form.object_pk }}
+    {{ form.timestamp }}
+    {{ form.security_hash }}
+    <input type="hidden" name="next" value="{{ request.path }}#observations">
+    <p><input type="submit" value="Store"></p>
+</form>
+{% else %}
+<p>If you have an interesting observation or anecdote about this production
+that you think others may be interested in, please
+<a href="{% url login %}?next={{ request.path }}%23observations">sign in</a> in order to record it here.</p>
+{% endif %}
+
 </div>
+
+</div>
+
 {% endblock %}

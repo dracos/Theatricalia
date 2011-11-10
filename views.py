@@ -41,6 +41,7 @@ def home(request):
         'people': Person.objects.count(),
         'parts': Part.objects.count(),
         'random_photo': random_photo,
+        'home': True,
     })
 
 def static_colophon(request):

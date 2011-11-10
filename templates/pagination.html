@@ -1,9 +1,6 @@
+{% load humanize %}
 {% if page_obj.has_other_pages %}
 <p class="pagination">
-        <span class="current">
-            Page {{ page_obj.number }} of {{ paginator.num_pages }}.
-        </span>
-<br>
         {% if page_obj.has_previous %}
 		{% ifequal page_obj.previous_page_number 1 %}
             <a href="{{ request.path }}">&larr; Previous</a>
@@ -13,7 +10,11 @@
         {% else %}
             <span class="greyed">&larr; Previous</span>
         {% endif %}
-|
+        &middot;
+        <span class="current">
+            {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ paginator.count|intcomma }}
+        </span>
+        &middot;
         {% if page_obj.has_next %}
             <a href="?page={{ page_obj.next_page_number }}">Next &rarr;</a>
         {% else %}
