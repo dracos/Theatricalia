@@ -5,6 +5,7 @@ from django.views.generic.list_detail import object_list
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
+from django.views.decorators.cache import cache_page
 
 from common.models import Alert
 from forms import PlaceForm
@@ -98,6 +99,7 @@ def place_alert(request, place_id, place, type):
 
     return HttpResponseRedirect(place.get_absolute_url())
 
+@cache_page(60*5)
 def list_places(request, letter='a'):
     if letter == '0':
         places = Place.objects.filter(name__regex=r'^[0-9]')

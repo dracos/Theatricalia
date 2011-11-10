@@ -5,6 +5,8 @@ from django.forms.formsets import formset_factory
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect 
 from django.db.models import Q
+from django.views.decorators.cache import cache_page
+
 from shortcuts import render, check_url, UnmatchingSlugException
 from models import Play
 from people.models import Person
@@ -96,7 +98,7 @@ def play_edit(request, play_id, play):
         'formset': formset,
     })
 
-
+@cache_page(60 * 5)
 def list_plays(request, letter='a'):
 	if letter == '0':
 		plays = Play.objects.filter(title__regex=r'^[0-9]')
