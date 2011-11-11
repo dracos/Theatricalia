@@ -16,12 +16,6 @@
 {% endwith %}{% endwith %}
 {% endif %}
 
-{% if production.book_tickets and not production.finished %}
-<div class="secondary">
-<p id="book-tickets"><a rel="nofollow" itemprop="offers" href="{{ production.book_tickets }}">Book tickets</a></p>
-</div>
-{% endif %}
-
 {% if production.photos.all %}
     {% with production.photos.all|random as photo %}
     <div id="photograph-feature">
@@ -35,6 +29,12 @@
     </div>
     {% endwith %}
 {% endif %}{% endif %}
+
+{% if production.book_tickets and not production.finished %}
+<div class="secondary">
+<p id="book-tickets"><a rel="nofollow" itemprop="offers" href="{{ production.book_tickets }}">Book tickets</a></p>
+</div>
+{% endif %}
 
 <h1 itemprop="name">{{ production.play.get_title_display|prettify }}</h1>
 
