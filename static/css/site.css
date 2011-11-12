@@ -246,7 +246,8 @@ ul.errorlist li {
 
 h1 {
     font-size: 150%;
-    line-height: 2;
+    line-height: 1.5;
+    margin-bottom: 0.5em;
 }
 
 h2 {
@@ -278,7 +279,8 @@ h3 {
 
 #header div, #header h1 {
     font-size: 150%;
-    line-height: 2;
+    line-height: 1.5;
+    margin-bottom: 0.5em;
 }
 
 #header div img, #header h1 img {
@@ -806,7 +808,11 @@ p#book-tickets a:hover {
         background-position: 25% 100%;
     }
 
-    #header div, #header h1 { float: left; }
+    #header div, #header h1 {
+        float: left;
+        line-height: 2;
+        margin-bottom: 0;
+    }
 
     #header form {
         float: right;
@@ -825,6 +831,7 @@ p#book-tickets a:hover {
     h1 {
         font-size: 200%;
         line-height: 3.75;
+        margin-bottom: 0;
     }
 
     h2 {
