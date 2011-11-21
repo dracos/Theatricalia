@@ -56,6 +56,8 @@ $(function() {
         return false;
     });
     $('a[rel=gallery]').fancybox({
+        'overlayOpacity': '0.8',
+        'overlayColor': '#000000',
         'cyclic': 'true',
         'opacity': 'true',
         'transitionIn': 'elastic',
