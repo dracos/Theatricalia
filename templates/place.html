@@ -59,7 +59,7 @@
 {% if place.photos.all %}
     {% with place.photos.all|random as photo %}
     <div id="photograph-feature">
-    <a href="{{ photo.get_absolute_url }}">{{ photo.photo.extra_thumbnails_tag.feature }}</a>
+    <a title="{{ photo.title }}" href="/static/{{ photo.photo }}">{{ photo.photo.extra_thumbnails_tag.feature }}</a>
     </div>
     {% endwith %}
 {% endif %}
@@ -128,7 +128,7 @@ $(function(){
 <h2>Photographs</h2>
     <ul>
     {% for photo in place.photos.all %}
-    <li><a href="{{ photo.get_absolute_url }}">{{ photo.photo.thumbnail_tag }}</a>
+    <li><a rel="gallery" title="{{ photo.title }}" href="/static/{{ photo.photo }}">{{ photo.photo.thumbnail_tag }}</a>
     {% endfor %}
     </ul>
     </div>

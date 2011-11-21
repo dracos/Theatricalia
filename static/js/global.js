@@ -40,6 +40,37 @@ $(function() {
         window.scrollTo(0, 0);
     }
 
+    /* fancybox
+       Rewrite all Flickr photos to go to their pictures directly,
+       edal with the special big photo at the top,
+       and then set up fancybox galleries for all the photos.
+     */
+    $('a[href^="http://www.flickr.com"]').each(function(){
+        var l = $(this);
+        var pic = l.find('img').attr('src').replace('_s.', '_z.');
+        l.data('orighref', l.attr('href'));
+        l.attr('href', pic);
+    });
+    $('#photograph-feature a').click(function(){
+        $('a[rel=gallery][href^="' + $(this).attr('href') + '"]').click();
+        return false;
+    });
+    $('a[rel=gallery]').fancybox({
+        'cyclic': 'true',
+        'opacity': 'true',
+        'transitionIn': 'elastic',
+        'transitionOut': 'elastic',
+        'titlePosition': 'over',
+        'titleFormat': function(title, currentArray, currentIndex, currentOpts) {
+            if (currentOpts.href.substring(0, 7) == 'http://') {
+                var orig = $(currentArray[currentIndex]).data('orighref');
+                title += ' <a href="' + orig + '">View on Flickr</a>';
+            }
+            if (currentArray.length <= 1) return title;
+            return '<span id="fancybox-title-over">Image ' + (currentIndex + 1) + ' / ' + currentArray.length + (title.length ? ' &nbsp; ' + title : '') + '</span>';
+        }
+    });
+
     // Add another place when editing production
     $('form#edit .place:last').after(
         $('<p>If this production performed at another place, <a href="">add another place</a>.</p>').click(function(){

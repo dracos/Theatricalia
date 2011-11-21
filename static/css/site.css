@@ -792,6 +792,10 @@ p#book-tickets a:hover {
     background-color: #990000;
 }
 
+#fancybox-title-over a {
+    color: #fff;
+}
+
 @media all and (min-width: 481px) {
 
     body {
