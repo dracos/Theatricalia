@@ -66,8 +66,12 @@ $(function() {
                 var orig = $(currentArray[currentIndex]).data('orighref');
                 title += ' <a href="' + orig + '">View on Flickr</a>';
             }
-            if (currentArray.length <= 1) return title;
-            return '<span id="fancybox-title-over">Image ' + (currentIndex + 1) + ' / ' + currentArray.length + (title.length ? ' &nbsp; ' + title : '') + '</span>';
+            var image_idx = '';
+            if (currentArray.length > 1) {
+                if (title.length) title = ' &nbsp; ' + title;
+                image_idx = 'Image ' + (currentIndex + 1) + ' / ' + currentArray.length;
+            }
+            return '<span id="fancybox-title-over">' + image_idx + title + '</span>';
         }
     });
 
