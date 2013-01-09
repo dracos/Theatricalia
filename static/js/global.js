@@ -34,7 +34,7 @@ $(function() {
         selected: start_tab,
         select: function(e, ui) {
             window.location.hash = ui.tab.hash;
-        }
+       }
     });
     if ($('#search_tabs').length && window.location.hash) {
         window.scrollTo(0, 0);
@@ -47,9 +47,12 @@ $(function() {
      */
     $('a[href^="http://www.flickr.com"]').each(function(){
         var l = $(this);
-        var pic = l.find('img').attr('src').replace('_s.', '_z.');
-        l.data('orighref', l.attr('href'));
-        l.attr('href', pic);
+        var pic = l.find('img').attr('src');
+        if (pic) {
+            pic = pic.replace('_s.', '_z.');
+            l.data('orighref', l.attr('href'));
+            l.attr('href', pic);
+        }
     });
     $('#photograph-feature a').click(function(){
         $('a[rel=gallery][href^="' + $(this).attr('href') + '"]').click();
@@ -110,7 +113,7 @@ $(function() {
     );
 
     $('form#edit .company:last').after(
-        $('<p style="margin-left:7.5em"><small><a href="">Add another company</a></small></p>').click(function(){
+        $('<p style="margin-left:8.5em"><small><a href="">Add another company</a></small></p>').click(function(){
             var last_form = $('form#edit .company:last');
             var newRow = last_form.clone().insertAfter(last_form);
             var total = $('#id_company-TOTAL_FORMS').val();
@@ -142,7 +145,7 @@ $(function() {
 
     // Add another author when editing play
     $('form#edit .author:last').after(
-        $('<p style="margin-left:7.5em"><small><a href="">Add another author</a></small></p>').click(function(){
+        $('<p style="margin-left:8.5em"><small><a href="">Add another author</a></small></p>').click(function(){
             var last_form = $('form#edit .author:last');
             var newRow = last_form.clone().insertAfter(last_form);
             var total = $('#id_form-TOTAL_FORMS').val();
@@ -305,6 +308,7 @@ function autocomplete_add(params) {
             model_name: params.model_name
         },
         matchContains:1,
+        matchSubset:false,
         max:20,
         multipleSeparator: '|',
         selectFirst:0
