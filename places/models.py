@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.contenttypes import generic
 from django.template.defaultfilters import slugify
 from photos.models import Photo
-from utils import int_to_base32
+from utils import int_to_base32, base32_to_int
 from fields import ApproximateDateField
 from common.models import Alert
 from countries.models import Country
@@ -17,6 +17,12 @@ class PlaceManager(models.Manager):
             latitude__gte = lat - 0.1,
             latitude__lte = lat + 0.1
         )
+
+    def get(self, **kwargs):
+        b32 = kwargs.pop('Bid', None)
+        if b32:
+            kwargs['id'] = base32_to_int(b32)
+        return super(PlaceManager, self).get(**kwargs)
 
 class Place(models.Model):
     name = models.CharField(max_length=100)
