@@ -32,6 +32,35 @@ if (!window.location.hash)
 {% endif %}
 </div>
 
+<div id="search_people">
+{% if people %}
+<h2>People</h2>
+{% ifequal sounds_people 1 %}
+    <p>We couldn&rsquo;t find any results for &ldquo;{{ search }}&rdquo;. Here are some results that are, or sound, similar:
+{% endifequal %}
+{% ifequal sounds_people 2 %}
+<p>Here are results that are, or sound, similar to &ldquo;{{ search }}&rdquo;:
+{% endifequal %}
+<ul class="person_list">
+{% for person in people %}
+<li><a href="{{ person.get_absolute_url }}">{{ person|prettify }}</a>
+{% endfor %}
+</ul>
+{% if not request.GET.similar and not sounds_people %}
+    {% ifequal people.count 1 %}
+        <p>If this isn&rsquo;t whom you&rsquo;re looking for, <a href="{% url search %}?q={{ search }};similar=1">see if we have any similar sounding results</a>.
+    {% else %}
+        <p>If none of these is whom you&rsquo;re looking for, <a href="{% url search %}?q={{ search }};similar=1">see if we have any similar sounding results</a>.
+    {% endifequal %}
+{% endif %}
+{% else %}
+    {% if search %}
+        <p>I&rsquo;m afraid we couldn&rsquo;t find any results. If you&rsquo;re searching for someone, try
+        just their first or last name.
+    {% endif %}
+{% endif %}
+</div>
+
 <div id="search_places">
 
 {% if places or near.geonames %}
@@ -76,35 +105,6 @@ if (!window.location.hash)
 </div>
 {% endif %}
 
-</div>
-
-<div id="search_people">
-{% if people %}
-<h2>People</h2>
-{% ifequal sounds_people 1 %}
-    <p>We couldn&rsquo;t find any results for &ldquo;{{ search }}&rdquo;. Here are some results that are, or sound, similar:
-{% endifequal %}
-{% ifequal sounds_people 2 %}
-<p>Here are results that are, or sound, similar to &ldquo;{{ search }}&rdquo;:
-{% endifequal %}
-<ul class="person_list">
-{% for person in people %}
-<li><a href="{{ person.get_absolute_url }}">{{ person|prettify }}</a>
-{% endfor %}
-</ul>
-{% if not request.GET.similar and not sounds_people %}
-    {% ifequal people.count 1 %}
-        <p>If this isn&rsquo;t whom you&rsquo;re looking for, <a href="{% url search %}?q={{ search }};similar=1">see if we have any similar sounding results</a>.
-    {% else %}
-        <p>If none of these is whom you&rsquo;re looking for, <a href="{% url search %}?q={{ search }};similar=1">see if we have any similar sounding results</a>.
-    {% endifequal %}
-{% endif %}
-{% else %}
-    {% if search %}
-        <p>I&rsquo;m afraid we couldn&rsquo;t find any results. If you&rsquo;re searching for someone, try
-        just their first or last name.
-    {% endif %}
-{% endif %}
 </div>
 
 <div id="search_parts">
