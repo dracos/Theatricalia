@@ -126,17 +126,33 @@ elif thing == 'production':
     Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
     Visit.objects.filter(production=alt).update(production=main)
     Comment.objects.filter(content_type=ctype, object_pk=alt.id).update(object_pk=main.id)
-    Production_Companies.objects.filter(production=alt).update(production=main)
+    for company in Production_Companies.objects.filter(production=alt):
+        company.production = main
+        try:
+            company.save()
+        except:
+            company.delete()
     if alt.description != main.description:
         main.description += "\n\n" + alt.description
-    main.source += "\n\n" + alt.source
+    if alt.source:
+        main.source += "\n\n" + alt.source
 
     ProductionPlace.objects.filter(production=alt).update(production=main)
     #main_place = main.place_set.all()[0]
     #alt_place = alt.place_set.all()[0]
     #Part.objects.filter(production=main, start_date='', end_date='').update(start_date=main_place.start_date, end_date=main_place.end_date)
     #Part.objects.filter(production=alt, start_date='', end_date='').update(production=main, start_date=alt_place.start_date, end_date=alt_place.end_date)
-    Part.objects.filter(production=alt).update(production=main)
+    for part in Part.objects.filter(production=alt):
+        if Part.objects.filter(person=part.person, production=main, role=part.role, cast=part.cast, credited_as=part.credited_as, order=part.order, start_date=part.start_date or '', end_date=part.end_date or ''):
+            print "Going to delete %s" % part
+            part.delete()
+        elif not part.role and Part.objects.filter(person=part.person, production=main, cast=part.cast, credited_as=part.credited_as, order=part.order, start_date=part.start_date or '', end_date=part.end_date or ''):
+            print "Going to delete %s" % part
+            part.delete()
+        else:
+            part.production = main
+            print "Going to save %s" % part
+            part.save()
 
     Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
     Redirect.objects.create(old_object_id=alt_id, new_object=main)
