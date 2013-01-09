@@ -9,7 +9,7 @@ from shortcuts import render
 from people.models import Person
 from places.models import Place
 from plays.models import Play
-from productions.models import Part, Production, ProductionCompany
+from productions.models import Part, Production, ProductionCompany, Place as ProductionPlace, Production_Companies
 from sounds.metaphone import dm
 from sounds.jarowpy import jarow
 #from levenshtein import damerau, qnum
@@ -296,6 +296,66 @@ def validate_partial_postcode(postcode):
         return False
 
 def search(request):
+    person = request.GET.get('person', '').strip()
+    place = request.GET.get('place', '').strip()
+    play = request.GET.get('play', '').strip()
+    if person and place:
+        places = search_places(Q(name__icontains=place), place)
+        places = list(places)
+        people, sounds_people = search_people(person, False, False)
+        people = list(people)
+        productions = list(Production.objects.filter(parts__in=people, places__in=places).select_related('play'))
+        parts = Part.objects.filter(production__in=productions, person__in=people).select_related('person')
+
+        companiesM2M = Production_Companies.objects.filter(production__in=productions).select_related('productioncompany')
+        m2m = {}
+        for c in companiesM2M:
+            m2m.setdefault(c.production_id, []).append( c.productioncompany )
+        for p in productions:
+            p._companies = m2m.get(p.id, [])
+
+        placeM2M = ProductionPlace.objects.filter(production__in=productions).order_by('start_date', 'press_date', 'end_date')
+        venues = placeM2M.filter(place__in=places).select_related('place')
+        m2m = {}
+        for p in placeM2M:
+            m2m.setdefault(p.production_id, []).append( p )
+        for p in productions:
+            p._place_set = m2m.get(p.id, [])
+
+        m2m = {}
+        for p in venues:
+            m2m.setdefault(p.production_id, []).append( p.place )
+        for p in productions:
+            p.searched_places = m2m.get(p.id, [])
+        m2m = {}
+        for p in parts:
+            m2m.setdefault(p.production_id, []).append( p.person )
+        for p in productions:
+            p.searched_people = m2m.get(p.id, [])
+
+        return render(request, 'places/productions.html', {
+            'productions': productions,
+            'places': places,
+            'people': people,
+        })
+    if person and play:
+        title_q = Q(title__icontains=play)
+        m = re.match('^(A|An|The) (.*)$(?i)', play)
+        if m:
+            article, rest = m.groups()
+            title_q = title_q | Q(title__iendswith=' %s' % article, title__istartswith=rest)
+        plays = Play.objects.filter(title_q)
+        plays = list(plays)
+        people, sounds_people = search_people(person, False, False)
+        people = list(people)
+        productions = list(Production.objects.filter(parts__in=people, play__in=plays).select_related('play'))
+
+        return render(request, 'places/productions.html', {
+            'productions': productions,
+            'plays': plays,
+            'people': people,
+        })
+
     search = request.GET.get('q', '').strip()
 
     # Searching round a point, or a postcode

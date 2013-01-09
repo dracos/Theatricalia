@@ -5,16 +5,26 @@
 
 {% block content %}
 
+{% if place %}
 <h1>{{ place.get_name_display|prettify }}</h1>
+{% else %}
+<h1>Matching productions</h1>
+{% endif %}
 
 <div class="primary">
 
+{% if place %}
 <h2>A&ndash;Z&nbsp; of all Productions</h2>
+{% else %}
+{% endif %}
 
 {% if productions %}
 <ul class="production_list">
 {% for production in productions %}
 <li><a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.get_companies_display %}, {{ production.get_companies_display }}{% endif %}
+{% if production.searched_places and production.searched_people %}
+: {{ production.searched_people|prettify_list }} at {{ production.searched_places|prettify_list }}
+{% endif %}
 <span class="meta">{{ production.date_summary|prettify }}.</span>
 {% endfor %}
 </ul>
@@ -24,8 +34,34 @@
 
 </div>
 
-<div class="secondary">
+<div id="sidebar_tulip" class="secondary"><div id="sidebar_tulip_r" role="contentinfo">
+{% if place %}
 <p>All productions shown at <a href="{{ place.get_absolute_url }}">{{ place|prettify }}</a>.</p>
+{% else %}
+<p>All productions matching the terms searched for.</p>
+{% endif %}
+</div></div>
+
+<!--
+<div class="secondary">
+{% if people %}
+<h2>People</h2>
+<ul>
+{% for person in people %}
+<li><a href="{{ request.get_full_path }}&amp;person_id={{ person.id32 }}">{{ person }}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if places %}
+<h2 class="no-descenders">Places</h2>
+<ul>
+{% for place in places %}
+<li><a href="{{ request.get_full_path }}&amp;place_id={{ place.id32 }}">{{ place }}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
 </div>
+-->
 
 {% endblock %}
