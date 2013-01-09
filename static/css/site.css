@@ -109,8 +109,10 @@ input[type="submit"] {
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     border-radius: 4px;
-    font-size: 0.75em;
-    padding: 0.166667em 0.5em;
+    font-size: 100%;
+    line-height: 1.5;
+    padding: 0.125em 0.5em;
+    margin-bottom: 1.25em;
     border: none;
     cursor: pointer;
 }
@@ -678,6 +680,8 @@ form#edit #submit {
 }
 
 form#edit #cancel {
+    display: none;
+    clear: right;
     float: right;
     background-color: #999999;
 }
