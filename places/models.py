@@ -57,6 +57,11 @@ class Place(models.Model):
 
     def save(self, **kwargs):
         name = re.sub('^(.*), (A|An|The)$(?i)', r'\2 \1', self.name.strip())
+        include_town = kwargs.pop('include_town', None)
+        m = re.match('(.*), ([^,]*)$', name)
+        if include_town and m:
+            self.name = m.group(1)
+            self.town = m.group(2)
         self.slug = slugify('%s %s' % (name, self.town))
         self.name = re.sub('^(A|An|The) (.*)$(?i)', r'\2, \1', self.name.strip())
         super(Place, self).save(**kwargs)

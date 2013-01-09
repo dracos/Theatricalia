@@ -167,7 +167,7 @@ class PlaceForm(forms.ModelForm):
 
     def save(self, **kwargs):
         if not self.cleaned_data['place'].id:
-            self.cleaned_data['place'].save()
+            self.cleaned_data['place'].save(include_town=True)
         return super(PlaceForm, self).save(**kwargs)
 
 # person is the text box where someone enters a name, and always will be
