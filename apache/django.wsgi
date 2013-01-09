@@ -6,8 +6,10 @@ script_dir = os.path.dirname(__file__)
 project_dir = os.path.abspath(os.path.join(script_dir, '..'))
 vhost_dir = os.path.abspath(os.path.join(project_dir, '..'))
 
+django_dir = os.path.abspath(os.path.join(vhost_dir, 'ext'))
+
 # Custom paths for location of Django and project - think this should work.
-for path in (script_dir, project_dir, vhost_dir):
+for path in (script_dir, project_dir, vhost_dir, django_dir):
     if path not in sys.path:
         sys.path.insert(0, path)
 
