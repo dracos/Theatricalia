@@ -178,6 +178,8 @@ class PartForm(forms.ModelForm):
     start_date = ApproximateDateFormField(required=False, help_text='if they were only in this production for part of its run')
     end_date = ApproximateDateFormField(required=False)
 
+    _flag_up_no_results = False
+
     class Meta:
         model = Part
         exclude = ('order')
@@ -218,7 +220,7 @@ class PartForm(forms.ModelForm):
         elif unicode(p) == s:
             choices.append( ( 'new', prettify('A new person also called \'' + s + '\'') ) )
         else:
-            choices.append( ( 'new', prettify('A new person called \'' + s + '\'') ) )
+            return []
         choices.append( ( 'back', 'I misspelled, and will enter a new name below:' ) )
         return choices
 
@@ -230,6 +232,8 @@ class PartForm(forms.ModelForm):
 
     def clean_person_choice(self):
         person = self.cleaned_data['person_choice']
+        if self._flag_up_no_results:
+            return 'new'
         if re.match('[0-9]+$', person):
             return Person.objects.get(id=person)
         if person == 'new' or (person == '' and 'person' not in self.changed_data and self.fields['production'].required == True):
@@ -245,7 +249,10 @@ class PartForm(forms.ModelForm):
         if not self.fields['person_choice'].choices:
             # Okay, so we have a search string
             choices = self.radio_choices(person)
-            self.fields['person_choice'].choices = choices # = forms.ChoiceField( label='Person', choices=choices, widget = forms.RadioSelect() )
+            if choices:
+                self.fields['person_choice'].choices = choices # = forms.ChoiceField( label='Person', choices=choices, widget = forms.RadioSelect() )
+            else:
+                self._flag_up_no_results = True
         return person
 
 class ProductionCompanyForm(forms.ModelForm):
