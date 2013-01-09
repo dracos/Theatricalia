@@ -57,17 +57,9 @@
 
 <div id="sidebar_tulip" class="secondary"><div id="sidebar_tulip_r" role="contentinfo">
 
-{% if original_production %}
-{% with original_production as production %}
 <p>This is a production of the play
 <a href="{{ production.play.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.play.get_authors_display %}
 (by {{ production.play.get_authors_display }}){% endif %}{% if production.get_companies_display %} by {{ production.get_companies_display }}{% endif %},
-{% endwith %}
-{% else %}
-<p>This is a production of the play
-<a href="{{ production.play.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.play.get_authors_display %}
-(by {{ production.play.get_authors_display }}){% endif %}{% if production.get_companies_display %} by {{ production.get_companies_display }}{% endif %},
-{% endif %}
 
 {% include 'productions/sidebar_bit.html' %}
 
@@ -117,14 +109,8 @@
 </table>
 {% else %}
 
-{% ifequal production.source_type "Birmingham Libraries" %}
-<p>No cast initially in the data from Birmingham Libraries; do check to see if someone has
-<a href="{{ production.get_absolute_url }}/corrected">added some information</a>,
-or please <a href="{{ production.get_edit_url }}">do add it to the site</a>.</p>
-{% else %}
 <p>Currently unknown; if you can provide some information about this production, please
 <a href="{{ production.get_edit_url }}">do add it to the site</a>.</p>
-{% endifequal %}
 
 {% endif %}
 
@@ -175,19 +161,6 @@ or please <a href="{{ production.get_edit_url }}">do add it to the site</a>.</p>
 {% endif %}
 
 <li id="edit-link"><a href="{{ production.get_edit_url }}?js=0">Edit this production</a>
-
-{% ifequal production.source_type "Birmingham Libraries" %}
-    {% if initial_only %}
-        <li>Production data sourced from Birmingham Libraries will show their
-            initial data by default.
-        {% if changes %}
-            <a href="{{ production.get_absolute_url }}/corrected">View user corrections and additions to this production</a>
-        {% endif %}
-    {% else %}
-        <li>Viewing additions and corrections to this production.
-        <a href="{{ production.get_absolute_url }}">View original Birmingham Library data</a>
-    {% endif %}
-{% endifequal %}
 
 {% if seen %}
     {% if production.finished %}
