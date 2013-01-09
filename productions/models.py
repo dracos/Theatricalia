@@ -182,12 +182,18 @@ class Production(models.Model):
 
         return u"%sproduction of %s, %s%s" % (producer, self.play, places, self.date_summary())
 
+    _place_set = None
+    def _get_place_set(self):
+        if self._place_set is None:
+            self._place_set = self.place_set.order_by('start_date', 'press_date', 'end_date')
+        return self._place_set
+
     # Find min/max dates from the places of this production
     def get_min_max_dates(self):
         start_date = None
         end_date = None
         press_date = None
-        for place in self.place_set.order_by('start_date', 'press_date', 'end_date'):
+        for place in self._get_place_set():
             if not start_date: start_date = place.start_date
             if not press_date: press_date = place.press_date
             end_date = place.end_date
@@ -221,12 +227,19 @@ class Production(models.Model):
             place = u'Unknown location'
         return place
         
+    _companies = None
+    def _get_companies(self):
+        if self._companies is None:
+            self._companies = self.companies.all()
+        return self._companies
+
     def get_companies_display(self, html=True):
-        num = self.companies.count()
+        companies = self._get_companies()
+        num = len(companies)
         if html:
-            companies = map(lambda x: u'<span itemscope itemtype="http://schema.org/TheaterGroup"><a itemprop="url" href="%s">%s</a></span>' % (x.get_absolute_url(), prettify(x)), self.companies.all())
+            companies = map(lambda x: u'<span itemscope itemtype="http://schema.org/TheaterGroup"><a itemprop="url" href="%s">%s</a></span>' % (x.get_absolute_url(), prettify(x)), companies)
         else:
-            companies = [ unicode(x) for x in self.companies.all() ]
+            companies = [ unicode(x) for x in companies ]
         if num > 2:
             str = u', '.join(companies[:num-2]) + u', ' + u', and '.join(companies[num-2:])
         elif num == 2:

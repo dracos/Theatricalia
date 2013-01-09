@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block title %}All People | {{ place|prettify|striptags }}{% endblock %}
+
+{% block content %}
+
+<h1>{{ place.get_name_display|prettify }}</h1>
+
+<div class="primary">
+
+<h2>A&ndash;Z&nbsp; of all People</h2>
+
+{% if people %}
+<ul class="production_list">
+{% for person in people %}
+<li><a href="{{ person.get_absolute_url }}">{{ person|prettify }}</a>
+<span class="meta">{{ person }}.</span>
+{% endfor %}
+</ul>
+{% else %}
+<p>There are no results to display.</p>
+{% endif %}
+
+</div>
+
+<div class="secondary">
+<p>All people who have been involved at <a href="{{ place.get_absolute_url }}">{{ place|prettify }}</a>.</p>
+</div>
+
+{% endblock %}

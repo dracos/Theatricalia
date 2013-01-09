@@ -115,6 +115,7 @@ urlpatterns = patterns('',
     url('^place/(?P<place_id>[^/]+)/(?P<place>.*)/alert/(?P<type>add|remove)$', places.place_alert, name='place-alert'),
     url('^place/(?P<place_id>[^/]+)/(?P<place>.*)/add$', productions.add_from_place, name='place-production-add'),
     url('^place/(?P<place_id>[^/]+)/(?P<place>.*)/productions$', places.productions, name='place-productions'),
+    url('^place/(?P<place_id>[^/]+)/(?P<place>.*)/people$', places.people, name='place-people'),
     url('^place/(?P<place_id>[^/]+)/(?P<place>[^/]*)$', places.place, name='place'),
     url('^place/(?P<place_id>[^/]+)$', places.place_short_url),
 

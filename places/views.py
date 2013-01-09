@@ -12,7 +12,8 @@ from forms import PlaceForm
 from models import Place
 from shortcuts import render, check_url, UnmatchingSlugException
 from productions.objshow import productions_list, productions_for
-from productions.models import Production
+from productions.models import Production, Production_Companies, Place as ProductionPlace, Part
+from people.models import Person
 from photos.forms import PhotoForm
 
 def place_short_url(request, place_id):
@@ -34,9 +35,45 @@ def productions(request, place_id, place):
         place = check_url(Place, place_id, place)
     except UnmatchingSlugException, e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
-    productions = Production.objects.filter(places=place).order_by('play__title')
+
+    productions = Production.objects.filter(places=place).order_by('play__title').select_related('play')
+    productions_dict = dict([(obj.id, obj) for obj in productions])
+
+    companiesM2M = Production_Companies.objects.filter(production__in=productions).select_related('productioncompany')
+    m2m = {}
+    for c in companiesM2M:
+        m2m.setdefault(c.production_id, []).append( c.productioncompany )
+    for p in productions:
+        p._companies = m2m.get(p.id, [])
+
+    placeM2M = ProductionPlace.objects.filter(production__in=productions).order_by('start_date', 'press_date', 'end_date')
+    m2m = {}
+    for p in placeM2M:
+        m2m.setdefault(p.production_id, []).append( p )
+    for p in productions:
+        p._place_set = m2m.get(p.id, [])
+
     return render(request, 'places/productions.html', {
         'productions': productions,
+        'place': place,
+    })
+
+def people(request, place_id, place):
+    try:
+        place = check_url(Place, place_id, place)
+    except UnmatchingSlugException, e:
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
+
+    people = Person.objects.filter(productions__places=place).distinct().order_by('last_name', 'first_name')
+    productionsM2M = Part.objects.filter(production__places=place, person__in=people).select_related('production')
+    m2m = {}
+    for p in productionsM2M:
+        m2m.setdefault(p.person_id, []).append( p.production )
+    for p in people:
+        p._productions = m2m.get(p.id, [])
+
+    return render(request, 'places/people.html', {
+        'people': people,
         'place': place,
     })
 
