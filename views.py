@@ -1,6 +1,8 @@
 import random
 from django.contrib.comments.models import Comment
 from django.contrib.auth.models import User
+from django.db.models import Count
+from django.http import HttpResponseRedirect
 from shortcuts import render
 from productions.models import Production, Part
 from plays.models import Play
@@ -9,6 +11,12 @@ from places.models import Place
 from people.models import Person
 from news.models import Article
 from photos.models import Photo
+
+def random_production(request):
+    count = Production.objects.aggregate(count=Count('id'))['count']
+    random_index = random.randint(0, count - 1)
+    p = Production.objects.all()[random_index]
+    return HttpResponseRedirect(p.get_absolute_url())
 
 def home(request):
     matthew = User.objects.get(id=1)

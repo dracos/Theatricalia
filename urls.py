@@ -4,7 +4,7 @@ import settings
 from django.conf.urls.defaults import *
 from django.views.generic import date_based, simple
 
-from views import *
+import views
 from profiles import views as profiles
 from plays import views as plays
 from productions import views as productions
@@ -43,13 +43,13 @@ urlpatterns = patterns('',
     (r'^tickets/lost/found$', 'django.contrib.auth.views.password_reset_complete'),
     url(r'^tickets/returns$', 'django.contrib.auth.views.logout', name='logout'),
 
-    url('^$', home, name='home'),
+    url('^$', views.home, name='home'),
 
-    url('^about$', static_about, name='about'),
-    url('^assistance$', static_help, name='help'),
-    url('^criticism$', static_contact, name='criticism'),
-    url('^colophon$', static_colophon, name='colophon'),
-    url('^moo$', static_moocards, name='moo'),
+    url('^about$', views.static_about, name='about'),
+    url('^assistance$', views.static_help, name='help'),
+    url('^criticism$', views.static_contact, name='criticism'),
+    url('^colophon$', views.static_colophon, name='colophon'),
+    url('^moo$', views.static_moocards, name='moo'),
 
     url('^(?P<url>(play|person|place|around)/.*)/feed$', feeds_view,
         { 'feed_dict': {
@@ -160,6 +160,7 @@ urlpatterns = patterns('',
     url('^publicity/(?P<year>\d{4})/(?P<month>\w+)/(?P<slug>[-\w]+)$',
         news.article, name='news-entry'),
 
+    url('^random$', views.random_production, name='random'),
     #url('forums/forum/', include('forums.django-forum.forum.urls')),
     #url('forums/simple/', include('forums.django-simpleforum.forum.urls')),
     #url('forums/bb/', include('forums.djangobb.djangobb.urls')),
