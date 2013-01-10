@@ -299,13 +299,22 @@ def search_advanced(request, person, place, play):
     people = []
     places = []
     plays = []
+    count = 0
+
+    productions = Production.objects.all()
 
     if person:
         people, sounds_people = search_people(person, False, False)
         people = list(people)
+        productions = productions.filter(parts__in=people)
+        count += 1
+
     if place:
         places = search_places(Q(name__icontains=place), place)
         places = list(places)
+        productions = productions.filter(places__in=places)
+        count += 1
+
     if play:
         title_q = Q(title__icontains=play)
         m = re.match('^(A|An|The) (.*)$(?i)', play)
@@ -314,39 +323,37 @@ def search_advanced(request, person, place, play):
             title_q = title_q | Q(title__iendswith=' %s' % article, title__istartswith=rest)
         plays = Play.objects.filter(title_q)
         plays = list(plays)
+        productions = productions.filter(play__in=plays)
+        count += 1
 
-    if person and place:
-        productions = list(Production.objects.filter(parts__in=people, places__in=places).select_related('play'))
-        parts = Part.objects.filter(production__in=productions, person__in=people).select_related('person')
-
+    if count > 1:
+        productions = list(productions.select_related('play'))
         Production.objects.prefetch_companies(productions)
-        placeM2M = Production.objects.prefetch_places(productions)
+        Production.objects.prefetch_places(productions)
+        # placeM2M = Production.objects.prefetch_places(productions)
 
-        venues = placeM2M.filter(place__in=places).select_related('place')
+        if person:
+            parts = Part.objects.filter(production__in=productions, person__in=people).select_related('person')
+            m2m = {}
+            for p in parts:
+                m2m.setdefault(p.production_id, []).append( '%s, %s' % (p.person, p.role_or_unknown(True)) )
+            for p in productions:
+                p.searched_people = m2m.get(p.id, [])
+        #if place:
+        #    venues = placeM2M.filter(place__in=places).select_related('place')
+        #    m2m = {}
+        #    for p in venues:
+        #        m2m.setdefault(p.production_id, []).append( p.place )
+        #    for p in productions:
+        #        p.searched_places = m2m.get(p.id, [])
 
-        m2m = {}
-        for p in venues:
-            m2m.setdefault(p.production_id, []).append( p.place )
-        for p in productions:
-            p.searched_places = m2m.get(p.id, [])
-        m2m = {}
-        for p in parts:
-            m2m.setdefault(p.production_id, []).append( p.person )
-        for p in productions:
-            p.searched_people = m2m.get(p.id, [])
 
+        form = SearchForm(request.GET or None)
         return render(request, 'search/productions.html', {
-            'productions': productions,
-            'places': places,
-            'people': people,
-        })
-
-    if person and play:
-        productions = list(Production.objects.filter(parts__in=people, play__in=plays).select_related('play'))
-
-        return render(request, 'search/productions.html', {
+            'form': form,
             'productions': productions,
             'plays': plays,
+            'places': places,
             'people': people,
         })
 

@@ -13,10 +13,17 @@
 <ul class="production_list">
 {% for production in productions %}
 <li><a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.get_companies_display %}, {{ production.get_companies_display }}{% endif %}
-{% if production.searched_places and production.searched_people %}
-: {{ production.searched_people|prettify_list }} at {{ production.searched_places|prettify_list }}
+{% if production.searched_people %}
+<br>
+{{ production.searched_people|prettify_list }}
 {% endif %}
-<span class="meta">{{ production.date_summary|prettify }}.</span>
+<span class="meta">{{ production.date_summary|prettify }},
+{% ifequal production.places.count 1 %}
+<a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
+{% else %}
+{{ production.place_summary|prettify }}.
+{% endifequal %}
+</span>
 {% endfor %}
 </ul>
 {% else %}
@@ -29,26 +36,11 @@
 <p>All productions matching the terms searched for.</p>
 </div></div>
 
-<!--
 <div class="secondary">
-{% if people %}
-<h2>People</h2>
-<ul>
-{% for person in people %}
-<li><a href="{{ request.get_full_path }}&amp;person_id={{ person.id32 }}">{{ person }}</a></li>
-{% endfor %}
-</ul>
-{% endif %}
-
-{% if places %}
-<h2 class="no-descenders">Places</h2>
-<ul>
-{% for place in places %}
-<li><a href="{{ request.get_full_path }}&amp;place_id={{ place.id32 }}">{{ place }}</a></li>
-{% endfor %}
-</ul>
-{% endif %}
+<form id="edit">
+{{ form.as_p }}
+<p><input type="submit" value="Search"></p>
+</form>
 </div>
--->
 
 {% endblock %}
