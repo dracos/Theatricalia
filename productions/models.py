@@ -10,7 +10,7 @@ from reversion.models import Version
 from common.models import Alert
 from common.templatetags.prettify import prettify
 from utils import int_to_base32
-from places.models import Place
+from places.models import Place as PlacePlace
 from people.models import Person
 from plays.models import Play
 from photos.models import Photo
@@ -123,10 +123,27 @@ class ProductionManager(models.Manager):
         # qs = qs.exclude(source__endswith='RSC Performance Database</a>')
         return qs
 
+    def prefetch_companies(self, productions):
+        companiesM2M = Production_Companies.objects.filter(production__in=productions).select_related('productioncompany')
+        m2m = {}
+        for c in companiesM2M:
+            m2m.setdefault(c.production_id, []).append( c.productioncompany )
+        for p in productions:
+            p._companies = m2m.get(p.id, [])
+
+    def prefetch_places(self, productions):
+        placeM2M = Place.objects.filter(production__in=productions).order_by('start_date', 'press_date', 'end_date')
+        m2m = {}
+        for p in placeM2M:
+            m2m.setdefault(p.production_id, []).append( p )
+        for p in productions:
+            p._place_set = m2m.get(p.id, [])
+        return placeM2M
+
 class Production(models.Model):
     play = models.ForeignKey(Play, related_name='productions')
     companies = models.ManyToManyField(ProductionCompany, through='Production_Companies', related_name='productions', blank=True, null=True)
-    places = models.ManyToManyField(Place, through='Place', related_name='productions', blank=True)
+    places = models.ManyToManyField(PlacePlace, through='Place', related_name='productions', blank=True)
     parts = models.ManyToManyField(Person, through='Part', related_name='productions', blank=True)
     photos = generic.GenericRelation(Photo)
     description = models.TextField(blank=True)
@@ -302,7 +319,7 @@ class ProductionPlaceManager(models.Manager):
 
 class Place(models.Model):
     production = models.ForeignKey(Production)
-    place = models.ForeignKey(Place, related_name='productions_here')
+    place = models.ForeignKey(PlacePlace, related_name='productions_here')
     start_date = ApproximateDateField(blank=True)
     press_date = models.DateField(blank=True, null=True)
     end_date = ApproximateDateField(blank=True)

@@ -295,32 +295,34 @@ def validate_partial_postcode(postcode):
     else:
         return False
 
-def search(request):
-    person = request.GET.get('person', '').strip()
-    place = request.GET.get('place', '').strip()
-    play = request.GET.get('play', '').strip()
-    if person and place:
-        places = search_places(Q(name__icontains=place), place)
-        places = list(places)
+def search_advanced(request, person, place, play):
+    people = []
+    places = []
+    plays = []
+
+    if person:
         people, sounds_people = search_people(person, False, False)
         people = list(people)
+    if place:
+        places = search_places(Q(name__icontains=place), place)
+        places = list(places)
+    if play:
+        title_q = Q(title__icontains=play)
+        m = re.match('^(A|An|The) (.*)$(?i)', play)
+        if m:
+            article, rest = m.groups()
+            title_q = title_q | Q(title__iendswith=' %s' % article, title__istartswith=rest)
+        plays = Play.objects.filter(title_q)
+        plays = list(plays)
+
+    if person and place:
         productions = list(Production.objects.filter(parts__in=people, places__in=places).select_related('play'))
         parts = Part.objects.filter(production__in=productions, person__in=people).select_related('person')
 
-        companiesM2M = Production_Companies.objects.filter(production__in=productions).select_related('productioncompany')
-        m2m = {}
-        for c in companiesM2M:
-            m2m.setdefault(c.production_id, []).append( c.productioncompany )
-        for p in productions:
-            p._companies = m2m.get(p.id, [])
+        Production.objects.prefetch_companies(productions)
+        placeM2M = Production.objects.prefetch_places(productions)
 
-        placeM2M = ProductionPlace.objects.filter(production__in=productions).order_by('start_date', 'press_date', 'end_date')
         venues = placeM2M.filter(place__in=places).select_related('place')
-        m2m = {}
-        for p in placeM2M:
-            m2m.setdefault(p.production_id, []).append( p )
-        for p in productions:
-            p._place_set = m2m.get(p.id, [])
 
         m2m = {}
         for p in venues:
@@ -333,32 +335,47 @@ def search(request):
         for p in productions:
             p.searched_people = m2m.get(p.id, [])
 
-        return render(request, 'places/productions.html', {
+        return render(request, 'search/productions.html', {
             'productions': productions,
             'places': places,
             'people': people,
         })
+
     if person and play:
-        title_q = Q(title__icontains=play)
-        m = re.match('^(A|An|The) (.*)$(?i)', play)
-        if m:
-            article, rest = m.groups()
-            title_q = title_q | Q(title__iendswith=' %s' % article, title__istartswith=rest)
-        plays = Play.objects.filter(title_q)
-        plays = list(plays)
-        people, sounds_people = search_people(person, False, False)
-        people = list(people)
         productions = list(Production.objects.filter(parts__in=people, play__in=plays).select_related('play'))
 
-        return render(request, 'places/productions.html', {
+        return render(request, 'search/productions.html', {
             'productions': productions,
             'plays': plays,
             'people': people,
         })
 
+    if len(people) + len(places) + len(plays) == 1:
+        if len(plays) == 1:
+            return HttpResponseRedirect(plays[0].get_absolute_url())
+        if len(places) == 1:
+            return HttpResponseRedirect(places[0].get_absolute_url())
+        if len(people) == 1:
+            return HttpResponseRedirect(people[0].get_absolute_url())
+
+    return render(request, 'search.html', {
+        'people': people,
+        'plays': plays,
+        'places': places,
+    })
+
+def search(request):
+    person = request.GET.get('person', '').strip()
+    place = request.GET.get('place', '').strip()
+    play = request.GET.get('play', '').strip()
+    if person or place or play:
+        # Advanced search form
+        return search_advanced(request, person, place, play)
+
+    # Generic "search everything" box
     search = request.GET.get('q', '').strip()
 
-    # Searching round a point, or a postcode
+    # Check if we're searching round a point, or a postcode, redirect if so
     m = re.match('([-\d.]+)\s*,\s*([-\d.]+)$', search)
     if m or validate_postcode(search) or validate_partial_postcode(search):
         return HttpResponseRedirect(reverse('search-around', args=[urllib.quote(search.encode('utf-8'))]))

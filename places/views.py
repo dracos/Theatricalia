@@ -37,21 +37,8 @@ def productions(request, place_id, place):
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 
     productions = Production.objects.filter(places=place).order_by('play__title').select_related('play')
-    productions_dict = dict([(obj.id, obj) for obj in productions])
-
-    companiesM2M = Production_Companies.objects.filter(production__in=productions).select_related('productioncompany')
-    m2m = {}
-    for c in companiesM2M:
-        m2m.setdefault(c.production_id, []).append( c.productioncompany )
-    for p in productions:
-        p._companies = m2m.get(p.id, [])
-
-    placeM2M = ProductionPlace.objects.filter(production__in=productions).order_by('start_date', 'press_date', 'end_date')
-    m2m = {}
-    for p in placeM2M:
-        m2m.setdefault(p.production_id, []).append( p )
-    for p in productions:
-        p._place_set = m2m.get(p.id, [])
+    Production.objects.prefetch_companies(productions)
+    Production.objects.prefetch_places(productions)
 
     return render(request, 'places/productions.html', {
         'productions': productions,
