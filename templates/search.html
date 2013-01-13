@@ -147,7 +147,7 @@ if (!window.location.hash)
 {% ifequal error 'Length' %}
 <p>The minimum search length is three characters, as anything else returns too many results.</p>
 {% else %}
-{% if plays or near.geonames or places or people or parts.object_list %}
+{% if plays or near.geonames or places or people or parts.object_list or companies %}
 {% else %}
     <p>I&rsquo;m afraid we couldn&rsquo;t find any results. If you&rsquo;re searching for someone, try
     just their first or last name.</p>
