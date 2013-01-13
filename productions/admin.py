@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django import forms
 from reversion.admin import VersionAdmin
-from models import Production, ProductionCompany, Part, Place, Production_Companies
+from models import Production, ProductionCompany, Part, Place, Production_Companies, Visit
 from forms import AutoCompleteMultiValueField
 from plays.models import Play
 from people.models import Person
@@ -31,6 +31,11 @@ class CompanyInline(admin.TabularInline): # options.InlineModelAdmin):
     raw_id_fields = ('productioncompany',)
     extra = 1
 
+class VisitInline(admin.TabularInline): # options.InlineModelAdmin):
+    model = Visit
+    #raw_id_fields = ('productioncompany',)
+    extra = 1
+
 class ProductionForm(forms.ModelForm):
     play = AutoCompleteMultiValueField(
             Play, 'title',
@@ -52,6 +57,7 @@ class ProductionAdmin(VersionAdmin, AutocompleteModelAdmin):
         PartInline,
         PlaceInline,
         CompanyInline,
+        VisitInline,
     ]
 
 class PlaceAdmin(VersionAdmin):
