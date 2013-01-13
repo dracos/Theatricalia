@@ -15,6 +15,7 @@ from sounds.jarowpy import jarow
 #from levenshtein import damerau, qnum
 from productions.objshow import productions_for, productions_list
 from common.models import AlertLocal
+from common.templatetags.prettify import prettify_list
 from forms import SearchForm
 
 distance = jarow
@@ -336,9 +337,11 @@ def search_advanced(request, person, place, play):
             parts = Part.objects.filter(production__in=productions, person__in=people).select_related('person')
             m2m = {}
             for p in parts:
-                m2m.setdefault(p.production_id, []).append( '%s, %s' % (p.person, p.role_or_unknown(True)) )
+                m2m.setdefault(p.production_id, {}).setdefault(p.person, []).append( p.role_or_unknown(True) )
             for p in productions:
-                p.searched_people = m2m.get(p.id, [])
+                searched_people = m2m.get(p.id, {})
+                searched_people = [ '%s, %s' % (pers, prettify_list(roles)) for pers, roles in searched_people.items() ]
+                p.searched_people = searched_people
         #if place:
         #    venues = placeM2M.filter(place__in=places).select_related('place')
         #    m2m = {}
