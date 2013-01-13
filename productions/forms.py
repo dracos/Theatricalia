@@ -19,6 +19,11 @@ class CastCrewNullBooleanSelect(forms.widgets.NullBooleanSelect):
         choices = ((u'1', 'Unknown'), (u'2', 'Cast'), (u'3', 'Crew'))
         super(forms.widgets.NullBooleanSelect, self).__init__(attrs, choices)
 
+class StripCharField(forms.CharField):
+    def clean(self, value):
+        if value: value = value.strip()
+        return super(StripCharField, self).clean(value)
+
 # Auto-complete for those with JavaScript
 
 class AutoCompleteMultiValueField(forms.MultiValueField):
@@ -39,17 +44,17 @@ class ProductionForm(forms.ModelForm):
     play = AutoCompleteMultiValueField(
         Play, 'title',
         required = False, # It is required, but will be spotted in the clean function
-        fields = (forms.CharField(), forms.ModelChoiceField(Play.objects.all())),
+        fields = (StripCharField(), forms.ModelChoiceField(Play.objects.all())),
         widget = ForeignKeySearchInput(Production.play.field.rel, ('title',))
     )
     play_choice = forms.ChoiceField(label='Play', widget=forms.RadioSelect(), required=False)
     #company = AutoCompleteMultiValueField(
     #    ProductionCompany, 'name',
     #    required = False,
-    #    fields = (forms.CharField(), forms.ModelChoiceField(ProductionCompany.objects.all())),
+    #    fields = (StripCharField(), forms.ModelChoiceField(ProductionCompany.objects.all())),
     #    widget = ForeignKeySearchInput(Production.company.field.rel, ('name',))
     #)
-    description = forms.CharField(required=False, widget=forms.Textarea(attrs={'cols': 40, 'rows':5}))
+    description = StripCharField(required=False, widget=forms.Textarea(attrs={'cols': 40, 'rows':5}))
     url = forms.URLField(label='Web page', required=False, widget=forms.TextInput(attrs={'size': 40}))
     book_tickets = forms.URLField(label='Booking URL', required=False, widget=forms.TextInput(attrs={'size': 40}))
 
@@ -124,7 +129,7 @@ class CompanyInlineForm(forms.ModelForm):
     productioncompany = AutoCompleteMultiValueField(
         ProductionCompany, 'name',
         required = False, label='Company',
-        fields = (forms.CharField(), forms.ModelChoiceField(ProductionCompany.objects.all())),
+        fields = (StripCharField(), forms.ModelChoiceField(ProductionCompany.objects.all())),
         widget = ForeignKeySearchInput(Production_Companies.productioncompany.field.rel, ('name',))
     )
 
@@ -145,7 +150,7 @@ class PlaceForm(forms.ModelForm):
     place = AutoCompleteMultiValueField(
         PlacePlace, 'name',
         required = False, # It is required, but will be spotted in the clean function
-        fields = (forms.CharField(), forms.ModelChoiceField(PlacePlace.objects.all())),
+        fields = (StripCharField(), forms.ModelChoiceField(PlacePlace.objects.all())),
         widget = ForeignKeySearchInput(Place.place.field.rel, ('name',))
     )
     start_date = ApproximateDateFormField(required=False, label='It was/is on from')
@@ -173,7 +178,7 @@ class PlaceForm(forms.ModelForm):
 # person is the text box where someone enters a name, and always will be
 # person_choice is the selection of someone from that, or the creation of a new person
 class PartForm(forms.ModelForm):
-    person = forms.CharField(error_messages = {'required':'You have to specify a person.'})
+    person = StripCharField(error_messages = {'required':'You have to specify a person.'})
     person_choice = forms.ChoiceField(label='Person', widget=forms.RadioSelect(), required=False)
     start_date = ApproximateDateFormField(required=False, help_text='if they were only in this production for part of its run')
     end_date = ApproximateDateFormField(required=False)
