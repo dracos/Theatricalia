@@ -8,7 +8,7 @@ from models import Production, Part, Place, ProductionCompany, Production_Compan
 from plays.models import Play
 from places.models import Place as PlacePlace
 from people.models import Person
-from fields import PrettyDateField, ApproximateDateFormField
+from fields import PrettyDateField, ApproximateDateFormField, StripCharField
 from widgets import PrettyDateInput
 from search.views import search_people
 from common.templatetags.prettify import prettify
@@ -18,11 +18,6 @@ class CastCrewNullBooleanSelect(forms.widgets.NullBooleanSelect):
     def __init__(self, attrs=None):
         choices = ((u'1', 'Unknown'), (u'2', 'Cast'), (u'3', 'Crew'))
         super(forms.widgets.NullBooleanSelect, self).__init__(attrs, choices)
-
-class StripCharField(forms.CharField):
-    def clean(self, value):
-        if value: value = value.strip()
-        return super(StripCharField, self).clean(value)
 
 # Auto-complete for those with JavaScript
 

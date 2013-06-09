@@ -1,9 +1,12 @@
 from django import forms
 from models import Person
+from fields import StripCharField
 from admin import PersonAdmin
 
 class PersonEditForm(forms.ModelForm):
     #last_modified = forms.DateTimeField(widget=forms.HiddenInput(), required=False)
+    first_name = StripCharField(max_length=50, required=False, label='Forenames')
+    last_name = StripCharField(max_length=50)
 
     class Meta:
         model = Person

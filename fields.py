@@ -9,6 +9,11 @@ from django.utils import dateformat
 
 from south.modelsinspector import add_introspection_rules
 
+class StripCharField(forms.CharField):
+    def clean(self, value):
+        if value: value = value.strip()
+        return super(StripCharField, self).clean(value)
+
 class ApproximateDate(object):
     """A date that accepts 0 for month or day to mean we don't know when it is within that month/year.
        Also works with BC dates."""
@@ -229,4 +234,3 @@ class PrettyDateField(forms.fields.Field):
             except ValueError:
                 continue
         raise ValidationError('Please enter a valid date.')
-
