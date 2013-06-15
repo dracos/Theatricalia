@@ -1,11 +1,8 @@
 # Django settings for theatricalia project.
 
-# My additions
-import os.path, sys
-OUR_ROOT = os.path.realpath(os.path.dirname(__file__))
-ext = os.path.join(OUR_ROOT, 'ext')
-if ext not in sys.path:
-    sys.path.insert(0, ext)
+import os
+PROJECT_DIR = os.path.realpath(os.path.dirname(__file__))
+OUR_ROOT = os.path.join(PROJECT_DIR, '..')
 
 ALPHA_PASSWORD='tiaomiwym' # this, if anything of mine, is worth your memory
 
@@ -124,15 +121,15 @@ INSTALLED_APPS = (
     'reversion',
     'countries',
     'south',
-    'theatricalia.common',
-    'theatricalia.places',
-    'theatricalia.plays',
-    'theatricalia.productions',
-    'theatricalia.photos',
-    'theatricalia.people',
-    'theatricalia.profiles',
-    'theatricalia.news',
-    'theatricalia.merged',
+    'common',
+    'places',
+    'plays',
+    'productions',
+    'photos',
+    'people',
+    'profiles',
+    'news',
+    'merged',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

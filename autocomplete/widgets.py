@@ -7,8 +7,6 @@ from django.utils.text import truncate_words
 from django.contrib import admin
 from django.db import models
 
-import operator,settings
-from django.contrib.auth.models import Message
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.db.models.query import QuerySet
 from django.utils.encoding import smart_str
