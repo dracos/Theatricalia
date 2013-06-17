@@ -11,7 +11,7 @@
 
 <h1>Editing {{ place.get_name_display|prettify }}</h1>
 
-<form method="post" id="edit">
+<form method="post" id="edit">{% csrf_token %}
 {% for field in form.hidden_fields %} {{ field }} {% endfor %}
 
 {{ form.errors }}

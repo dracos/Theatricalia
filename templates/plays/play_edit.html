@@ -9,7 +9,7 @@
 
 <div class="primary">
 
-<form method="post" id="edit">
+<form method="post" id="edit">{% csrf_token %}
 {{ form.as_p }}
 
 {{ formset.management_form }}

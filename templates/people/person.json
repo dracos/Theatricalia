@@ -98,7 +98,7 @@ Why not <a href="{% url person-edit person.slug %}">add one</a>?
 <p style="margin-bottom:0" class="clear">If you have a photograph of this person, and you
 have permission to do so, please upload it here.</p>
 
-<form method="post" action="{% url take-photo %}" enctype="multipart/form-data">
+<form method="post" action="{% url "take-photo" %}" enctype="multipart/form-data">{% csrf_token %}
 {{ photo_form.content_type }}{{ photo_form.object_id }}
 <input type="hidden" name="next" value="{{ request.path }}#photographs">
 <table>

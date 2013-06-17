@@ -1,4 +1,4 @@
-<form method="post" action="{% url take-photo %}" enctype="multipart/form-data" id="photo_form">
+<form method="post" action="{% url "take-photo" %}" enctype="multipart/form-data" id="photo_form">{% csrf_token %}
 {{ photo_form.content_type }}{{ photo_form.object_id }}
 <input type="hidden" name="next" value="{{ request.path }}#photographs">
 <table>

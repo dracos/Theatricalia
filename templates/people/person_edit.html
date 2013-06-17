@@ -29,7 +29,7 @@ so it can be removed, letting me know the URLs of both people; thank you.</p>
 {{ error }}
 {% endfor %}
 
-<form method="post" id="edit">
+<form method="post" id="edit">{% csrf_token %}
 {% for field in form.hidden_fields %} {{ field }} {% endfor %}
 {% for field in form.visible_fields %}
 <p>{{ field.label_tag }} {{ field }}</p>

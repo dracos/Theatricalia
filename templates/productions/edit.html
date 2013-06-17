@@ -14,7 +14,7 @@
 <p>Thank you for taking the time to add or correct some information on this site.
 </p>
 
-<form method="post" id="edit">
+<form method="post" id="edit">{% csrf_token %}
 
 {% if form.play_choice.errors or form.play_choice.is_hidden %}
 {{ form.play_choice.errors }}

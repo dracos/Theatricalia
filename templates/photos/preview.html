@@ -4,7 +4,7 @@
 {% block title %}{% trans "Preview your photograph" %}{% endblock %}
 
 {% block content %}
-  <form action="{% url take-photo %}" method="post">
+  <form action="{% url "take-photo" %}" method="post">{% csrf_token %}
     {% if form.errors %}
     <h1>{% blocktrans count form.errors|length as counter %}Please correct the error below{% plural %}Please correct the errors below{% endblocktrans %}</h1>
 {{ form.errors }}

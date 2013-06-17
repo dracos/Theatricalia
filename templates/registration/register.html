@@ -10,7 +10,7 @@
 {{ errors }}
 {% endfor %}
 
-<form method="post">
+<form method="post">{% csrf_token %}
 
 <p>To prevent ticket touting, we ask for some information from people to help identify
 them on the site.</p>

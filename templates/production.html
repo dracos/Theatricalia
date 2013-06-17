@@ -263,7 +263,7 @@ at <a title="Permanent link to this observation" href="{{ request.path }}#o{{ ob
 
 {% if user.is_authenticated %}
 {% get_comment_form for production as form %}
-<form action="{% comment_form_target %}" method="post">
+<form action="{% comment_form_target %}" method="post">{% csrf_token %}
         {{ form.comment.errors }} 
         <p><label for="id_comment">If you have an interesting observation or anecdote about this production
 that you think others may be interested in, please feel free to record it here:</label></p>
