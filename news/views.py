@@ -1,34 +1,42 @@
 import calendar
-from django.views.generic import date_based
+from django.views.generic import dates
 from models import Article
 
-def setup_dict(request):
-    if request.user.is_staff == 1:
-        qs = Article.objects.all()
-    else:
-        qs = Article.objects.visible()
-    return {
-        'queryset': qs,
-        'date_field': 'created',
-        'extra_context': {
-            'all': qs,
-        },
-    }
+MONTHS = [ m.lower() for m in calendar.month_name ]
 
-def month(request, year, month):
-    return date_based.archive_month(request, year=year, month=month, month_format='%B', **setup_dict(request))
+class NewsMixin(object):
+    date_field = 'created'
 
-def year(request, year):
-    return date_based.archive_year(request, year=year, make_object_list=True, **setup_dict(request))
+    def get_queryset(self):
+        if self.request.user.is_staff == 1:
+            qs = Article.objects.all()
+        else:
+            qs = Article.objects.visible()
+        return qs
 
-def article(request, year, month, slug):
-    months = [ x.lower() for x in calendar.month_name ]
-    month_id = months.index(month)
-    a = Article.objects.get(created__year=year, created__month=month_id, slug=slug)
-    day = a.created.day
-    return date_based.object_detail(request, year=year, month=month, day=day,
-        slug=slug, month_format='%B', slug_field='slug', **setup_dict(request))
+    def get_context_data(self, **kwargs):
+        context = super(NewsMixin, self).get_context_data(**kwargs)
+        context['all'] = self.get_queryset()
+        return context
 
-def index(request):
-    return date_based.archive_index(request, **setup_dict(request))
+class NewsMonth(NewsMixin, dates.MonthArchiveView):
+    month_format = '%B'
 
+class NewsYear(NewsMixin, dates.YearArchiveView):
+    make_object_list = True
+
+class NewsArticle(NewsMixin, dates.DateDetailView):
+    month_format = '%B'
+
+    def get_day(self):
+        """"No day in URL, easiest just to fake it from a quick lookup."""
+        a = Article.objects.get(**{
+            '%s__year' % self.date_field: self.get_year(),
+            '%s__month' % self.date_field: MONTHS.index(self.get_month()),
+            self.get_slug_field(): self.kwargs.get(self.slug_url_kwarg),
+        })
+        day = a.created.day
+        return str(day)
+
+class NewsIndex(NewsMixin, dates.ArchiveIndexView):
+    pass

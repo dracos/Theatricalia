@@ -4,11 +4,11 @@
 <link href="/publicity/feed" type="application/rss+xml" rel="alternate">
 {% endblock %}
 
-{% block title %}{{ year }} &ndash; Publicity{% endblock %}
+{% block title %}{{ year|date:"Y" }} &ndash; Publicity{% endblock %}
 
 {% block content %}
 
-<h1>Publicity in {{ year }}</h1>
+<h1>Publicity in {{ year|date:"Y" }}</h1>
 
 <div class="primary">
 

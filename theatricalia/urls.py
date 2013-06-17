@@ -1,8 +1,7 @@
 import os
 import settings
 
-from django.conf.urls.defaults import *
-from django.views.generic import date_based, simple
+from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 import views
@@ -150,16 +149,16 @@ urlpatterns = patterns('',
     url('^profile/(?P<username>.*)$', profiles.profile, name='profile'),
     url('^profile$', profiles.profile_user, name='profile-user'),
 
-    url('^(?P<url>publicity)/feed$', 'django.contrib.syndication.views.feed',
+    url('^(?P<url>publicity)/feed$', 'django.contrib.syndication.views.Feed',
         { 'feed_dict': {
         'publicity': NewsFeed,
         } },
     ),
-    url('^publicity$', news.index, name='news-index'),
-    url('^publicity/(?P<year>\d{4})$', news.year, name='news-year'),
-    url('^publicity/(?P<year>\d{4})/(?P<month>\w+)$', news.month, name='news-month'),
+    url('^publicity$', news.NewsIndex.as_view(), name='news-index'),
+    url('^publicity/(?P<year>\d{4})$', news.NewsYear.as_view(), name='news-year'),
+    url('^publicity/(?P<year>\d{4})/(?P<month>\w+)$', news.NewsMonth.as_view(), name='news-month'),
     url('^publicity/(?P<year>\d{4})/(?P<month>\w+)/(?P<slug>[-\w]+)$',
-        news.article, name='news-entry'),
+        news.NewsArticle.as_view(), name='news-entry'),
 
     url('^random$', views.random_production, name='random'),
     #url('forums/forum/', include('forums.django-forum.forum.urls')),
