@@ -1,11 +1,13 @@
 import string
 from datetime import datetime
 
-from django.views.generic.list_detail import object_list
+from django.views.generic import ListView
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.views.decorators.cache import cache_page
+
+from mixins import ListMixin
 
 from common.models import Alert
 from forms import PlaceForm
@@ -123,17 +125,6 @@ def place_alert(request, place_id, place, type):
 
     return HttpResponseRedirect(place.get_absolute_url())
 
-@cache_page(60*5)
-def list_places(request, letter='a'):
-    if letter == '0':
-        places = Place.objects.filter(name__regex=r'^[0-9]')
-        letter = '0-9'
-    elif letter == '*':
-        places = Place.objects.exclude(name__regex=r'^[A-Za-z0-9]')
-        letter = 'Symbols'
-    else:
-        places = Place.objects.filter(name__istartswith=letter)
-        letter = letter.upper()
-    letters = list(string.ascii_uppercase)
-    return object_list(request, queryset=places, extra_context={ 'letter': letter, 'letters': letters })
-
+class PlaceList(ListMixin, ListView):
+    model = Place
+    field = 'name'

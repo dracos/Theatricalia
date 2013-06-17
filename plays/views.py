@@ -1,11 +1,13 @@
 import string
 from datetime import datetime
-from django.views.generic.list_detail import object_list
+from django.views.generic import ListView
 from django.forms.formsets import formset_factory
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect 
 from django.db.models import Q
 from django.views.decorators.cache import cache_page
+
+from mixins import ListMixin
 
 from shortcuts import render, check_url, UnmatchingSlugException
 from models import Play
@@ -98,17 +100,19 @@ def play_edit(request, play_id, play):
         'formset': formset,
     })
 
-@cache_page(60 * 5)
-def list_plays(request, letter='a'):
-	if letter == '0':
-		plays = Play.objects.filter(title__regex=r'^[0-9]')
-		letter = '0-9'
-	elif letter == '*':
-		plays = Play.objects.exclude(title__regex=r'^[A-Za-z0-9]').exclude(title__regex=r'^(\'|")[A-Za-z]')
-		letter = 'Symbols'
-	else:
-		plays = Play.objects.filter( Q(title__istartswith=letter) | Q(title__istartswith="'%s" % letter) | Q(title__istartswith='"%s' % letter) )
-		letter = letter.upper()
-	letters = list(string.ascii_uppercase)
-	return object_list(request, queryset=plays, extra_context={ 'letter': letter, 'letters': letters })
+class PlayList(ListMixin, ListView):
+    model = Play
+    field = 'title'
 
+    def get_queryset(self):
+        objs = super(PlayList, self).get_queryset()
+        letter = self.kwargs.get('letter', 'a')
+        if letter == '0':
+            pass
+        elif letter == '*':
+            args = { '%s__regex' % self.field: r'^(\'|")[A-Za-z]' }
+            objs = objs.exclude(**args)
+        else:
+            plays = self.model.objects.filter( Q(title__istartswith=letter) | Q(title__istartswith="'%s" % letter) | Q(title__istartswith='"%s' % letter) )
+            letter = letter.upper()
+        return objs

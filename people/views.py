@@ -1,7 +1,7 @@
 import string
 from datetime import datetime
 
-from django.views.generic.list_detail import object_list
+from django.views.generic import ListView
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.db import IntegrityError
 from django.db.models import Q
@@ -10,6 +10,8 @@ from django.core import serializers
 from django.utils import simplejson
 from django.conf import settings
 from django.views.decorators.cache import cache_page
+
+from mixins import ListMixin
 
 from shortcuts import render, check_url, UnmatchingSlugException
 from utils import int_to_base32
@@ -142,17 +144,6 @@ def person_edit(request, person_id, person):
         'form': form,
     })
 
-@cache_page(60*5)
-def list_people(request, letter='a'):
-    if letter == '0':
-        people = Person.objects.filter(last_name__regex=r'^[0-9]')
-        letter = '0-9'
-    elif letter == '*':
-        people = Person.objects.exclude(last_name__regex=r'^[A-Za-z0-9]')
-        letter = 'Symbols'
-    else:
-        people = Person.objects.filter(last_name__istartswith=letter)
-        letter = letter.upper()
-    letters = list(string.ascii_uppercase)
-    return object_list(request, queryset=people, paginate_by=50, extra_context={ 'letter': letter, 'letters': letters, 'request':request })
-
+class PersonList(ListMixin, ListView):
+    model = Person
+    field = 'last_name'
