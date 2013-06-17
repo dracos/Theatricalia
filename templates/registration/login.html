@@ -16,7 +16,7 @@
 <input type="hidden" name="next" value="{{ next }}">
 </form>
 
-<p><a href="{% url password-reset %}">Forgotten your password?</a></p>
+<p><a href="{% url "password-reset" %}">Forgotten your password?</a></p>
 
 </div>
 
@@ -25,12 +25,12 @@
 <p>
 The action you are trying to perform requires you to sign in
 to the site. If you do not yet have an account, please
-<a href="{% url register %}">register for one</a>.
+<a href="{% url "register" %}">register for one</a>.
 </p>
 {% else %}
 <p>Signing in lets you add information to the site;
 if you do not yet have an account, please
-<a href="{% url register %}">register for one</a>.
+<a href="{% url "register" %}">register for one</a>.
 </p>
 {% endif %}
 </div>

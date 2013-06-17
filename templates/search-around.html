@@ -31,7 +31,7 @@
 {% endfor %}
 </ul>
 {% if future.has_other_pages %}
-<p align="right"><a href="{% url search-around-future latlon %}?page=2">More &rarr;</a></p>
+<p align="right"><a href="{% url "search-around-future" latlon %}?page=2">More &rarr;</a></p>
 {% endif %}
 {% endif %}
 
@@ -50,7 +50,7 @@
 {% endfor %}
 </ul>
 {% if past.has_other_pages %}
-<p align="right"><a href="{% url search-around-past latlon %}?page=2">More &rarr;</a></p>
+<p align="right"><a href="{% url "search-around-past" latlon %}?page=2">More &rarr;</a></p>
 {% endif %}
 {% endif %}
 
@@ -106,7 +106,7 @@ $(function(){
 
 <p>If your local theatre isn&rsquo;t here, it&rsquo;s possible it&rsquo;s not
 yet in our database, or is in our database but not yet geo-located &ndash; please
-do search for the theatre, or <a href="{% url production-add %}">add a production</a> and you can add a
+do search for the theatre, or <a href="{% url "production-add" %}">add a production</a> and you can add a
 place along the way.
 </p>
 
@@ -116,7 +116,7 @@ place along the way.
 
 <p>No results have been found, I&rsquo;m afraid. It&rsquo;s possible theatres
 are not yet in our database, or are present but not yet geo-located &ndash;
-please do search for a theatre, or <a href="{% url production-add %}">add a production</a>
+please do search for a theatre, or <a href="{% url "production-add" %}">add a production</a>
 and you can add a place along the way.
 </p>
 

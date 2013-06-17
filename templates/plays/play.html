@@ -86,7 +86,7 @@
 Why not <a href="{{ play.get_edit_url }}">add one</a>?
 {% else %}
 <p>To add a description of this play, or to request an alert,
-please <a href="{% url login %}?next={{ request.path }}">sign in</a>.</p>
+please <a href="{% url "login" %}?next={{ request.path }}">sign in</a>.</p>
 {% endif %}
 {% endif %}
 

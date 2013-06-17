@@ -48,9 +48,9 @@ if (!window.location.hash)
 </ul>
 {% if not request.GET.similar and not sounds_people %}
     {% ifequal people.count 1 %}
-        <p>If this isn&rsquo;t whom you&rsquo;re looking for, <a href="{% url search %}?q={{ search }};similar=1">see if we have any similar sounding results</a>.
+        <p>If this isn&rsquo;t whom you&rsquo;re looking for, <a href="{% url "search" %}?q={{ search }};similar=1">see if we have any similar sounding results</a>.
     {% else %}
-        <p>If none of these is whom you&rsquo;re looking for, <a href="{% url search %}?q={{ search }};similar=1">see if we have any similar sounding results</a>.
+        <p>If none of these is whom you&rsquo;re looking for, <a href="{% url "search" %}?q={{ search }};similar=1">see if we have any similar sounding results</a>.
     {% endifequal %}
 {% endif %}
 {% else %}
@@ -127,7 +127,7 @@ if (!window.location.hash)
 {% endfor %}
 </ul>
 {% if parts.has_other_pages %}
-<p align="right"><a href="{% url search-parts search %}?page=2">More &rarr;</a></p>
+<p align="right"><a href="{% url "search-parts" search %}?page=2">More &rarr;</a></p>
 {% endif %}
 {% endif %}
 
