@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 class Profile(models.Model):
     user = models.ForeignKey(User, unique=True)
     biography = models.TextField(blank=True)  
-    url = models.URLField('Website', blank=True, verify_exists=False)
+    url = models.URLField('Website', blank=True)
     email_validated = models.BooleanField()
     last_alert_sent = models.DateTimeField(auto_now_add=True)
 

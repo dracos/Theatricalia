@@ -3,6 +3,7 @@ import settings
 
 from django.conf.urls.defaults import *
 from django.views.generic import date_based, simple
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 import views
 from profiles import views as profiles
@@ -30,7 +31,7 @@ urlpatterns = patterns('',
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-    (r'^admin/(.*)', admin.site.root),
+    (r'^admin/', include(admin.site.urls)),
 
     url(r'^tickets/boxoffice$', profiles.register, name='register'),
     url(r'^tickets/(?P<uidb32>[0-9A-Za-z]+)-(?P<token>.+)$', profiles.register_confirm, name='register-confirm'),
@@ -167,11 +168,4 @@ urlpatterns = patterns('',
     #url('forums/counterpoint/', include('forums.counterpoint.counterpoint.urls')),
 )
 
-if settings.DEBUG:
-    urlpatterns += patterns('', 
-        (r'^static/(?P<path>.*)$', 'django.views.static.serve', {
-            'document_root': os.path.join(settings.OUR_ROOT, 'static')
-        })
-    )
-    
-
+urlpatterns += staticfiles_urlpatterns()

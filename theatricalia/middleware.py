@@ -1,7 +1,7 @@
 import re, random
 from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
-from django.forms.fields import email_re
+from django.core.validators import email_re
 from common.models import Prelaunch
 from shortcuts import render
 
