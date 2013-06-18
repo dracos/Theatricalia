@@ -44,7 +44,7 @@ def profile(request, username):
                 pass
         latest.append(versions)
 
-    seen = user.visit_set.order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))', 'production__place__press_date').distinct()
+    seen = user.visit_set.extra(select={'best_date': 'IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))'}).order_by('-best_date', 'production__place__press_date').distinct()
 
     return render(request, 'profile.html', {
         'view': user,

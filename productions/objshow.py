@@ -38,9 +38,9 @@ def productions_filter(object, type, date_filter):
 
     if date_filter == 'past':
         if isinstance(object, Place):
-            return o.order_by('-IFNULL(press_date, IF(end_date!="", end_date, start_date))')
+            return o.extra(select={'best_date': 'IFNULL(press_date, IF(end_date!="", end_date, start_date))'}).order_by('-best_date')
         else:
-            return o.order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))')
+            return o.extra(select={'best_date': 'IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))'}).order_by('-best_date')
     else:
         if isinstance(object, Place):
             return o.order_by('start_date', 'press_date')

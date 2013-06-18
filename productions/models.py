@@ -335,7 +335,7 @@ class Place(models.Model):
 
 class PartManager(models.Manager):
     def search(self, search):
-        return self.get_query_set().filter(role__icontains=search).order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))', 'production__place__press_date')
+        return self.get_query_set().filter(role__icontains=search).extra(select={'best_date': 'IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))'}).order_by('-best_date', 'production__place__press_date')
     # use_for_related_fields = True
     def get_query_set(self):
         qs = super(PartManager, self).get_query_set()

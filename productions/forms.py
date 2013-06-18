@@ -200,7 +200,7 @@ class PartForm(forms.ModelForm):
         choices = []
         p = ''
         for p in people:
-            last_production = p.productions.order_by('-IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))', 'place__press_date')[:1]
+            last_production = p.productions.extra(select={'best_date': 'IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))'}).order_by('-best_date', 'place__press_date')[:1]
             if len(last_production):
                 part = last_production[0].part_set.filter(person=p)[:1]
                 if len(part):

@@ -26,7 +26,6 @@ In my bad youth (look, it was using SVN when this project began), I have made
 some modifications to Django, as follows (this is mostly so hopefully this can
 eventually be cleaned up):
 
-* db/models/sql/query.py: to allow 'IFNULL(' strings to be passed through
 * db/models/fields/related.py: to not have the provided multi-select help-text
 * forms/formsets.py & models.py: to not have Delete on last form (I think?)
 * forms/fields.py: Add aria-required to required fields
