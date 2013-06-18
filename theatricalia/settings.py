@@ -95,16 +95,18 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    #'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    # Uncomment the next line for simple clickjacking protection:
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
     #'theatricalia.middleware.AlphaMiddleware',
     'theatricalia.middleware.OnlyLowercaseUrls',
     'django.middleware.transaction.TransactionMiddleware',
     'reversion.middleware.RevisionMiddleware',
-    #'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
 ROOT_URLCONF = 'theatricalia.urls'
@@ -126,6 +128,7 @@ INSTALLED_APPS = (
     'django.contrib.webdesign', # Lorem
     'django.contrib.sites',
     'django.contrib.staticfiles',
+    'django.contrib.messages',
     'django.contrib.admin',
     'sorl.thumbnail',
     'reversion',
@@ -146,6 +149,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.core.context_processors.auth',
     'django.core.context_processors.debug',
+    'django.contrib.messages.context_processors.messages',
     #'django.core.context_processors.i18n',
     #'django.core.context_processors.media',
 )

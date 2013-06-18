@@ -1,6 +1,6 @@
-# Create your views here.
 from django.http import Http404, HttpResponseRedirect
 from django.core.mail import mail_admins
+from django.contrib import messages
 
 from shortcuts import render, check_url, UnmatchingSlugException
 from places.models import Place
@@ -41,7 +41,7 @@ def merge(request, url):
         if 'merging_' + type in request.session:
             del request.session['merging_' + type]
         if request.user.is_authenticated():
-            request.user.message_set.create(message=u"We have forgotten your search for a duplicate.")
+            messages.success(request, u"We have forgotten your search for a duplicate.")
         return HttpResponseRedirect(object.get_absolute_url())
 
     if request.POST.get('dupe') and request.session.get('merging_' + type):

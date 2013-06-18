@@ -5,6 +5,7 @@ from django.core import serializers
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
+from django.contrib import messages
 from django.forms.models import modelformset_factory, inlineformset_factory
 from django.db import IntegrityError
 from django.contrib.comments.views.comments import post_comment
@@ -122,10 +123,10 @@ def production_seen(request, play_id, play, production_id, type):
         except IntegrityError, e:
             if e.args[0] != 1062: # Duplicate
                 raise
-        request.user.message_set.create(message=u"Your visit has been recorded.")
+        messages.success(request, u"Your visit has been recorded.")
     elif type == 'remove':
         Visit.objects.get(user=request.user, production=production).delete()
-        request.user.message_set.create(message=u"Your visit has been removed.")
+        messages.success(request, u"Your visit has been removed.")
 
     return HttpResponseRedirect(production.get_absolute_url())
 
@@ -162,11 +163,11 @@ def company_edit(request, company_id, company):
     form = ProductionCompanyForm(request.POST or None, instance=company)
     if request.method == 'POST':
         if request.POST.get('disregard'):
-            request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
+            messages.success(request, u"All right, we\u2019ve ignored any changes you made.")
             return HttpResponseRedirect(company.get_absolute_url())
         if form.is_valid():
             form.save()
-            request.user.message_set.create(message="Your changes have been stored; thank you.")
+            messages.success(request, "Your changes have been stored; thank you.")
             return HttpResponseRedirect(company.get_absolute_url())
 
     return render(request, 'productions/company_edit.html', {
@@ -188,10 +189,10 @@ def company_alert(request, company_id, company, type):
         except IntegrityError, e:
             if e.args[0] != 1062: # Duplicate
                 raise
-        request.user.message_set.create(message=u"Your alert has been added.")
+        messages.success(request, u"Your alert has been added.")
     elif type == 'remove':
         company.alerts.filter(user=request.user).delete()
-        request.user.message_set.create(message=u"Your alert has been removed.")
+        messages.success(request, u"Your alert has been removed.")
 
     return HttpResponseRedirect(company.get_absolute_url())
 
@@ -212,13 +213,13 @@ def part_edit(request, play_id, play, production_id, part_id):
 
     if request.method == 'POST':
         if request.POST.get('disregard'):
-            request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
+            messages.success(request, u"All right, we\u2019ve ignored any changes you made.")
             return HttpResponseRedirect(production.get_edit_cast_url())
         if part_form.is_valid():
             if part_form.cleaned_data.get('person_choice') == 'new':
                 part_form.cleaned_data['person'] = Person.objects.create_from_name(part_form.cleaned_data['person'])
             part_form.save()
-            request.user.message_set.create(message="Your changes have been stored; thank you.")
+            messages.success(request, "Your changes have been stored; thank you.")
             return HttpResponseRedirect(production.get_edit_cast_url())
 
     return render(request, 'productions/edit-part.html', {
@@ -253,13 +254,13 @@ def production_edit(request, play_id, play, production_id):
 
     if request.method == 'POST':
         if request.POST.get('disregard'):
-            request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
+            messages.success(request, u"All right, we\u2019ve ignored any changes you made.")
             return HttpResponseRedirect(production.get_absolute_url())
         if production_form.is_valid() and place_formset.is_valid() and companies_formset.is_valid():
             production_form.save()
             place_formset.save()
             companies_formset.save()
-            request.user.message_set.create(message="Your changes have been stored; thank you.")
+            messages.success(request, "Your changes have been stored; thank you.")
             return HttpResponseRedirect(production.get_absolute_url())
 
     return render(request, 'productions/edit.html', {
@@ -288,7 +289,7 @@ def production_edit_cast(request, play_id, play, production_id):
                 part_form.cleaned_data['person'] = Person.objects.create_from_name(part_form.cleaned_data['person'])
             part_form.cleaned_data['production'] = production
             part_form.save()
-            request.user.message_set.create(message="Your new part has been added; thank you.")
+            messages.success(request, "Your new part has been added; thank you.")
             return HttpResponseRedirect(production.get_edit_cast_url())
 
     return render(request, 'productions/edit-parts.html', {
@@ -328,7 +329,7 @@ def production_add(request, play=None, place=None, company=None):
 
     if request.method == 'POST':
         if request.POST.get('disregard'):
-            request.user.message_set.create(message=u"All right, we\u2019ve ignored what you had done.")
+            messages.success(request, u"All right, we\u2019ve ignored what you had done.")
             if play: return HttpResponseRedirect(play.get_absolute_url())
             if company: return HttpResponseRedirect(company.get_absolute_url())
             if place: return HttpResponseRedirect(place.get_absolute_url())
@@ -340,7 +341,7 @@ def production_add(request, play=None, place=None, company=None):
                 form.cleaned_data['production'] = production
             place_formset.save()
             companies_formset.save()
-            request.user.message_set.create(message="Your addition has been stored; thank you. If you know members of the cast or crew, please feel free to add them now.")
+            messages.success(request, "Your addition has been stored; thank you. If you know members of the cast or crew, please feel free to add them now.")
             url = production.get_edit_cast_url()
             if request.POST.get('initial_person'):
                 url += '?person=' + request.POST.get('initial_person')

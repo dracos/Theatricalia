@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect 
 from django.db.models import Q
 from django.views.decorators.cache import cache_page
+from django.contrib import messages
 
 from mixins import ListMixin
 
@@ -60,10 +61,10 @@ def play_alert(request, play_id, play, type):
         except IntegrityError, e:
             if e.args[0] != 1062: # Duplicate
                 raise
-        request.user.message_set.create(message=u"Your alert has been added.")
+        messages.success(request, u"Your alert has been added.")
     elif type == 'remove':
         play.alerts.filter(user=request.user).delete()
-        request.user.message_set.create(message=u"Your alert has been removed.")
+        messages.success(request, u"Your alert has been removed.")
 
     return HttpResponseRedirect(play.get_absolute_url())
 
@@ -80,7 +81,7 @@ def play_edit(request, play_id, play):
     formset = PlayAuthorFormSet(request.POST or None, initial=initial)
     if request.method == 'POST':
         if request.POST.get('disregard'):
-            request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
+            messages.success(request, u"All right, we\u2019ve ignored any changes you made.")
             return HttpResponseRedirect(play.get_absolute_url())
         if form.is_valid() and formset.is_valid():
             authors = []
@@ -91,7 +92,7 @@ def play_edit(request, play_id, play):
                     authors.append(author['person'])
             form.cleaned_data['authors'] = authors
             form.save()
-            request.user.message_set.create(message="Your changes have been stored; thank you.")
+            messages.success(request, "Your changes have been stored; thank you.")
             return HttpResponseRedirect(play.get_absolute_url())
 
     return render(request, 'plays/play_edit.html', {

@@ -10,6 +10,7 @@ from django.core import serializers
 from django.utils import simplejson
 from django.conf import settings
 from django.views.decorators.cache import cache_page
+from django.contrib import messages
 
 from mixins import ListMixin
 
@@ -115,10 +116,10 @@ def person_alert(request, person_id, person, type):
         except IntegrityError, e:
             if e.args[0] != 1062: # Duplicate
                 raise
-        request.user.message_set.create(message=u"Your alert has been added.")
+        messages.success(request, u"Your alert has been added.")
     elif type == 'remove':
         person.alerts.filter(user=request.user).delete()
-        request.user.message_set.create(message=u"Your alert has been removed.")
+        messages.success(request, u"Your alert has been removed.")
 
     return HttpResponseRedirect(person.get_absolute_url())
 
@@ -132,11 +133,11 @@ def person_edit(request, person_id, person):
     form = PersonEditForm(data=request.POST or None, instance=person)
     if request.method == 'POST':
         if request.POST.get('disregard'):
-            request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
+            messages.success(request, u"All right, we\u2019ve ignored any changes you made.")
             return HttpResponseRedirect(person.get_absolute_url())
         if form.is_valid():
             form.save()
-            request.user.message_set.create(message="Your changes have been stored, thank you.")
+            messages.success(request, "Your changes have been stored, thank you.")
             return HttpResponseRedirect(person.get_absolute_url())
 
     return render(request, 'people/person_edit.html', {

@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect, Http404, HttpResponse
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
+from django.contrib import messages
 
 from common.models import AlertLocal
 from places.models import Place
@@ -27,10 +28,10 @@ def alert(request, latlon, type):
         except IntegrityError, e:
             if e.args[0] != 1062: # Duplicate
                 raise
-        request.user.message_set.create(message=u"Your alert has been added.")
+        messages.success(request, u"Your alert has been added.")
     elif type == 'remove':
         AlertLocal.objects.filter(user=request.user, latitude=lat, longitude=lon).delete()
-        request.user.message_set.create(message=u"Your alert has been removed.")
+        messages.success(request, u"Your alert has been removed.")
 
     url = reverse('search-around', args=(latlon,))
     if request.GET.get('name', ''):

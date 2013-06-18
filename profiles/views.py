@@ -9,6 +9,7 @@ from django.views.decorators.cache import never_cache
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.comments.models import Comment
+from django.contrib import messages
 
 from forms import RegistrationForm, AuthenticationForm, ProfileForm
 from shortcuts import render, send_email
@@ -139,11 +140,11 @@ def profile_edit(request):
 
     if request.method == 'POST':
         if request.POST.get('disregard'):
-            request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
+            messages.success(request, u"All right, we\u2019ve ignored any changes you made.")
             return HttpResponseRedirect(profile.get_absolute_url())
         if form.is_valid():
             form.save()
-            request.user.message_set.create(message="Your changes have been stored; thank you.")
+            messages.success(request, "Your changes have been stored; thank you.")
             return HttpResponseRedirect(profile.get_absolute_url())
 
     return render(request, 'profile-edit.html', {
@@ -161,5 +162,5 @@ def profile_alert(request, id):
     if request.user != alert.user:
         raise Exception("Trying to unsubscribe someone else's alert?")
     alert.delete()
-    request.user.message_set.create(message="Your alert has been removed.")
+    messages.success(request, "Your alert has been removed.")
     return HttpResponseRedirect(profile.get_edit_url())

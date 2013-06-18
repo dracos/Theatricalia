@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.views.decorators.cache import cache_page
+from django.contrib import messages
 
 from mixins import ListMixin
 
@@ -76,11 +77,11 @@ def place_edit(request, place_id, place):
     form = PlaceForm(request.POST or None, instance=place)
     if request.method == 'POST':
         if request.POST.get('disregard'):
-            request.user.message_set.create(message=u"All right, we\u2019ve ignored any changes you made.")
+            messages.success(request, u"All right, we\u2019ve ignored any changes you made.")
             return HttpResponseRedirect(place.get_absolute_url())
         if form.is_valid():
             form.save()
-            request.user.message_set.create(message="Your changes have been stored; thank you.")
+            messages.success(request, "Your changes have been stored; thank you.")
             return HttpResponseRedirect(place.get_absolute_url())
 
     return render(request, 'places/place_edit.html', {
@@ -118,10 +119,10 @@ def place_alert(request, place_id, place, type):
         except IntegrityError, e:
             if e.args[0] != 1062: # Duplicate
                 raise
-        request.user.message_set.create(message=u"Your alert has been added.")
+        messages.success(request, u"Your alert has been added.")
     elif type == 'remove':
         place.alerts.filter(user=request.user).delete()
-        request.user.message_set.create(message=u"Your alert has been removed.")
+        messages.success(request, u"Your alert has been removed.")
 
     return HttpResponseRedirect(place.get_absolute_url())
 
