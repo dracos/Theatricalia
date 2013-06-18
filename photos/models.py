@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from sorl.thumbnail.fields import ImageWithThumbnailsField
+from sorl.thumbnail import ImageField
 from utils import int_to_base32
 
 def get_upload_to(instance, filename):
@@ -15,16 +15,7 @@ class Photo(models.Model):
     is_visible = models.BooleanField(default=True)
 
     title = models.CharField(max_length=255)
-    photo = ImageWithThumbnailsField('Photograph',
-        upload_to = get_upload_to,
-        thumbnail = { 'size': (80, 80), 'options': ('crop', ) },
-        extra_thumbnails = {
-            'feature': { 'size': (108, 108), 'options': ('crop', ) },
-            'larger': { 'size': (400, 400), 'options': ['upscale'] },
-        },
-        max_length = 255,
-        thumbnail_tag = '<img src="%(src)s" width="%(width)s" height="%(height)s">'
-    )
+    photo = ImageField('Photograph', upload_to = get_upload_to, max_length = 255)
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()

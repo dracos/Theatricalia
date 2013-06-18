@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load prettify %}
+{% load thumbnail %}
 
 {% block title %}{{ place|prettify|striptags }}{% endblock %}
 
@@ -58,9 +59,11 @@
 
 {% if place.photos.all %}
     {% with place.photos.all|random as photo %}
+    {% thumbnail photo.photo "108x108" crop="center" as im %}
     <div id="photograph-feature">
-    <a title="{{ photo.title }}" href="/static/{{ photo.photo }}">{{ photo.photo.extra_thumbnails_tag.feature }}</a>
+    <a href="{{ MEDIA_URL }}{{ photo.photo }}" title="{{ photo.title }}"><img src="{{ im.url }}" width={{ im.width }} height={{ im.height }}></a>
     </div>
+    {% endthumbnail %}
     {% endwith %}
 {% endif %}
 
@@ -128,7 +131,9 @@ $(function(){
 <h2>Photographs</h2>
     <ul>
     {% for photo in place.photos.all %}
-    <li><a rel="gallery" title="{{ photo.title }}" href="/static/{{ photo.photo }}">{{ photo.photo.thumbnail_tag }}</a>
+    {% thumbnail photo.photo "80x80" crop="center" as im %}
+    <li><a rel="gallery" href="{{ MEDIA_URL }}{{ photo.photo }}" title="{{ photo.title }}"><img src="{{ im.url }}" width={{ im.width }} height={{ im.height }}></a>
+    {% endthumbnail %}
     {% endfor %}
     </ul>
     </div>

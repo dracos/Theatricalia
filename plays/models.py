@@ -1,5 +1,4 @@
 import re
-#from sorl.thumbnail.fields import ImageWithThumbnailsField
 from django.db import models
 from people.models import Person
 #from django.utils.html import escape

@@ -11,7 +11,9 @@
 
 <h2 id="photo-title">{{ photo.title|prettify }}</h2>
 
-<p aria-labelledby="photo-title" id="photo"><img style="max-width: 100%" src="{% thumbnail photo.photo 720x720 %}" alt="{{ photo.title }}"></p>
+{% thumbnail photo.photo "720x720" as im %}
+<p aria-labelledby="photo-title" id="photo"><img style="max-width: 100%" src="{{ im.url }}" alt="{{ photo.title }}"></p>
+{% endthumbnail %}
 
 </div>
 

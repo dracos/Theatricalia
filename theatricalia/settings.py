@@ -30,6 +30,7 @@ if 'staging' in OUR_ROOT:
 else:
     DEBUG = False
 TEMPLATE_DEBUG = DEBUG
+THUMBNAIL_DEBUG = DEBUG
 
 ADMINS = (
     ('Matthew Somerville', 'matthew@theatricalia.com'),
@@ -72,9 +73,9 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-MEDIA_ROOT = os.path.join(OUR_ROOT, 'media')
+MEDIA_ROOT = os.path.join(OUR_ROOT, '..', 'media')
 MEDIA_URL = '/media/'
-STATIC_ROOT = ''
+STATIC_ROOT = os.path.join(OUR_ROOT, '..', 'collected_static')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(OUR_ROOT, 'static'),
@@ -152,7 +153,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.debug',
     'django.contrib.messages.context_processors.messages',
     #'django.core.context_processors.i18n',
-    #'django.core.context_processors.media',
+    'django.core.context_processors.media',
 )
 
 # A sample logging configuration. The only tangible logging

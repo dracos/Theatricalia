@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load prettify %}{% load comments %}
+{% load prettify %}{% load comments %}{% load thumbnail %}
 
 {% block title %}Production of {{ production.play.get_title_display|prettify|striptags }}{% endblock %}
 
@@ -18,9 +18,11 @@
 
 {% if production.photos.all %}
     {% with production.photos.all|random as photo %}
+    {% thumbnail photo.photo "108x108" crop="center" as im %}
     <div id="photograph-feature">
-    <a href="/static/{{ photo.photo }}" title="{{ photo.title }}">{{ photo.photo.extra_thumbnails_tag.feature }}</a>
+    <a href="{{ MEDIA_URL }}{{ photo.photo }}" title="{{ photo.title }}"><img src="{{ im.url }}" width={{ im.width }} height={{ im.height }}></a>
     </div>
+    {% endthumbnail %}
     {% endwith %}
 {% else %}{% if flickr.photos.photo %}
     {% with flickr.photos.photo|random as photo %}
@@ -213,7 +215,9 @@
 {% if production.photos.all or flickr.photos.photo %}
 <ul>
 {% for photo in production.photos.all %}
-<li><a rel="gallery" href="/static/{{ photo.photo }}" title="{{ photo.title }}">{{ photo.photo.thumbnail_tag }}</a>
+{% thumbnail photo.photo "80x80" crop="center" as im %}
+<li><a rel="gallery" href="{{ MEDIA_URL }}{{ photo.photo }}" title="{{ photo.title }}"><img src="{{ im.url }}" width={{ im.width }} height={{ im.height }}></a>
+{% endthumbnail %}
 {% endfor %}
 {% for photo in flickr.photos.photo %}
 <li><a rel="gallery" href="http://www.flickr.com/photos/{{ photo.owner }}/{{ photo.id }}/" title="{{ photo.title }}"><img src="http://farm{{ photo.farm }}.static.flickr.com/{{ photo.server }}/{{ photo.id }}_{{ photo.secret }}_s.jpg" alt="{{ photo.title }}"></a>

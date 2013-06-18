@@ -14,7 +14,6 @@ from productions.models import Production
 from plays.models import Play
 from places.models import Place
 from people.models import Person
-import settings
 
 @login_required
 def take_photo(request):
