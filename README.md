@@ -28,7 +28,6 @@ eventually be cleaned up):
 
 * db/models/fields/related.py: to not have the provided multi-select help-text
 * forms/formsets.py & models.py: to not have Delete on last form (I think?)
-* forms/fields.py: Add aria-required to required fields
 * forms/forms.py: Move label_suffix to inside label
 * contrib/comments/views/comments.py: Remove c parameter from redirect
 * contrib/admin/media/js/urlify.js: Remove stop words removelist

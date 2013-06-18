@@ -185,3 +185,15 @@ LOGGING = {
         },
     }
 }
+
+
+# Monkeypatches
+
+# To have aria-required on required form fields
+from django.forms import fields
+def aria_widget_attrs(self, widget):
+    if self.required:
+        return { 'aria-required': 'true' }
+    return {}
+fields.Field.widget_attrs = aria_widget_attrs
+
