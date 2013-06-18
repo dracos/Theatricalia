@@ -21,6 +21,7 @@ AUTHENTICATION_BACKENDS = (
     'profiles.backends.ModelBackend',
 )
 AUTH_PROFILE_MODULE = 'profiles.profile'
+AUTH_USER_MODEL = 'profiles.User'
 
 APPEND_SLASH = False
 
@@ -146,8 +147,8 @@ INSTALLED_APPS = (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.request',
-    'django.core.context_processors.auth',
     'django.core.context_processors.debug',
     'django.contrib.messages.context_processors.messages',
     #'django.core.context_processors.i18n',

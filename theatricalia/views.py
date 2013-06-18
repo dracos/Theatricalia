@@ -1,6 +1,5 @@
 import random
 from django.contrib.comments.models import Comment
-from django.contrib.auth.models import User
 from django.db.models import Count
 from django.http import HttpResponseRedirect
 from shortcuts import render
@@ -11,6 +10,7 @@ from places.models import Place
 from people.models import Person
 from news.models import Article
 from photos.models import Photo
+from profiles.models import User
 
 def random_production(request):
     count = Production.objects.aggregate(count=Count('id'))['count']

@@ -10,7 +10,6 @@ from plays.models import Play
 from productions.models import Production, Part, Place as ProductionPlace, ProductionCompany
 from people.models import Person
 from places.models import Place
-from django.contrib.auth.models import User
 
 def fix_dots(s):
     return s.title().replace('.', ' ').replace('  ', ' ').strip()

@@ -18,6 +18,10 @@ This is a standard Django project, running with MySQL.
 Django modifications
 --------------------
 
+The following were previously made by Django code modifications and need to be
+reintroduced some other way:
+* Email uniqueness
+
 In my bad youth (look, it was using SVN when this project began), I have made
 some modifications to Django, as follows (this is mostly so hopefully this can
 eventually be cleaned up):
@@ -32,7 +36,5 @@ eventually be cleaned up):
 * contrib/admin/filterspecs.py: Allow filtering of lookup_choices
 * contrib/admin/views/main.py: smart_split the query
 * contrib/admin/templates/admin/actions.html: Pass search terms through the form
-* contrib/auth/admin.py: Use name rather than first/last name
-* contrib/auth/models.py: Ditto, and make email unique
 * middleware/common.py: Provide reverse of APPEND_SLASH, removing one if one is present and not needed.
 

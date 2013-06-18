@@ -12,7 +12,6 @@ from productions.models import Production, Part, ProductionCompany
 from productions.models import Place as ProductionPlace
 from people.models import Person
 from places.models import Place
-from django.contrib.auth.models import User
 
 def add_parts(str, cast):
     people = re.findall('<tr>\s*<td class="UnderviewKey">\s*&nbsp;</td>\s*<td class="UnderviewEntry"><p>(.*?)</p></td>\s*<td class="UnderviewEntry"><p>(.*?)</p></td>\s*<td class="AuthorityLink">', str)

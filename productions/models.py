@@ -1,10 +1,11 @@
 from datetime import date
+
+from django.conf import settings
 from django.db import models
 from django.utils import dateformat
 from django.utils.safestring import mark_safe
 from django.contrib.contenttypes import generic
 from django.template.defaultfilters import slugify
-from django.contrib.auth.models import User
 from reversion.models import Version
 
 from common.models import Alert
@@ -148,7 +149,7 @@ class Production(models.Model):
     photos = generic.GenericRelation(Photo)
     description = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
-    seen_by = models.ManyToManyField(User, through='Visit', related_name='seen', blank=True)
+    seen_by = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Visit', related_name='seen', blank=True)
     source = models.TextField(blank=True)
     url = models.URLField(blank=True, verbose_name='Web page')
     book_tickets = models.URLField(blank=True, verbose_name='Booking URL')
@@ -375,7 +376,7 @@ class Part(models.Model):
 
 class Visit(models.Model):
     production = models.ForeignKey(Production)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     recommend = models.BooleanField()
     date = ApproximateDateField(blank=True, default='')
 

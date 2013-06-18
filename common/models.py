@@ -1,12 +1,12 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from django.contrib.auth.models import User
 
 class Alert(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     enabled = models.BooleanField(default=True)
-    user = models.ForeignKey(User, related_name='alerts')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='alerts')
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
@@ -21,7 +21,7 @@ class Alert(models.Model):
 class AlertLocal(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     enabled = models.BooleanField(default=True)
-    user = models.ForeignKey(User, related_name='local_alerts')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='local_alerts')
 
     latitude = models.FloatField()
     longitude = models.FloatField()

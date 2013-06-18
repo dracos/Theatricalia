@@ -8,12 +8,11 @@ sys.path.insert(0, os.path.join(OUR_ROOT, '..'))
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
 from django.db.models import Q
-from django.contrib.auth.models import User
 
 from common.models import Alert
 from plays.models import Play
 from places.models import Place
-from profiles.models import Profile
+from profiles.models import Profile, User
 from productions.models import Production
 
 for user in User.objects.filter(Q(alerts__isnull=False) | Q(local_alerts__isnull=False)).distinct():

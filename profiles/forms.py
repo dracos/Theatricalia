@@ -1,11 +1,11 @@
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.models import Site
 from django.template import Context, loader
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm as DjangoAuthenticationForm
-from models import Profile
+
+from .models import Profile, User
 
 class ProfileForm(forms.ModelForm):
     class Meta:
@@ -51,8 +51,12 @@ class RegistrationForm(forms.ModelForm):
             return username
         raise forms.ValidationError("A user with that username already exists.")
 
+    def clean(self):
+        if 'unicorn' in self.cleaned_data:
+            self.cleaned_data['email'] = self.cleaned_data['unicorn']
+        return self.cleaned_data
+
     def save(self):
-        self.cleaned_data['email'] = self.cleaned_data['unicorn']
         user = super(RegistrationForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password"])
         user.save()

@@ -4,8 +4,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.syndication.views import Feed, FeedDoesNotExist
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.db.models import Count
-from django.contrib.auth.models import User
 
+from profiles.models import User
 from people.models import Person
 from plays.models import Play
 from places.models import Place

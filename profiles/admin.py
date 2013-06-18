@@ -1,14 +1,21 @@
 from django.contrib import admin
-from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
-from models import Profile
-
-admin.site.unregister(User)
+from django.contrib.auth.forms import UserChangeForm
+from models import Profile, User
 
 class ProfileInline(admin.StackedInline):
     model = Profile
 
+class MyUserChangeForm(UserChangeForm):
+    class Meta(UserChangeForm.Meta):
+        model = User
+
+# Help from http://stackoverflow.com/questions/15012235/using-django-auth-useradmin-for-a-custom-user-model
 class MyUserAdmin(UserAdmin):
+    form = MyUserChangeForm
+
+    fieldsets = ( ( "Personal data", { 'fields': ( 'name', ) } ), ) + UserAdmin.fieldsets
+
     inlines = [ ProfileInline ]
     list_display = ('username', 'email', 'name', 'is_staff', 'email_validated')
 

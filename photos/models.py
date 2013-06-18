@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from django.contrib.auth.models import User
 from sorl.thumbnail.fields import ImageWithThumbnailsField
 from utils import int_to_base32
 

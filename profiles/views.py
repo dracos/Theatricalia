@@ -2,7 +2,6 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import User
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.conf import settings
 from django.views.decorators.cache import never_cache
@@ -17,6 +16,7 @@ from utils import int_to_base32, base32_to_int
 from common.models import Alert, AlertLocal
 from reversion.models import Revision
 from productions.models import Part
+from .models import User
 
 @login_required
 def profile_user(request):
@@ -99,7 +99,7 @@ login = never_cache(login)
 #    return render(request, 'accounts/registration_complete.html', {})
 
 def perform_login(request, user):
-    user.backend = 'theatricalia.profiles.backends.ModelBackend' # Needs backend to login?
+    user.backend = 'profiles.backends.ModelBackend' # Needs backend to login?
     from django.contrib.auth import login
     login(request, user)
 

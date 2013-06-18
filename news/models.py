@@ -1,12 +1,12 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 class ArticleManager(models.Manager):
     def visible(self):
         return super(ArticleManager, self).get_query_set().filter(visible=True)
 
 class Article(models.Model):
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
     enable_comments = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(unique_for_month='created')
