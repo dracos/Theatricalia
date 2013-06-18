@@ -35,5 +35,4 @@ eventually be cleaned up):
 * contrib/admin/filterspecs.py: Allow filtering of lookup_choices
 * contrib/admin/views/main.py: smart_split the query
 * contrib/admin/templates/admin/actions.html: Pass search terms through the form
-* middleware/common.py: Provide reverse of APPEND_SLASH, removing one if one is present and not needed.
 

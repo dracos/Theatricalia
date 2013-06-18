@@ -107,6 +107,7 @@ MIDDLEWARE_CLASSES = (
 
     #'theatricalia.middleware.AlphaMiddleware',
     'theatricalia.middleware.OnlyLowercaseUrls',
+    'theatricalia.middleware.RemoveSlashMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
     'reversion.middleware.RevisionMiddleware',
 )
