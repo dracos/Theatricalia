@@ -25,7 +25,9 @@ class Play(models.Model):
 
     def __unicode__(self):
         title = self.get_title_display()
-        authors = self.get_authors_display(html=False)
+        authors = ''
+        if self.id:
+            authors = self.get_authors_display(html=False)
         if authors:
             title += u', by ' + authors
         return title

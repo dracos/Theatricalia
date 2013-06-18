@@ -189,14 +189,16 @@ class Production(models.Model):
         return self.url_components('production-seen', type='remove')
 
     def __unicode__(self):
-        producer = self.get_companies_display(html=False)
-        if producer: producer += ' '
+        producer = places = ''
+        if self.id:
+            producer = self.get_companies_display(html=False)
+            if producer: producer += ' '
 
-        places = self.place_summary()
-        if places == 'Unknown location':
-            places = u''
-        else:
-            places = u'%s, ' % places
+            places = self.place_summary()
+            if places == 'Unknown location':
+                places = u''
+            else:
+                places = u'%s, ' % places
 
         return u"%sproduction of %s, %s%s" % (producer, self.play, places, self.date_summary())
 
