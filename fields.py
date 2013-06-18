@@ -45,6 +45,9 @@ class ApproximateDate(object):
         elif self.year:
             return "%04d-00-00" % (self.year)
 
+    def __len__(self):
+        return len(repr(self))
+
     def __str__(self):
         absself = copy.copy(self)
         if absself.year < 0:
@@ -104,7 +107,7 @@ class ApproximateDateField(models.CharField):
             msg = _('Invalid date: %s') % _(str(e))
             raise exceptions.ValidationError(msg)
 
-    def get_db_prep_value(self, value):
+    def get_db_prep_value(self, value, **kwargs):
         if value in (None, ''):
                 return ''
         if isinstance(value, ApproximateDate):
