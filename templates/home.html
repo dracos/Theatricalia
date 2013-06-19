@@ -43,8 +43,8 @@ or search for a location to find things near you.
 
 {% if random_photo %}
 
-{% with random_photo.content_object as production %}
-<p><img align="right" src="{{ random_photo.photo.extra_thumbnails.feature }}" alt="" style="margin-left:0.5em">
+{% with random_photo.0.content_object as production %}
+<p><img align="right" src="{{ random_photo.0.photo.extra_thumbnails.feature }}" alt="" style="margin-left:0.5em">
 <a href="{{ production.play.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.get_companies_display %}
 by {{ production.get_companies_display }}{% endif %},
 

@@ -36,7 +36,7 @@ def home(request):
     except:
         latest_comment = {}
 
-    random_photo = Photo.objects.exclude(id__gte=149, id__lte=159).filter(content_type=22).order_by('?')[0]
+    random_photo = Photo.objects.exclude(id__gte=149, id__lte=159).filter(content_type=22).order_by('?')[:1]
     if random.randint(1, 10) == 1: random_photo = None
 
     return render(request, 'home.html', {
