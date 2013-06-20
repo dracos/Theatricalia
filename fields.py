@@ -97,6 +97,11 @@ class ApproximateDateField(models.CharField):
         if isinstance(value, ApproximateDate):
             return value
 
+        if isinstance(value, datetime.datetime):
+            value = value.date().isoformat()
+        if isinstance(value, datetime.date):
+            value = value.isoformat()
+
         if not ansi_date_re.search(value):
             raise ValidationError('Enter a valid date in YYYY-MM-DD format.')
 
