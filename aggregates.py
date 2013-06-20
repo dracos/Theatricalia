@@ -15,5 +15,4 @@ class Concatenate(Aggregate):
     name = 'Concatenate'
     def add_to_query(self, query, alias, col, source, is_summary):
         aggregate = ConcatenateSQL(col, source=source, separator=' / ', is_summary=is_summary, **self.extra)
-        query.connection.ops.check_aggregate_support(aggregate)
         query.aggregates[alias] = aggregate
