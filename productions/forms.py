@@ -43,15 +43,14 @@ class ProductionForm(forms.ModelForm):
         widget = ForeignKeySearchInput(Production.play.field.rel, ('title',))
     )
     play_choice = forms.ChoiceField(label='Play', widget=forms.RadioSelect(), required=False)
-    #company = AutoCompleteMultiValueField(
-    #    ProductionCompany, 'name',
-    #    required = False,
-    #    fields = (StripCharField(), forms.ModelChoiceField(ProductionCompany.objects.all())),
-    #    widget = ForeignKeySearchInput(Production.company.field.rel, ('name',))
-    #)
     description = StripCharField(required=False, widget=forms.Textarea(attrs={'cols': 40, 'rows':5}))
     url = forms.URLField(label='Web page', required=False, widget=forms.TextInput(attrs={'size': 40}))
     book_tickets = forms.URLField(label='Booking URL', required=False, widget=forms.TextInput(attrs={'size': 40}))
+
+    def _get_validation_exclusions(self):
+        exclusions = super(ProductionForm, self)._get_validation_exclusions()
+        exclusions.append('play')
+        return exclusions
 
     class Meta:
         model = Production
@@ -116,8 +115,8 @@ class ProductionForm(forms.ModelForm):
     def save(self, **kwargs):
         if not self.cleaned_data['play'].id:
             self.cleaned_data['play'].save()
-        #if self.cleaned_data['company'] and not self.cleaned_data['company'].id:
-        #    self.cleaned_data['company'].save()
+            # Must reattach the now-saved play to the instance to pass in the ID
+            self.instance.play = self.cleaned_data['play']
         return super(ProductionForm, self).save(**kwargs)
 
 class CompanyInlineForm(forms.ModelForm):
@@ -136,9 +135,16 @@ class CompanyInlineForm(forms.ModelForm):
         self.fields['production'].required = False
         self.fields['production'].widget = forms.HiddenInput()
 
+    def _get_validation_exclusions(self):
+        exclusions = super(CompanyInlineForm, self)._get_validation_exclusions()
+        exclusions.append('productioncompany')
+        return exclusions
+
     def save(self, **kwargs):
         if not self.cleaned_data['productioncompany'].id:
             self.cleaned_data['productioncompany'].save()
+            # Must reattach the now-saved object to the instance to pass in the ID
+            self.instance.productioncompany = self.cleaned_data['productioncompany']
         return super(CompanyInlineForm, self).save(**kwargs)
 
 class PlaceForm(forms.ModelForm):
@@ -160,6 +166,11 @@ class PlaceForm(forms.ModelForm):
         self.fields['production'].required = False
         self.fields['production'].widget = forms.HiddenInput()
 
+    def _get_validation_exclusions(self):
+        exclusions = super(PlaceForm, self)._get_validation_exclusions()
+        exclusions.append('place')
+        return exclusions
+
     def clean_place(self):
         if not self.cleaned_data['place']:
             raise forms.ValidationError('You must specify a place.')
@@ -168,6 +179,8 @@ class PlaceForm(forms.ModelForm):
     def save(self, **kwargs):
         if not self.cleaned_data['place'].id:
             self.cleaned_data['place'].save(include_town=True)
+            # Must reattach the now-saved object to the instance to pass in the ID
+            self.instance.place = self.cleaned_data['place']
         return super(PlaceForm, self).save(**kwargs)
 
 # person is the text box where someone enters a name, and always will be
@@ -183,6 +196,11 @@ class PartForm(forms.ModelForm):
     class Meta:
         model = Part
         exclude = ('order')
+
+    def _get_validation_exclusions(self):
+        exclusions = super(PartForm, self)._get_validation_exclusions()
+        exclusions.append('person')
+        return exclusions
 
     def __init__(self, editing=True, *args, **kwargs):
         super(PartForm, self).__init__(*args, **kwargs)
@@ -253,7 +271,14 @@ class PartForm(forms.ModelForm):
                 self.fields['person_choice'].choices = choices # = forms.ChoiceField( label='Person', choices=choices, widget = forms.RadioSelect() )
             else:
                 self._flag_up_no_results = True
-        return person
+        return Person.objects.from_name(person)
+
+    def save(self, **kwargs):
+        if self.cleaned_data.get('person_choice') == 'new':
+            self.cleaned_data['person'].save()
+            # Must reattach the now-saved play to the instance to pass in the ID
+            self.instance.person = self.cleaned_data['person']
+        return super(PartForm, self).save(**kwargs)
 
 class ProductionCompanyForm(forms.ModelForm):
     class Meta:

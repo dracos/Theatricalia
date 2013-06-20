@@ -278,16 +278,14 @@ def production_edit_cast(request, play_id, play, production_id):
         production = check_parameters(play_id, play, production_id)
     except UnmatchingSlugException, e:
         return HttpResponsePermanentRedirect(e.args[0].get_edit_cast_url())
-    initial = {}
+    initial = { 'production': production }
     if request.GET.get('person'):
         initial['person'] = Person.objects.get(id=base32_to_int(request.GET.get('person')))
     part_form = PartForm(data=request.POST or None, editing=False, initial=initial)
 
     if request.method == 'POST':
         if part_form.is_valid():
-            if part_form.cleaned_data.get('person_choice') == 'new':
-                part_form.cleaned_data['person'] = Person.objects.create_from_name(part_form.cleaned_data['person'])
-            part_form.cleaned_data['production'] = production
+            part_form.instance.production = production
             part_form.save()
             messages.success(request, "Your new part has been added; thank you.")
             return HttpResponseRedirect(production.get_edit_cast_url())
@@ -307,14 +305,16 @@ def production_add(request, play=None, place=None, company=None):
 
     production_form = ProductionForm(data=request.POST or None, initial=initial)
 
-    ProductionPlaceFormSet = modelformset_factory( ProductionPlace, form=PlaceForm )
+    # Inline even though empty, because model validation means it can't assign null
+    # to Place.production when calling construct_instance()
+    ProductionPlaceFormSet = inlineformset_factory( Production, ProductionPlace, extra=1, form=PlaceForm )
     place_formset = ProductionPlaceFormSet(
         data = request.POST or None,
         prefix = 'place',
         queryset = ProductionPlace.objects.none()
     )
 
-    ProductionCompanyFormSet = modelformset_factory( Production_Companies, form=CompanyInlineForm )
+    ProductionCompanyFormSet = inlineformset_factory( Production, Production_Companies, extra=1, form=CompanyInlineForm )
     companies_formset = ProductionCompanyFormSet(
         data = request.POST or None,
         prefix = 'company',
@@ -334,11 +334,14 @@ def production_add(request, play=None, place=None, company=None):
             if company: return HttpResponseRedirect(company.get_absolute_url())
             if place: return HttpResponseRedirect(place.get_absolute_url())
         if production_form.is_valid() and place_formset.is_valid() and companies_formset.is_valid():
+            # Nasty things to set up the parent/child inline relations as it expects them to be.
             production = production_form.save()
+            place_formset.instance = production
             for form in place_formset.forms:
-                form.cleaned_data['production'] = production
+                form.instance.production = production
+            companies_formset.instance = production
             for form in companies_formset.forms:
-                form.cleaned_data['production'] = production
+                form.instance.production = production
             place_formset.save()
             companies_formset.save()
             messages.success(request, "Your addition has been stored; thank you. If you know members of the cast or crew, please feel free to add them now.")

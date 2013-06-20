@@ -14,13 +14,17 @@ class PersonManager(models.Manager):
         qs = qs.exclude(deleted=True)
         return qs
 
-    def create_from_name(self, name):
+    def from_name(self, name):
         names = name.split(None, 1)
         if len(names)==2:
             first_name, last_name = names
         else:
             first_name, last_name = u'', name
         new_person = Person(first_name=first_name, last_name=last_name)
+        return new_person
+
+    def create_from_name(self, name):
+        new_person = self.from_name(name)
         new_person.save()
         return new_person
 
