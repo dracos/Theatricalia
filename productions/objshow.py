@@ -37,10 +37,10 @@ def productions_filter(object, type, date_filter):
         o = o.annotate(Concatenate('part__role'))
 
     if date_filter == 'past':
-        if isinstance(object, Place):
-            return o.extra(select={'best_date': 'IFNULL(press_date, IF(end_date!="", end_date, start_date))'}).order_by('-best_date')
+        if isinstance(object, Person):
+            return o.extra(select={'best_date': 'IFNULL(T6.press_date, IF(T6.end_date!="", T6.end_date, T6.start_date))'}).order_by('-best_date')
         else:
-            return o.extra(select={'best_date': 'IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))'}).order_by('-best_date')
+            return o.extra(select={'best_date': 'IFNULL(press_date, IF(end_date!="", end_date, start_date))'}).order_by('-best_date')
     else:
         if isinstance(object, Place):
             return o.order_by('start_date', 'press_date')
