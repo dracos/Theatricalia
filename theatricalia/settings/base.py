@@ -51,6 +51,8 @@ DATABASES = {
     }
 }
 
+SOUTH_TESTS_MIGRATE = False
+
 ALLOWED_HOSTS = []
 
 # Local time zone for this installation. Choices can be found here:
