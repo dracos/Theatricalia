@@ -1,8 +1,8 @@
 # Django settings for theatricalia project.
 
 import os
-PROJECT_DIR = os.path.realpath(os.path.dirname(__file__))
-OUR_ROOT = os.path.join(PROJECT_DIR, '..')
+SETTINGS_DIR = os.path.realpath(os.path.dirname(__file__))
+OUR_ROOT = os.path.join(SETTINGS_DIR, '..', '..')
 
 ALPHA_PASSWORD='tiaomiwym' # this, if anything of mine, is worth your memory
 
@@ -85,9 +85,6 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
-
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = 'z)iry(aa$xl^k-v&s(c1@*%9p+9m38c)^3orpb3b58njw9y9lq'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (

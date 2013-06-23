@@ -1,4 +1,2 @@
-.svn
 /data
-/ext/forums
-/ext/south-src
+/theatricalia/settings/config.py
