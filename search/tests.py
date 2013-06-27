@@ -1,23 +1,21 @@
-"""
-This file demonstrates two different styles of tests (one doctest and one
-unittest). These will both pass when you run "manage.py test".
-
-Replace these with more appropriate tests for your application.
-"""
-
 from django.test import TestCase
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.failUnlessEqual(1 + 1, 2)
+from theatricalia.tests import make_production
 
-__test__ = {"doctest": """
-Another way to test that 1 + 1 is equal to 2.
+class SearchTest(TestCase):
+    def setUp(self):
+        make_production('Hamlet', 'A tragedy', [ 'Shakespeare Productions' ], [ { 'name': 'Stirchley Theatre', 'start': '2013-01-01', 'end': '2013-01-14' } ], [ { 'first': u'Matthew', 'last': u'Somerville', 'role': 'Laertes' } ])
+        make_production('Hamlet', 'Another tragedy', [ 'Shakespeare Productions' ], [ { 'name': 'Bournville Theatre', 'start': '2013-02-01', 'end': '2013-02-14' } ], [ { 'first': u'Matthew', 'last': u'Boulton', 'role': 'Hamlet' } ])
 
->>> 1 + 1 == 2
-True
-"""}
+    def test_basic_search(self):
+        resp = self.client.get('/search?q=hamlet')
+        self.assertContains(resp, 'Hamlet')
+        resp = self.client.get('/search?q=matthew')
+        self.assertContains(resp, 'Matthew')
+        resp = self.client.get('/search?q=mathew')
+        self.assertContains(resp, 'Matthew')
+        resp = self.client.get('/search?q=stirchley')
+        self.assertRedirects(resp, '/place/1/stirchley-theatre')
+        resp = self.client.get('/search?person=somerville&place=stirchley')
+        self.assertContains(resp, 'Matthew')
 

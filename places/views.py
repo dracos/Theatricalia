@@ -96,7 +96,7 @@ def place(request, place_id, place):
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     past, future = productions_for(place)
     photo_form = PhotoForm(place)
-    alert = place.alerts.filter(user=request.user)
+    alert = place.alerts.filter(user=request.user.pk)
     return render(request, 'place.html', {
         'place': place,
         'past': past,

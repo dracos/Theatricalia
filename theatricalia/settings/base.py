@@ -52,6 +52,7 @@ DATABASES = {
 }
 
 SOUTH_TESTS_MIGRATE = False
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 ALLOWED_HOSTS = []
 
@@ -136,6 +137,7 @@ INSTALLED_APPS = (
     'reversion',
     'countries',
     'south',
+    'django_nose',
     'common',
     'places',
     'plays',

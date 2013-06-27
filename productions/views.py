@@ -137,7 +137,7 @@ def company(request, company_id, company):
     except UnmatchingSlugException, e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 
-    alert = company.alerts.filter(user=request.user)
+    alert = company.alerts.filter(user=request.user.pk)
     past, future = productions_for(company)
     return render(request, 'productions/company.html', {
         'company': company,

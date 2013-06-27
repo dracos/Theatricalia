@@ -3,6 +3,8 @@ from django.test import TestCase
 from .models import Production
 from profiles.models import User
 
+from theatricalia.tests import make_production
+
 def play_form_defaults():
     return {
         'company-TOTAL_FORMS': '1',
@@ -115,3 +117,48 @@ class ProductionTest(TestCase):
         self.assertContains(resp, 'Your new part has been added; thank you.')
         self.assertContains(resp, 'Matthew, Director <small>(Crew)</small>')
 
+    def test_short_url(self):
+        make_production('Hamlet', 'A tragedy', [ 'Shakespeare Productions' ], [ { 'name': 'Stirchley Theatre', 'start': '2013-01-01', 'end': '2013-01-14' } ], [ { 'first': u'Matthew', 'last': u'Somerville', 'role': 'Laertes' } ])
+        resp = self.client.get('/d/1')
+        self.assertRedirects(resp, '/play/1/hamlet/production/1', status_code=301)
+
+class CompanyTest(TestCase):
+    def setUp(self):
+        make_production('Hamlet', 'A tragedy', [ 'Shakespeare Productions' ], [ { 'name': 'Stirchley Theatre', 'start': '2013-01-01', 'end': '2013-01-14' } ], [ { 'first': u'Matthew', 'last': u'Somerville', 'role': 'Laertes' } ])
+
+    def test_short_url(self):
+        resp = self.client.get('/c/1')
+        self.assertRedirects(resp, '/company/1/shakespeare-productions', status_code=301)
+
+    def test_company_viewing(self):
+        resp = self.client.get('/company/1/shakes', follow=True)
+        self.assertRedirects(resp, '/company/1/shakespeare-productions', status_code=301)
+        self.assertContains(resp, 'Stirchley Theatre')
+        self.assertContains(resp, 'Hamlet')
+        self.assertContains(resp, 'January 2013')
+
+    def test_past(self):
+        resp = self.client.get('/company/1/shakespeare-productions/past')
+        self.assertContains(resp, 'Hamlet')
+
+    def test_company_editing(self):
+        resp = self.client.get('/company/1/shakespeare-productions/add')
+        self.assertRedirects(resp, '/tickets?next=/company/1/shakespeare-productions/add')
+
+        User.objects.create_user('test', password='test')
+        self.client.login(username='test', password='test')
+
+        resp = self.client.get('/company/1/shakespeare-productions/add')
+        self.assertContains(resp, 'Adding production')
+        self.assertContains(resp, 'Shakespeare Productions')
+
+        resp = self.client.get('/company/1/shakespeare-productions/edit')
+        self.assertContains(resp, 'Editing Shakespeare Productions')
+        resp = self.client.post('/company/1/shakespeare-productions/edit', {
+            'name': 'Ancient Shakespeare Productions',
+            'description': 'Ancient company',
+        }, follow=True)
+        self.assertRedirects(resp, '/company/1/ancient-shakespeare-productions')
+        self.assertContains(resp, 'Your changes have been stored; thank you.')
+        self.assertContains(resp, 'Ancient company')
+        self.assertContains(resp, 'Ancient Shakespeare Productions')

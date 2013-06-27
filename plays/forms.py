@@ -7,12 +7,12 @@ from search.views import search_people
 from common.templatetags.prettify import prettify
 
 class PlayEditForm(forms.ModelForm):
-	authors = forms.CharField(widget=forms.HiddenInput)
+    authors = forms.CharField(widget=forms.HiddenInput)
     #description = forms.CharField(widget=forms.Textarea(attrs={'cols':50, 'rows':10}))
 
-	class Meta:
-		model = Play
-		exclude = ('slug', 'parent')
+    class Meta:
+        model = Play
+        exclude = ('slug', 'parent')
 
 class PlayAuthorForm(forms.Form):
     person = forms.CharField(label='Author', max_length=101, required=False)

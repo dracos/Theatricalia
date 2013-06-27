@@ -14,12 +14,19 @@ from profiles.models import User
 
 def random_production(request):
     count = Production.objects.aggregate(count=Count('id'))['count']
-    random_index = random.randint(0, count - 1)
-    p = Production.objects.all()[random_index]
-    return HttpResponseRedirect(p.get_absolute_url())
+    if count:
+        random_index = random.randint(0, count - 1)
+        p = Production.objects.all()[random_index]
+        url = p.get_absolute_url()
+    else:
+        url = '/'
+    return HttpResponseRedirect(url)
 
 def home(request):
-    matthew = User.objects.get(id=1)
+    try:
+        matthew = User.objects.get(id=1)
+    except:
+        matthew = User()
 
     try:
         latest_news = Article.objects.visible().latest()

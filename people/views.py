@@ -56,7 +56,7 @@ def person(request, person_id, person):
     past, future = productions_for(person)
     plays = person.plays.all()
     photo_form = PhotoForm(person)
-    alert = person.alerts.filter(user=request.user)
+    alert = person.alerts.filter(user=request.user.pk)
     same_name = Person.objects.filter(first_name=person.first_name, last_name=person.last_name).exclude(id=person.id)
     return render(request, 'people/person.html', {
         'person': person,
