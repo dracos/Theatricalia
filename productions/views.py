@@ -175,26 +175,26 @@ def company_edit(request, company_id, company):
         'form': form,
     })
 
-@login_required
-def company_alert(request, company_id, company, type):
-    try:
-        company = check_url(ProductionCompany, company_id, company)
-    except UnmatchingSlugException, e:
-        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
-
-    if type == 'add':
-        alert = Alert(user=request.user, content_object=company)
-        try:
-            alert.save()
-        except IntegrityError, e:
-            if e.args[0] != 1062: # Duplicate
-                raise
-        messages.success(request, u"Your alert has been added.")
-    elif type == 'remove':
-        company.alerts.filter(user=request.user).delete()
-        messages.success(request, u"Your alert has been removed.")
-
-    return HttpResponseRedirect(company.get_absolute_url())
+#@login_required
+#def company_alert(request, company_id, company, type):
+#    try:
+#        company = check_url(ProductionCompany, company_id, company)
+#    except UnmatchingSlugException, e:
+#        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
+#
+#    if type == 'add':
+#        alert = Alert(user=request.user, content_object=company)
+#        try:
+#            alert.save()
+#        except IntegrityError, e:
+#            if e.args[0] != 1062: # Duplicate
+#                raise
+#        messages.success(request, u"Your alert has been added.")
+#    elif type == 'remove':
+#        company.alerts.filter(user=request.user).delete()
+#        messages.success(request, u"Your alert has been removed.")
+#
+#    return HttpResponseRedirect(company.get_absolute_url())
 
 @login_required
 def part_edit(request, play_id, play, production_id, part_id):

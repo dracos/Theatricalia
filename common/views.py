@@ -13,30 +13,30 @@ from plays.models import Play
 from shortcuts import check_url, UnmatchingSlugException
 from utils import base32_to_int
 
-@login_required
-def alert(request, latlon, type):
-    m = re.match('\s*([-\d.]+)\s*,\s*([-\d.]+)\s*$', latlon)
-    if not m:
-        raise Http404
-    lat, lon = m.groups()
-    places = Place.objects.around(float(lat), float(lon))
-
-    if type == 'add':
-        alert = AlertLocal(user=request.user, latitude=lat, longitude=lon)
-        try:
-            alert.save()
-        except IntegrityError, e:
-            if e.args[0] != 1062: # Duplicate
-                raise
-        messages.success(request, u"Your alert has been added.")
-    elif type == 'remove':
-        AlertLocal.objects.filter(user=request.user, latitude=lat, longitude=lon).delete()
-        messages.success(request, u"Your alert has been removed.")
-
-    url = reverse('search-around', args=(latlon,))
-    if request.GET.get('name', ''):
-        url += '?name=%s' % request.GET['name']
-    return HttpResponseRedirect(url)
+#@login_required
+#def alert(request, latlon, type):
+#    m = re.match('\s*([-\d.]+)\s*,\s*([-\d.]+)\s*$', latlon)
+#    if not m:
+#        raise Http404
+#    lat, lon = m.groups()
+#    places = Place.objects.around(float(lat), float(lon))
+#
+#    if type == 'add':
+#        alert = AlertLocal(user=request.user, latitude=lat, longitude=lon)
+#        try:
+#            alert.save()
+#        except IntegrityError, e:
+#            if e.args[0] != 1062: # Duplicate
+#                raise
+#        messages.success(request, u"Your alert has been added.")
+#    elif type == 'remove':
+#        AlertLocal.objects.filter(user=request.user, latitude=lat, longitude=lon).delete()
+#        messages.success(request, u"Your alert has been removed.")
+#
+#    url = reverse('search-around', args=(latlon,))
+#    if request.GET.get('name', ''):
+#        url += '?name=%s' % request.GET['name']
+#    return HttpResponseRedirect(url)
 
 type_dict = {
     'play': Play,

@@ -152,15 +152,15 @@ def profile_edit(request):
         'profile': profile,
     })
 
-@login_required
-def profile_alert(request, id):
-    profile = request.user.get_profile()
-    if id[0]=='l':
-        alert = get_object_or_404(AlertLocal, id=id[1:])
-    else:
-        alert = get_object_or_404(Alert, id=id)
-    if request.user != alert.user:
-        raise Exception("Trying to unsubscribe someone else's alert?")
-    alert.delete()
-    messages.success(request, "Your alert has been removed.")
-    return HttpResponseRedirect(profile.get_edit_url())
+#@login_required
+#def profile_alert(request, id):
+#    profile = request.user.get_profile()
+#    if id[0]=='l':
+#        alert = get_object_or_404(AlertLocal, id=id[1:])
+#    else:
+#        alert = get_object_or_404(Alert, id=id)
+#    if request.user != alert.user:
+#        raise Exception("Trying to unsubscribe someone else's alert?")
+#    alert.delete()
+#    messages.success(request, "Your alert has been removed.")
+#    return HttpResponseRedirect(profile.get_edit_url())

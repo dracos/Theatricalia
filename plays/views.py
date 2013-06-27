@@ -47,26 +47,26 @@ def play(request, play_id, play):
         'same_name': same_name,
     })
 
-@login_required
-def play_alert(request, play_id, play, type):
-    try:
-        play = check_url(Play, play_id, play)
-    except UnmatchingSlugException, e:
-        return HttpResponseRedirect(e.args[0].get_absolute_url())
-
-    if type == 'add':
-        alert = Alert(user=request.user, content_object=play)
-        try:
-            alert.save()
-        except IntegrityError, e:
-            if e.args[0] != 1062: # Duplicate
-                raise
-        messages.success(request, u"Your alert has been added.")
-    elif type == 'remove':
-        play.alerts.filter(user=request.user).delete()
-        messages.success(request, u"Your alert has been removed.")
-
-    return HttpResponseRedirect(play.get_absolute_url())
+#@login_required
+#def play_alert(request, play_id, play, type):
+#    try:
+#        play = check_url(Play, play_id, play)
+#    except UnmatchingSlugException, e:
+#        return HttpResponseRedirect(e.args[0].get_absolute_url())
+#
+#    if type == 'add':
+#        alert = Alert(user=request.user, content_object=play)
+#        try:
+#            alert.save()
+#        except IntegrityError, e:
+#            if e.args[0] != 1062: # Duplicate
+#                raise
+#        messages.success(request, u"Your alert has been added.")
+#    elif type == 'remove':
+#        play.alerts.filter(user=request.user).delete()
+#        messages.success(request, u"Your alert has been removed.")
+#
+#    return HttpResponseRedirect(play.get_absolute_url())
 
 @login_required
 def play_edit(request, play_id, play):

@@ -105,26 +105,26 @@ def place(request, place_id, place):
         'alert': alert,
     })
 
-@login_required
-def place_alert(request, place_id, place, type):
-    try:
-        place = check_url(Place, place_id, place)
-    except UnmatchingSlugException, e:
-        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
-
-    if type == 'add':
-        alert = Alert(user=request.user, content_object=place)
-        try:
-            alert.save()
-        except IntegrityError, e:
-            if e.args[0] != 1062: # Duplicate
-                raise
-        messages.success(request, u"Your alert has been added.")
-    elif type == 'remove':
-        place.alerts.filter(user=request.user).delete()
-        messages.success(request, u"Your alert has been removed.")
-
-    return HttpResponseRedirect(place.get_absolute_url())
+#@login_required
+#def place_alert(request, place_id, place, type):
+#    try:
+#        place = check_url(Place, place_id, place)
+#    except UnmatchingSlugException, e:
+#        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
+#
+#    if type == 'add':
+#        alert = Alert(user=request.user, content_object=place)
+#        try:
+#            alert.save()
+#        except IntegrityError, e:
+#            if e.args[0] != 1062: # Duplicate
+#                raise
+#        messages.success(request, u"Your alert has been added.")
+#    elif type == 'remove':
+#        place.alerts.filter(user=request.user).delete()
+#        messages.success(request, u"Your alert has been removed.")
+#
+#    return HttpResponseRedirect(place.get_absolute_url())
 
 class PlaceList(ListMixin, ListView):
     model = Place

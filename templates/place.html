@@ -118,11 +118,13 @@ $(function(){
 {% if not request.session.merging_place %}
 <li><a rel="nofollow" href="{{ place.get_absolute_url }}/merge">This is a duplicate of another place</a>
 {% endif %}
+<!--
 {% if alert %}
 <li><a href="{{ place.get_alert_remove_url }}">Stop alerting me to productions here</a>
 {% else %}
 <li><a rel="nofollow" href="{{ place.get_alert_add_url }}">Alert me to productions here</a>
 {% endif %}
+-->
 <li><a href="{{ place.get_productions_url }}">A&ndash;Z of all productions at this place</a></li>
 </ul>
 

@@ -102,26 +102,26 @@ def person_js(request, person_id, person):
     simplejson.dump(out, response, ensure_ascii=False)
     return response
 
-@login_required
-def person_alert(request, person_id, person, type):
-    try:
-        person = check_url(Person, person_id, person)
-    except UnmatchingSlugException, e:
-        return HttpResponseRedirect(e.args[0].get_absolute_url())
-
-    if type == 'add':
-        alert = Alert(user=request.user, content_object=person)
-        try:
-            alert.save()
-        except IntegrityError, e:
-            if e.args[0] != 1062: # Duplicate
-                raise
-        messages.success(request, u"Your alert has been added.")
-    elif type == 'remove':
-        person.alerts.filter(user=request.user).delete()
-        messages.success(request, u"Your alert has been removed.")
-
-    return HttpResponseRedirect(person.get_absolute_url())
+#@login_required
+#def person_alert(request, person_id, person, type):
+#    try:
+#        person = check_url(Person, person_id, person)
+#    except UnmatchingSlugException, e:
+#        return HttpResponseRedirect(e.args[0].get_absolute_url())
+#
+#    if type == 'add':
+#        alert = Alert(user=request.user, content_object=person)
+#        try:
+#            alert.save()
+#        except IntegrityError, e:
+#            if e.args[0] != 1062: # Duplicate
+#                raise
+#        messages.success(request, u"Your alert has been added.")
+#    elif type == 'remove':
+#        person.alerts.filter(user=request.user).delete()
+#        messages.success(request, u"Your alert has been removed.")
+#
+#    return HttpResponseRedirect(person.get_absolute_url())
 
 @login_required
 def person_edit(request, person_id, person):
