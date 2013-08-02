@@ -20,7 +20,7 @@ from news.models import Article
 from django.contrib import admin
 admin.autodiscover()
 
-from feeds import PersonFeed, PlayFeed, PlaceFeed, NearbyFeed, UserSeenFeed, NewsFeed, view as feeds_view
+from feeds import PersonFeed, PlayFeed, PlaceFeed, NearbyFeed, UserSeenFeed, NewsFeed
 
 urlpatterns = patterns('',
     # Example:
@@ -51,19 +51,11 @@ urlpatterns = patterns('',
     url('^colophon$', views.static_colophon, name='colophon'),
     url('^moo$', views.static_moocards, name='moo'),
 
-    url('^(?P<url>(play|person|place|around)/.*)/feed$', feeds_view,
-        { 'feed_dict': {
-        'person': PersonFeed,
-        'play': PlayFeed,
-        'place': PlaceFeed,
-        'around': NearbyFeed,
-        } },
-    ),
-    url('^(?P<url>profile/.*)/feed/seen$', feeds_view,
-        { 'feed_dict': {
-        'profile': UserSeenFeed,
-        } },
-    ),
+    url('^play/(?P<id>.*?)/(?P<slug>.*)/feed$', PlayFeed()),
+    url('^person/(?P<id>.*?)/(?P<slug>.*)/feed$', PersonFeed()),
+    url('^place/(?P<id>.*?)/(?P<slug>.*)/feed$', PlaceFeed()),
+    url('^around/(?P<coord>.*)/feed$', NearbyFeed()),
+    url('^profile/(?P<user>.*)/feed/seen$', UserSeenFeed()),
     #url('^around/(.*?)/alert/(add|remove)$', common.alert, name='around-alert'),
 
     url('^play/.*?/(?P<url>production/.*/merge)$', merged.merge),
@@ -149,11 +141,7 @@ urlpatterns = patterns('',
     url('^profile/(?P<username>.*)$', profiles.profile, name='profile'),
     url('^profile$', profiles.profile_user, name='profile-user'),
 
-    url('^(?P<url>publicity)/feed$', 'django.contrib.syndication.views.Feed',
-        { 'feed_dict': {
-        'publicity': NewsFeed,
-        } },
-    ),
+    url('^(?P<url>publicity)/feed$', NewsFeed()),
     url('^publicity$', news.NewsIndex.as_view(), name='news-index'),
     url('^publicity/(?P<year>\d{4})$', news.NewsYear.as_view(), name='news-year'),
     url('^publicity/(?P<year>\d{4})/(?P<month>\w+)$', news.NewsMonth.as_view(), name='news-month'),

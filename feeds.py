@@ -1,9 +1,11 @@
 import re
+from calendar import timegm
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.syndication.views import Feed, FeedDoesNotExist
+from django.contrib.syndication.views import Feed as DjangoFeed, FeedDoesNotExist
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.db.models import Count
+from django.utils.http import http_date
 
 from profiles.models import User
 from people.models import Person
@@ -14,37 +16,28 @@ from shortcuts import check_url, UnmatchingSlugException
 from productions.objshow import productions_past
 from news.models import Article
 
-# Copy of django.contrib.syndication.views.feed changed to support URL redirects
-def view(request, url, feed_dict):
-    if not feed_dict:
-        raise Http404, "No feeds are registered."
-
-    try:
-        slug, param = url.split('/', 1)
-    except ValueError:
-        slug, param = url, ''
-
-    try:
-        f = feed_dict[slug]
-    except KeyError:
-        raise Http404, "Slug %r isn't registered." % slug
-
-    try:
-        feedgen = f(slug, request).get_feed(param)
-    except UnmatchingSlugException, e:
-        return HttpResponseRedirect(e.args[0].get_absolute_url() + '/feed')
-    except FeedDoesNotExist:
-        raise Http404, "Invalid feed parameters. Slug %r is valid, but other parameters, or lack thereof, are not." % slug
-
-    response = HttpResponse(mimetype=feedgen.mime_type)
-    feedgen.write(response, 'utf-8')
-    return response
+# Subclass of Feed overwriting __call__ to support URL redirects
+class Feed(DjangoFeed):
+    def __call__(self, request, *args, **kwargs):
+        try:
+            obj = self.get_object(request, *args, **kwargs)
+        except UnmatchingSlugException, e:
+            return HttpResponseRedirect(e.args[0].get_absolute_url() + '/feed')
+        except ObjectDoesNotExist:
+            raise Http404('Feed object does not exist.')
+        feedgen = self.get_feed(obj, request)
+        response = HttpResponse(content_type=feedgen.mime_type)
+        if hasattr(self, 'item_pubdate'):
+            # if item_pubdate is defined for the feed, set header so as
+            # ConditionalGetMiddleware is able to send 304 NOT MODIFIED
+            response['Last-Modified'] = http_date(
+                timegm(feedgen.latest_post_date().utctimetuple()))
+        feedgen.write(response, 'utf-8')
+        return response
 
 class NearbyFeed(Feed):
-    def get_object(self, bits):
-        if len(bits) != 1:
-            raise ObjectDoesNotExist
-        m = re.match('\s*([-\d.]+)\s*,\s*([-\d.]+)\s*$', bits[0])
+    def get_object(self, request, coord):
+        m = re.match('\s*([-\d.]+)\s*,\s*([-\d.]+)\s*$', coord)
         if not m:
             raise ObjectDoesNotExist
         self.point = (lat, lon) = m.groups()
@@ -64,11 +57,9 @@ class NearbyFeed(Feed):
         return productions_past(places, 'places')[:20]
 
 class PlaceFeed(Feed):
-    def get_object(self, bits):
-        if len(bits) != 2:
-            raise ObjectDoesNotExist
+    def get_object(self, request, id, slug):
         try:
-            place = check_url(Place, bits[0], bits[1])
+            place = check_url(Place, id, slug)
         except:
             raise ObjectDoesNotExist
         return place
@@ -88,10 +79,8 @@ class PlaceFeed(Feed):
         return obj.productions.order_by('-id')[:20]
 
 class PersonFeed(Feed):
-    def get_object(self, bits):
-        if len(bits) != 2:
-            raise ObjectDoesNotExist
-        person = check_url(Person, bits[0], bits[1])
+    def get_object(self, request, id, slug):
+        person = check_url(Person, id, slug)
         return person
 
     def title(self, person):
@@ -112,10 +101,8 @@ class PersonFeed(Feed):
         return productions.order_by('-id')[:20]
 
 class PlayFeed(Feed):
-    def get_object(self, bits):
-        if len(bits) != 2:
-            raise ObjectDoesNotExist
-        play = check_url(Play, bits[0], bits[1])
+    def get_object(self, request, id, slug):
+        play = check_url(Play, id, slug)
         return play
 
     def title(self, obj):
@@ -133,10 +120,8 @@ class PlayFeed(Feed):
         return obj.productions.order_by('-id')[:20]
 
 class UserSeenFeed(Feed):
-    def get_object(self, bits):
-        if len(bits) != 1:
-            raise ObjectDoesNotExist
-        profile = User.objects.get(username=bits[0])
+    def get_object(self, request, user):
+        profile = User.objects.get(username=user)
         return profile
 
     def title(self, obj):
