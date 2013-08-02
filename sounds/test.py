@@ -4,11 +4,11 @@ from sounds.metaphone import dm, soundex
 from sounds.jarowpy import jarow
 from sounds.levenshtein import damerau, qnum
 
-def test(s1f, s1l, s2f, s2l):
-	s1f = s1f.lower()
-	s1l = s1l.lower()
-	s2f = s2f.lower()
-	s2l = s2l.lower()
+def compare(s1f, s1l, s2f, s2l):
+	s1f = unicode(s1f.lower())
+	s1l = unicode(s1l.lower())
+	s2f = unicode(s2f.lower())
+	s2l = unicode(s2l.lower())
 	s1 = "%s %s" % (s1f, s1l)
 	s2 = "%s %s" % (s2f, s2l)
 	soundex1 = soundex(s1)
@@ -45,16 +45,17 @@ def test(s1f, s1l, s2f, s2l):
 	print "Jarow\t\t%.4f\t\t%.4f\t\t%.4f\nDamerau\t\t%.4f\t\t%.4f\t\t%.4f" % (jarowN, jarowNf, jarowNl, damerauN, damerauNf, damerauNl)
 	#print "Qnum\t\t%.4f\t\t%.4f\t\t%.4f" % (qnumN, qnumNf, qnumNl)
 
-test('Robert', 'Goodwill', 'Bob', 'Goodwell')
-test('Antony', 'Sher', 'Anthony', 'Share')
-test('Chuk', 'Iwuji', 'Chuck', 'Iwugee')
-test('David', 'Tennant', 'Dave', 'Tennant')
-test('Matthew', 'Somerville', 'Matthew', 'Summerville')
-test('Lex', 'Shrapnel', 'Alex', 'Shrapnel')
-test('John', 'Abbott', 'Jon', 'Abbot')
-test('Ben', 'Addis', 'Benjamin', 'Addis')
-test('Debbi', 'Kerr', 'Deborah', 'Kerr')
-test('Katy', 'Stephens', 'Katie', 'Stephen')
-test('Katy', 'Stephens', 'Kayt', 'Stephens')
-test('Katy', 'Stephens', 'Ksty', 'Stephens')
-test('Katy', 'Stephens', 'Akty', 'Stephens')
+def test():
+    compare('Robert', 'Goodwill', 'Bob', 'Goodwell')
+    compare('Antony', 'Sher', 'Anthony', 'Share')
+    compare('Chuk', 'Iwuji', 'Chuck', 'Iwugee')
+    compare('David', 'Tennant', 'Dave', 'Tennant')
+    compare('Matthew', 'Somerville', 'Matthew', 'Summerville')
+    compare('Lex', 'Shrapnel', 'Alex', 'Shrapnel')
+    compare('John', 'Abbott', 'Jon', 'Abbot')
+    compare('Ben', 'Addis', 'Benjamin', 'Addis')
+    compare('Debbi', 'Kerr', 'Deborah', 'Kerr')
+    compare('Katy', 'Stephens', 'Katie', 'Stephen')
+    compare('Katy', 'Stephens', 'Kayt', 'Stephens')
+    compare('Katy', 'Stephens', 'Ksty', 'Stephens')
+    compare('Katy', 'Stephens', 'Akty', 'Stephens')
