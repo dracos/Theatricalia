@@ -11,12 +11,12 @@ class Migration(SchemaMigration):
         # Fill in the destination name with the table name of your model
         db.rename_table('auth_user', 'profiles_user')
         db.rename_table('auth_user_groups', 'profiles_user_groups')
-        db.rename_table('auth_user_user_permissions', 'profiles_user_permissions')
+        db.rename_table('auth_user_user_permissions', 'profiles_user_user_permissions')
 
     def backwards(self, orm):
         db.rename_table('profiles_user', 'auth_user')
         db.rename_table('profiles_user_groups', 'auth_user_groups')
-        db.rename_table('profiles_user_permissions', 'auth_user_user_permissions')
+        db.rename_table('profiles_user_user_permissions', 'auth_user_user_permissions')
 
     models = {
         u'auth.group': {
