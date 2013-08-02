@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load prettify %}
+{% load thumbnail %}
 
 {% block extra_head %}
 <link href="/publicity/feed" type="application/rss+xml" rel="alternate">
@@ -44,9 +45,11 @@ or search for a location to find things near you.
 {% if random_photo %}
 
 {% with random_photo.0.content_object as production %}
-<p><img align="right" src="{{ random_photo.0.photo.extra_thumbnails.feature }}" alt="" style="margin-left:0.5em">
+    {% thumbnail random_photo.0.photo "108x108" crop="center" as im %}
+<p><img align="right" src="{{ im.url }}" width={{ im.width }} height={{ im.height }} alt="" style="margin-left:0.5em">
 <a href="{{ production.play.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.get_companies_display %}
 by {{ production.get_companies_display }}{% endif %},
+    {% endthumbnail %}
 
 {% ifequal production.places.count 1 %}
     {{ production.date_summary|prettify }},
