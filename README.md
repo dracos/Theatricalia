@@ -4,11 +4,17 @@ Theatricalia
 A database of past and future theatre productions
 http://theatricalia.com/
 
-Nice things
------------
+Nice data things
+----------------
+
+* Birmingham Rep archive 1913-1971.
+* RSC archive, back to 1879.
+
+Nice technical things
+---------------------
 
 * Homophone name matching in search
-* Partial dates (spun off to another repo, but not cleanly included here, sigh)
+* Partial dates (spun off to another repo, but not cleanly included here yet)
 
 Installation
 ------------
@@ -18,17 +24,8 @@ This is a standard Django project, running with MySQL.
 Django modifications
 --------------------
 
-The following were previously made by Django code modifications and need to be
-reintroduced some other way:
-* db/models/fields/related.py: to not have the provided multi-select help-text
-* forms/formsets.py & models.py: to not have Delete on last form
-* forms/forms.py: Move the label_suffix to inside label_tag
-* Email uniqueness
-* contrib/comments/views/comments.py: Remove c parameter from redirect
-
-In my bad youth (look, it was using SVN when this project began), I have made
-some modifications to Django, as follows (to be cleaned up soon):
-
+In my bad youth (it was using SVN when this project began), I made some
+modifications to core Django, as follows, that still need tidying up:
 * contrib/admin/media/js/urlify.js: Remove stop words removelist
 * contrib/admin/filterspecs.py: Allow filtering of lookup_choices
 * contrib/admin/views/main.py: smart_split the query

@@ -8,7 +8,7 @@
     </span></p>
     <p class="help_text"><small>If you don&rsquo;t know the precise start and end dates, feel free to give just month and year, or just year (e.g. &ldquo;October 1974&rdquo;, &ldquo;2003&rdquo;, or &ldquo;17/3/1935&rdquo;)</small></p>
     <p>{{ f.press_date.label_tag }} {{ f.press_date }}</p>
-    {% if f.DELETE %}
+    {% if f.DELETE and not forloop.last %}
     <p>{{ f.DELETE.label_tag }} {{ f.DELETE }} <small>&ndash; select this if this production did not perform in this place, to remove it.</small></p>
     {% endif %}
     {{ f.production }}
