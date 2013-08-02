@@ -71,18 +71,22 @@ def search_autocomplete(request):
         else:
             q = qq
 
-    model = get_model(app_label, model_name)
-    for field_name in search_fields.split(','):
-        name = autocomplete_construct_search(field_name)
-        if q:
-            q = q | Q( **{str(name):query} )
-        else:
-            q = Q( **{str(name):query} )
-    if search_fields == 'first_name,last_name' and ' ' in query:
-        first, last = query.split(' ')
-        q = q | Q(first_name__icontains=first, last_name__icontains=last)
+    if app_label == 'people' and model_name == 'person':
+        people, dummy = search_people(query, False, False)
+        qs = people[:20]
+    else:
+        model = get_model(app_label, model_name)
+        for field_name in search_fields.split(','):
+            name = autocomplete_construct_search(field_name)
+            if q:
+                q = q | Q( **{str(name):query} )
+            else:
+                q = Q( **{str(name):query} )
+        if search_fields == 'first_name,last_name' and ' ' in query:
+            first, last = query.split(' ')
+            q = q | Q(first_name__icontains=first, last_name__icontains=last)
 
-    qs = model.objects.filter( q )[:20]
+        qs = model.objects.filter( q )[:20]
     data = ''.join([u'%s|%s\n' % (f.__unicode__(), f.pk) for f in qs])
     return HttpResponse(data)
 
@@ -242,6 +246,9 @@ def search_around(request, search, type=''):
     else:
         raise Exception, 'Bad request'
 
+    if not lat or not lon:
+        return
+
     places = Place.objects.around(float(lat), float(lon))
     if not type:
         past, future = productions_for(places, 'places')
@@ -387,7 +394,7 @@ def search(request):
 
     # Check if we're searching round a point, or a postcode, redirect if so
     m = re.match('([-\d.]+)\s*,\s*([-\d.]+)$', search)
-    if m or validate_postcode(search) or validate_partial_postcode(search):
+    if search.lower() != 'dv8' and (m or validate_postcode(search) or validate_partial_postcode(search)):
         return HttpResponseRedirect(reverse('search-around', args=[urllib.quote(search.encode('utf-8'))]))
 
     if search and len(search)<3:
