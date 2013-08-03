@@ -252,7 +252,7 @@ def search_around(request, search, type=''):
     places = Place.objects.around(float(lat), float(lon))
     if not type:
         past, future = productions_for(places, 'places')
-        alert = AlertLocal.objects.filter(user=request.user, latitude=lat, longitude=lon)
+        alert = AlertLocal.objects.filter(user=request.user.id, latitude=lat, longitude=lon)
         return render(request, 'search-around.html', {
             'places': places,
             'past': past,
