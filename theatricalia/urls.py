@@ -153,6 +153,8 @@ urlpatterns = patterns('',
     #url('forums/simple/', include('forums.django-simpleforum.forum.urls')),
     #url('forums/bb/', include('forums.djangobb.djangobb.urls')),
     #url('forums/counterpoint/', include('forums.counterpoint.counterpoint.urls')),
+
+    url('^lp/day/', include('lp.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

@@ -1,0 +1,9 @@
+{
+    "owner_email": "publishers@bergcloud.com",
+    "publication_api_version": "1.0",
+    "name": "Theatricalia Random Production of the Week",
+    "description": "A random production from Theatricalia's historical database",
+    "delivered_on": "every Thursday",
+    "send_timezone_info": true,
+    "send_delivery_count": false
+}

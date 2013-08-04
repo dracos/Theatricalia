@@ -1,0 +1,34 @@
+{% load thumbnail %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Production of the Week</title>
+  <style type="text/css">
+    h1 {
+      font-size: 150%;
+    }
+    body {
+      font-family: 'Quattrocento Roman';
+      font-size: 24px;
+      width: 384px;
+      padding: 0;
+      margin: 0;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+    <p align="center">
+        <img class="dither" src="http://theatricalia.com/static/i/title.png" width=283 height=76>
+        <br>Random Production of the Week</p>
+    </p>
+
+    <h1>{{ production.play.get_title_display }}</h1>
+    {% thumbnail photo.photo "384x384" colorspace="GRAY" as im %}
+    <p align="center"><img class="dither" src="http://theatricalia.com{{ im.url }}" width={{ im.width }} height={{ im.height }}></p>
+    {% endthumbnail %}
+    <p>{% if production.play.get_authors_display %}By {{ production.play.get_authors_display|striptags }}.{% endif %}
+    {% if production.get_companies_display %}A production by {{ production.get_companies_display|striptags }}.{% endif %}
+    {{ production.date_summary }}{% if production.place_summary %} at {{ production.place_summary }}{% endif %}.
+</body>
+</html>

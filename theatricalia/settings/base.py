@@ -98,6 +98,7 @@ TEMPLATE_LOADERS = (
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -147,6 +148,7 @@ INSTALLED_APPS = (
     'profiles',
     'news',
     'merged',
+    'lp',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
