@@ -6,7 +6,7 @@ from django.utils import dateformat
 from django.utils.safestring import mark_safe
 from django.contrib.contenttypes import generic
 from django.template.defaultfilters import slugify
-from reversion.models import Version
+import reversion
 
 from common.models import Alert
 from common.templatetags.prettify import prettify
@@ -276,14 +276,14 @@ class Production(models.Model):
     def creator(self):
         if self.source: return ''
         try:
-            latest_version = Version.objects.get_for_object(self)[0]
+            latest_version = reversion.get_for_object(self)[0]
             return latest_version.revision.user
         except:
             return ''
 
     def last_modifier(self):
         try:
-            latest_version = Version.objects.get_for_object(self).reverse()[0]
+            latest_version = reversion.get_for_object(self).reverse()[0]
             return latest_version.revision.user
         except:
             return ''
