@@ -55,7 +55,6 @@ class JitterCacheMixin(CacheControlMixin):
 
 # Project mixins
 class ListMixin(CacheMixin):
-    paginate_by = 50
     cache_timeout = 60 * 5
 
     def get_paginator(self, *args, **kwargs):

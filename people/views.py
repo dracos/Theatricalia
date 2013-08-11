@@ -148,3 +148,4 @@ def person_edit(request, person_id, person):
 class PersonList(ListMixin, ListView):
     model = Person
     field = 'last_name'
+    paginate_by = 50
