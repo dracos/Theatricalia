@@ -216,8 +216,6 @@ def part_edit(request, play_id, play, production_id, part_id):
             messages.success(request, u"All right, we\u2019ve ignored any changes you made.")
             return HttpResponseRedirect(production.get_edit_cast_url())
         if part_form.is_valid():
-            if part_form.cleaned_data.get('person_choice') == 'new':
-                part_form.cleaned_data['person'] = Person.objects.create_from_name(part_form.cleaned_data['person'])
             part_form.save()
             messages.success(request, "Your changes have been stored; thank you.")
             return HttpResponseRedirect(production.get_edit_cast_url())
