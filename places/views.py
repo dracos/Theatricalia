@@ -74,6 +74,7 @@ def place_edit(request, place_id, place):
     except UnmatchingSlugException, e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 
+    place.name = place.get_name_display()
     form = PlaceForm(request.POST or None, instance=place)
     if request.method == 'POST':
         if request.POST.get('disregard'):
