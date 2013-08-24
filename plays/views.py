@@ -75,6 +75,7 @@ def play_edit(request, play_id, play):
     except UnmatchingSlugException, e:
         return HttpResponseRedirect(e.args[0].get_absolute_url())
 
+    play.title = play.get_title_display()
     form = PlayEditForm(request.POST or None, instance=play)
     PlayAuthorFormSet = formset_factory(PlayAuthorForm)
     initial = [ { 'person': author } for author in play.authors.all() ]
