@@ -120,7 +120,7 @@ class Person(models.Model):
     def creator(self):
         if self._creator is None:
             try:
-                latest_version = reversion.get_for_object(self)[0]
+                latest_version = reversion.get_for_object(self).order_by('revision__date_created')[0]
                 self._creator = latest_version.revision.user
             except:
                 self._creator = ''
@@ -131,7 +131,7 @@ class Person(models.Model):
     def last_modifier(self):
         if self._last_modifier is None:
             try:
-                latest_version = reversion.get_for_object(self).reverse()[0]
+                latest_version = reversion.get_for_object(self).order_by('-revision__date_created')[0]
                 self._last_modifier = latest_version.revision.user
             except:
                 self._last_modifier = ''

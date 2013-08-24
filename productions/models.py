@@ -276,14 +276,14 @@ class Production(models.Model):
     def creator(self):
         if self.source: return ''
         try:
-            latest_version = reversion.get_for_object(self)[0]
+            latest_version = reversion.get_for_object(self).order_by('revision__date_created')[0]
             return latest_version.revision.user
         except:
             return ''
 
     def last_modifier(self):
         try:
-            latest_version = reversion.get_for_object(self).reverse()[0]
+            latest_version = reversion.get_for_object(self).order_by('-revision__date_created')[0]
             return latest_version.revision.user
         except:
             return ''
