@@ -223,26 +223,29 @@ def search_parts(request, search):
     return productions_list(request, search, 'parts', 'search-parts.html')
 
 # For pagination of search around
-def search_around(request, search, type=''):
-    search = search.strip()
-    m = re.match('([-\d.]+)\s*,\s*([-\d.]+)$', search)
+def search_around(request, s, type=''):
+    s = s.strip()
+    m = re.match('([-\d.]+)\s*,\s*([-\d.]+)$', s)
 
     if m:
         lat, lon = m.groups()
         name = request.GET.get('name', '')
-    elif validate_postcode(search):
-        r = urllib.urlopen('http://mapit.mysociety.org/postcode/%s' % urllib.quote(search)).read()
-        loc = simplejson.loads(r)
-        pc, lat, lon = loc['postcode'], loc['wgs84_lat'], loc['wgs84_lon']
-        name = re.sub('(\d[A-Z]{2})', r' \1', search.upper())
-    elif validate_partial_postcode(search):
+    elif validate_postcode(s):
         try:
-            r = urllib.urlopen('http://mapit.mysociety.org/postcode/partial/' + urllib.quote(search)).read()
+            r = urllib.urlopen('http://mapit.mysociety.org/postcode/%s' % urllib.quote(s)).read()
+            loc = simplejson.loads(r)
+            pc, lat, lon = loc['postcode'], loc['wgs84_lat'], loc['wgs84_lon']
+            name = re.sub('(\d[A-Z]{2})', r' \1', s.upper())
+        except:
+            return search(request, redirect_okay=False)
+    elif validate_partial_postcode(s):
+        try:
+            r = urllib.urlopen('http://mapit.mysociety.org/postcode/partial/' + urllib.quote(s)).read()
             r = simplejson.loads(r)
             lat, lon = r['wgs84_lat'], r['wgs84_lon']
         except:
-            r, lat, lon = '', None, None
-        name = search.upper()
+            return search(request, redirect_okay=False)
+        name = s.upper()
     else:
         raise Exception, 'Bad request'
 
@@ -381,7 +384,7 @@ def search_advanced(request, person, place, play):
         'places': places,
     })
 
-def search(request):
+def search(request, redirect_okay=True):
     person = request.GET.get('person', '').strip()
     place = request.GET.get('place', '').strip()
     play = request.GET.get('play', '').strip()
@@ -394,7 +397,7 @@ def search(request):
 
     # Check if we're searching round a point, or a postcode, redirect if so
     m = re.match('([-\d.]+)\s*,\s*([-\d.]+)$', search)
-    if search.lower() != 'dv8' and (m or validate_postcode(search) or validate_partial_postcode(search)):
+    if search.lower() != 'dv8' and redirect_okay and (m or validate_postcode(search) or validate_partial_postcode(search)):
         return HttpResponseRedirect(reverse('search-around', args=[urllib.quote(search.encode('utf-8'))]))
 
     if search and len(search)<3:

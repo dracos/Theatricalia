@@ -125,9 +125,9 @@ urlpatterns = patterns('',
     url('^photograph/taken/', photos.photo_taken, name='photo-taken'),
     url('^photograph/view/(?P<photo_id>[0-9a-z]+)$', photos.view, name='photo-view'),
 
-    url('^search/around/(?P<search>.+)/future$', search.search_around, {'type':'future'}, name='search-around-future'),
-    url('^search/around/(?P<search>.+)/past$', search.search_around, {'type':'past'}, name='search-around-past'),
-    url('^search/around/(?P<search>.+)$', search.search_around, name='search-around'),
+    url('^search/around/(?P<s>.+)/future$', search.search_around, {'type':'future'}, name='search-around-future'),
+    url('^search/around/(?P<s>.+)/past$', search.search_around, {'type':'past'}, name='search-around-past'),
+    url('^search/around/(?P<s>.+)$', search.search_around, name='search-around'),
     url('^search/parts/(?P<search>.+)$', search.search_parts, name='search-parts'),
     url('^search$', search.search, name='search'),
 
