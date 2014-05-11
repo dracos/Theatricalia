@@ -54,7 +54,7 @@ DATABASES = {
 SOUTH_TESTS_MIGRATE = False
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
-ALLOWED_HOSTS = [ 'theatricalia.com' ]
+ALLOWED_HOSTS = [ 'theatricalia.com', 'theatricalia.com.' ]
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
