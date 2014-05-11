@@ -8,7 +8,7 @@ DIR = os.path.dirname(__file__) + '/../data/flickr'
 
 def call_api(method, **params):
     eval = params.pop('eval', True)
-    url = 'http://api.flickr.com/services/rest/?format=json&nojsoncallback=1&api_key=be8821cc6e82e0f36d04adee0450224e&method=' + method
+    url = 'https://api.flickr.com/services/rest/?format=json&nojsoncallback=1&api_key=be8821cc6e82e0f36d04adee0450224e&method=' + method
     for k,v in params.items():
         url += '&' + urllib.quote(k) + '=' + urllib.quote(v)
     out = urllib.urlopen(url).read()
