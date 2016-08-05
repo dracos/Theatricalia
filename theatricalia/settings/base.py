@@ -4,12 +4,14 @@ import os
 SETTINGS_DIR = os.path.realpath(os.path.dirname(__file__))
 OUR_ROOT = os.path.join(SETTINGS_DIR, '..', '..')
 
-ALPHA_PASSWORD='tiaomiwym' # this, if anything of mine, is worth your memory
+EMAIL_LOCALPART = 'principal'
+EMAIL_DOMAIN = 'theatricalia.com'
+EMAIL_FULL = '%s@%s' % (EMAIL_LOCALPART, EMAIL_DOMAIN)
 
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 25
-DEFAULT_FROM_EMAIL = 'Matthew Somerville <matthew@theatricalia.com>'
-SERVER_EMAIL = 'matthew@theatricalia.com'
+DEFAULT_FROM_EMAIL = 'Matthew Somerville <%s>' % EMAIL_FULL
+SERVER_EMAIL = EMAIL_FULL
 
 CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 CACHE_MIDDLEWARE_SECONDS = 300
@@ -33,7 +35,7 @@ TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = DEBUG
 
 ADMINS = (
-    ('Matthew Somerville', 'matthew@theatricalia.com'),
+    ('Matthew Somerville', EMAIL_FULL),
 )
 
 INTERNAL_IPS = ('127.0.0.1',)
@@ -54,7 +56,7 @@ DATABASES = {
 SOUTH_TESTS_MIGRATE = False
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
-ALLOWED_HOSTS = [ 'theatricalia.com', 'theatricalia.com.' ]
+ALLOWED_HOSTS = [ 'theatricalia.com', 'theatricalia.com.', 'localhost' ]
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
