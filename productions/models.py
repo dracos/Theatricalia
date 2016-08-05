@@ -238,9 +238,9 @@ class Production(models.Model):
 
     def place_summary(self):
         if self.places.count()>2:
-            place = '%s, %s, and other locations' % (self.places.all()[0], self.places.all()[1])
+            place = u'%s, %s, and other locations' % (self.places.all()[0], self.places.all()[1])
         elif self.places.count()==2:
-            place = '%s and %s' % (self.places.all()[0], self.places.all()[1])
+            place = u'%s and %s' % (self.places.all()[0], self.places.all()[1])
         elif self.places.count()==1:
             place = self.places.all()[0]
         else:
