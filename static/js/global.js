@@ -16,7 +16,7 @@ $.fn.wait = function(time, type) {
 
 var start_tab;
 $(function() {
-    $('#messages').wait(3000).slideUp('slow');
+    //$('#messages').wait(3000).slideUp('slow');
 
     $('#navigation a').hover(function(){
         $('#navigation a').not(this).addClass('greyed');
