@@ -12,7 +12,8 @@
 </blockquote>
 
 <p>Unfortunately, whatever you were looking for could not be found.
-<br>You could try <a href="/search?q={{ request.META.REQUEST_URI|replace:"/ "|urlencode }}">searching for &ldquo;{{ request.META.REQUEST_URI|replace:"/ " }}&rdquo;</a>,
+<br>You could try <a href="/search?q={{ request.META.PATH_INFO|replace:"/ "|slice:"1:"|urlencode }}">searching for
+&ldquo;{{ request.META.PATH_INFO|replace:"/ "|slice:"1:" }}&rdquo;</a>,
 use the search form above,
 <br>or browse our
 <a href="/plays">plays</a>,
