@@ -22,23 +22,6 @@
 
 {% include 'includes/messages.html' %}
 
-<!--
-<h2 class="no-descenders">Your alerts</h2>
-{% if user.alerts.all or user.local_alerts.all %}
-<ul>
-{% for alert in user.alerts.all %}
-<li>{{ alert }} &ndash; <a href="{{ profile.get_alert_remove_url }}/{{ alert.id }}">remove</a>
-{% endfor %}
-{% for alert in user.local_alerts.all %}
-<li>{{ alert }} &ndash; <a href="{{ profile.get_alert_remove_url }}/l{{ alert.id }}">remove</a>
-{% endfor %}
-</ul>
-{% else %}
-<p>You currently have no alerts. Visit a person, play, or place
-page to set one up.
-{% endif %}
--->
-
 </div>
 
 {% endblock %}

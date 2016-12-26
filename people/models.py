@@ -93,14 +93,6 @@ class Person(models.Model):
     def get_more_past_url(self):
         return self.make_url('person-productions-past')
 
-    @models.permalink
-    def get_alert_add_url(self):
-        return self.make_url('person-alert', 'add')
-
-    @models.permalink
-    def get_alert_remove_url(self):
-        return self.make_url('person-alert', 'remove')
-
     class Meta:
         ordering = ['last_name', 'first_name']
         verbose_name_plural = 'people'

@@ -101,14 +101,6 @@ class ProductionCompany(models.Model):
     def get_add_production_url(self):
         return self.construct_url('company-production-add')
 
-    @models.permalink
-    def get_alert_add_url(self):
-        return self.construct_url('company-alert', 'add')
-
-    @models.permalink
-    def get_alert_remove_url(self):
-        return self.construct_url('company-alert', 'remove')
-
     def get_past_url(self):
         return '%s/past' % self.get_absolute_url()
 

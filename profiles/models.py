@@ -20,7 +20,3 @@ class Profile(models.Model):
     @models.permalink
     def get_edit_url(self):
         return ('profile-edit', ())
-
-    @models.permalink
-    def get_alert_remove_url(self):
-        return ('profile-alert', ())

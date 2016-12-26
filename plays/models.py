@@ -84,14 +84,6 @@ class Play(models.Model):
     def get_edit_url(self):
         return self.construct_url('play-edit')
 
-    @models.permalink
-    def get_alert_add_url(self):
-        return self.construct_url('play-alert', 'add')
-
-    @models.permalink
-    def get_alert_remove_url(self):
-        return self.construct_url('play-alert', 'remove')
-
     def get_feed_url(self):
         return '%s/feed' % self.get_absolute_url()
 
