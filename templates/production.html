@@ -140,16 +140,16 @@
 
 {% ifnotequal production.last_modifier production.creator %}
     {% if production.creator.name %}
-        <li>Added by <a href="{{ production.creator.get_profile.get_absolute_url }}">{{ production.creator.name }}</a>, last modified by <a href="{{ production.last_modifier.get_profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</li>
+        <li>Added by <a href="{{ production.creator.profile.get_absolute_url }}">{{ production.creator.name }}</a>, last modified by <a href="{{ production.last_modifier.profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</li>
     {% else %}
-        <li>Last modified by <a href="{{ production.last_modifier.get_profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</li>
+        <li>Last modified by <a href="{{ production.last_modifier.profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</li>
     {% endif %}
 {% else %}
     {% if production.creator.name %}
-        <li>Added by <a href="{{ production.creator.get_profile.get_absolute_url }}">{{ production.creator.name }}</a>.</li>
+        <li>Added by <a href="{{ production.creator.profile.get_absolute_url }}">{{ production.creator.name }}</a>.</li>
     {% else %}
         {% if production.last_modifier.name %}
-            <li>Last modified by <a href="{{ production.last_modifier.get_profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</li>
+            <li>Last modified by <a href="{{ production.last_modifier.profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</li>
         {% endif %}
     {% endif %}
 {% endifnotequal %}
@@ -204,7 +204,7 @@
 {% endif %}
 <ul id="seen_by">
 {% for u in production.seen_by.all %}
-<li itemprop="attendees" itemscope itemtype="http://schema.org/Person"><a itemprop="url" href="{{ u.get_profile.get_absolute_url }}">{% firstof u.name u.username %}</a>
+<li itemprop="attendees" itemscope itemtype="http://schema.org/Person"><a itemprop="url" href="{{ u.profile.get_absolute_url }}">{% firstof u.name u.username %}</a>
 {% endfor %}
 </ul>
 {% endif %}
@@ -258,7 +258,7 @@
 <p class="posted-by">
 <span class="meta">On {{ observation.submit_date|date:"jS F Y"|prettify }}
 at <a title="Permanent link to this observation" href="{{ request.path }}#o{{ observation.id }}">{{ observation.submit_date|date:"g:i a" }}</a>,
-<a href="{{ observation.user.get_profile.get_absolute_url }}">{{ observation.user_name|prettify }}</a> noted:</p>
+<a href="{{ observation.user.profile.get_absolute_url }}">{{ observation.user_name|prettify }}</a> noted:</p>
 <blockquote>{{ observation.comment|prettify|urlize|linebreaks }}</blockquote>
 </li>
 {% endfor %}

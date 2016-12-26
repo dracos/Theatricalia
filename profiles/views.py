@@ -20,11 +20,11 @@ from .models import User
 
 @login_required
 def profile_user(request):
-    return HttpResponseRedirect(request.user.get_profile().get_absolute_url())
+    return HttpResponseRedirect(request.user.profile.get_absolute_url())
 
 def profile(request, username):
     user = get_object_or_404(User, username=username)
-    profile = user.get_profile()
+    profile = user.profile
 
     latest = []
     content_types = ContentType.objects.filter(
@@ -111,7 +111,7 @@ def register_confirm(request, uidb32, token):
 
     user = get_object_or_404(User, id=uid_int)
     if default_token_generator.check_token(user, token):
-        p = user.get_profile()
+        p = user.profile
         p.email_validated = True
         p.save()
         perform_login(request, user)
@@ -135,7 +135,7 @@ def send_confirmation_email(request, user):
 
 @login_required
 def profile_edit(request):
-    profile = request.user.get_profile()
+    profile = request.user.profile
     form = ProfileForm(request.POST or None, instance=profile)
 
     if request.method == 'POST':
@@ -154,7 +154,7 @@ def profile_edit(request):
 
 #@login_required
 #def profile_alert(request, id):
-#    profile = request.user.get_profile()
+#    profile = request.user.profile
 #    if id[0]=='l':
 #        alert = get_object_or_404(AlertLocal, id=id[1:])
 #    else:

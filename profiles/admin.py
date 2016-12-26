@@ -20,7 +20,7 @@ class MyUserAdmin(UserAdmin):
     list_display = ('username', 'email', 'name', 'is_staff', 'email_validated')
 
     def email_validated(self, obj):
-        return obj.get_profile().email_validated
+        return obj.profile.email_validated
     email_validated.boolean = True
 
 admin.site.register(User, MyUserAdmin)

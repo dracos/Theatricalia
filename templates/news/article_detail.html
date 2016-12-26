@@ -19,7 +19,7 @@
 
 <div id="sidebar_tulip" class="secondary"><div id="sidebar_tulip_r">
 
-<p>A news article written by <a href="{{ object.author.get_profile.get_absolute_url }}">{{ object.author.name }}</a>
+<p>A news article written by <a href="{{ object.author.profile.get_absolute_url }}">{{ object.author.name }}</a>
 at {{ object.created|date:"g:i" }}&nbsp;{{ object.created|date:"a" }}
 on {{ object.created|date:"jS F Y"|prettify }}.</p>
 

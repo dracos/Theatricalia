@@ -124,10 +124,10 @@ at the <a href="/place/46/courtyard-theatre-stratford-upon-avon">Courtyard Theat
 {% endifequal %}
 {% endifequal %}
 {% ifnotequal latest_production.last_modifier latest_production.creator %}
-Added by <a href="{{ latest_production.creator.get_profile.get_absolute_url }}">{{ latest_production.creator.name }}</a>, last modified by <a href="{{ latest_production.last_modifier.get_profile.get_absolute_url }}">{{ latest_production.last_modifier.name }}</a>.
+Added by <a href="{{ latest_production.creator.profile.get_absolute_url }}">{{ latest_production.creator.name }}</a>, last modified by <a href="{{ latest_production.last_modifier.profile.get_absolute_url }}">{{ latest_production.last_modifier.name }}</a>.
 {% else %}
 {% if latest_production.creator.name %}
-Added by <a href="{{ latest_production.creator.get_profile.get_absolute_url }}">{{ latest_production.creator.name }}</a>.
+Added by <a href="{{ latest_production.creator.profile.get_absolute_url }}">{{ latest_production.creator.name }}</a>.
 {% endif %}
 {% endifnotequal %}
 {% else %}
@@ -139,7 +139,7 @@ Nothing in the system yet!
 {% if latest_observation %}
 On {{ latest_observation.submit_date|date:"jS F Y"|prettify }}
 at {{ latest_observation.submit_date|date:"g:i a" }},
-<a href="{{ latest_observation.user.get_profile.get_absolute_url }}">{{ latest_observation.user_name|prettify }}</a> noted,
+<a href="{{ latest_observation.user.profile.get_absolute_url }}">{{ latest_observation.user_name|prettify }}</a> noted,
 about a <a href="{{ latest_observation.content_object.get_absolute_url }}">production</a> of {{ latest_observation.content_object.play.get_title_display|prettify }}:</p>
 <blockquote><p>{{ latest_observation.comment|truncatewords:10|prettify }}
 <a href="{{ latest_observation.content_object.get_absolute_url }}#o{{ latest_observation.id }}">More &rarr;</a>

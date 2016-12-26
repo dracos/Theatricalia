@@ -24,7 +24,6 @@ LOGIN_REDIRECT_URL = '/profile'
 AUTHENTICATION_BACKENDS = (
     'profiles.backends.ModelBackend',
 )
-AUTH_PROFILE_MODULE = 'profiles.profile'
 AUTH_USER_MODEL = 'profiles.User'
 
 APPEND_SLASH = False

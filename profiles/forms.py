@@ -77,7 +77,7 @@ class AuthenticationForm(DjangoAuthenticationForm):
                 raise forms.ValidationError("Please enter a correct email address or username, and password.")
             elif not self.user_cache.is_active:
                 raise forms.ValidationError("This account is inactive.")
-            #if not self.user_cache.get_profile().email_validated:
+            #if not self.user_cache.profile.email_validated:
             #    raise forms.ValidationError("You must validate your email address before logging in. Check your email!")
 
         # TODO: determine whether this should move to its own method.
