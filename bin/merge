@@ -3,9 +3,7 @@
 # Needs to move things such as reversions?
 
 import os, sys
-sys.path.insert(0, '../..')
 sys.path.insert(0, '..')
-sys.path.insert(0, '.')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'theatricalia.settings'
 
 from django.contrib.contenttypes.models import ContentType
