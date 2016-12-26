@@ -26,7 +26,7 @@ def person_productions(request, person_id, person, type):
     try:
         person = check_url(Person, person_id, person)
     except UnmatchingSlugException, e:
-        return HttpResponseRedirect(e.args[0].get_absolute_url())
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     return productions_list(request, person, type, 'people/production_list.html')
 
 def person_short_url(request, person_id):
@@ -40,7 +40,7 @@ def person(request, person_id, person):
     try:
         person = check_url(Person, person_id, person)
     except UnmatchingSlugException, e:
-        return HttpResponseRedirect(e.args[0].get_absolute_url())
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 
     #if person.productions.count() == 0:
     #    raise Http404()
@@ -73,7 +73,7 @@ def person_js(request, person_id, person):
     try:
         person = check_url(Person, person_id, person)
     except UnmatchingSlugException, e:
-        return HttpResponseRedirect(e.args[0].get_absolute_url())
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     plays = person.plays.all()
 
     past   = [ {'id': int_to_base32(p.id), 'desc': unicode(p) } for p in productions_past(person, '') ]
@@ -107,7 +107,7 @@ def person_js(request, person_id, person):
 #    try:
 #        person = check_url(Person, person_id, person)
 #    except UnmatchingSlugException, e:
-#        return HttpResponseRedirect(e.args[0].get_absolute_url())
+#        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 #
 #    if type == 'add':
 #        alert = Alert(user=request.user, content_object=person)
@@ -128,7 +128,7 @@ def person_edit(request, person_id, person):
     try:
         person = check_url(Person, person_id, person)
     except UnmatchingSlugException, e:
-        return HttpResponseRedirect(e.args[0].get_absolute_url())
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 
     form = PersonEditForm(data=request.POST or None, instance=person)
     if request.method == 'POST':

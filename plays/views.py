@@ -28,14 +28,14 @@ def play_productions(request, play_id, play, type):
     try:
         play = check_url(Play, play_id, play)
     except UnmatchingSlugException, e:
-        return HttpResponseRedirect(e.args[0].get_absolute_url())
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     return productions_list(request, play, type, 'plays/production_list.html')
 
 def play(request, play_id, play):
     try:
         play = check_url(Play, play_id, play)
     except UnmatchingSlugException, e:
-        return HttpResponseRedirect(e.args[0].get_absolute_url())
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     past, future = productions_for(play)
     alert = play.alerts.filter(user=request.user.pk)
     same_name = Play.objects.filter(title=play.title).exclude(id=play.id)
@@ -52,7 +52,7 @@ def play(request, play_id, play):
 #    try:
 #        play = check_url(Play, play_id, play)
 #    except UnmatchingSlugException, e:
-#        return HttpResponseRedirect(e.args[0].get_absolute_url())
+#        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 #
 #    if type == 'add':
 #        alert = Alert(user=request.user, content_object=play)
@@ -73,7 +73,7 @@ def play_edit(request, play_id, play):
     try:
         play = check_url(Play, play_id, play)
     except UnmatchingSlugException, e:
-        return HttpResponseRedirect(e.args[0].get_absolute_url())
+        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 
     play.title = play.get_title_display()
     form = PlayEditForm(request.POST or None, instance=play)
