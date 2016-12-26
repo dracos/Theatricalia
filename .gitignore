@@ -1,2 +1,3 @@
-/data
+*.pyc
+
 /theatricalia/settings/config.py
