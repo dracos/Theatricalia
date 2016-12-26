@@ -39,7 +39,7 @@ urlpatterns = patterns('',
     (r'^tickets/exchanged$', 'django.contrib.auth.views.password_change_done'),
     url(r'^tickets/lost$', 'django.contrib.auth.views.password_reset', name='password-reset'),
     (r'^tickets/lost/done$', 'django.contrib.auth.views.password_reset_done'),
-    (r'^tickets/lost/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)$', 'django.contrib.auth.views.password_reset_confirm'),
+    (r'^tickets/lost/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)$', 'django.contrib.auth.views.password_reset_confirm'),
     (r'^tickets/lost/found$', 'django.contrib.auth.views.password_reset_complete'),
     url(r'^tickets/returns$', 'django.contrib.auth.views.logout', name='logout'),
 
