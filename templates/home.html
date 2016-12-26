@@ -134,7 +134,7 @@ Added by <a href="{{ latest_production.creator.get_profile.get_absolute_url }}">
 Nothing in the system yet!
 {% endif %}
 
-<li><strong>&hellip;observation:</strong>
+<li><p><strong>&hellip;observation:</strong>
 
 {% if latest_observation %}
 On {{ latest_observation.submit_date|date:"jS F Y"|prettify }}
@@ -145,7 +145,7 @@ about a <a href="{{ latest_observation.content_object.get_absolute_url }}">produ
 <a href="{{ latest_observation.content_object.get_absolute_url }}#o{{ latest_observation.id }}">More &rarr;</a>
 </p></blockquote>
 {% else %}
-<p>Nothing in the system yet!</p>
+Nothing in the system yet!</p>
 {% endif %}
 
 </ul>
