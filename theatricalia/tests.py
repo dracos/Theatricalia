@@ -26,9 +26,9 @@ class TheatricaliaTest(TestCase):
     def test_random_page(self):
         resp = self.client.get('/random')
         self.assertRedirects(resp, '/')
-        make_production('Hamlet', 'A tragedy', [ 'Shakespeare Productions' ], [ { 'name': 'Theatre', 'start': '2013-01-01', 'end': '2013-01-14' } ])
+        prod = make_production('Hamlet', 'A tragedy', [ 'Shakespeare Productions' ], [ { 'name': 'Theatre', 'start': '2013-01-01', 'end': '2013-01-14' } ])
         resp = self.client.get('/random')
-        self.assertRedirects(resp, '/play/1/hamlet/production/1')
+        self.assertRedirects(resp, '/play/%s/hamlet/production/%s' % (prod.play.id32, prod.id32))
 
     def test_static_pages(self):
         resp = self.client.get('/moo')
@@ -47,9 +47,9 @@ class TheatricaliaTest(TestCase):
 
 class ProductionTest(TestCase):
     def test_production_viewing(self):
-        make_production('Hamlet', 'A tragedy', [ 'Shakespeare Productions' ], [ { 'name': 'Stirchley Theatre', 'start': '2013-01-01', 'end': '2013-01-14' } ], [ { 'first': u'Matthew', 'last': u'Somerville', 'role': 'Laertes' } ])
-        resp = self.client.get('/play/1/hamlet/production/1')
+        prod = make_production('Hamlet', 'A tragedy', [ 'Shakespeare Productions' ], [ { 'name': 'Stirchley Theatre', 'start': '2013-01-01', 'end': '2013-01-14' } ], [ { 'first': u'Matthew', 'last': u'Somerville', 'role': 'Laertes' } ])
+        resp = self.client.get('/play/%s/hamlet/production/%s' % (prod.play.id32, prod.id32))
         self.assertContains(resp, 'Hamlet')
         self.assertContains(resp, 'January 2013')
-        resp = self.client.get('/play/1/hamlet/production/2')
+        resp = self.client.get('/play/%s/hamlet/production/%sb' % (prod.play.id32, prod.id32))
         self.assertEqual(resp.status_code, 404)

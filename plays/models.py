@@ -32,6 +32,10 @@ class Play(models.Model):
             title += u', by ' + authors
         return title
 
+    @property
+    def id32(self):
+        return int_to_base32(self.id)
+
     def save(self, **kwargs):
         title = self.get_title_display()
         self.slug = slugify(title)

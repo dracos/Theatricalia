@@ -72,12 +72,13 @@ class Place(models.Model):
         if m:
             out = "%s %s" % (m.group(2), m.group(1))
         return out
-    
+
+    @property
     def id32(self):
         return int_to_base32(self.id)
 
     def make_url(self, name, *args):
-        return (name, (self.id32(), self.slug) + args)
+        return (name, (self.id32, self.slug) + args)
 
     @models.permalink
     def get_absolute_url(self):

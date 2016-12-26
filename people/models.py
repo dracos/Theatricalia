@@ -69,11 +69,12 @@ class Person(models.Model):
     def died_machine(self):
         return repr(self.died)
 
+    @property
     def id32(self):
         return int_to_base32(self.id)
 
     def make_url(self, name, *args):
-        params = (self.id32(), self.slug) + args
+        params = (self.id32, self.slug) + args
         return (name, params)
 
     @models.permalink

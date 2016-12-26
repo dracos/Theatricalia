@@ -82,6 +82,7 @@ class ProductionCompany(models.Model):
         self.slug = slugify(self.name)
         super(ProductionCompany, self).save(**kwargs)
 
+    @property
     def id32(self):
         return int_to_base32(self.id)
 
@@ -157,6 +158,7 @@ class Production(models.Model):
     objects = ProductionManager()
     all_objects = models.Manager()
 
+    @property
     def id32(self):
         return int_to_base32(self.id)
 
