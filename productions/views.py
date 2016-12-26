@@ -96,7 +96,7 @@ def production(request, play_id, play, production_id, okay=False, format='html')
             'other': py_serializer.serialize(other, ensure_ascii=False),
             'flickr': flickr,
         }
-        response = HttpResponse(mimetype='application/json')
+        response = HttpResponse(content_type='application/json')
         json.dump(out, response, ensure_ascii=False)
         return response
 

@@ -98,7 +98,7 @@ def person_js(request, person_id, person):
         'future': future,
         'plays': plays,
     }
-    response = HttpResponse(mimetype='application/json')
+    response = HttpResponse(content_type='application/json')
     json.dump(out, response, ensure_ascii=False)
     return response
 
