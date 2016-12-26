@@ -2,7 +2,8 @@ import six
 import re, random
 from django import http
 from django.conf import settings
-from django.core.validators import email_re
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.core import urlresolvers
 from django.utils.http import urlquote
 
@@ -101,11 +102,12 @@ class AlphaMiddleware(ratelimit):
 
             email = request.POST.get('ebygum', '')
             if email:
-                if email_re.match(email):
+                try:
+                    validate_email(email)
                     obj = Prelaunch(email = email)
                     obj.save()
                     vars['messages'] = ['Thank you; you will hopefully hear from us in the not too distant future.']
-                else:
+                except ValidationError:
                     vars['error']['em'] = 'Please enter a valid email address.'
 
         statuses = [ 'Painting scenery', 'Auditioning actors', 'Cutting out gobos', 'Rehearsing', 'Measuring for costumes', 'Learning lines', 'Stocking the ice-cream cabinet' ]
