@@ -10,7 +10,7 @@ class MyUserChangeForm(UserChangeForm):
     class Meta(UserChangeForm.Meta):
         model = User
 
-# Help from http://stackoverflow.com/questions/15012235/using-django-auth-useradmin-for-a-custom-user-model
+# Help from https://stackoverflow.com/questions/15012235/using-django-auth-useradmin-for-a-custom-user-model
 class MyUserAdmin(UserAdmin):
     form = MyUserChangeForm
 

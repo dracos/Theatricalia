@@ -61,7 +61,7 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 ALLOWED_HOSTS = [ 'theatricalia.com', 'theatricalia.com.', 'localhost' ]
 
 # Local time zone for this installation. Choices can be found here:
-# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
+# https://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.

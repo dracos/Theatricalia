@@ -5,7 +5,7 @@
 {% block title %}{{ place|prettify|striptags }}{% endblock %}
 
 {% block extra_head %}
-<link rev="canonical" type="text/html" href="http://theatricalia.com/t/{{ place.id32 }}">
+<link rev="canonical" type="text/html" href="https://theatricalia.com/t/{{ place.id32 }}">
 <link href="{{ place.get_feed_url }}" type="application/rss+xml" rel="alternate">
 <script type="text/javascript" src="/static/js/web-maps-lite.js"></script>
 {% endblock %}
@@ -109,7 +109,7 @@ $(function(){
 {% endif %}
 
 <div style="float: right">
-<a href="http://twitter.com/share" class="twitter-share-button" data-count="none" data-via="theatricalia" data-related="dracos">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+<a href="https://twitter.com/share" class="twitter-share-button" data-count="none" data-via="theatricalia" data-related="dracos">Tweet</a><script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>
 </div>
 
 <ul class="clear">
@@ -143,13 +143,13 @@ $(function(){
 
 {% if user.is_authenticated %}
     <p class="clear before_form">If you have a photograph or picture of this place,
-    please either upload it here, or add it to <a href="http://flickr.com/">Flickr</a> and tag it with
+    please either upload it here, or add it to <a href="https://flickr.com/">Flickr</a> and tag it with
     <input type="text" value="theatricalia:place={{ place.id32 }}" onclick="this.focus();this.select();" readonly size=25>.</p>
     {% include 'includes/photo-form.html' %}
 {% else %}
     <p class="clear">If you have a photograph or picture of this place,
     please <a href="{% url "login" %}?next={{ request.path }}">sign in</a> to upload it, or
-    add it to <a href="http://flickr.com/">Flickr</a> and tag it with
+    add it to <a href="https://flickr.com/">Flickr</a> and tag it with
     <input type="text" value="theatricalia:place={{ place.id32 }}" onclick="this.focus();this.select();" readonly size=25>.</p>
 {% endif %}
 

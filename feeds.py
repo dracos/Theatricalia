@@ -140,7 +140,7 @@ class UserSeenFeed(Feed):
 
 class NewsFeed(Feed):
     title = 'Theatricalia: News articles'
-    link = 'http://theatricalia.com/publicity'
+    link = 'https://theatricalia.com/publicity'
     description = 'The latest news articles from Theatricalia'
 
     def items(self):

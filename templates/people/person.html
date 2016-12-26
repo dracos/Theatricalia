@@ -6,7 +6,7 @@
 
 {% block extra_head %}
 <link href="{{ person.get_absolute_url }}/feed" type="application/rss+xml" rel="alternate">
-<link rev="canonical" type="text/html" href="http://theatricalia.com/a/{{ person.id32 }}">
+<link rev="canonical" type="text/html" href="https://theatricalia.com/a/{{ person.id32 }}">
 {% endblock %}
 
 {% block content %}
@@ -100,7 +100,7 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 {% else %}{% if flickr.photos.photo %}
     {% with flickr.photos.photo|random as photo %}
     <div id="photograph-feature">
-    <a href="http://www.flickr.com/photos/{{ photo.owner }}/{{ photo.id }}/" title="{{ photo.title }}"><img src="http://farm{{ photo.farm }}.static.flickr.com/{{ photo.server }}/{{ photo.id }}_{{ photo.secret }}_s.jpg" alt="{{ photo.title }}"></a>
+    <a href="https://www.flickr.com/photos/{{ photo.owner }}/{{ photo.id }}/" title="{{ photo.title }}"><img src="https://farm{{ photo.farm }}.staticflickr.com/{{ photo.server }}/{{ photo.id }}_{{ photo.secret }}_s.jpg" alt="{{ photo.title }}"></a>
     </div>
     {% endwith %}
 {% endif %}{% endif %}
@@ -118,7 +118,7 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 {% endif %}
 
 <div style="float: right">
-<a href="http://twitter.com/share" class="twitter-share-button" data-count="none" data-via="theatricalia" data-related="dracos">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+<a href="https://twitter.com/share" class="twitter-share-button" data-count="none" data-via="theatricalia" data-related="dracos">Tweet</a><script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>
 </div>
 
 <h2 class="sm">Tools</h2>
@@ -174,7 +174,7 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 {% endthumbnail %}
 {% endfor %}
 {% for photo in flickr.photos.photo %}
-<li><a rel="gallery" href="http://www.flickr.com/photos/{{ photo.owner }}/{{ photo.id }}/" title="{{ photo.title }}"><img src="http://farm{{ photo.farm }}.static.flickr.com/{{ photo.server }}/{{ photo.id }}_{{ photo.secret }}_s.jpg" alt="{{ photo.title }}"></a>
+<li><a rel="gallery" href="https://www.flickr.com/photos/{{ photo.owner }}/{{ photo.id }}/" title="{{ photo.title }}"><img src="https://farm{{ photo.farm }}.staticflickr.com/{{ photo.server }}/{{ photo.id }}_{{ photo.secret }}_s.jpg" alt="{{ photo.title }}"></a>
 {% endfor %}
 </ul>
 {% endif %}
@@ -182,13 +182,13 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 
 {% if user.is_authenticated %}
     <p class="clear before_form">If you have a photograph of this person,
-    please either upload it here, or add it to <a href="http://flickr.com/">Flickr</a> and tag it with
+    please either upload it here, or add it to <a href="https://flickr.com/">Flickr</a> and tag it with
     <input type="text" value="theatricalia:person={{ person.id32 }}" onclick="this.focus();this.select();" readonly size=25>.</p>
     {% include 'includes/photo-form.html' %}
 {% else %}
     <p class="clear">If you have a photograph of this person,
     please <a href="{% url "login" %}?next={{ request.path }}">sign in</a> to upload it, or
-    add it to <a href="http://flickr.com/">Flickr</a> and tag it with
+    add it to <a href="https://flickr.com/">Flickr</a> and tag it with
     <input type="text" value="theatricalia:person={{ person.id32 }}" onclick="this.focus();this.select();" readonly size=25>.</p>
 {% endif %}
 

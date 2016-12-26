@@ -19,13 +19,13 @@
 </head>
 <body>
     <p align="center">
-        <img class="dither" src="http://theatricalia.com/static/i/title.png" width=283 height=76>
+        <img class="dither" src="https://theatricalia.com/static/i/title.png" width=283 height=76>
         <br>Random Production of the Week</p>
     </p>
 
     <h1>{{ production.play.get_title_display }}</h1>
     {% thumbnail photo.photo "384x384" colorspace="GRAY" as im %}
-    <p align="center"><img class="dither" src="http://theatricalia.com{{ im.url }}" width={{ im.width }} height={{ im.height }}></p>
+    <p align="center"><img class="dither" src="https://theatricalia.com{{ im.url }}" width={{ im.width }} height={{ im.height }}></p>
     {% endthumbnail %}
     <p>{% if production.play.get_authors_display %}By {{ production.play.get_authors_display|striptags }}.{% endif %}
     {% if production.get_companies_display %}A production by {{ production.get_companies_display|striptags }}.{% endif %}
