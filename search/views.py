@@ -1,9 +1,9 @@
+import json
 import re # , difflib
 import urllib
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
-from django.utils import simplejson
 from django.db.models import Q, get_model
 from shortcuts import render
 from people.models import Person
@@ -213,7 +213,7 @@ def search_geonames(s):
     try:
         splurgle
         r = urllib.urlopen('http://ws.geonames.org/searchJSON?isNameRequired=true&style=LONG&q=' + urllib.quote(s.encode('utf-8')) + '&maxRows=20').read()
-        r = simplejson.loads(r)
+        r = json.loads(r)
     except:
         r = ''
     return r
@@ -233,7 +233,7 @@ def search_around(request, s, type=''):
     elif validate_postcode(s):
         try:
             r = urllib.urlopen('http://mapit.mysociety.org/postcode/%s' % urllib.quote(s)).read()
-            loc = simplejson.loads(r)
+            loc = json.loads(r)
             pc, lat, lon = loc['postcode'], loc['wgs84_lat'], loc['wgs84_lon']
             name = re.sub('(\d[A-Z]{2})', r' \1', s.upper())
         except:
@@ -241,7 +241,7 @@ def search_around(request, s, type=''):
     elif validate_partial_postcode(s):
         try:
             r = urllib.urlopen('http://mapit.mysociety.org/postcode/partial/' + urllib.quote(s)).read()
-            r = simplejson.loads(r)
+            r = json.loads(r)
             lat, lon = r['wgs84_lat'], r['wgs84_lon']
         except:
             return search(request, redirect_okay=False)

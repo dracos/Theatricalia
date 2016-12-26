@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
+import json
 import re, os, sys
 from datetime import datetime
-import simplejson
 sys.path.append('../../')
 sys.path.append('../')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
@@ -18,7 +18,7 @@ real_run()
 
 uk = Country.objects.get(iso='GB')
 
-data = simplejson.load(open('../data/edinburgh2010.json'))
+data = json.load(open('../data/edinburgh2010.json'))
 for d in data:
     if d['festival'] != 'fringe': continue
     if d['main_class'] not in ('Childrens Shows', 'Dance and Physical Theatre', 'Musicals & Operas', 'Theatre'): continue

@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
+import json
 import urllib, time
 import os, errno
-from django.utils import simplejson
 
 DIR = os.path.dirname(__file__) + '/../data/flickr'
 
@@ -13,7 +13,7 @@ def call_api(method, **params):
         url += '&' + urllib.quote(k) + '=' + urllib.quote(v)
     out = urllib.urlopen(url).read()
     if eval:
-        out = simplejson.loads(out)
+        out = json.loads(out)
     time.sleep(1)
     return out
 

@@ -1,3 +1,4 @@
+import json
 import string
 from datetime import datetime
 
@@ -7,7 +8,6 @@ from django.db import IntegrityError
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
-from django.utils import simplejson
 from django.conf import settings
 from django.views.decorators.cache import cache_page
 from django.contrib import messages
@@ -49,7 +49,7 @@ def person(request, person_id, person):
         fp = open(settings.OUR_ROOT + '/data/flickr/person/' + person_id)
         flickr = fp.read()
         fp.close()
-        flickr = simplejson.loads(flickr)
+        flickr = json.loads(flickr)
     except:
         flickr = ''
 
@@ -99,7 +99,7 @@ def person_js(request, person_id, person):
         'plays': plays,
     }
     response = HttpResponse(mimetype='application/json')
-    simplejson.dump(out, response, ensure_ascii=False)
+    json.dump(out, response, ensure_ascii=False)
     return response
 
 #@login_required

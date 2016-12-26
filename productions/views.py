@@ -1,3 +1,4 @@
+import json
 import re
 import urllib
 
@@ -10,7 +11,6 @@ from django.forms.models import modelformset_factory, inlineformset_factory
 from django.db import IntegrityError
 from django.contrib.comments.views.comments import post_comment
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
-from django.utils import simplejson
 from django.conf import settings
 
 from reversion.models import Version
@@ -72,7 +72,7 @@ def production(request, play_id, play, production_id, okay=False, format='html')
         fp = open(settings.OUR_ROOT + '/data/flickr/production/' + production_id)
         flickr = fp.read()
         fp.close()
-        flickr = simplejson.loads(flickr)
+        flickr = json.loads(flickr)
     except:
         flickr = ''
 
@@ -97,7 +97,7 @@ def production(request, play_id, play, production_id, okay=False, format='html')
             'flickr': flickr,
         }
         response = HttpResponse(mimetype='application/json')
-        simplejson.dump(out, response, ensure_ascii=False)
+        json.dump(out, response, ensure_ascii=False)
         return response
 
     return render(request, 'production.html', {
