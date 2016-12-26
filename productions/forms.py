@@ -195,7 +195,7 @@ class PartForm(forms.ModelForm):
 
     class Meta:
         model = Part
-        exclude = ('order')
+        exclude = ('order',)
 
     def _get_validation_exclusions(self):
         exclusions = super(PartForm, self)._get_validation_exclusions()
@@ -283,5 +283,5 @@ class PartForm(forms.ModelForm):
 class ProductionCompanyForm(forms.ModelForm):
     class Meta:
         model = ProductionCompany
-        exclude = ('slug')
+        exclude = ('slug',)
 

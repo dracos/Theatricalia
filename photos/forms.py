@@ -17,7 +17,7 @@ class PhotoForm(forms.ModelForm):
 
     class Meta:
         model = Photo
-        exclude = ('is_visible')
+        exclude = ('is_visible',)
 
     def clean(self):
         self.cleaned_data['content_type'] = ContentType.objects.get_for_model(self.target_object)
