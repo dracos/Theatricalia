@@ -98,7 +98,7 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -112,7 +112,9 @@ MIDDLEWARE_CLASSES = (
     'theatricalia.middleware.OnlyLowercaseUrls',
     'theatricalia.middleware.RemoveSlashMiddleware',
     'reversion.middleware.RevisionMiddleware',
-)
+]
+if DEBUG:
+    MIDDLEWARE_CLASSES.insert(2, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
 ROOT_URLCONF = 'theatricalia.urls'
 WSGI_APPLICATION = 'theatricalia.wsgi.application'
@@ -124,7 +126,7 @@ TEMPLATE_DIRS = (
     os.path.join(OUR_ROOT, 'templates'),
 )
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes', # Attaching things to multiple models - comments, photos
     'django_comments',
@@ -149,7 +151,9 @@ INSTALLED_APPS = (
     'news',
     'merged',
     'lp',
-)
+]
+if DEBUG:
+    INSTALLED_APPS.append('debug_toolbar')
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
