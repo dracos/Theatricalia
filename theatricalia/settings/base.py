@@ -99,6 +99,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = [
+    'theatricalia.middleware.RemoteAddrMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -114,7 +115,7 @@ MIDDLEWARE_CLASSES = [
     'reversion.middleware.RevisionMiddleware',
 ]
 if DEBUG:
-    MIDDLEWARE_CLASSES.insert(2, 'debug_toolbar.middleware.DebugToolbarMiddleware')
+    MIDDLEWARE_CLASSES.insert(3, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
 ROOT_URLCONF = 'theatricalia.urls'
 WSGI_APPLICATION = 'theatricalia.wsgi.application'

@@ -12,6 +12,11 @@ from shortcuts import render
 
 from ratelimitcache import ratelimit
 
+class RemoteAddrMiddleware(object):
+    def process_request(self, request):
+       if 'REMOTE_ADDR' not in request.META or not request.META['REMOTE_ADDR']:
+           request.META['REMOTE_ADDR'] = request.META['HTTP_X_REAL_IP']
+
 class OnlyLowercaseUrls:
     def process_request(self, request):
         if request.path.lower() != request.path:
