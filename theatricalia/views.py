@@ -1,5 +1,5 @@
 import random
-from django.contrib.comments.models import Comment
+from django_comments.models import Comment
 from django.db.models import Count
 from django.http import HttpResponseRedirect
 from shortcuts import render

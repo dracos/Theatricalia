@@ -7,7 +7,7 @@ sys.path.insert(0, '..')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'theatricalia.settings'
 
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.comments.models import Comment
+from django_comments.models import Comment
 
 from utils import base32_to_int
 from plays.models import Play

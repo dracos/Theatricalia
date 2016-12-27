@@ -129,7 +129,7 @@ TEMPLATE_DIRS = (
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes', # Attaching things to multiple models - comments, photos
-    'django.contrib.comments',
+    'django_comments',
     'django.contrib.sessions',
     'django.contrib.humanize', # Ordinals
     'django.contrib.webdesign', # Lorem

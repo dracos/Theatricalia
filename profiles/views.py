@@ -7,7 +7,7 @@ from django.conf import settings
 from django.views.decorators.cache import never_cache
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.comments.models import Comment
+from django_comments.models import Comment
 from django.contrib import messages
 
 from forms import RegistrationForm, AuthenticationForm, ProfileForm

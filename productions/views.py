@@ -9,7 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 from django.forms.models import modelformset_factory, inlineformset_factory
 from django.db import IntegrityError
-from django.contrib.comments.views.comments import post_comment
+from django_comments.views.comments import post_comment
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.conf import settings
 
