@@ -115,8 +115,8 @@ class ProductionForm(forms.ModelForm):
     def save(self, **kwargs):
         if not self.cleaned_data['play'].id:
             self.cleaned_data['play'].save()
-            # Must reattach the now-saved play to the instance to pass in the ID
-            self.instance.play = self.cleaned_data['play']
+        # Must reattach the now-saved play to the instance to pass in the ID
+        self.instance.play = self.cleaned_data['play']
         return super(ProductionForm, self).save(**kwargs)
 
 class CompanyInlineForm(forms.ModelForm):
@@ -144,8 +144,8 @@ class CompanyInlineForm(forms.ModelForm):
     def save(self, **kwargs):
         if not self.cleaned_data['productioncompany'].id:
             self.cleaned_data['productioncompany'].save()
-            # Must reattach the now-saved object to the instance to pass in the ID
-            self.instance.productioncompany = self.cleaned_data['productioncompany']
+        # Must reattach the now-saved object to the instance to pass in the ID
+        self.instance.productioncompany = self.cleaned_data['productioncompany']
         return super(CompanyInlineForm, self).save(**kwargs)
 
 class PlaceForm(forms.ModelForm):
@@ -181,8 +181,8 @@ class PlaceForm(forms.ModelForm):
     def save(self, **kwargs):
         if not self.cleaned_data['place'].id:
             self.cleaned_data['place'].save(include_town=True)
-            # Must reattach the now-saved object to the instance to pass in the ID
-            self.instance.place = self.cleaned_data['place']
+        # Must reattach the now-saved object to the instance to pass in the ID
+        self.instance.place = self.cleaned_data['place']
         return super(PlaceForm, self).save(**kwargs)
 
 # person is the text box where someone enters a name, and always will be
@@ -278,8 +278,8 @@ class PartForm(forms.ModelForm):
     def save(self, **kwargs):
         if self.cleaned_data.get('person_choice') == 'new':
             self.cleaned_data['person'].save()
-            # Must reattach the now-saved play to the instance to pass in the ID
-            self.instance.person = self.cleaned_data['person']
+        # Must reattach the now-saved play to the instance to pass in the ID
+        self.instance.person = self.cleaned_data['person']
         return super(PartForm, self).save(**kwargs)
 
 class ProductionCompanyForm(forms.ModelForm):
