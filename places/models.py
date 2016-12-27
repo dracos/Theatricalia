@@ -1,6 +1,6 @@
 import re
 from django.db import models
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericRelation
 from django.template.defaultfilters import slugify
 from photos.models import Photo
 from utils import int_to_base32, base32_to_int
@@ -41,11 +41,11 @@ class Place(models.Model):
     closing_date = ApproximateDateField(blank=True, default='')
     url = models.URLField('URL', blank=True)
     wikipedia = models.URLField(blank=True)
-    photos = generic.GenericRelation(Photo)
+    photos = GenericRelation(Photo)
 
     objects = PlaceManager()
 
-    alerts = generic.GenericRelation(Alert)
+    alerts = GenericRelation(Alert)
 
     class Meta:
         ordering = ['name']

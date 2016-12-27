@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 
 class Alert(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -10,7 +10,7 @@ class Alert(models.Model):
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
 
     class Meta:
         unique_together = (('user', 'content_type', 'object_id'),)

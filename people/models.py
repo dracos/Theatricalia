@@ -1,6 +1,6 @@
 from django.db import models
 from utils import int_to_base32
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericRelation
 from django.template.defaultfilters import slugify
 from fields import ApproximateDateField
 from photos.models import Photo
@@ -44,10 +44,10 @@ class Person(models.Model):
     wikipedia = models.URLField(blank=True, verbose_name='Wikipedia URL')
     openplaques = models.URLField(blank=True, verbose_name='OpenPlaques URL', default='')
     web = models.URLField(blank=True, verbose_name='Personal website')
-    photos = generic.GenericRelation(Photo)
+    photos = GenericRelation(Photo)
     deleted = models.BooleanField(default=False)
 
-    alerts = generic.GenericRelation(Alert)
+    alerts = GenericRelation(Alert)
     objects = PersonManager()
 
     def __unicode__(self):

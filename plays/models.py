@@ -4,7 +4,7 @@ from people.models import Person
 #from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import slugify
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericRelation
 from utils import int_to_base32
 from common.models import Alert
 from common.templatetags.prettify import prettify
@@ -18,7 +18,7 @@ class Play(models.Model):
     url = models.URLField(blank=True, verbose_name='URL')
     wikipedia = models.URLField(blank=True)
 
-    alerts = generic.GenericRelation(Alert)
+    alerts = GenericRelation(Alert)
 
     class Meta:
         ordering = ['title']

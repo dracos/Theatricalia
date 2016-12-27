@@ -4,7 +4,7 @@ from django.conf import settings
 from django.db import models
 from django.utils import dateformat
 from django.utils.safestring import mark_safe
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericRelation
 from django.template.defaultfilters import slugify
 import reversion
 
@@ -69,7 +69,7 @@ class ProductionCompany(models.Model):
     description = models.TextField(blank=True)
     url = models.URLField(blank=True, verbose_name='Website')
 
-    alerts = generic.GenericRelation(Alert)
+    alerts = GenericRelation(Alert)
 
     class Meta:
         ordering = ['name']
@@ -139,7 +139,7 @@ class Production(models.Model):
     companies = models.ManyToManyField(ProductionCompany, through='Production_Companies', related_name='productions', blank=True)
     places = models.ManyToManyField(PlacePlace, through='Place', related_name='productions', blank=True)
     parts = models.ManyToManyField(Person, through='Part', related_name='productions', blank=True)
-    photos = generic.GenericRelation(Photo)
+    photos = GenericRelation(Photo)
     description = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     seen_by = models.ManyToManyField(settings.AUTH_USER_MODEL, through='Visit', related_name='seen', blank=True)
