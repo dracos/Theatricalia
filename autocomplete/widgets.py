@@ -81,7 +81,7 @@ $(document).ready(function(){
 		''' % {
 			'search_fields': ','.join(self.search_fields),
 			#'MEDIA_URL': settings.MEDIA_URL,
-			'model_name': self.rel.to._meta.module_name,
+			'model_name': self.rel.to._meta.model_name,
 			'app_label': self.rel.to._meta.app_label,
 			'name': name,
 			'namenodash': name.replace('-', '_'),
@@ -193,7 +193,7 @@ $(document).ready(function(){
 
 		''') % {
 			'search_fields': ','.join(self.search_fields),
-			'model_name': self.rel.to._meta.module_name,
+			'model_name': self.rel.to._meta.model_name,
 			'app_label': self.rel.to._meta.app_label,
 			'label': label,
 			'name': name,
