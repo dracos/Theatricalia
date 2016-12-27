@@ -140,7 +140,6 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     'reversion',
     'countries',
-    'south',
     'django_nose',
     'common',
     'places',

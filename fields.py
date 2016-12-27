@@ -7,8 +7,6 @@ from django import forms
 from django.forms import ValidationError
 from django.utils import dateformat
 
-from south.modelsinspector import add_introspection_rules
-
 class StripCharField(forms.CharField):
     def clean(self, value):
         if value: value = value.strip()
@@ -134,17 +132,6 @@ class ApproximateDateField(models.CharField):
 
 #    def get_db_prep_lookup(self, lookup_type, value):
 #        pass
-
-# South
-add_introspection_rules([
-    (
-        [ ApproximateDateField ],
-        [],
-        {
-            "max_length": ["max_length", {"default": 10}],
-        },
-    ),
-], ["^fields\.ApproximateDateField"])
 
 DATE_INPUT_FORMATS = (
     '%Y-%m-%d', '%d/%m/%Y', '%d/%m/%y', # '2006-10-25', '25/10/2006', '25/10/06'

@@ -1,254 +1,92 @@
-# encoding: utf-8
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
-class Migration(SchemaMigration):
-
-    def forwards(self, orm):
-        
-        # Adding model 'ProductionCompany'
-        db.create_table('productions_productioncompany', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=100, db_index=True)),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('url', self.gf('django.db.models.fields.URLField')(max_length=200, blank=True)),
-        ))
-        db.send_create_signal('productions', ['ProductionCompany'])
-
-        # Adding model 'Production'
-        db.create_table('productions_production', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('play', self.gf('django.db.models.fields.related.ForeignKey')(related_name='productions', to=orm['plays.Play'])),
-            ('company', self.gf('django.db.models.fields.related.ForeignKey')(related_name='productions', blank=True, null=True, to=orm['productions.ProductionCompany'])),
-            ('description', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('source', self.gf('django.db.models.fields.TextField')(blank=True)),
-            ('url', self.gf('django.db.models.fields.URLField')(max_length=200, blank=True)),
-            ('book_tickets', self.gf('django.db.models.fields.URLField')(max_length=200, blank=True)),
-        ))
-        db.send_create_signal('productions', ['Production'])
-
-        # Adding model 'Place'
-        db.create_table('productions_place', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('production', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['productions.Production'])),
-            ('place', self.gf('django.db.models.fields.related.ForeignKey')(related_name='productions_here', to=orm['places.Place'])),
-            ('start_date', self.gf('fields.ApproximateDateField')(blank=True)),
-            ('press_date', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
-            ('end_date', self.gf('fields.ApproximateDateField')(blank=True)),
-        ))
-        db.send_create_signal('productions', ['Place'])
-
-        # Adding model 'Part'
-        db.create_table('productions_part', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('production', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['productions.Production'])),
-            ('person', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['people.Person'])),
-            ('role', self.gf('django.db.models.fields.CharField')(max_length=200, blank=True)),
-            ('cast', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('credited_as', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-            ('order', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('start_date', self.gf('fields.ApproximateDateField')(blank=True)),
-            ('end_date', self.gf('fields.ApproximateDateField')(blank=True)),
-        ))
-        db.send_create_signal('productions', ['Part'])
-
-        # Adding model 'Visit'
-        db.create_table('productions_visit', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('production', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['productions.Production'])),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('recommend', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True)),
-        ))
-        db.send_create_signal('productions', ['Visit'])
-
-        # Adding unique constraint on 'Visit', fields ['user', 'production']
-        db.create_unique('productions_visit', ['user_id', 'production_id'])
+from django.db import models, migrations
+import fields
 
 
-    def backwards(self, orm):
-        
-        # Deleting model 'ProductionCompany'
-        db.delete_table('productions_productioncompany')
+class Migration(migrations.Migration):
 
-        # Deleting model 'Production'
-        db.delete_table('productions_production')
+    dependencies = [
+    ]
 
-        # Deleting model 'Place'
-        db.delete_table('productions_place')
-
-        # Deleting model 'Part'
-        db.delete_table('productions_part')
-
-        # Deleting model 'Visit'
-        db.delete_table('productions_visit')
-
-        # Removing unique constraint on 'Visit', fields ['user', 'production']
-        db.delete_unique('productions_visit', ['user_id', 'production_id'])
-
-
-    models = {
-        'auth.group': {
-            'Meta': {'object_name': 'Group'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '80', 'unique': 'True'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'blank': 'True'})
-        },
-        'auth.permission': {
-            'Meta': {'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
-            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        'auth.user': {
-            'Meta': {'object_name': 'User'},
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'unique': 'True', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'blank': 'True'}),
-            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'blank': 'True'}),
-            'username': ('django.db.models.fields.CharField', [], {'max_length': '30', 'unique': 'True'})
-        },
-        'common.alert': {
-            'Meta': {'unique_together': "(('user', 'content_type', 'object_id'),)", 'object_name': 'Alert'},
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'enabled': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'object_id': ('django.db.models.fields.PositiveIntegerField', [], {}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'alerts'", 'to': "orm['auth.User']"})
-        },
-        'contenttypes.contenttype': {
-            'Meta': {'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        'countries.country': {
-            'Meta': {'object_name': 'Country', 'db_table': "'country'"},
-            'iso': ('django.db.models.fields.CharField', [], {'max_length': '2', 'primary_key': 'True'}),
-            'iso3': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'numcode': ('django.db.models.fields.PositiveSmallIntegerField', [], {'null': 'True'}),
-            'printable_name': ('django.db.models.fields.CharField', [], {'max_length': '128'})
-        },
-        'people.person': {
-            'Meta': {'object_name': 'Person'},
-            'bio': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'died': ('fields.ApproximateDateField', [], {'blank': 'True'}),
-            'dob': ('fields.ApproximateDateField', [], {'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
-            'first_name_metaphone': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'first_name_metaphone_alt': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'imdb': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'last_name_metaphone': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'last_name_metaphone_alt': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '100', 'db_index': 'True'}),
-            'web': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
-            'wikipedia': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'})
-        },
-        'photos.photo': {
-            'Meta': {'object_name': 'Photo'},
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_visible': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'blank': 'True'}),
-            'object_id': ('django.db.models.fields.PositiveIntegerField', [], {}),
-            'photo': ('django.db.models.fields.files.ImageField', [], {'max_length': '255'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'})
-        },
-        'places.place': {
-            'Meta': {'object_name': 'Place'},
-            'address': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'country': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['countries.Country']", 'null': 'True', 'blank': 'True'}),
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'latitude': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'longitude': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'opening_date': ('fields.ApproximateDateField', [], {'blank': 'True'}),
-            'postcode': ('django.db.models.fields.CharField', [], {'max_length': '10', 'blank': 'True'}),
-            'size': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '150', 'db_index': 'True'}),
-            'telephone': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
-            'town': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
-            'type': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
-            'wikipedia': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'})
-        },
-        'plays.play': {
-            'Meta': {'object_name': 'Play'},
-            'authors': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'plays'", 'blank': 'True', 'to': "orm['people.Person']"}),
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'parent': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'children'", 'blank': 'True', 'null': 'True', 'to': "orm['plays.Play']"}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '255', 'db_index': 'True'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
-            'wikipedia': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'})
-        },
-        'productions.part': {
-            'Meta': {'object_name': 'Part'},
-            'cast': ('django.db.models.fields.NullBooleanField', [], {'null': 'True', 'blank': 'True'}),
-            'credited_as': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'end_date': ('fields.ApproximateDateField', [], {'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'order': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'person': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['people.Person']"}),
-            'production': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['productions.Production']"}),
-            'role': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'start_date': ('fields.ApproximateDateField', [], {'blank': 'True'})
-        },
-        'productions.place': {
-            'Meta': {'object_name': 'Place'},
-            'end_date': ('fields.ApproximateDateField', [], {'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'place': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'productions_here'", 'to': "orm['places.Place']"}),
-            'press_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            'production': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['productions.Production']"}),
-            'start_date': ('fields.ApproximateDateField', [], {'blank': 'True'})
-        },
-        'productions.production': {
-            'Meta': {'object_name': 'Production'},
-            'book_tickets': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
-            'company': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'productions'", 'blank': 'True', 'null': 'True', 'to': "orm['productions.ProductionCompany']"}),
-            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'parts': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'productions'", 'blank': 'True', 'through': "'Part'", 'to': "orm['people.Person']"}),
-            'places': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'productions'", 'blank': 'True', 'through': "'Place'", 'to': "orm['places.Place']"}),
-            'play': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'productions'", 'to': "orm['plays.Play']"}),
-            'seen_by': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'seen'", 'blank': 'True', 'through': "'Visit'", 'to': "orm['auth.User']"}),
-            'source': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'})
-        },
-        'productions.productioncompany': {
-            'Meta': {'object_name': 'ProductionCompany'},
-            'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '100', 'db_index': 'True'}),
-            'url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'})
-        },
-        'productions.visit': {
-            'Meta': {'unique_together': "(('user', 'production'),)", 'object_name': 'Visit'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'production': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['productions.Production']"}),
-            'recommend': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
-        }
-    }
-
-    complete_apps = ['productions']
+    operations = [
+        migrations.CreateModel(
+            name='Part',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('role', models.CharField(help_text='e.g. \u201cRomeo\u201d or \u201cDirector\u201d', max_length=200, verbose_name='R\xf4le', blank=True)),
+                ('cast', models.NullBooleanField(help_text='Crew includes all non-cast, from director to musicians to producers', verbose_name=b'Cast/Crew')),
+                ('credited_as', models.CharField(help_text='if they were credited differently to their name, or \u201cuncredited\u201d', max_length=100, blank=True)),
+                ('order', models.IntegerField(null=True, blank=True)),
+                ('start_date', fields.ApproximateDateField(max_length=10, blank=True)),
+                ('end_date', fields.ApproximateDateField(max_length=10, blank=True)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Place',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('start_date', fields.ApproximateDateField(max_length=10, blank=True)),
+                ('press_date', models.DateField(null=True, blank=True)),
+                ('end_date', fields.ApproximateDateField(max_length=10, blank=True)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Production',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('description', models.TextField(blank=True)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('source', models.TextField(blank=True)),
+                ('url', models.URLField(verbose_name=b'Web page', blank=True)),
+                ('book_tickets', models.URLField(verbose_name=b'Booking URL', blank=True)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Production_Companies',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+            ],
+            options={
+                'verbose_name': 'production-company many-to-many',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ProductionCompany',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=100)),
+                ('slug', models.SlugField(max_length=100)),
+                ('description', models.TextField(blank=True)),
+                ('url', models.URLField(verbose_name=b'Website', blank=True)),
+            ],
+            options={
+                'ordering': ['name'],
+                'verbose_name_plural': 'production companies',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Visit',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('recommend', models.BooleanField()),
+                ('date', fields.ApproximateDateField(default=b'', max_length=10, blank=True)),
+                ('production', models.ForeignKey(to='productions.Production')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+    ]
