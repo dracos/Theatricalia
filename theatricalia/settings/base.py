@@ -15,7 +15,6 @@ SERVER_EMAIL = EMAIL_FULL
 
 CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
 CACHE_MIDDLEWARE_SECONDS = 300
-CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
@@ -57,7 +56,7 @@ DATABASES = {
 SOUTH_TESTS_MIGRATE = False
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
-ALLOWED_HOSTS = [ 'theatricalia.com', 'theatricalia.com.', 'localhost' ]
+ALLOWED_HOSTS = [ 'theatricalia.com', 'theatricalia.com.', 'localhost', 'staging.theatricalia.com' ]
 
 # Local time zone for this installation. Choices can be found here:
 # https://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -112,7 +111,6 @@ MIDDLEWARE_CLASSES = (
     #'theatricalia.middleware.AlphaMiddleware',
     'theatricalia.middleware.OnlyLowercaseUrls',
     'theatricalia.middleware.RemoveSlashMiddleware',
-    'django.middleware.transaction.TransactionMiddleware',
     'reversion.middleware.RevisionMiddleware',
 )
 
