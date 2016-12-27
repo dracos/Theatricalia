@@ -3,7 +3,7 @@ from django.conf import settings
 
 class ArticleManager(models.Manager):
     def visible(self):
-        return super(ArticleManager, self).get_query_set().filter(visible=True)
+        return super(ArticleManager, self).get_queryset().filter(visible=True)
 
 class Article(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL)

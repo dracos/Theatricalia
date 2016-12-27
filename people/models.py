@@ -9,8 +9,8 @@ from common.models import Alert
 import reversion
 
 class PersonManager(models.Manager):
-    def get_query_set(self):
-        qs = super(PersonManager, self).get_query_set()
+    def get_queryset(self):
+        qs = super(PersonManager, self).get_queryset()
         qs = qs.exclude(deleted=True)
         return qs
 

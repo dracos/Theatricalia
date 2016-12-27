@@ -8,8 +8,8 @@ def get_upload_to(instance, filename):
     return 'photos/%s/%s/%s' % (instance.content_type, instance.object_id, filename)
 
 class PhotoManager(models.Manager):
-    def get_query_set(self):
-        return super(PhotoManager, self).get_query_set().filter(is_visible=True)
+    def get_queryset(self):
+        return super(PhotoManager, self).get_queryset().filter(is_visible=True)
 
 class Photo(models.Model):
     is_visible = models.BooleanField(default=True)

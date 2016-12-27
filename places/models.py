@@ -11,7 +11,7 @@ from countries.models import Country
 class PlaceManager(models.Manager):
     # Crappy bounding box, need to do radial!
     def around(self, lat, lon):
-        return self.get_query_set().filter(
+        return self.get_queryset().filter(
             longitude__gte = lon - 0.1,
             longitude__lte = lon + 0.1,
             latitude__gte = lat - 0.1,

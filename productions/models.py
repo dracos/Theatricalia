@@ -109,8 +109,8 @@ class ProductionCompany(models.Model):
 
 class ProductionManager(models.Manager):
     # use_for_related_fields = True
-    def get_query_set(self):
-        qs = super(ProductionManager, self).get_query_set()
+    def get_queryset(self):
+        qs = super(ProductionManager, self).get_queryset()
         qs = qs.exclude(source__startswith='<a href="http://wo') # National
         # qs = qs.exclude(source__endswith='University of Bristol Theatre Collection</a>')
         # qs = qs.exclude(source__endswith='AHDS Performing Arts</a>')
@@ -309,8 +309,8 @@ class Production_Companies(models.Model):
 
 class ProductionPlaceManager(models.Manager):
     # use_for_related_fields = True
-    def get_query_set(self):
-        qs = super(ProductionPlaceManager, self).get_query_set()
+    def get_queryset(self):
+        qs = super(ProductionPlaceManager, self).get_queryset()
         qs = qs.exclude(production__source__startswith='<a href="http://wo')
         return qs
 
@@ -331,10 +331,10 @@ class Place(models.Model):
 
 class PartManager(models.Manager):
     def search(self, search):
-        return self.get_query_set().filter(role__icontains=search).extra(select={'best_date': 'IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))'}).order_by('-best_date', 'production__place__press_date')
+        return self.get_queryset().filter(role__icontains=search).extra(select={'best_date': 'IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))'}).order_by('-best_date', 'production__place__press_date')
     # use_for_related_fields = True
-    def get_query_set(self):
-        qs = super(PartManager, self).get_query_set()
+    def get_queryset(self):
+        qs = super(PartManager, self).get_queryset()
         qs = qs.exclude(production__source__startswith='<a href="http://wo')
         return qs
 
