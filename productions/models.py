@@ -136,7 +136,7 @@ class ProductionManager(models.Manager):
 
 class Production(models.Model):
     play = models.ForeignKey(Play, related_name='productions')
-    companies = models.ManyToManyField(ProductionCompany, through='Production_Companies', related_name='productions', blank=True, null=True)
+    companies = models.ManyToManyField(ProductionCompany, through='Production_Companies', related_name='productions', blank=True)
     places = models.ManyToManyField(PlacePlace, through='Place', related_name='productions', blank=True)
     parts = models.ManyToManyField(Person, through='Part', related_name='productions', blank=True)
     photos = generic.GenericRelation(Photo)
