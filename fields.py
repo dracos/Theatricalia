@@ -89,6 +89,11 @@ class ApproximateDateField(models.CharField):
         kwargs['max_length'] = 10
         super(ApproximateDateField, self).__init__(*args, **kwargs)
 
+    def deconstruct(self):
+        name, path, args, kwargs = super(ApproximateDateField, self).deconstruct()
+        del kwargs["max_length"]
+        return name, path, args, kwargs
+
     def to_python(self, value):
         if value in (None, ''):
             return None
