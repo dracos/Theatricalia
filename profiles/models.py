@@ -10,7 +10,7 @@ class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
     biography = models.TextField(blank=True)  
     url = models.URLField('Website', blank=True)
-    email_validated = models.BooleanField()
+    email_validated = models.BooleanField(default=False)
     last_alert_sent = models.DateTimeField(auto_now_add=True)
 
     @models.permalink

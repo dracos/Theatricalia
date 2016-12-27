@@ -373,7 +373,7 @@ class Part(models.Model):
 class Visit(models.Model):
     production = models.ForeignKey(Production)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    recommend = models.BooleanField()
+    recommend = models.BooleanField(default=False)
     date = ApproximateDateField(blank=True, default='')
 
     class Meta:
