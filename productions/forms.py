@@ -129,6 +129,7 @@ class CompanyInlineForm(forms.ModelForm):
 
     class Meta:
         model = Production_Companies
+        fields = "__all__"
 
     def __init__(self, *args, **kwargs):
         super(CompanyInlineForm, self).__init__(*args, **kwargs)
@@ -160,6 +161,7 @@ class PlaceForm(forms.ModelForm):
 
     class Meta:
         model = Place
+        fields = "__all__"
 
     def __init__(self, *args, **kwargs):
         super(PlaceForm, self).__init__(*args, **kwargs)
