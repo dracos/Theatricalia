@@ -28,7 +28,11 @@ def play_productions(request, play_id, play, type):
     try:
         play = check_url(Play, play_id, play)
     except UnmatchingSlugException, e:
-        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
+        if type == 'future':
+            url = e.args[0].get_future_url()
+        elif type == 'past':
+            url = e.args[0].get_past_url()
+        return HttpResponsePermanentRedirect(url)
     return productions_list(request, play, type, 'plays/production_list.html')
 
 def play(request, play_id, play):
@@ -73,7 +77,7 @@ def play_edit(request, play_id, play):
     try:
         play = check_url(Play, play_id, play)
     except UnmatchingSlugException, e:
-        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
+        return HttpResponsePermanentRedirect(e.args[0].get_edit_url())
 
     play.title = play.get_title_display()
     form = PlayEditForm(request.POST or None, instance=play)

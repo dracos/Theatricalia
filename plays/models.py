@@ -86,9 +86,3 @@ class Play(models.Model):
 
     def get_feed_url(self):
         return '%s/feed' % self.get_absolute_url()
-
-def first_letters():
-    from django.db import connection
-    cursor = connection.cursor()
-    cursor.execute('SELECT DISTINCT SUBSTRING(title, 1, 1) FROM plays_play')
-    return cursor.fetchall()
