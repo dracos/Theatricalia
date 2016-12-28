@@ -55,7 +55,7 @@
     <li>Last logged in on {{ view.last_login|date:"jS F Y" }}.
 {% ifequal user view %}
     <li><a href="{{ profile.get_edit_url }}">Edit your profile<!-- and alerts --></a>
-    <li><a href="{% url "password-change" %}">Change your password</a>
+    <li><a href="{% url "password_change" %}">Change your password</a>
 {% endifequal %}
     </ul>
 
