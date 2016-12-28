@@ -130,7 +130,7 @@ class UserSeenFeed(Feed):
     def link(self, obj):
         if not obj:
             raise FeedDoesNotExist
-        return obj.get_absolute_url().lower()
+        return obj.profile.get_absolute_url()
 
     def description(self, obj):
         return 'The latest productions seen by %s from Theatricalia' % obj
