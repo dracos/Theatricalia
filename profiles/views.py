@@ -1,10 +1,17 @@
 from django.http import HttpResponseRedirect
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login
 from django.conf import settings
+from django.shortcuts import resolve_url
+from django.template.response import TemplateResponse
+from django.utils.http import is_safe_url
 from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.debug import sensitive_post_parameters
+
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from django_comments.models import Comment
@@ -67,41 +74,61 @@ def register(request):
             return render(request, 'registration/register-checkemail.html')
     return render(request, 'registration/register.html', { 'form': form })
 
-def login(request, template_name='registration/login.html', redirect_field_name=REDIRECT_FIELD_NAME):
-    redirect_to = request.REQUEST.get(redirect_field_name, '')
-    if not redirect_to: redirect_to = settings.LOGIN_REDIRECT_URL
+@sensitive_post_parameters()
+@csrf_protect
+@never_cache
+def login(request, template_name='registration/login.html',
+          redirect_field_name=REDIRECT_FIELD_NAME,
+          authentication_form=AuthenticationForm,
+          current_app=None, extra_context=None):
+    """
+    Displays the login form and handles the login action.
+    """
+    redirect_to = request.POST.get(redirect_field_name,
+                                   request.GET.get(redirect_field_name, ''))
 
+    # Ensure the user-originating redirection url is safe.
+    if not is_safe_url(url=redirect_to, host=request.get_host()):
+        redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
+
+    # Redirect if logged in!
     if request.user.is_authenticated():
         return HttpResponseRedirect(redirect_to)
 
     if request.method == "POST":
-        form = AuthenticationForm(data=request.POST)
+        form = authentication_form(request, data=request.POST)
         if form.is_valid():
-            from django.contrib.auth import login
-            login(request, form.get_user())
-            if request.session.test_cookie_worked():
-                request.session.delete_test_cookie()
-            if not redirect_to or '//' in redirect_to or ' ' in redirect_to:
-                redirect_to = settings.LOGIN_REDIRECT_URL
+
+            # Okay, security check complete. Log the user in.
+            auth_login(request, form.get_user())
+
             return HttpResponseRedirect(redirect_to)
     else:
-        form = AuthenticationForm(request)
+        form = authentication_form(request)
 
-    request.session.set_test_cookie()
+    current_site = get_current_site(request)
 
-    return render(request, template_name, {
+    context = {
         'form': form,
         redirect_field_name: redirect_to,
-    })
-login = never_cache(login)
+        'site': current_site,
+        'site_name': current_site.name,
+    }
+    if extra_context is not None:
+        context.update(extra_context)
+
+    if current_app is not None:
+        request.current_app = current_app
+
+    return TemplateResponse(request, template_name, context)
+
 
 #def registration_complete(request):
 #    return render(request, 'accounts/registration_complete.html', {})
 
 def perform_login(request, user):
     user.backend = 'profiles.backends.ModelBackend' # Needs backend to login?
-    from django.contrib.auth import login
-    login(request, user)
+    auth_login(request, user)
 
 def register_confirm(request, uidb32, token):
     try:

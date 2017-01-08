@@ -80,10 +80,5 @@ class AuthenticationForm(DjangoAuthenticationForm):
             #if not self.user_cache.profile.email_validated:
             #    raise forms.ValidationError("You must validate your email address before logging in. Check your email!")
 
-        # TODO: determine whether this should move to its own method.
-        if self.request:
-            if not self.request.session.test_cookie_worked():
-                raise forms.ValidationError("Your Web browser doesn't appear to have cookies enabled. Cookies are required for logging in.")
-
         return self.cleaned_data
 
