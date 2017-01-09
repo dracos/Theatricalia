@@ -40,6 +40,8 @@ def merge(request, url):
     if request.POST.get('stop'):
         if 'merging_' + type in request.session:
             del request.session['merging_' + type]
+        if not request.session.keys():
+            request.session.flush()
         if request.user.is_authenticated():
             messages.success(request, u"We have forgotten your search for a duplicate.")
         return HttpResponseRedirect(object.get_absolute_url())
