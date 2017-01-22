@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block content %}
+{% get_comment_count for production as comment_count %}
 <div itemscope itemtype="http://schema.org/TheaterEvent">
 
 {% if request.session.merging_production %}
@@ -249,7 +250,6 @@
 
 <h2 id="observations" class="no-descenders"><!-- Anecdotes &amp; -->Observations</h2>
 
-{% get_comment_count for production as comment_count %}
 {% get_comment_list for production as observations %}
 {% if observations %}
 <ol id="observation_list">
