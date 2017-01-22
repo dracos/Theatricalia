@@ -13,6 +13,7 @@ from django_comments.views.comments import post_comment
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.conf import settings
 
+from django_comments.models import Comment
 from reversion.models import Version
 from utils import base32_to_int
 from shortcuts import render, check_url, UnmatchingSlugException
@@ -379,3 +380,10 @@ def post_comment_wrapper(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/tickets')
     return post_comment(request)
+
+@login_required
+def hide_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    comment.is_removed = True
+    comment.save()
+    return HttpResponseRedirect(comment.get_absolute_url())

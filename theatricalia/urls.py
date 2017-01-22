@@ -115,6 +115,7 @@ urlpatterns = patterns('',
     url('^company/(?P<company_id>[^/]+)$', productions.production_company_short_url),
 
     url('^observations/post/', productions.post_comment_wrapper),
+    url('^observations/remove/(?P<comment_id>\d+)', productions.hide_comment, name='hide-comment'),
     url('^observations/', include('django_comments.urls')),
     url('^photograph/take/', photos.take_photo, name='take-photo'),
     url('^photograph/taken/', photos.photo_taken, name='photo-taken'),
