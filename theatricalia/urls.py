@@ -18,7 +18,6 @@ from news import views as news
 from news.models import Article
 
 from django.contrib import admin
-admin.autodiscover()
 
 from feeds import PersonFeed, PlayFeed, PlaceFeed, NearbyFeed, UserSeenFeed, NewsFeed
 
