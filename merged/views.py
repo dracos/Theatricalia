@@ -34,8 +34,6 @@ def merge(request, url):
         object = check_url(obj_type, id, slug)
     except UnmatchingSlugException, e:
         return HttpResponseRedirect(e.args[0].get_absolute_url() + "/merge")
-    except:
-        raise Exception
 
     if request.POST.get('stop'):
         if 'merging_' + type in request.session:
@@ -50,7 +48,7 @@ def merge(request, url):
         # Send email
         other_id = request.session['merging_' + type]['id']
         other = obj_type.objects.get(id=other_id)
-        mail_admins('Merge request', '%s\nand\n%s\n\n%s : https://theatricalia.com%s\n%s : https://theatricalia.com%s\n\nRequest made by: %s\n\nATB,\nMatthew' % (other, object, int_to_base32(other.id), other.get_absolute_url(), int_to_base32(object.id), object.get_absolute_url(), request.user), fail_silently=True)
+        mail_admins('Merge request', u'%s\nand\n%s\n\n%s : https://theatricalia.com%s\n%s : https://theatricalia.com%s\n\nRequest made by: %s\n\nATB,\nMatthew' % (other, object, int_to_base32(other.id), other.get_absolute_url(), int_to_base32(object.id), object.get_absolute_url(), request.user), fail_silently=True)
         del request.session['merging_' + type]
         return render(request, 'merged/thanks.html', {
             'object': object,
