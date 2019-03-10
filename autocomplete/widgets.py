@@ -15,7 +15,7 @@ from django.utils.translation import ugettext as _
 from django.utils.encoding import force_unicode 
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
-from django.utils.datastructures import MultiValueDict, MergeDict
+from django.utils.datastructures import MultiValueDict
 
 from search.views import search_autocomplete
 
@@ -114,7 +114,7 @@ class ManyToManySearchInput(forms.MultipleHiddenInput):
 		self.help_text = u"To search, enter at least two characters"
 	
 	def value_from_datadict(self, data, files, name):
-		if isinstance(data, (MultiValueDict, MergeDict)):
+		if isinstance(data, MultiValueDict):
 			res = data.getlist(name)
 		else:
 			res = data.get(name, None)

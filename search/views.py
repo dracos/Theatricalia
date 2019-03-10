@@ -1,10 +1,11 @@
 import json
 import re # , difflib
 import urllib
+from django.apps import apps
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
-from django.db.models import Q, get_model
+from django.db.models import Q
 from shortcuts import render
 from people.models import Person
 from places.models import Place
@@ -75,7 +76,7 @@ def search_autocomplete(request):
         people, dummy = search_people(query, False, False)
         qs = people[:20]
     else:
-        model = get_model(app_label, model_name)
+        model = apps.get_model(app_label=app_label, model_name=model_name)
         for field_name in search_fields.split(','):
             name = autocomplete_construct_search(field_name)
             if q:

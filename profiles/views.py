@@ -80,24 +80,20 @@ def register(request):
 def login(request, template_name='registration/login.html',
           redirect_field_name=REDIRECT_FIELD_NAME,
           authentication_form=AuthenticationForm,
-          current_app=None, extra_context=None):
+          extra_context=None):
     """
     Displays the login form and handles the login action.
     """
     redirect_to = request.POST.get(redirect_field_name,
                                    request.GET.get(redirect_field_name, ''))
 
-    # Ensure the user-originating redirection url is safe.
-    if not is_safe_url(url=redirect_to, host=request.get_host()):
-        redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
-
-    # Redirect if logged in!
-    if request.user.is_authenticated():
-        return HttpResponseRedirect(redirect_to)
-
     if request.method == "POST":
         form = authentication_form(request, data=request.POST)
         if form.is_valid():
+
+            # Ensure the user-originating redirection url is safe.
+            if not is_safe_url(url=redirect_to, host=request.get_host()):
+                redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
 
             # Okay, security check complete. Log the user in.
             auth_login(request, form.get_user())
@@ -116,9 +112,6 @@ def login(request, template_name='registration/login.html',
     }
     if extra_context is not None:
         context.update(extra_context)
-
-    if current_app is not None:
-        request.current_app = current_app
 
     return TemplateResponse(request, template_name, context)
 

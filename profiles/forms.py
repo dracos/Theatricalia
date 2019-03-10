@@ -5,8 +5,6 @@ from django.template import Context, loader
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm as DjangoAuthenticationForm
 
-from fields import StripCharField
-
 from .models import Profile, User
 
 class ProfileForm(forms.ModelForm):
@@ -14,20 +12,16 @@ class ProfileForm(forms.ModelForm):
         fields = ('biography', 'url')
         model = Profile
 
-class StripEmailField(forms.EmailField):
-    def clean(self, value):
-        if value: value = value.strip()
-        return super(StripEmailField, self).clean(value)
 
 class RegistrationForm(forms.ModelForm):
-    name = StripCharField(label="Name", max_length=100, error_messages = {'required':'Please provide your name.'})
-    unicorn = StripEmailField(label="Email", error_messages = {'required': 'Please enter your email address.'} )
+    name = forms.CharField(label="Name", max_length=100, error_messages = {'required':'Please provide your name.'})
+    unicorn = forms.EmailField(label="Email", error_messages = {'required': 'Please enter your email address.'} )
     username = forms.RegexField(label="Username", max_length=30, regex=r'^\w+$',
         #help_text = "Required. 30 characters or fewer. Alphanumeric characters only (letters, digits and underscores).",
         error_message = "Your username can only contain letters, numbers and underscores.")
     password = forms.CharField( label = "Password", widget = forms.PasswordInput,
         error_messages = {'required': 'Please enter a password.'} )
-    website = StripCharField(label = "Website", required=False)
+    website = forms.CharField(label = "Website", required=False)
 
     #def __init__(self, *args, **kwargs):
     #    super(RegistrationForm, self).__init__(*args, **kwargs)
@@ -66,7 +60,7 @@ class RegistrationForm(forms.ModelForm):
         return user
 
 class AuthenticationForm(DjangoAuthenticationForm):
-    username = StripCharField(label="Email or username", max_length=100)
+    username = forms.CharField(label="Email or username", max_length=100)
     def clean(self):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')

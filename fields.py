@@ -7,10 +7,6 @@ from django import forms
 from django.forms import ValidationError
 from django.utils import dateformat
 
-class StripCharField(forms.CharField):
-    def clean(self, value):
-        if value: value = value.strip()
-        return super(StripCharField, self).clean(value)
 
 class ApproximateDate(object):
     """A date that accepts 0 for month or day to mean we don't know when it is within that month/year.
@@ -83,8 +79,6 @@ class ApproximateDate(object):
 ansi_date_re = re.compile(r'^-?\d{4}-\d{1,2}-\d{1,2}$')
 
 class ApproximateDateField(models.CharField):
-    __metaclass__ = models.SubfieldBase
-
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = 10
         super(ApproximateDateField, self).__init__(*args, **kwargs)
@@ -95,15 +89,18 @@ class ApproximateDateField(models.CharField):
         return name, path, args, kwargs
 
     def to_python(self, value):
-        if value in (None, ''):
-            return None
         if isinstance(value, ApproximateDate):
             return value
 
-        if isinstance(value, datetime.datetime):
-            value = value.date().isoformat()
-        if isinstance(value, datetime.date):
-            value = value.isoformat()
+        return self.from_db_value(value)
+
+    def from_db_value(self, value, expression=None, connection=None, context=None):
+        if value in (None, ''):
+            return None
+        #if isinstance(value, datetime.datetime):
+        #    value = value.date().isoformat()
+        #if isinstance(value, datetime.date):
+        #    value = value.isoformat()
 
         if not ansi_date_re.search(value):
             raise ValidationError('Enter a valid date in YYYY-MM-DD format.')
@@ -115,7 +112,7 @@ class ApproximateDateField(models.CharField):
             msg = _('Invalid date: %s') % _(str(e))
             raise exceptions.ValidationError(msg)
 
-    def get_db_prep_value(self, value, **kwargs):
+    def get_prep_value(self, value):
         if value in (None, ''):
                 return ''
         if isinstance(value, ApproximateDate):
@@ -128,7 +125,7 @@ class ApproximateDateField(models.CharField):
 
     def value_to_string(self, obj):
         value = self._get_val_from_obj(obj)
-        return self.get_db_prep_value(value)
+        return self.get_prep_value(value)
 
     def formfield(self, **kwargs):
         defaults = { 'form_class': ApproximateDateFormField }
@@ -163,7 +160,7 @@ BC_MONTH_INPUT_FORMATS.extend( [ i.replace('%Y', '-%Y') for i in MONTH_INPUT_FOR
 BC_YEAR_INPUT_FORMATS.extend(  [ i.replace('%Y', '-%Y') for i in YEAR_INPUT_FORMATS ] )
 
 class ApproximateDateFormField(forms.fields.Field):
-    def __init__(self, max_length=10, *args, **kwargs):
+    def __init__(self, max_length=10, empty_value='', *args, **kwargs):
         super(ApproximateDateFormField, self).__init__(*args, **kwargs)
 
     def clean(self, value):

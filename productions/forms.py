@@ -8,7 +8,7 @@ from models import Production, Part, Place, ProductionCompany, Production_Compan
 from plays.models import Play
 from places.models import Place as PlacePlace
 from people.models import Person
-from fields import PrettyDateField, ApproximateDateFormField, StripCharField
+from fields import PrettyDateField, ApproximateDateFormField
 from widgets import PrettyDateInput
 from search.views import search_people
 from common.templatetags.prettify import prettify
@@ -39,11 +39,11 @@ class ProductionForm(forms.ModelForm):
     play = AutoCompleteMultiValueField(
         Play, 'title',
         required = False, # It is required, but will be spotted in the clean function
-        fields = (StripCharField(), forms.ModelChoiceField(Play.objects.all())),
+        fields = (forms.CharField(), forms.ModelChoiceField(Play.objects.all())),
         widget = ForeignKeySearchInput(Production.play.field.rel, ('title',))
     )
     play_choice = forms.ChoiceField(label='Play', widget=forms.RadioSelect(), required=False)
-    description = StripCharField(required=False, widget=forms.Textarea(attrs={'cols': 40, 'rows':5}))
+    description = forms.CharField(required=False, widget=forms.Textarea(attrs={'cols': 40, 'rows':5}))
     url = forms.URLField(label='Web page', required=False, widget=forms.TextInput(attrs={'size': 40}))
     book_tickets = forms.URLField(label='Booking URL', required=False, widget=forms.TextInput(attrs={'size': 40}))
 
@@ -123,7 +123,7 @@ class CompanyInlineForm(forms.ModelForm):
     productioncompany = AutoCompleteMultiValueField(
         ProductionCompany, 'name',
         required = False, label='Company',
-        fields = (StripCharField(), forms.ModelChoiceField(ProductionCompany.objects.all())),
+        fields = (forms.CharField(), forms.ModelChoiceField(ProductionCompany.objects.all())),
         widget = ForeignKeySearchInput(Production_Companies.productioncompany.field.rel, ('name',))
     )
 
@@ -152,7 +152,7 @@ class PlaceForm(forms.ModelForm):
     place = AutoCompleteMultiValueField(
         PlacePlace, 'name',
         required = False, # It is required, but will be spotted in the clean function
-        fields = (StripCharField(), forms.ModelChoiceField(PlacePlace.objects.all())),
+        fields = (forms.CharField(), forms.ModelChoiceField(PlacePlace.objects.all())),
         widget = ForeignKeySearchInput(Place.place.field.rel, ('name',))
     )
     start_date = ApproximateDateFormField(required=False, label='It was/is on from')
@@ -188,7 +188,7 @@ class PlaceForm(forms.ModelForm):
 # person is the text box where someone enters a name, and always will be
 # person_choice is the selection of someone from that, or the creation of a new person
 class PartForm(forms.ModelForm):
-    person = StripCharField(error_messages = {'required':'You have to specify a person.'})
+    person = forms.CharField(error_messages = {'required':'You have to specify a person.'})
     person_choice = forms.ChoiceField(label='Person', widget=forms.RadioSelect(), required=False)
     start_date = ApproximateDateFormField(required=False, help_text='if they were only in this production for part of its run')
     end_date = ApproximateDateFormField(required=False)

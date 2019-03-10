@@ -4,7 +4,8 @@ from django import http
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.core import urlresolvers
+from django.core.urlresolvers import is_valid_path
+from django.utils.encoding import escape_uri_path, iri_to_uri
 from django.utils.http import urlquote
 
 from common.models import Prelaunch
@@ -26,46 +27,49 @@ class OnlyLowercaseUrls:
             return http.HttpResponseRedirect(path)
 
 class RemoveSlashMiddleware(object):
-    def process_request(self, request):
-        host = request.get_host()
-        old_url = [host, request.path]
-        new_url = old_url[:]
-        if not settings.APPEND_SLASH and old_url[1].endswith('/'):
-            urlconf = getattr(request, 'urlconf', None)
-            if (not urlresolvers.is_valid_path(request.path_info, urlconf) and
-                    urlresolvers.is_valid_path(request.path_info[:-1], urlconf)):
-                new_url[1] = new_url[1][:-1]
-                if settings.DEBUG and request.method == 'POST':
-                    raise RuntimeError((""
-                    "You called this URL via POST, but the URL ends "
-                    "in a slash and you don't have APPEND_SLASH set. Django can't "
-                    "redirect to the non-slash URL while maintaining POST data. "
-                    "Change your form to point to %s%s (note no trailing "
-                    "slash), or set APPEND_SLASH=True in your Django "
-                    "settings.") % (new_url[0], new_url[1]))
+    response_redirect_class = http.HttpResponsePermanentRedirect
 
-        if new_url == old_url:
-            # No redirects required.
-            return
-        if new_url[0]:
-            newurl = "%s://%s%s" % (
-                request.is_secure() and 'https' or 'http',
-                new_url[0], urlquote(new_url[1]))
-        else:
-            newurl = urlquote(new_url[1])
-        if request.META.get('QUERY_STRING', ''):
-            if six.PY3:
-                newurl += '?' + request.META['QUERY_STRING']
-            else:
-                # `query_string` is a bytestring. Appending it to the unicode
-                # string `newurl` will fail if it isn't ASCII-only. This isn't
-                # allowed; only broken software generates such query strings.
-                # Better drop the invalid query string than crash (#15152).
-                try:
-                    newurl += '?' + request.META['QUERY_STRING'].decode()
-                except UnicodeDecodeError:
-                    pass
-        return http.HttpResponsePermanentRedirect(newurl)
+    def process_request(self, request):
+        if self.should_redirect_with_slash(request):
+            path = self.get_full_path_without_slash(request)
+            return self.response_redirect_class(path)
+
+    def should_redirect_with_slash(self, request):
+        """
+        Return True if settings.APPEND_SLASH is False and removing a slash from
+        the request path turns an invalid path into a valid one.
+        """
+        if not settings.APPEND_SLASH and request.path_info.endswith('/'):
+            urlconf = getattr(request, 'urlconf', None)
+            return (
+                not is_valid_path(request.path_info, urlconf) and
+                is_valid_path(request.path_info[:-1], urlconf)
+            )
+        return False
+
+    def get_full_path_without_slash(self, request):
+        """
+        Return the full path of the request with a trailing slash removed.
+
+        Raise a RuntimeError if settings.DEBUG is True and request.method is
+        POST, PUT, or PATCH.
+        """
+        new_path = '%s%s' % (
+            escape_uri_path(request.path[:-1]),
+            ('?' + iri_to_uri(request.META.get('QUERY_STRING', ''))) if request.META.get('QUERY_STRING', '') else ''
+        )
+        if settings.DEBUG and request.method in ('POST', 'PUT', 'PATCH'):
+            raise RuntimeError((""
+                "You called this URL via %(method)s, but the URL ends "
+                "in a slash and you don't have APPEND_SLASH set. Django can't "
+                "redirect to the non-slash URL while maintaining %(method)s data. "
+                "Change your form to point to %(url)s (note no trailing "
+                "slash), or set APPEND_SLASH=True in your Django settings." % {
+                    'method': request.method,
+                    'url': request.get_host() + new_path,
+                }
+            ))
+        return new_path
 
 class AlphaMiddleware(ratelimit):
     cookie_name = 'godot'

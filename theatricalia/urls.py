@@ -1,7 +1,7 @@
 import os
 from django.conf import settings
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 import views
@@ -18,10 +18,11 @@ from news import views as news
 from news.models import Article
 
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 
 from feeds import PersonFeed, PlayFeed, PlaceFeed, NearbyFeed, UserSeenFeed, NewsFeed
 
-urlpatterns = patterns('',
+urlpatterns = [
     # Example:
     # (r'^theatricalia/', include('theatricalia.foo.urls')),
 
@@ -29,18 +30,18 @@ urlpatterns = patterns('',
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-    (r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
 
     url(r'^tickets/boxoffice$', profiles.register, name='register'),
     url(r'^tickets/(?P<uidb32>[0-9A-Za-z]+)-(?P<token>.+)$', profiles.register_confirm, name='register-confirm'),
     url(r'^tickets$', profiles.login, name='login'),
-    url(r'^tickets/exchange$', 'django.contrib.auth.views.password_change', name='password_change'),
-    url(r'^tickets/exchanged$', 'django.contrib.auth.views.password_change_done', name='password_change_done'),
-    url(r'^tickets/lost$', 'django.contrib.auth.views.password_reset', name='password_reset'),
-    url(r'^tickets/lost/done$', 'django.contrib.auth.views.password_reset_done', name='password_reset_done'),
-    url(r'^tickets/lost/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)$', 'django.contrib.auth.views.password_reset_confirm', name='password_reset_confirm'),
-    url(r'^tickets/lost/found$', 'django.contrib.auth.views.password_reset_complete', name='password_reset_complete'),
-    url(r'^tickets/returns$', 'django.contrib.auth.views.logout', name='logout'),
+    url(r'^tickets/exchange$', auth_views.password_change, name='password_change'),
+    url(r'^tickets/exchanged$', auth_views.password_change_done, name='password_change_done'),
+    url(r'^tickets/lost$', auth_views.password_reset, name='password_reset'),
+    url(r'^tickets/lost/done$', auth_views.password_reset_done, name='password_reset_done'),
+    url(r'^tickets/lost/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)$', auth_views.password_reset_confirm, name='password_reset_confirm'),
+    url(r'^tickets/lost/found$', auth_views.password_reset_complete, name='password_reset_complete'),
+    url(r'^tickets/returns$', auth_views.logout, name='logout'),
 
     url('^$', views.home, name='home'),
 
@@ -148,13 +149,13 @@ urlpatterns = patterns('',
     #url('forums/counterpoint/', include('forums.counterpoint.counterpoint.urls')),
 
     url('^lp/day/', include('lp.urls')),
-)
+]
 
 urlpatterns += staticfiles_urlpatterns()
 
 
 if settings.DEBUG:
     import debug_toolbar
-    urlpatterns += patterns('',
+    urlpatterns += [
         url(r'^__debug__/', include(debug_toolbar.urls)),
-    )
+    ]

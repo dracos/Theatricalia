@@ -38,7 +38,6 @@ if 'staging' in OUR_ROOT:
     DEBUG = True
 else:
     DEBUG = False
-TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = DEBUG
 
 ADMINS = (
@@ -100,12 +99,24 @@ STATICFILES_FINDERS = (
 )
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(OUR_ROOT, 'templates'),
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
+            ],
+        },
+    },
+]
 
 MIDDLEWARE_CLASSES = [
     'theatricalia.middleware.RemoteAddrMiddleware',
@@ -137,20 +148,12 @@ CSRF_COOKIE_HTTPONLY = True
 ROOT_URLCONF = 'theatricalia.urls'
 WSGI_APPLICATION = 'theatricalia.wsgi.application'
 
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    os.path.join(OUR_ROOT, 'templates'),
-)
-
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes', # Attaching things to multiple models - comments, photos
     'django_comments',
     'django.contrib.sessions',
     'django.contrib.humanize', # Ordinals
-    'django.contrib.webdesign', # Lorem
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'django.contrib.messages',
@@ -172,15 +175,6 @@ INSTALLED_APPS = [
 ]
 if DEBUG:
     INSTALLED_APPS.append('debug_toolbar')
-
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.request',
-    'django.core.context_processors.debug',
-    'django.contrib.messages.context_processors.messages',
-    #'django.core.context_processors.i18n',
-    'django.core.context_processors.media',
-)
 
 from django.db.utils import OperationalError
 def skip_too_many_connections(record):

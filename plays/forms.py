@@ -5,7 +5,6 @@ from models import Play
 from people.models import Person
 from search.views import search_people
 from common.templatetags.prettify import prettify
-from fields import StripCharField
 
 class PlayEditForm(forms.ModelForm):
     authors = forms.CharField(widget=forms.HiddenInput)
@@ -16,7 +15,7 @@ class PlayEditForm(forms.ModelForm):
         exclude = ('slug', 'parent')
 
 class PlayAuthorForm(forms.Form):
-    person = StripCharField(label='Author', max_length=101, required=False)
+    person = forms.CharField(label='Author', max_length=101, required=False)
     person_choice = forms.ChoiceField(label='Author', widget=forms.RadioSelect(), required=False)
 
     def __init__(self, *args, **kwargs):

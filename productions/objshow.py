@@ -13,20 +13,21 @@ from aggregates import Concatenate
 # type will be blank, or 'places' for multiple place search
 def productions_filter(object, type, date_filter):
     o = None
+    now = datetime.now()
     if isinstance(object, Place):
-        filter = ( ~Q(end_date='') & Q(end_date__lt=datetime.now) ) | Q(end_date='', press_date__lt=datetime.now) | Q(end_date='', press_date__isnull=True, start_date__lt=datetime.now)
+        filter = ( ~Q(end_date='') & Q(end_date__lt=now) ) | Q(end_date='', press_date__lt=now) | Q(end_date='', press_date__isnull=True, start_date__lt=now)
         if date_filter == 'past':
             o = object.productions_here.filter(filter).distinct()
         else:
             o = object.productions_here.exclude(filter).distinct()
     elif isinstance(object, Person) or isinstance(object, Play) or isinstance(object, ProductionCompany):
-        filter = ( ~Q(place__end_date='') & Q(place__end_date__lt=datetime.now) ) | Q(place__end_date='', place__press_date__lt=datetime.now) | Q(place__end_date='', place__press_date__isnull=True, place__start_date__lt=datetime.now)
+        filter = ( ~Q(place__end_date='') & Q(place__end_date__lt=now) ) | Q(place__end_date='', place__press_date__lt=now) | Q(place__end_date='', place__press_date__isnull=True, place__start_date__lt=now)
         if date_filter == 'past':
             o = object.productions.filter(filter).distinct()
         else:
             o = object.productions.exclude(filter).distinct()
     elif type=='places':
-        filter = ( ~Q(place__end_date='') & Q(place__end_date__lt=datetime.now) ) | Q(place__end_date='', place__press_date__lt=datetime.now) | Q(place__end_date='', place__press_date__isnull=True, place__start_date__lt=datetime.now)
+        filter = ( ~Q(place__end_date='') & Q(place__end_date__lt=now) ) | Q(place__end_date='', place__press_date__lt=now) | Q(place__end_date='', place__press_date__isnull=True, place__start_date__lt=now)
         if date_filter == 'past':
             o = Production.objects.filter(filter, place__place__in=object)
         else:
@@ -34,7 +35,7 @@ def productions_filter(object, type, date_filter):
     else:
         raise Exception, 'Strange call to productions_filter'
     if isinstance(object, Person):
-        o = o.annotate(Concatenate('part__role'))
+        o = o.annotate(part__role__concatenate=Concatenate('part__role'))
 
     if date_filter == 'past':
         if isinstance(object, Person):
