@@ -13,7 +13,14 @@ EMAIL_PORT = 25
 DEFAULT_FROM_EMAIL = 'Matthew Somerville <%s>' % EMAIL_FULL
 SERVER_EMAIL = EMAIL_FULL
 
-CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    },
+    'staticfiles': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    },
+}
 CACHE_MIDDLEWARE_SECONDS = 300
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -91,6 +98,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
