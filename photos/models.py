@@ -22,6 +22,7 @@ class Photo(models.Model):
     content_object = GenericForeignKey('content_type', 'object_id')
 
     objects = PhotoManager()
+    all_objects = models.Manager()
 
     def __unicode__(self):
         return self.title
