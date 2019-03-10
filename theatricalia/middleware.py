@@ -19,6 +19,8 @@ class RemoteAddrMiddleware(object):
 
 class OnlyLowercaseUrls:
     def process_request(self, request):
+        if 'tickets/lost/' in request.path:
+            return
         if request.path.lower() != request.path:
             path = request.get_full_path().replace(request.path, request.path.lower())
             return http.HttpResponseRedirect(path)
