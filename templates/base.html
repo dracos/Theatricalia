@@ -153,6 +153,13 @@
 <p><a href="/random"><img src="/static/i/mouse_sm.png" alt="Random production" title="Random production" height="48"></a></p>
 </div>
 
+{% if request.path == '/criticism' %}
+<p style="color:#999; text-align:center; font-size: smaller">Address:
+Matthew Somerville, Unit 11768, PO Box 15113, Birmingham, B2 2NJ.
+Please email first.
+</p>
+{% endif %}
+
 {% if debug %}
 <p><a href="#" onclick="$('#queries').toggle(); return false;">Show/hide database queries</a></p>
 <div class="hide" id="queries">
