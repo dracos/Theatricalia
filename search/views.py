@@ -398,7 +398,7 @@ def search(request, redirect_okay=True):
     # Check if we're searching round a point, or a postcode, redirect if so
     m = re.match('([-\d.]+)\s*,\s*([-\d.]+)$', search)
     if search.lower() != 'dv8' and redirect_okay and (m or validate_postcode(search) or validate_partial_postcode(search)):
-        return HttpResponseRedirect(reverse('search-around', args=[urllib.quote(search.encode('utf-8'))]))
+        return HttpResponseRedirect(reverse('search-around', args=[search.encode('utf-8')]))
 
     if search and len(search)<3:
         return render(request, 'search.html', {
