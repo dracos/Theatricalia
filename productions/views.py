@@ -3,7 +3,7 @@ import re
 import urllib
 
 from django.core import serializers
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
@@ -16,7 +16,7 @@ from django.conf import settings
 from django_comments.models import Comment
 from reversion.models import Version
 from utils import base32_to_int
-from shortcuts import render, check_url, UnmatchingSlugException
+from shortcuts import check_url, UnmatchingSlugException
 from models import Production, Part, Place as ProductionPlace, Visit, ProductionCompany, Production_Companies
 from forms import ProductionForm, PartForm, CompanyInlineForm, PlaceForm, ProductionCompanyForm
 from common.models import Alert

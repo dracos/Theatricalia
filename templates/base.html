@@ -160,17 +160,6 @@ Please email first.
 </p>
 {% endif %}
 
-{% if debug %}
-<p><a href="#" onclick="$('#queries').toggle(); return false;">Show/hide database queries</a></p>
-<div class="hide" id="queries">
-<table>
-{% for q in connection.queries %}
-<tr valign="top"><td>{{ q.time }}</td><td>{{ q.sql }}</td></tr>
-{% endfor %}
-</table>
-</div>
-{% endif %}
-
 {% ifequal request.META.HTTP_HOST "staging.theatricalia.com" %}
 <div id="banner_big">Staging site (behind the scenes)</div>
 {% else %}

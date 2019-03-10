@@ -7,10 +7,11 @@ from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.db.models import Q
 from django.views.decorators.cache import cache_page
 from django.contrib import messages
+from django.shortcuts import render
 
 from mixins import ListMixin
 
-from shortcuts import render, check_url, UnmatchingSlugException
+from shortcuts import check_url, UnmatchingSlugException
 from models import Play
 from people.models import Person
 from forms import PlayEditForm, PlayAuthorForm

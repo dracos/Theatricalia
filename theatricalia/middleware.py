@@ -5,11 +5,11 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.core.urlresolvers import is_valid_path
+from django.shortcuts import render
 from django.utils.encoding import escape_uri_path, iri_to_uri
 from django.utils.http import urlquote
 
 from common.models import Prelaunch
-from shortcuts import render
 
 from ratelimitcache import ratelimit
 

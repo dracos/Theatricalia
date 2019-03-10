@@ -1,8 +1,9 @@
 from django.http import Http404, HttpResponseRedirect
 from django.core.mail import mail_admins
 from django.contrib import messages
+from django.shortcuts import render
 
-from shortcuts import render, check_url, UnmatchingSlugException
+from shortcuts import check_url, UnmatchingSlugException
 from places.models import Place
 from people.models import Person
 from productions.models import ProductionCompany, Production

@@ -1,6 +1,6 @@
 import os
 from django.http import HttpResponseBadRequest, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
@@ -9,7 +9,6 @@ from django.contrib.auth.decorators import login_required
 from django.utils.html import escape 
 from models import Photo
 from forms import PhotoForm
-from shortcuts import render
 from productions.models import Production
 from plays.models import Play
 from places.models import Place

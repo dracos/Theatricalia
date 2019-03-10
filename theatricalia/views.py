@@ -2,7 +2,7 @@ import random
 from django_comments.models import Comment
 from django.db.models import Count
 from django.http import HttpResponseRedirect
-from shortcuts import render
+from django.shortcuts import render
 from productions.models import Production, Part
 from plays.models import Play
 from places.models import Place

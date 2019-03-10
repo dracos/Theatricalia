@@ -2,7 +2,7 @@ from datetime import datetime
 from django.core.paginator import Paginator, InvalidPage
 from django.db.models import Q
 from django.http import Http404
-from shortcuts import render
+from django.shortcuts import render
 from models import Production, Part, ProductionCompany
 from plays.models import Play
 from places.models import Place

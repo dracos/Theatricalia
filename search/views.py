@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.db.models import Q
-from shortcuts import render
+from django.shortcuts import render
 from people.models import Person
 from places.models import Place
 from plays.models import Play

@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login
 from django.conf import settings
-from django.shortcuts import resolve_url
+from django.shortcuts import render, resolve_url
 from django.template.response import TemplateResponse
 from django.utils.http import is_safe_url
 from django.views.decorators.cache import never_cache
@@ -18,7 +18,7 @@ from django_comments.models import Comment
 from django.contrib import messages
 
 from forms import RegistrationForm, AuthenticationForm, ProfileForm
-from shortcuts import render, send_email
+from shortcuts import send_email
 from utils import int_to_base32, base32_to_int
 from common.models import Alert, AlertLocal
 from reversion.models import Revision

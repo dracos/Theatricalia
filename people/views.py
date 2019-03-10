@@ -11,10 +11,11 @@ from django.core import serializers
 from django.conf import settings
 from django.views.decorators.cache import cache_page
 from django.contrib import messages
+from django.shortcuts import render
 
 from mixins import ListMixin
 
-from shortcuts import render, check_url, UnmatchingSlugException
+from shortcuts import check_url, UnmatchingSlugException
 from utils import int_to_base32
 from common.models import Alert
 from models import Person
