@@ -47,6 +47,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'theatricalia',
         'USER': 'theatricalia',
+        'CONN_MAX_AGE': None,
         'PASSWORD': '',
         'HOST': '',
         'PORT': '',
@@ -173,6 +174,21 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
 )
 
+from django.db.utils import OperationalError
+def skip_too_many_connections(record):
+    if record.exc_info:
+        exc_type, exc_value = record.exc_info[:2]
+        if exc_type == OperationalError and exc_value.args[0] == 1040:
+            return False
+    return True
+
+def skip_new_content_types(record):
+    if record.exc_info:
+        exc_type, exc_value = record.exc_info[:2]
+        if exc_type == RuntimeError and 'Error creating new content types' in exc_value.args[0]:
+            return False
+    return True
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
@@ -182,14 +198,22 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'filters': {
+        'not_too_many_connections': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': skip_too_many_connections, 
+        },
+        'not_new_content_types': {
+            '()': 'django.utils.log.CallbackFilter',
+            'callback': skip_new_content_types,
+        },
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
-        }
+        },
     },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
-            'filters': ['require_debug_false'],
+            'filters': ['require_debug_false', 'not_new_content_types', 'not_too_many_connections'],
             'class': 'django.utils.log.AdminEmailHandler'
         }
     },
@@ -201,7 +225,6 @@ LOGGING = {
         },
     }
 }
-
 
 # Monkeypatches
 
