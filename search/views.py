@@ -232,7 +232,7 @@ def search_around(request, s, type=''):
         name = request.GET.get('name', '')
     elif validate_postcode(s):
         try:
-            r = urllib.urlopen('http://mapit.mysociety.org/postcode/%s' % urllib.quote(s)).read()
+            r = urllib.urlopen('https://mapit.mysociety.org/postcode/%s' % urllib.quote(s)).read()
             loc = json.loads(r)
             pc, lat, lon = loc['postcode'], loc['wgs84_lat'], loc['wgs84_lon']
             name = re.sub('(\d[A-Z]{2})', r' \1', s.upper())
@@ -240,7 +240,7 @@ def search_around(request, s, type=''):
             return search(request, redirect_okay=False)
     elif validate_partial_postcode(s):
         try:
-            r = urllib.urlopen('http://mapit.mysociety.org/postcode/partial/' + urllib.quote(s)).read()
+            r = urllib.urlopen('https://mapit.mysociety.org/postcode/partial/' + urllib.quote(s)).read()
             r = json.loads(r)
             lat, lon = r['wgs84_lat'], r['wgs84_lon']
         except:

@@ -42,10 +42,10 @@ $(function() {
 
     /* fancybox
        Rewrite all Flickr photos to go to their pictures directly,
-       edal with the special big photo at the top,
+       deal with the special big photo at the top,
        and then set up fancybox galleries for all the photos.
      */
-    $('a[href^="http://www.flickr.com"]').each(function(){
+    $('a[href^="https://www.flickr.com"]').each(function(){
         var l = $(this);
         var pic = l.find('img').attr('src');
         if (pic) {
