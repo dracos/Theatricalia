@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
                 ('url', models.URLField(verbose_name=b'Website', blank=True)),
                 ('email_validated', models.BooleanField()),
                 ('last_alert_sent', models.DateTimeField(auto_now_add=True)),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
+                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
             options={
             },

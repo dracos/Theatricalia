@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=255)),
                 ('photo', sorl.thumbnail.fields.ImageField(upload_to=photos.models.get_upload_to, max_length=255, verbose_name=b'Photograph')),
                 ('object_id', models.PositiveIntegerField()),
-                ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
+                ('content_type', models.ForeignKey(to='contenttypes.ContentType', on_delete=models.PROTECT)),
             ],
         ),
     ]

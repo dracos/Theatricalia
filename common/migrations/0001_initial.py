@@ -21,8 +21,8 @@ class Migration(migrations.Migration):
                 ('created', models.DateTimeField(auto_now_add=True)),
                 ('enabled', models.BooleanField(default=True)),
                 ('object_id', models.PositiveIntegerField()),
-                ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
-                ('user', models.ForeignKey(related_name='alerts', to=settings.AUTH_USER_MODEL)),
+                ('content_type', models.ForeignKey(to='contenttypes.ContentType', on_delete=models.PROTECT)),
+                ('user', models.ForeignKey(related_name='alerts', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -33,15 +33,15 @@ class Migration(migrations.Migration):
                 ('enabled', models.BooleanField(default=True)),
                 ('latitude', models.FloatField()),
                 ('longitude', models.FloatField()),
-                ('user', models.ForeignKey(related_name='local_alerts', to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(related_name='local_alerts', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
             name='AlertSent',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('alert', models.ForeignKey(to='common.Alert')),
-                ('production', models.ForeignKey(to='productions.Production')),
+                ('alert', models.ForeignKey(to='common.Alert', on_delete=models.CASCADE)),
+                ('production', models.ForeignKey(to='productions.Production', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(

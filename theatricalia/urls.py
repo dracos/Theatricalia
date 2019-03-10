@@ -30,7 +30,7 @@ urlpatterns = [
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
 
     url(r'^tickets/boxoffice$', profiles.register, name='register'),
     url(r'^tickets/(?P<uidb32>[0-9A-Za-z]+)-(?P<token>.+)$', profiles.register_confirm, name='register-confirm'),

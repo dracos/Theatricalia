@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='visit',
             name='user',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -29,13 +29,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='production_companies',
             name='production',
-            field=models.ForeignKey(to='productions.Production'),
+            field=models.ForeignKey(to='productions.Production', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='production_companies',
             name='productioncompany',
-            field=models.ForeignKey(verbose_name=b'company', to='productions.ProductionCompany'),
+            field=models.ForeignKey(verbose_name=b'company', to='productions.ProductionCompany', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='production',
             name='play',
-            field=models.ForeignKey(related_name='productions', to='plays.Play'),
+            field=models.ForeignKey(related_name='productions', to='plays.Play', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -71,25 +71,25 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='place',
             name='place',
-            field=models.ForeignKey(related_name='productions_here', to='places.Place'),
+            field=models.ForeignKey(related_name='productions_here', to='places.Place', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='place',
             name='production',
-            field=models.ForeignKey(to='productions.Production'),
+            field=models.ForeignKey(to='productions.Production', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='part',
             name='person',
-            field=models.ForeignKey(to='people.Person'),
+            field=models.ForeignKey(to='people.Person', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='part',
             name='production',
-            field=models.ForeignKey(to='productions.Production'),
+            field=models.ForeignKey(to='productions.Production', on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

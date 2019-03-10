@@ -83,7 +83,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('recommend', models.BooleanField()),
                 ('date', fields.ApproximateDateField(default=b'', max_length=10, blank=True)),
-                ('production', models.ForeignKey(to='productions.Production')),
+                ('production', models.ForeignKey(to='productions.Production', on_delete=models.CASCADE)),
             ],
             options={
             },

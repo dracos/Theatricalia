@@ -40,7 +40,7 @@ class ProductionForm(forms.ModelForm):
         Play, 'title',
         required = False, # It is required, but will be spotted in the clean function
         fields = (forms.CharField(), forms.ModelChoiceField(Play.objects.all())),
-        widget = ForeignKeySearchInput(Production.play.field.rel, ('title',))
+        widget = ForeignKeySearchInput(Production.play.field.remote_field, ('title',))
     )
     play_choice = forms.ChoiceField(label='Play', widget=forms.RadioSelect(), required=False)
     description = forms.CharField(required=False, widget=forms.Textarea(attrs={'cols': 40, 'rows':5}))
@@ -124,7 +124,7 @@ class CompanyInlineForm(forms.ModelForm):
         ProductionCompany, 'name',
         required = False, label='Company',
         fields = (forms.CharField(), forms.ModelChoiceField(ProductionCompany.objects.all())),
-        widget = ForeignKeySearchInput(Production_Companies.productioncompany.field.rel, ('name',))
+        widget = ForeignKeySearchInput(Production_Companies.productioncompany.field.remote_field, ('name',))
     )
 
     class Meta:
@@ -153,7 +153,7 @@ class PlaceForm(forms.ModelForm):
         PlacePlace, 'name',
         required = False, # It is required, but will be spotted in the clean function
         fields = (forms.CharField(), forms.ModelChoiceField(PlacePlace.objects.all())),
-        widget = ForeignKeySearchInput(Place.place.field.rel, ('name',))
+        widget = ForeignKeySearchInput(Place.place.field.remote_field, ('name',))
     )
     start_date = ApproximateDateFormField(required=False, label='It was/is on from')
     press_date = PrettyDateField(required=False, label='Press night')

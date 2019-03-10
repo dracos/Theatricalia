@@ -38,7 +38,7 @@ class ForeignKeySearchInput(forms.MultiWidget):
 
 	def label_for_value(self, value):
 		key = self.rel.get_related_field().name
-		obj = self.rel.to._default_manager.get(**{key: value})
+		obj = self.rel.model._default_manager.get(**{key: value})
 		
 		return obj
 
@@ -53,10 +53,10 @@ class ForeignKeySearchInput(forms.MultiWidget):
 			return [ '', None ]
 		return [ self.label_for_value(value), value ]
 
-	def render(self, name, value, attrs=None):
+	def render(self, name, value, attrs=None, renderer=None):
 		if attrs is None:
 			attrs = {}
-		rendered = super(ForeignKeySearchInput, self).render(name, value, attrs)
+		rendered = super(ForeignKeySearchInput, self).render(name, value, attrs, renderer)
 		return mark_safe('<span role="combobox">') + rendered + mark_safe('</span>') + mark_safe(u'''
 <script type="text/javascript">
 
@@ -81,8 +81,8 @@ $(document).ready(function(){
 		''' % {
 			'search_fields': ','.join(self.search_fields),
 			#'MEDIA_URL': settings.MEDIA_URL,
-			'model_name': self.rel.to._meta.model_name,
-			'app_label': self.rel.to._meta.app_label,
+			'model_name': self.rel.model._meta.model_name,
+			'app_label': self.rel.model._meta.app_label,
 			'name': name,
 			'namenodash': name.replace('-', '_'),
 			#'value': value,
@@ -120,7 +120,7 @@ class ManyToManySearchInput(forms.MultipleHiddenInput):
 			res = data.get(name, None)
 		#print name, res
 		#for id in res:
-		#	print self.rel.to.objects.get(pk=id)
+		#	print self.rel.model.objects.get(pk=id)
 		return res
 
 	def render(self, name, value, attrs=None):
@@ -135,7 +135,7 @@ class ManyToManySearchInput(forms.MultipleHiddenInput):
 		#rel_name = self.search_fields[0].split('__')[0]
 		
 		for id in value:
-			obj = self.rel.to.objects.get(pk=id)
+			obj = self.rel.model.objects.get(pk=id)
 		
 			selected = selected + mark_safe(u"""
 				<div class="to_delete deletelink" ><input type="hidden" name="%(name)s" value="%(value)s"/>%(label)s</div>""" 
@@ -193,8 +193,8 @@ $(document).ready(function(){
 
 		''') % {
 			'search_fields': ','.join(self.search_fields),
-			'model_name': self.rel.to._meta.model_name,
-			'app_label': self.rel.to._meta.app_label,
+			'model_name': self.rel.model._meta.model_name,
+			'app_label': self.rel.model._meta.app_label,
 			'label': label,
 			'name': name,
 			'value': value,
@@ -293,7 +293,7 @@ class AutocompleteModelAdmin(admin.ModelAdmin):
 	
 class AutocompleteWidgetWrapper(RelatedFieldWidgetWrapper):
 	def render(self, name, value, *args, **kwargs):
-		rel_to = self.rel.to
+		rel_to = self.rel.model
 		related_url = '../../../%s/%s/' % (rel_to._meta.app_label, rel_to._meta.object_name.lower())
 		self.widget.choices = self.choices
 		output = [self.widget.render(name, value, *args, **kwargs)]

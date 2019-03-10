@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('url', models.URLField(verbose_name=b'URL', blank=True)),
                 ('wikipedia', models.URLField(blank=True)),
                 ('authors', models.ManyToManyField(related_name='plays', to='people.Person', blank=True)),
-                ('parent', models.ForeignKey(related_name='children', blank=True, to='plays.Play', null=True)),
+                ('parent', models.ForeignKey(related_name='children', blank=True, to='plays.Play', null=True, on_delete=models.SET_NULL)),
             ],
             options={
                 'ordering': ['title'],

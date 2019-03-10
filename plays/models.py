@@ -2,6 +2,7 @@ import re
 from django.db import models
 from people.models import Person
 #from django.utils.html import escape
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import slugify
 from django.contrib.contenttypes.fields import GenericRelation
@@ -13,7 +14,7 @@ class Play(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255)
     authors = models.ManyToManyField(Person, related_name='plays', blank=True)
-    parent = models.ForeignKey('self', related_name='children', blank=True, null=True)
+    parent = models.ForeignKey('self', related_name='children', blank=True, null=True, on_delete=models.SET_NULL)
     description = models.TextField(blank=True)
     url = models.URLField(blank=True, verbose_name='URL')
     wikipedia = models.URLField(blank=True)
@@ -62,25 +63,20 @@ class Play(models.Model):
         return mark_safe(str)
             
     def construct_url(self, name, *args):
-        return (name, (int_to_base32(self.id), self.slug) + args)
+        return reverse(name, args=(int_to_base32(self.id), self.slug) + args)
 
-    @models.permalink
     def get_absolute_url(self):
         return self.construct_url('play')
 
-    @models.permalink
     def get_past_url(self):
         return self.construct_url('play-productions-past')
 
-    @models.permalink
     def get_future_url(self):
         return self.construct_url('play-productions-future')
 
-    @models.permalink
     def get_add_url(self):
         return self.construct_url('play-production-add')
 
-    @models.permalink
     def get_edit_url(self):
         return self.construct_url('play-edit')
 

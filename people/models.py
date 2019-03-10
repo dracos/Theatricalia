@@ -2,6 +2,7 @@ from django.db import models
 from utils import int_to_base32
 from django.contrib.contenttypes.fields import GenericRelation
 from django.template.defaultfilters import slugify
+from django.urls import reverse
 from fields import ApproximateDateField
 from photos.models import Photo
 from sounds.metaphone import dm
@@ -75,21 +76,17 @@ class Person(models.Model):
 
     def make_url(self, name, *args):
         params = (self.id32, self.slug) + args
-        return (name, params)
+        return reverse(name, args=params)
 
-    @models.permalink
     def get_absolute_url(self):
         return self.make_url('person')
 
-    @models.permalink
     def get_edit_url(self):
         return self.make_url('person-edit')
 
-    @models.permalink
     def get_more_future_url(self):
         return self.make_url('person-productions-future')
 
-    @models.permalink
     def get_more_past_url(self):
         return self.make_url('person-productions-past')
 

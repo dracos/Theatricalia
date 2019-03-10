@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.urls import reverse
 from sorl.thumbnail import ImageField
 from utils import int_to_base32
 
@@ -17,7 +18,7 @@ class Photo(models.Model):
     title = models.CharField(max_length=255)
     photo = ImageField('Photograph', upload_to = get_upload_to, max_length = 255)
 
-    content_type = models.ForeignKey(ContentType)
+    content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
@@ -27,9 +28,8 @@ class Photo(models.Model):
     def __unicode__(self):
         return self.title
 
-    @models.permalink
     def get_absolute_url(self):
-        return ('photo-view', (), { 'photo_id': int_to_base32(self.id) })
+        return reverse('photo-view', kwargs={ 'photo_id': int_to_base32(self.id) })
 
     def get_attached(self):
         return self.content_object

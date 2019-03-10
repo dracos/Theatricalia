@@ -2,6 +2,7 @@ import re
 from django.db import models
 from django.contrib.contenttypes.fields import GenericRelation
 from django.template.defaultfilters import slugify
+from django.urls import reverse
 from photos.models import Photo
 from utils import int_to_base32, base32_to_int
 from fields import ApproximateDateField
@@ -32,7 +33,7 @@ class Place(models.Model):
     longitude = models.FloatField(blank=True, null=True)
     address = models.CharField(blank=True, max_length=200)
     town = models.CharField(blank=True, max_length=50)
-    country = models.ForeignKey(Country, blank=True, null=True)
+    country = models.ForeignKey(Country, blank=True, null=True, on_delete=models.SET_NULL)
     postcode = models.CharField(blank=True, max_length=10)
     telephone = models.CharField(blank=True, max_length=50)
     type = models.CharField(blank=True, max_length=100, choices=(('proscenium', 'Proscenium Arch'), ('thrust', 'Thrust'), ('multiple', 'Multiple'), ('other', 'Other')))
@@ -78,17 +79,14 @@ class Place(models.Model):
         return int_to_base32(self.id)
 
     def make_url(self, name, *args):
-        return (name, (self.id32, self.slug) + args)
+        return reverse(name, args=(self.id32, self.slug) + args)
 
-    @models.permalink
     def get_absolute_url(self):
         return self.make_url('place')
 
-    @models.permalink
     def get_edit_url(self):
         return self.make_url('place-edit')
 
-    @models.permalink
     def get_add_production_url(self):
         return self.make_url('place-production-add')
 
@@ -101,7 +99,6 @@ class Place(models.Model):
     def get_feed_url(self):
         return '%s/feed' % self.get_absolute_url()
 
-    @models.permalink
     def get_productions_url(self):
         return self.make_url('place-productions')
 

@@ -40,7 +40,7 @@ class ProductionForm(forms.ModelForm):
     play = AutoCompleteMultiValueField(
             Play, 'title',
             fields = (forms.CharField(), forms.ModelChoiceField(Play.objects.all())),
-            widget = ForeignKeySearchInput(Production.play.field.rel, ('title',))
+            widget = ForeignKeySearchInput(Production.play.field.remote_field, ('title',))
     )
 
     class Meta:

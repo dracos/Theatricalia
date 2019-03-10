@@ -2,6 +2,7 @@ from datetime import date
 
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 from django.utils import dateformat
 from django.utils.safestring import mark_safe
 from django.contrib.contenttypes.fields import GenericRelation
@@ -87,17 +88,14 @@ class ProductionCompany(models.Model):
         return int_to_base32(self.id)
 
     def construct_url(self, name, *args):
-        return (name, (int_to_base32(self.id), self.slug) + args)
+        return reverse(name, args=(int_to_base32(self.id), self.slug) + args)
 
-    @models.permalink
     def get_absolute_url(self):
         return self.construct_url('company')
 
-    @models.permalink
     def get_edit_url(self):
         return self.construct_url('company-edit')
 
-    @models.permalink
     def get_add_production_url(self):
         return self.construct_url('company-production-add')
 
@@ -134,7 +132,7 @@ class ProductionManager(models.Manager):
         return placeM2M
 
 class Production(models.Model):
-    play = models.ForeignKey(Play, related_name='productions')
+    play = models.ForeignKey(Play, related_name='productions', on_delete=models.CASCADE)
     companies = models.ManyToManyField(ProductionCompany, through='Production_Companies', related_name='productions', blank=True)
     places = models.ManyToManyField(PlacePlace, through='Place', related_name='productions', blank=True)
     parts = models.ManyToManyField(Person, through='Part', related_name='productions', blank=True)
@@ -159,25 +157,20 @@ class Production(models.Model):
             'play_id': int_to_base32(self.play.id),
             'production_id': int_to_base32(self.id),
         })
-        return (name, (), kwargs)
+        return reverse(name, kwargs=kwargs)
 
-    @models.permalink
     def get_absolute_url(self):
         return self.url_components('production')
 
-    @models.permalink
     def get_edit_url(self):
         return self.url_components('production-edit')
 
-    @models.permalink
     def get_edit_cast_url(self):
         return self.url_components('production-edit-cast')
 
-    @models.permalink
     def get_seen_url(self):
         return self.url_components('production-seen', type='add')
 
-    @models.permalink
     def get_seen_no_url(self):
         return self.url_components('production-seen', type='remove')
 
@@ -287,8 +280,8 @@ class Production(models.Model):
         return 'Other'
 
 class Production_Companies(models.Model):
-    production = models.ForeignKey(Production)
-    productioncompany = models.ForeignKey(ProductionCompany, verbose_name='company')
+    production = models.ForeignKey(Production, on_delete=models.CASCADE)
+    productioncompany = models.ForeignKey(ProductionCompany, verbose_name='company', on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'production-company many-to-many'
@@ -297,11 +290,11 @@ class Production_Companies(models.Model):
         return u"%s's bit in %s" % (self.productioncompany, self.production)
 
 #class Performance(models.Model):
-#    production = models.ForeignKey(Production)
+#    production = models.ForeignKey(Production, on_delete=models.CASCADE)
 #    date = models.DateField()
 #    time = models.TimeField(blank=True, null=True)
 #    duration = models.IntegerField(blank=True, null=True)
-#    place = models.ForeignKey(Place)
+#    place = models.ForeignKey(Place, on_delete=models.CASCADE)
 #
 #    def __unicode__(self):
 #        return '%s %s performance of %s at %s' % (self.date, self.time, self.production, self.place)
@@ -313,8 +306,8 @@ class ProductionPlaceManager(models.Manager):
         return qs
 
 class Place(models.Model):
-    production = models.ForeignKey(Production)
-    place = models.ForeignKey(PlacePlace, related_name='productions_here')
+    production = models.ForeignKey(Production, on_delete=models.CASCADE)
+    place = models.ForeignKey(PlacePlace, related_name='productions_here', on_delete=models.CASCADE)
     start_date = ApproximateDateField(blank=True)
     press_date = models.DateField(blank=True, null=True)
     end_date = ApproximateDateField(blank=True)
@@ -336,8 +329,8 @@ class PartManager(models.Manager):
         return qs
 
 class Part(models.Model):
-    production = models.ForeignKey(Production)
-    person = models.ForeignKey(Person)
+    production = models.ForeignKey(Production, on_delete=models.CASCADE)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
     role = models.CharField(u'R\u00f4le', max_length=200, blank=True, help_text=u'e.g. \u201cRomeo\u201d or \u201cDirector\u201d')
     cast = models.NullBooleanField(null=True, blank=True, verbose_name='Cast/Crew',
         help_text=u'Crew includes all non-cast, from director to musicians to producers')
@@ -368,8 +361,8 @@ class Part(models.Model):
         return pretty_date_range(self.start_date, None, self.end_date)
 
 class Visit(models.Model):
-    production = models.ForeignKey(Production)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    production = models.ForeignKey(Production, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     recommend = models.BooleanField(default=False)
     date = ApproximateDateField(blank=True, default='')
 

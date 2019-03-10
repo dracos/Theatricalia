@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
                 ('closing_date', fields.ApproximateDateField(default=b'', max_length=10, blank=True)),
                 ('url', models.URLField(verbose_name=b'URL', blank=True)),
                 ('wikipedia', models.URLField(blank=True)),
-                ('country', models.ForeignKey(blank=True, to='countries.Country', null=True)),
+                ('country', models.ForeignKey(blank=True, to='countries.Country', null=True, on_delete=models.SET_NULL)),
             ],
             options={
                 'ordering': ['name'],

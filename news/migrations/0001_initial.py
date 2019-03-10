@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('visible', models.BooleanField(default=False)),
                 ('body', models.TextField()),
                 ('body_html', models.TextField(editable=False, blank=True)),
-                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('author', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.PROTECT)),
             ],
             options={
                 'ordering': ['-created'],

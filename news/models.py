@@ -1,12 +1,13 @@
 from django.db import models
 from django.conf import settings
+from django.urls import reverse
 
 class ArticleManager(models.Manager):
     def visible(self):
         return super(ArticleManager, self).get_queryset().filter(visible=True)
 
 class Article(models.Model):
-    author = models.ForeignKey(settings.AUTH_USER_MODEL)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     enable_comments = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(unique_for_month='created')
@@ -27,9 +28,8 @@ class Article(models.Model):
     def save(self, **kwargs):
         super(Article, self).save(kwargs)
 
-    @models.permalink
     def get_absolute_url(self):
-        return ('news-entry', (), {
+        return reverse('news-entry', kwargs={
             'year': self.created.year, 
             'month': self.created.strftime('%B').lower(),
             'slug': self.slug,

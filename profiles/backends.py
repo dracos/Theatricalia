@@ -5,7 +5,7 @@ from django.core.validators import validate_email
 from profiles.models import User
 
 class ModelBackend(DjangoModelBackend):
-    def authenticate(self, username=None, password=None):
+    def authenticate(self, request, username=None, password=None):
         """Case-insensitive email lookup"""
         try:
             try:
