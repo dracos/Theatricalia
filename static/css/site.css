@@ -27,6 +27,9 @@ body, input, select {
     /* Hmm, whether to include Optima-clones such as Optane, Opulent, Ottawa, "CG Omega", Eterna, "URW Classico" */
     font-family: Optima, "Zapf Humanist", "MgOpen Cosmetica", Candara, Myriad, "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Frutiger, "Trebuchet MS", sans-serif;
 }
+input, select, textarea {
+    font-size: 100%;
+}
 
 body {
     color: #000000;
@@ -270,10 +273,10 @@ h3 {
 /* Header */
 
 #header {
-    font-family: Zapfino, "Apple Chancery", "Zapf Chancery Italic", "Lucida Calligraphy", "Palatino Linotype", Palatino, "Book Antiqua", "Hoefler Text", Garamond, "Bookman Old Style", Bookman, serif;
+    overflow: hidden;
     padding-top: 0.75em;
-    padding-bottom: 1.5em;
-    margin-bottom: 0.75em;
+    padding-bottom: 2em;
+    margin-bottom: 2em;
     background-image: url("/static/i/rule-trim.png");
     background-repeat: no-repeat;
     background-position: 50% 100%;
@@ -289,6 +292,8 @@ h3 {
     vertical-align: top;
     width: 141px;
     height: 38px;
+        width: 212px;
+        height: 57px;
     /*
     -moz-transition: all 0.5s ease-in-out 0s;
     -webkit-transition: all 0.5s ease-in-out 0s;
@@ -302,6 +307,20 @@ h3 {
 
 #header form {
     line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+}
+#header form label {
+    padding-right: 0.25em;
+}
+#header form input[type=text] {
+    flex: 1 1 auto;
+}
+#header form input[type=submit] {
+}
+
+#search_term {
+    padding: 0.125em 0;
 }
 
 /*
@@ -335,10 +354,12 @@ h3 {
 }
 
 ul#navigation {
+    font-family: Zapfino, "Apple Chancery", "Zapf Chancery Italic", "Lucida Calligraphy", "Palatino Linotype", Palatino, "Book Antiqua", "Hoefler Text", Garamond, "Bookman Old Style", Bookman, serif;
     list-style-type: none;
     line-height: 3;
     text-decoration: none;
     text-align: center;
+    clear: both;
 }
 
 #navigation li {
@@ -806,16 +827,6 @@ p#book-tickets a:hover {
         padding: 0 1em;
     }
 
-    #main {
-        padding-top: 1.5em;
-    }
-
-    #header {
-        padding-bottom: 6em;
-        margin-bottom: 1.5em;
-        background-position: 25% 100%;
-    }
-
     #header div, #header h1 {
         float: left;
         line-height: 2;
@@ -823,16 +834,12 @@ p#book-tickets a:hover {
     }
 
     #header form {
+        display: block;
         float: right;
         line-height: 4.5;
     }
 
-    ul#navigation {
-        clear: right;
-        float: right;
-    }
-
-    h1, h2, h3, h4, h5, h6, #header {
+    h1, h2, h3, h4, h5, h6, #navigation {
         font-family: Zapfino, "Apple Chancery", "Zapf Chancery Italic", "Lucida Calligraphy", "Palatino Linotype", Palatino, "Book Antiqua", "Hoefler Text", Garamond, "Bookman Old Style", Bookman, serif;
     }
 
@@ -885,12 +892,6 @@ p#book-tickets a:hover {
         height: 76px;
     }
 
-    #header {
-        padding-top: 1.5em;
-        padding-bottom: 7.5em;
-        margin-bottom: 1.5em;
-        background-position: 25% 100%;
-    }
     ul#navigation {
         line-height: 3.6;
         font-size: 125%;
@@ -942,25 +943,11 @@ p#book-tickets a:hover {
 
 }
 
-@media all and (min-width: 770px) {
-    #header {
-        background-position: 50% 100%;
-        padding-bottom: 4.5em;
-    }
-}
-
 @media all and (min-width: 900px) {
     ul#navigation {
         clear: none;
         float: none;
     }
-    #header {
-        padding-bottom: 3em;
-    }
-    #main {
-        padding-top: 0;
-    }
-
 }
 
 @media all and (min-width: 35em) {
