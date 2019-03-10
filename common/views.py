@@ -1,7 +1,7 @@
 import re
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect, Http404, HttpResponse
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import IntegrityError
 from django.contrib import messages
 

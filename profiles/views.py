@@ -62,7 +62,7 @@ def profile(request, username):
     })
 
 def register(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return HttpResponseRedirect('/')
 
     form = RegistrationForm(request.POST or None)

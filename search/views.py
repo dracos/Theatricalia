@@ -2,7 +2,7 @@ import json
 import re # , difflib
 import urllib
 from django.apps import apps
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.db.models import Q

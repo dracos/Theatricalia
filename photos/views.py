@@ -17,7 +17,7 @@ from people.models import Person
 @login_required
 def take_photo(request):
     data = request.POST.copy()
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return HttpResponseBadRequest('Only signed in users can upload photographs.')
 
     ctype = data.get("content_type")

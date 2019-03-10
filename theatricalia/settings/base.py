@@ -118,16 +118,15 @@ TEMPLATES = [
     },
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'theatricalia.middleware.RemoteAddrMiddleware',
 
     'django.middleware.security.SecurityMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.gzip.GZipMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
@@ -137,7 +136,7 @@ MIDDLEWARE_CLASSES = [
     'reversion.middleware.RevisionMiddleware',
 ]
 if DEBUG:
-    MIDDLEWARE_CLASSES.insert(5, 'debug_toolbar.middleware.DebugToolbarMiddleware')
+    MIDDLEWARE.insert(5, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
 if 'staging' not in OUR_ROOT:
     SECURE_HSTS_SECONDS = 31536000

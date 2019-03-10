@@ -6,7 +6,7 @@ from django.utils import dateformat
 from django.utils.safestring import mark_safe
 from django.contrib.contenttypes.fields import GenericRelation
 from django.template.defaultfilters import slugify
-import reversion
+from reversion.models import Version
 
 from common.models import Alert
 from common.templatetags.prettify import prettify
@@ -108,7 +108,6 @@ class ProductionCompany(models.Model):
         return '%s/future' % self.get_absolute_url()
 
 class ProductionManager(models.Manager):
-    # use_for_related_fields = True
     def get_queryset(self):
         qs = super(ProductionManager, self).get_queryset()
         qs = qs.exclude(source__startswith='<a href="http://wo') # National
@@ -270,14 +269,14 @@ class Production(models.Model):
     def creator(self):
         if self.source: return ''
         try:
-            latest_version = reversion.get_for_object(self).order_by('revision__date_created')[0]
+            latest_version = Version.objects.get_for_object(self).order_by('revision__date_created')[0]
             return latest_version.revision.user
         except:
             return ''
 
     def last_modifier(self):
         try:
-            latest_version = reversion.get_for_object(self).order_by('-revision__date_created')[0]
+            latest_version = Version.objects.get_for_object(self).order_by('-revision__date_created')[0]
             return latest_version.revision.user
         except:
             return ''
@@ -308,7 +307,6 @@ class Production_Companies(models.Model):
 #        return '%s %s performance of %s at %s' % (self.date, self.time, self.production, self.place)
 
 class ProductionPlaceManager(models.Manager):
-    # use_for_related_fields = True
     def get_queryset(self):
         qs = super(ProductionPlaceManager, self).get_queryset()
         qs = qs.exclude(production__source__startswith='<a href="http://wo')
@@ -332,7 +330,6 @@ class Place(models.Model):
 class PartManager(models.Manager):
     def search(self, search):
         return self.get_queryset().filter(role__icontains=search).extra(select={'best_date': 'IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))'}).order_by('-best_date', 'production__place__press_date')
-    # use_for_related_fields = True
     def get_queryset(self):
         qs = super(PartManager, self).get_queryset()
         qs = qs.exclude(production__source__startswith='<a href="http://wo')

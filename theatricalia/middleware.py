@@ -1,10 +1,10 @@
-import six
-import re, random
+import re
+import random
 from django import http
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.core.urlresolvers import is_valid_path
+from django.urls import is_valid_path
 from django.shortcuts import render
 from django.utils.encoding import escape_uri_path, iri_to_uri
 from django.utils.http import urlquote
@@ -13,12 +13,26 @@ from common.models import Prelaunch
 
 from ratelimitcache import ratelimit
 
-class RemoteAddrMiddleware(object):
+
+class MyMiddleware(object):
+    def __init__(self, get_response, **kwargs):
+        self.get_response = get_response
+        super(MyMiddleware, self).__init__(**kwargs)
+
+    def __call__(self, request):
+        response = self.process_request(request)
+        if not response:
+            response = self.get_response(request)
+        return response
+
+
+class RemoteAddrMiddleware(MyMiddleware):
     def process_request(self, request):
        if 'REMOTE_ADDR' not in request.META or not request.META['REMOTE_ADDR']:
            request.META['REMOTE_ADDR'] = request.META['HTTP_X_REAL_IP']
 
-class OnlyLowercaseUrls:
+
+class OnlyLowercaseUrls(MyMiddleware):
     def process_request(self, request):
         if 'tickets/lost/' in request.path:
             return
@@ -26,7 +40,8 @@ class OnlyLowercaseUrls:
             path = request.get_full_path().replace(request.path, request.path.lower())
             return http.HttpResponseRedirect(path)
 
-class RemoveSlashMiddleware(object):
+
+class RemoveSlashMiddleware(MyMiddleware):
     response_redirect_class = http.HttpResponsePermanentRedirect
 
     def process_request(self, request):
@@ -71,12 +86,13 @@ class RemoveSlashMiddleware(object):
             ))
         return new_path
 
-class AlphaMiddleware(ratelimit):
+
+class AlphaMiddleware(MyMiddleware, ratelimit):
     cookie_name = 'godot'
     form_field_name = 'godot'
     
-    def __init__(self):
-        super(AlphaMiddleware, self).__init__(minutes=2, requests=10, expire_after=(2+1)*60)
+    def __init__(self, get_response):
+        super(AlphaMiddleware, self).__init__(get_response, minutes=2, requests=10, expire_after=(2+1)*60)
 
     def get_password(self):
         return settings.ALPHA_PASSWORD

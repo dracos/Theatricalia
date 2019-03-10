@@ -6,7 +6,7 @@ from fields import ApproximateDateField
 from photos.models import Photo
 from sounds.metaphone import dm
 from common.models import Alert
-import reversion
+from reversion.models import Version
 
 class PersonManager(models.Manager):
     def get_queryset(self):
@@ -113,7 +113,7 @@ class Person(models.Model):
     def creator(self):
         if self._creator is None:
             try:
-                latest_version = reversion.get_for_object(self).order_by('revision__date_created')[0]
+                latest_version = Version.objects.get_for_object(self).order_by('revision__date_created')[0]
                 self._creator = latest_version.revision.user
             except:
                 self._creator = ''
@@ -124,7 +124,7 @@ class Person(models.Model):
     def last_modifier(self):
         if self._last_modifier is None:
             try:
-                latest_version = reversion.get_for_object(self).order_by('-revision__date_created')[0]
+                latest_version = Version.objects.get_for_object(self).order_by('-revision__date_created')[0]
                 self._last_modifier = latest_version.revision.user
             except:
                 self._last_modifier = ''

@@ -132,8 +132,6 @@ class ApproximateDateField(models.CharField):
         defaults.update(kwargs)
         return super(ApproximateDateField, self).formfield(**defaults)
 
-#    def get_db_prep_lookup(self, lookup_type, value):
-#        pass
 
 DATE_INPUT_FORMATS = (
     '%Y-%m-%d', '%d/%m/%Y', '%d/%m/%y', # '2006-10-25', '25/10/2006', '25/10/06'

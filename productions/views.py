@@ -14,7 +14,6 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpRespons
 from django.conf import settings
 
 from django_comments.models import Comment
-from reversion.models import Version
 from utils import base32_to_int
 from shortcuts import check_url, UnmatchingSlugException
 from models import Production, Part, Place as ProductionPlace, Visit, ProductionCompany, Production_Companies
@@ -377,7 +376,7 @@ def add_from_company(request, company_id, company):
     return production_add(request, company=company)
 
 def post_comment_wrapper(request):
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
         return HttpResponseRedirect('/tickets')
     return post_comment(request)
 
