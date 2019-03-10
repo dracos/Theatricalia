@@ -23,13 +23,13 @@ def check_url(type, id, slug=None):
         raise Http404('Could not match id %s' % id)
     try:
         obj = type.objects.get(id=id)
-    except:
+    except type.DoesNotExist:
         content_type = ContentType.objects.get_for_model(type)
         try:
             redir = Redirect.objects.get(old_object_id=id, content_type=content_type)
             obj = redir.new_object
             mistyped = True
-        except:
+        except Redirect.DoesNotExist:
             raise Http404('No %s matches the given query.' % type._meta.object_name)
     if (slug is not None and obj.slug != slug) or mistyped:
         raise UnmatchingSlugException(obj)
