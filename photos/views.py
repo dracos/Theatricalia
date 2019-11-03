@@ -2,6 +2,7 @@ import os
 from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.core.exceptions import ObjectDoesNotExist
+from django.apps import apps
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from utils import base32_to_int
@@ -25,7 +26,7 @@ def take_photo(request):
     if ctype is None or object_id is None:
         return HttpResponseBadRequest("Missing content_type or object_id field.")
     try:
-        model = models.get_model(*ctype.split(".", 1))
+        model = apps.get_model(ctype)
         target = model._default_manager.get(id=object_id)
     except TypeError:
         return HttpResponseBadRequest("Invalid content_type value: %r" % escape(ctype))
