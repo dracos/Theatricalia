@@ -4,7 +4,7 @@ import urllib
 from django.apps import apps
 from django.urls import reverse
 from django.core.paginator import Paginator
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, Http404
 from django.db.models import Q
 from django.shortcuts import render
 from people.models import Person
@@ -248,7 +248,7 @@ def search_around(request, s, type=''):
             return search(request, redirect_okay=False)
         name = s.upper()
     else:
-        raise Exception, 'Bad request'
+        raise Http404()
 
     if not lat or not lon:
         return
