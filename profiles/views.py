@@ -12,7 +12,8 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 
-from django.db.models import Q
+from django.db.models import Q, Min
+from django.db.models.expressions import RawSQL
 from django.contrib.contenttypes.models import ContentType
 from django_comments.models import Comment
 from django.contrib import messages
@@ -51,7 +52,8 @@ def profile(request, username):
                 pass
         latest.append(versions)
 
-    seen = user.visit_set.extra(select={'best_date': 'IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))'}).order_by('-best_date', 'production__place__press_date').distinct()
+    # Min bit isn't needed except to make sure the GROUP BY gets added
+    seen = user.visit_set.annotate(min_press_date=Min('production__place__press_date')).annotate(best_date=RawSQL('MIN(IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date)))', ())).order_by('-best_date')
 
     return render(request, 'profile.html', {
         'view': user,

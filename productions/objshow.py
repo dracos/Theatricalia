@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.core.paginator import Paginator, InvalidPage
-from django.db.models import Q
+from django.db.models import Q, Min
+from django.db.models.expressions import RawSQL
 from django.http import Http404
 from django.shortcuts import render
 from models import Production, Part, ProductionCompany
@@ -40,14 +41,15 @@ def productions_filter(object, type, date_filter):
     if date_filter == 'past':
         if isinstance(object, Person):
             return o.extra(select={'best_date': 'IFNULL(press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))'}).order_by('-best_date')
+        elif isinstance(object, Place):
+            return o.annotate(min_press_date=Min('press_date')).annotate(best_date=RawSQL('MIN(IFNULL(press_date, IF(end_date!="", end_date, start_date)))', ())).order_by('-best_date')
         else:
-            return o.extra(select={'best_date': 'IFNULL(press_date, IF(end_date!="", end_date, start_date))'}).order_by('-best_date')
+            return o.annotate(min_press_date=Min('place__press_date')).annotate(best_date=RawSQL('MIN(IFNULL(press_date, IF(end_date!="", end_date, start_date)))', ())).order_by('-best_date')
     else:
         if isinstance(object, Place):
             return o.order_by('start_date', 'press_date')
         else:
             return o.order_by('place__start_date', 'place__press_date')
-    #.order_by('-IFNULL(press_date, IF(productions_production.end_date!="", productions_production.end_date, productions_production.start_date))')
 
 def productions_past(object, type):
     return productions_filter(object, type, 'past')
