@@ -22,10 +22,16 @@
 {% endif %}
 
 <p>{{ form.play.label_tag }} {{ form.play }}</p>
+{% if production.play.id %}
 <p class="help_text"><small>If you need to change the play&rsquo;s author
 or description, you can do that from the
 <a href="{{ production.play.get_edit_url }}">play&rsquo;s edit page</a>
 (you&rsquo;ll lose any changes you&rsquo;ve made to this page).</small></p>
+{% else %}
+<p class="help_text"><small>Enter the title of the play of this production.
+If needed, you can give the play an author and description over on its page once you&rsquo;ve
+entered this production.</small></p>
+{% endif %}
 
 {% for err in companies_formset.errors %}
 {{ err }}
@@ -71,7 +77,9 @@ if possible.</small></p>
 <ul>
 <li><strong>Edit production details</strong></li>
 <li><a href="edit/cast">Edit Cast &amp; Crew</a></li>
+{% if production.play.id %}
 <li><a href="{{ production.get_absolute_url }}">Disregard, and finish editing</a></li>
+{% endif %}
 </ul>
 
 <p>Play, Production company, and Place all use an auto-complete box to
