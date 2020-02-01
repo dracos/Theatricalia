@@ -6,6 +6,15 @@ from django.template.defaultfilters import stringfilter
 
 register = template.Library()
 
+
+def smart_quotes(s):
+    s = re.sub('(?:(?<=\A)|(?<=[([{"\-]|\s))\'', '&lsquo;', s)
+    s = re.sub('(?<!\s)\'(?!\Z|[.,:;!?"\'(){}[\]\-]|\s)', '&rsquo;', s)
+    s = re.sub('"([^"]*)"', r'&ldquo;\1&rdquo;', s)
+    s = s.replace('"', '&quot;').replace("'", '&rsquo;')
+    return s
+
+
 @register.filter
 @stringfilter
 def prettify(str):
@@ -28,18 +37,13 @@ def prettify(str):
     # Nice quotes
     str = str.replace('``', '&ldquo;').replace("''", '&rdquo;')
     if str.find('<') == -1:
-        str = re.sub('"([^"]*)"', r'&ldquo;\1&rdquo;', str)
-        #str = re.sub("(?P<closetext>[^\ \t\r\n\[\{\(\-])?'((?P=closetext)|(?=\s|s\b))", r'\1&rsquo;', str)
-        str = re.sub("'(.*?)'(?=[^\w]|$)", r'&lsquo;\1&rsquo;', str)
-        str = str.replace('"', '&quot;').replace("'", '&rsquo;')
+        str = smart_quotes(str)
     else:
         # Must be Safe data with HTML tags in it
         lines = []
         for line in re.split('(<[^>]*>)', str):
             if not re.match('<[^>]*>', line):
-                line = re.sub('"([^"]*)"', r'&ldquo;\1&rdquo;', line)
-                line = re.sub("'(.*?)'(?=[^\w]|$)", r'&lsquo;\1&rsquo;', line)
-                line = line.replace('"', '&quot;').replace("'", '&rsquo;')
+                line = smart_quotes(line)
             lines.append(line)
         str = ''.join(lines)
     #str = re.sub("'([dlstv])", r'&rsquo;\1', str) # Nice apostrophe
