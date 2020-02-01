@@ -20,7 +20,10 @@ type_dict = {
 
 def merge(request, url):
     try:
-        type, id, slug = url.split('/', 2)
+        splits = url.split('/', 2)
+        if len(splits) == 2:
+            splits.append(None)
+        type, id, slug = splits
         if type == 'production' and slug == 'merge':
             slug = None
     except ValueError:
