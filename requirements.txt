@@ -1,7 +1,7 @@
-Django==1.11.23
+Django==1.11.27
 MySQL-python==1.2.5
-Pillow==6.2.1
-django-contrib-comments==1.8.0
+Pillow==6.2.2
+django-contrib-comments==1.9.1
 django-nose==1.4.6
 django-reversion==2.0.13
-sorl-thumbnail==12.4.1
+sorl-thumbnail==12.5.0
