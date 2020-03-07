@@ -83,7 +83,7 @@ def play_edit(request, play_id, play):
     play.title = play.get_title_display()
     form = PlayEditForm(request.POST or None, instance=play)
     PlayAuthorFormSet = formset_factory(PlayAuthorForm)
-    initial = [ { 'person': author } for author in play.authors.all() ]
+    initial = [ { 'person': author.name() } for author in play.authors.all() ]
     formset = PlayAuthorFormSet(request.POST or None, initial=initial)
     if request.method == 'POST':
         if request.POST.get('disregard'):
@@ -91,10 +91,13 @@ def play_edit(request, play_id, play):
             return HttpResponseRedirect(play.get_absolute_url())
         if form.is_valid() and formset.is_valid():
             authors = []
+            name_to_id = { author.name():author for author in play.authors.all() }
             for author in formset.cleaned_data:
                 if author and author['person']:
                     if author.get('person_choice') == 'new':
                         author['person'] = Person.objects.create_from_name(author['person'])
+                    elif author.get('person_choice') == '':
+                        author['person'] = name_to_id[author['person']]
                     authors.append(author['person'])
             form.cleaned_data['authors'] = authors
             form.save()

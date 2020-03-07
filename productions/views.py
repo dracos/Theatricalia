@@ -208,7 +208,7 @@ def part_edit(request, play_id, play, production_id, part_id):
         data = request.POST or None,
         editing = True,
         instance = part,
-        initial = { 'person': part.person } # To make form have name rather than ID
+        initial = { 'person': part.person.name() } # To make form have name rather than ID
     )
 
     if request.method == 'POST':
