@@ -188,7 +188,7 @@
 {% endif %}
 
 {% if user.is_superuser %}
-<li><a href="/admin/productions/production/{{ production.id }}">Admin</a>
+<li><a href="/admin/productions/production/{{ production.id }}/change/">Admin</a>
 {% endif %}
 
 {% if not request.session.merging_production %}
