@@ -36,6 +36,8 @@ def prettify(str):
 
     # Nice quotes
     str = str.replace('``', '&ldquo;').replace("''", '&rdquo;')
+    cockney = ["'tain't","'twere","'twas","'tis","'twill","'til","'bout","'nuff","'round","'cause","'em"]
+    str = re.sub('|'.join(cockney) + '(?i)', lambda x: x.group(0).replace("'", '&rsquo;'), str)
     if str.find('<') == -1:
         str = smart_quotes(str)
     else:
