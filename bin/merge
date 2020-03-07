@@ -124,7 +124,12 @@ elif thing == 'production':
 
     ctype = ContentType.objects.get_for_model(alt)
     Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
-    Visit.objects.filter(production=alt).update(production=main)
+    for visit in Visit.objects.filter(production=alt):
+        visit.production = main
+        try:
+            visit.save()
+        except django.db.utils.IntegrityError:
+            visit.delete()
     Comment.objects.filter(content_type=ctype, object_pk=alt.id).update(object_pk=main.id)
     for company in Production_Companies.objects.filter(production=alt):
         company.production = main
