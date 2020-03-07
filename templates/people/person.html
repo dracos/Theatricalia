@@ -131,22 +131,6 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 {% endif %}
 </ul>
 
-{% ifnotequal person.last_modifier person.creator %}
-    {% if person.creator.name %}
-        <p>Added by <a href="{{ person.creator.profile.get_absolute_url }}">{{ person.creator.name }}</a>, last modified by <a href="{{ person.last_modifier.profile.get_absolute_url }}">{{ person.last_modifier.name }}</a>.</p>
-    {% else %}
-        <p>Last modified by <a href="{{ person.last_modifier.profile.get_absolute_url }}">{{ person.last_modifier.name }}</a>.</p>
-    {% endif %}
-{% else %}
-    {% if person.creator.name %}
-        <p>Added by <a href="{{ person.creator.profile.get_absolute_url }}">{{ person.creator.name }}</a>.</p>
-    {% else %}
-        {% if person.last_modifier.name %}
-            <p>Last modified by <a href="{{ person.last_modifier.profile.get_absolute_url }}">{{ person.last_modifier.name }}</a>.</p>
-        {% endif %}
-    {% endif %}
-{% endifnotequal %}
-
 <h2>Photographs</h2>
 
 <div id="photographs">
