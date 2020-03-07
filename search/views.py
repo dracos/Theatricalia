@@ -420,7 +420,7 @@ def search(request, redirect_okay=True):
         places = search_places(name_q, search)
         companies = ProductionCompany.objects.filter(name_q | Q(description__icontains=search))
         plays = Play.objects.filter(title_q)
-        parts = Paginator(Part.objects.search(search), 10, orphans=2)
+        parts = Paginator(Part.objects.search(search), 20, orphans=4)
 
         try:
             near_length = len(near.geonames)
