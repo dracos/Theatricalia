@@ -59,7 +59,7 @@ def profile(request, username):
         'view': user,
         'profile': profile,
         'latest': latest,
-        'observations': Comment.objects.filter(user=user).order_by('-submit_date')[:5],
+        'observations': Comment.objects.filter(user=user, is_public=True, is_removed=False).order_by('-submit_date')[:5],
         'seen': seen,
     })
 
