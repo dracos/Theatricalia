@@ -76,11 +76,11 @@ elif thing == 'place':
         Alert.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
         Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
         ProductionPlace.objects.filter(place=alt).update(place=main)
-        for attr in ('description', 'latitude', 'longitude', 'address', 'town', 'country_id', 'postcode', 'type', 'size', 'opening_date', 'closing_date', 'url', 'wikipedia'):
+        for attr in ('description', 'latitude', 'longitude', 'address', 'town', 'country_id', 'postcode', 'telephone', 'type', 'size', 'opening_date', 'closing_date', 'url', 'wikipedia'):
             if alt.__dict__[attr] and not main.__dict__[attr]:
                 main.__dict__[attr] = alt.__dict__[attr]
                 main.save()
-            elif alt.__dict__[attr] and main.__dict__[attr]:
+            elif alt.__dict__[attr] and main.__dict__[attr] and alt.__dict__[attr] != main.__dict__[attr]:
                 print "%s: 1: %s, 2: %s" % (attr, main.__dict__[attr], alt.__dict__[attr])
         Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
         Redirect.objects.create(old_object_id=alt_id, new_object=main)
