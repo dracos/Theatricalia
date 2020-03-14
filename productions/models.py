@@ -194,6 +194,9 @@ class Production(models.Model):
             self._place_set = self.place_set.order_by('start_date', 'press_date', 'end_date')
         return self._place_set
 
+    def place_set_ordered(self):
+        return self._get_place_set()
+
     # Find min/max dates from the places of this production
     def get_min_max_dates(self):
         start_date = None

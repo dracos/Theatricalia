@@ -90,7 +90,7 @@ def production(request, play_id, play, production_id, okay=False, format='html')
         json_serializer = serializers.get_serializer("json")()
         out = {
             'production': py_serializer.serialize([production], ensure_ascii=False),
-            'places': py_serializer.serialize(production.place_set.order_by('start_date', 'press_date'), ensure_ascii=False),
+            'places': py_serializer.serialize(production.place_set_ordered(), ensure_ascii=False),
             'cast': py_serializer.serialize(cast, ensure_ascii=False),
             'crew': py_serializer.serialize(crew, ensure_ascii=False),
             'other': py_serializer.serialize(other, ensure_ascii=False),
@@ -102,7 +102,7 @@ def production(request, play_id, play, production_id, okay=False, format='html')
 
     return render(request, 'production.html', {
         'production': production,
-        'places': production.place_set.order_by('start_date', 'press_date'),
+        'places': production.place_set_ordered(),
 #        'production_form': production_form,
 #        'production_formset': formset,
         'cast': cast,
@@ -224,7 +224,7 @@ def part_edit(request, play_id, play, production_id, part_id):
         'id': part_id,
         'form': part_form,
         'production': production,
-        'places': production.place_set.order_by('start_date', 'press_date'),
+        'places': production.place_set_ordered(),
     })
 
 @login_required
@@ -266,7 +266,7 @@ def production_edit(request, play_id, play, production_id):
         'place_formset': place_formset,
         'companies_formset': companies_formset,
         'production': production,
-        'places': production.place_set.order_by('start_date', 'press_date'),
+        'places': production.place_set_ordered(),
     })
 
 @login_required
@@ -290,7 +290,7 @@ def production_edit_cast(request, play_id, play, production_id):
 
     return render(request, 'productions/edit-parts.html', {
         'production': production,
-        'places': production.place_set.order_by('start_date', 'press_date'),
+        'places': production.place_set_ordered(),
         'form': part_form,
         'parts': production.part_set.order_by('-cast', 'order', 'role', 'person__last_name', 'person__first_name'),
     })
