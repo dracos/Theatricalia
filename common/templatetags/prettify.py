@@ -78,8 +78,8 @@ def prettify(str):
     #str = re.sub(r'^9\s', 'Nine ', str)
     #str = re.sub(r'^0\s', 'Zero ', str)
 
-    str = re.sub(r'(\s[0-9.,]+) ([A-Za-z])', r'\1&nbsp;\2', str) # Hard space short numerical and maths expressions
-    str = re.sub(r' ([0-9][A-Z][A-Z])', r'&nbsp;\1', str)
+    str = re.sub(r'(\s[0-9.,]+) ([A-Za-z])', r'\1&#8239;\2', str) # Hard space short numerical and maths expressions
+    str = re.sub(r' ([0-9][A-Z][A-Z])', r'&#8239;\1', str)
 
     str = re.sub('\(press night\)', '<small>(press night)</small>', str)
 
