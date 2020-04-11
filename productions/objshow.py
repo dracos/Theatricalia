@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.core.paginator import Paginator, InvalidPage
-from django.db.models import Q, Min
+from django.db.models import Q, Max
 from django.db.models.expressions import RawSQL
 from django.http import Http404
 from django.shortcuts import render
@@ -15,41 +15,42 @@ from aggregates import Concatenate
 def productions_filter(object, type, date_filter):
     o = None
     now = datetime.now()
+
     if isinstance(object, Place):
-        filter = ( ~Q(end_date='') & Q(end_date__lt=now) ) | Q(end_date='', press_date__lt=now) | Q(end_date='', press_date__isnull=True, start_date__lt=now)
-        if date_filter == 'past':
-            o = object.productions_here.filter(filter).distinct()
-        else:
-            o = object.productions_here.exclude(filter).distinct()
+        o = object.productions_here
+        annotate_extra = ''
+        filter_extra = False
     elif isinstance(object, Person) or isinstance(object, Play) or isinstance(object, ProductionCompany):
-        filter = ( ~Q(place__end_date='') & Q(place__end_date__lt=now) ) | Q(place__end_date='', place__press_date__lt=now) | Q(place__end_date='', place__press_date__isnull=True, place__start_date__lt=now)
-        if date_filter == 'past':
-            o = object.productions.filter(filter).distinct()
-        else:
-            o = object.productions.exclude(filter).distinct()
+        o = object.productions
+        annotate_extra = 'place__'
+        filter_extra = False
     elif type=='places':
-        filter = ( ~Q(place__end_date='') & Q(place__end_date__lt=now) ) | Q(place__end_date='', place__press_date__lt=now) | Q(place__end_date='', place__press_date__isnull=True, place__start_date__lt=now)
-        if date_filter == 'past':
-            o = Production.objects.filter(filter, place__place__in=object)
-        else:
-            o = Production.objects.exclude(filter).filter(place__place__in=object)
+        o = Production.objects
+        annotate_extra = 'place__'
+        filter_extra = True
     else:
         raise Exception, 'Strange call to productions_filter'
+
+    o = o.annotate(max_end_date=Max(annotate_extra + 'end_date'), max_press_date=Max(annotate_extra + 'press_date'), max_start_date=Max(annotate_extra + 'start_date'))
+    filter = ( ~Q(max_end_date='') & Q(max_end_date__lt=now) ) | Q(max_end_date='', max_press_date__lt=now) | Q(max_end_date='', max_press_date__isnull=True, max_start_date__lt=now)
+    if filter_extra:
+        if date_filter == 'past':
+            o = o.filter(filter, place__place__in=object)
+        else:
+            o = o.exclude(filter).filter(place__place__in=object)
+    else:
+        if date_filter == 'past':
+            o = o.filter(filter).distinct()
+        else:
+            o = o.exclude(filter).distinct()
+
     if isinstance(object, Person):
         o = o.annotate(part__role__concatenate=Concatenate('part__role'))
 
     if date_filter == 'past':
-        if isinstance(object, Person):
-            return o.extra(select={'best_date': 'IFNULL(press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))'}).order_by('-best_date')
-        elif isinstance(object, Place):
-            return o.annotate(min_press_date=Min('press_date')).annotate(best_date=RawSQL('MIN(IFNULL(press_date, IF(end_date!="", end_date, start_date)))', ())).order_by('-best_date')
-        else:
-            return o.annotate(min_press_date=Min('place__press_date')).annotate(best_date=RawSQL('MIN(IFNULL(press_date, IF(end_date!="", end_date, start_date)))', ())).order_by('-best_date')
+        return o.annotate(best_date=RawSQL('MIN(IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date)))', ())).order_by('-best_date')
     else:
-        if isinstance(object, Place):
-            return o.order_by('start_date', 'press_date')
-        else:
-            return o.order_by('place__start_date', 'place__press_date')
+        return o.order_by(annotate_extra + 'start_date', annotate_extra + 'press_date')
 
 def productions_past(object, type):
     return productions_filter(object, type, 'past')
