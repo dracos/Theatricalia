@@ -119,9 +119,9 @@ at the <a href="/place/46/courtyard-theatre-stratford-upon-avon">Courtyard Theat
     {% firstof latest_production.place_set_ordered|length as places %}
     at
     {% for place in latest_production.place_set_ordered|slice:":5" %}
-        {% if forloop.last and not forloop.first and places <= 5 %} and {% endif %}
+        {% if forloop.last and not forloop.first and places|add:0 <= 5 %} and {% endif %}
         <a href="{{ place.place.get_absolute_url }}">{{ place.place|prettify }}</a>
-        <small>({{ place.date_summary|prettify }})</small>{% ifequal forloop.revcounter0 0 %}{% else %}{% ifequal forloop.revcounter0 1 %}{% ifnotequal forloop.counter0 0 %},{% endifnotequal %}{% else %},{% endifequal %}{% endifequal %}{% endfor %}{% if places > 5 %} and other locations{% endif %}.
+        <small>({{ place.date_summary|prettify }})</small>{% ifequal forloop.revcounter0 0 %}{% else %}{% ifequal forloop.revcounter0 1 %}{% ifnotequal forloop.counter0 0 %},{% endifnotequal %}{% else %},{% endifequal %}{% endifequal %}{% endfor %}{% if places|add:0 > 5 %} and other locations{% endif %}.
 {% endifequal %}
 {% endifequal %}
 {% ifnotequal latest_production.last_modifier latest_production.creator %}
