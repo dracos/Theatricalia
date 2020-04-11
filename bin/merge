@@ -142,7 +142,16 @@ elif thing == 'production':
     if alt.source:
         main.source += "\n\n" + alt.source
 
-    ProductionPlace.objects.filter(production=alt).update(production=main)
+    #ProductionPlace.objects.filter(production=alt).update(production=main)
+    for place in ProductionPlace.objects.filter(production=alt):
+        if ProductionPlace.objects.filter(place=place.place, production=main, start_date=place.start_date or '', end_date=place.end_date or '', press_date=place.press_date):
+            print "Going to delete %s" % place
+            place.delete()
+        else:
+            place.production = main
+            print "Going to save %s" % place
+            place.save()
+
     #main_place = main.place_set.all()[0]
     #alt_place = alt.place_set.all()[0]
     #Part.objects.filter(production=main, start_date='', end_date='').update(start_date=main_place.start_date, end_date=main_place.end_date)
