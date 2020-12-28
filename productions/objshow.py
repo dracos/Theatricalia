@@ -45,7 +45,7 @@ def productions_filter(object, type, date_filter):
             o = o.exclude(filter).distinct()
 
     if isinstance(object, Person):
-        o = o.annotate(part__role__concatenate=Concatenate('part__role'))
+        o = o.annotate(part__role__concatenate=Concatenate('part__role', distinct=True))
 
     if date_filter == 'past':
         return o.annotate(best_date=RawSQL('MIN(IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date)))', ())).order_by('-best_date')
