@@ -163,6 +163,12 @@ elif thing == 'production':
         elif not part.role and Part.objects.filter(person=part.person, production=main, cast=part.cast, credited_as=part.credited_as, order=part.order, start_date=part.start_date or '', end_date=part.end_date or ''):
             print "Going to delete %s" % part
             part.delete()
+        elif Part.objects.filter(person=part.person, production=main, cast=part.cast, credited_as=part.credited_as, order=part.order, start_date=part.start_date or '', end_date=part.end_date or '', role=None):
+            ppp = Part.objects.filter(person=part.person, production=main, cast=part.cast, credited_as=part.credited_as, order=part.order, start_date=part.start_date or '', end_date=part.end_date or '', role=None).first()
+            ppp.role = part.role
+            ppp.save()
+            print "Going to move %s to main" % part
+            part.delete()
         else:
             part.production = main
             print "Going to save %s" % part
