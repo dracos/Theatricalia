@@ -109,6 +109,7 @@ class ProductionManager(models.Manager):
     def get_queryset(self):
         qs = super(ProductionManager, self).get_queryset()
         qs = qs.exclude(source__startswith='<a href="http://wo') # National
+        qs = qs.exclude(source__startswith='HIDE')
         # qs = qs.exclude(source__endswith='University of Bristol Theatre Collection</a>')
         # qs = qs.exclude(source__endswith='AHDS Performing Arts</a>')
         # qs = qs.exclude(source__endswith='RSC Performance Database</a>')

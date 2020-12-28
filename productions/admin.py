@@ -61,6 +61,11 @@ class ProductionAdmin(VersionAdmin, AutocompleteModelAdmin):
         VisitInline,
     ]
 
+    def get_queryset(self, request):
+        if request.user.is_superuser:
+            return Production.all_objects.all()
+        return super(ProductionAdmin, self).get_queryset(request)
+
 class PlaceAdmin(VersionAdmin):
     raw_id_fields = ('production', 'place')
 
