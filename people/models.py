@@ -16,11 +16,10 @@ class PersonManager(models.Manager):
         return qs
 
     def from_name(self, name):
-        names = name.split(None, 1)
-        if len(names)==2:
-            first_name, last_name = names
-        else:
-            first_name, last_name = u'', name
+        names = name.split(None)
+        spl = len(names) // 2
+        first_name = u' '.join(names[:spl])
+        last_name = u' '.join(names[spl:])
         new_person = Person(first_name=first_name, last_name=last_name)
         return new_person
 
