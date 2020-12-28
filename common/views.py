@@ -25,7 +25,7 @@ from utils import base32_to_int
 #        alert = AlertLocal(user=request.user, latitude=lat, longitude=lon)
 #        try:
 #            alert.save()
-#        except IntegrityError, e:
+#        except IntegrityError as e:
 #            if e.args[0] != 1062: # Duplicate
 #                raise
 #        messages.success(request, u"Your alert has been added.")
@@ -54,7 +54,7 @@ def api_flickr(request, type, id):
 
     try:
         object = check_url(obj_type, id)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         url = '/api/%s/%s/flickr' % (type, e.args[0].id)
         return HttpResponsePermanentRedirect(url)
 

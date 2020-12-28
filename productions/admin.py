@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django import forms
 from reversion.admin import VersionAdmin
-from models import Production, ProductionCompany, Part, Place, Production_Companies, Visit
-from forms import AutoCompleteMultiValueField
+from .models import Production, ProductionCompany, Part, Place, Production_Companies, Visit
+from .forms import AutoCompleteMultiValueField
 from plays.models import Play
 from people.models import Person
 from autocomplete.widgets import AutocompleteModelAdmin, ForeignKeySearchInput

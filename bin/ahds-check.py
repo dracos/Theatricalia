@@ -89,7 +89,7 @@ for n in range(1, 67):
         #else:
             #location, created = Place.objects.get_or_create(name='Unknown')
             #ProductionPlace.objects.get_or_create(production=production, place=location, start_date=data['first'], end_date=data['last'])
-        print places, data['theatre']
+        print(places, data['theatre'])
         continue
 
         total = 0
@@ -109,5 +109,4 @@ for n in range(1, 67):
         parts = parts.count()
         if orig_parts == total:
             continue
-        print data['id'], total, parts, orig_parts, data['play']
-
+        print(data['id'], total, parts, orig_parts, data['play'])

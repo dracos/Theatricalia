@@ -37,11 +37,11 @@ def qnum(s1, s2):
 	return (hits + 0.0) / (lens1 + lens2 - 2)
 
 if __name__ == '__main__' :
-	print qnum('Anthony Share', 'Antony Sher')
-	print qnum('Chuk Iwuji', 'Chuck Iwugee')
+	print(qnum('Anthony Share', 'Antony Sher'))
+	print(qnum('Chuk Iwuji', 'Chuck Iwugee'))
 	#import sys
 	#line = 'foo'
 	#while line:
 	#	line = sys.stdin.readline().strip()
-	#	print line, damerau(line.lower(), 'Antony Sher'.lower())
+	#	print(line, damerau(line.lower(), 'Antony Sher'.lower()))
 

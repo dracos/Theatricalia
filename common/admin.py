@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import Alert, AlertLocal, AlertSent
+from .models import Alert, AlertLocal, AlertSent
 
 class AlertAdmin(admin.ModelAdmin):
     pass

@@ -20,4 +20,4 @@ for x in possibilities:
 
 # Move the best scorers to head of list
 result = heapq.nlargest(n, result)
-print result
+print(result)

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import Redirect
+from .models import Redirect
 
 admin.site.register(Redirect, admin.ModelAdmin)
 

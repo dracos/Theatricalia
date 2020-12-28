@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.contenttypes.models import ContentType
-from models import Photo
+from .models import Photo
 
 class PhotoForm(forms.ModelForm):
     content_type  = forms.CharField(widget=forms.HiddenInput)

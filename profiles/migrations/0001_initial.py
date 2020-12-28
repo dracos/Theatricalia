@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('biography', models.TextField(blank=True)),
-                ('url', models.URLField(verbose_name=b'Website', blank=True)),
+                ('url', models.URLField(verbose_name='Website', blank=True)),
                 ('email_validated', models.BooleanField()),
                 ('last_alert_sent', models.DateTimeField(auto_now_add=True)),
                 ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),

@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('enable_comments', models.BooleanField(default=True)),
                 ('created', models.DateTimeField(auto_now_add=True)),
-                ('slug', models.SlugField(unique_for_month=b'created')),
+                ('slug', models.SlugField(unique_for_month='created')),
                 ('title', models.CharField(max_length=100)),
                 ('visible', models.BooleanField(default=False)),
                 ('body', models.TextField()),

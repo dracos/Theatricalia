@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='production_companies',
             name='productioncompany',
-            field=models.ForeignKey(verbose_name=b'company', to='productions.ProductionCompany', on_delete=models.CASCADE),
+            field=models.ForeignKey(verbose_name='company', to='productions.ProductionCompany', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(

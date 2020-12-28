@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=255)),
                 ('slug', models.SlugField(max_length=255)),
                 ('description', models.TextField(blank=True)),
-                ('url', models.URLField(verbose_name=b'URL', blank=True)),
+                ('url', models.URLField(verbose_name='URL', blank=True)),
                 ('wikipedia', models.URLField(blank=True)),
                 ('authors', models.ManyToManyField(related_name='plays', to='people.Person', blank=True)),
                 ('parent', models.ForeignKey(related_name='children', blank=True, to='plays.Play', null=True, on_delete=models.SET_NULL)),

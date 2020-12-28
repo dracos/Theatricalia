@@ -24,13 +24,13 @@ class Play(models.Model):
     class Meta:
         ordering = ['title']
 
-    def __unicode__(self):
+    def __str__(self):
         title = self.get_title_display()
         authors = ''
         if self.id:
             authors = self.get_authors_display(html=False)
         if authors:
-            title += u', by ' + authors
+            title += ', by ' + authors
         return title
 
     @property
@@ -49,18 +49,18 @@ class Play(models.Model):
     def get_authors_display(self, html=True):
         num = self.authors.count()
         if html:
-            authors = map(lambda x: u'<span itemprop="author" itemscope itemtype="http://schema.org/Person"><a itemprop="url" href="%s">%s</a></span>' % (x.get_absolute_url(), prettify(x)), self.authors.all())
+            authors = ['<span itemprop="author" itemscope itemtype="http://schema.org/Person"><a itemprop="url" href="%s">%s</a></span>' % (x.get_absolute_url(), prettify(x)) for x in self.authors.all()]
         else:
-            authors = [ unicode(x) for x in self.authors.all() ]
+            authors = [ str(x) for x in self.authors.all() ]
         if num > 2:
-            str = u', '.join(authors[:num-2]) + u', ' + u', and '.join(authors[num-2:])
+            s = u', '.join(authors[:num-2]) + u', ' + u', and '.join(authors[num-2:])
         elif num == 2:
-            str = u' and '.join(authors)
+            s = u' and '.join(authors)
         elif num == 1:
-            str = authors[0]
+            s = authors[0]
         else:
-            str = u''
-        return mark_safe(str)
+            s = u''
+        return mark_safe(s)
             
     def construct_url(self, name, *args):
         return reverse(name, args=(int_to_base32(self.id), self.slug) + args)

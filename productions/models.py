@@ -76,7 +76,7 @@ class ProductionCompany(models.Model):
         ordering = ['name']
         verbose_name_plural = 'production companies'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def save(self, **kwargs):
@@ -175,7 +175,7 @@ class Production(models.Model):
     def get_seen_no_url(self):
         return self.url_components('production-seen', type='remove')
 
-    def __unicode__(self):
+    def __str__(self):
         producer = places = ''
         if self.id:
             producer = self.get_companies_display(html=False)
@@ -183,11 +183,11 @@ class Production(models.Model):
 
             places = self.place_summary()
             if places == 'Unknown location':
-                places = u''
+                places = ''
             else:
-                places = u'%s, ' % places
+                places = '%s, ' % places
 
-        return u"%sproduction of %s, %s%s" % (producer, self.play, places, self.date_summary())
+        return "%sproduction of %s, %s%s" % (producer, self.play, places, self.date_summary())
 
     _place_set = None
     def _get_place_set(self):
@@ -247,18 +247,18 @@ class Production(models.Model):
         companies = self._get_companies()
         num = len(companies)
         if html:
-            companies = map(lambda x: u'<span itemscope itemtype="http://schema.org/TheaterGroup"><a itemprop="url" href="%s">%s</a></span>' % (x.get_absolute_url(), prettify(x)), companies)
+            companies = ['<span itemscope itemtype="http://schema.org/TheaterGroup"><a itemprop="url" href="%s">%s</a></span>' % (x.get_absolute_url(), prettify(x)) for x in companies]
         else:
-            companies = [ unicode(x) for x in companies ]
+            companies = [ str(x) for x in companies ]
         if num > 2:
-            str = u', '.join(companies[:num-2]) + u', ' + u', and '.join(companies[num-2:])
+            s = u', '.join(companies[:num-2]) + u', ' + u', and '.join(companies[num-2:])
         elif num == 2:
-            str = u' and '.join(companies)
+            s = u' and '.join(companies)
         elif num == 1:
-            str = companies[0]
+            s = companies[0]
         else:
-            str = u''
-        return mark_safe(str)
+            s = u''
+        return mark_safe(s)
         
     def title(self):
         return self.get_companies_display() or ''
@@ -290,8 +290,8 @@ class Production_Companies(models.Model):
     class Meta:
         verbose_name = 'production-company many-to-many'
 
-    def __unicode__(self):
-        return u"%s's bit in %s" % (self.productioncompany, self.production)
+    def __str__(self):
+        return "%s's bit in %s" % (self.productioncompany, self.production)
 
 #class Performance(models.Model):
 #    production = models.ForeignKey(Production, on_delete=models.CASCADE)
@@ -300,7 +300,7 @@ class Production_Companies(models.Model):
 #    duration = models.IntegerField(blank=True, null=True)
 #    place = models.ForeignKey(Place, on_delete=models.CASCADE)
 #
-#    def __unicode__(self):
+#    def __str__(self):
 #        return '%s %s performance of %s at %s' % (self.date, self.time, self.production, self.place)
 
 class ProductionPlaceManager(models.Manager):
@@ -318,8 +318,8 @@ class Place(models.Model):
 
     objects = ProductionPlaceManager()
 
-    def __unicode__(self):
-        return u"The part of production %d at %s, %s" % (self.production.id, self.place, self.date_summary())
+    def __str__(self):
+        return "The part of production %d at %s, %s" % (self.production.id, self.place, self.date_summary())
 
     def date_summary(self):
         return pretty_date_range(self.start_date, self.press_date, self.end_date)
@@ -350,8 +350,8 @@ class Part(models.Model):
         if lowercase: return 'unknown'
         return 'Unknown'
 
-    def __unicode__(self):
-        return u'%s, %s in %s' % (self.person, self.role_or_unknown(True), self.production)
+    def __str__(self):
+        return '%s, %s in %s' % (self.person, self.role_or_unknown(True), self.production)
 
     def cast_string(self):
         if self.cast == 1:
@@ -373,10 +373,10 @@ class Visit(models.Model):
     class Meta:
         unique_together = (('user', 'production'),)
     
-    def __unicode__(self):
-        out = u'%s saw %s' % (self.user, self.production)
+    def __str__(self):
+        out = '%s saw %s' % (self.user, self.production)
         if self.recommend:
-            out += u', recommended'
+            out += ', recommended'
         return out
 
     # Might as well just return the URL for the production for now

@@ -8,6 +8,6 @@ class Redirect(models.Model):
     new_object_id = models.PositiveIntegerField()
     new_object = GenericForeignKey('content_type', 'new_object_id')
 
-    def __unicode__(self):
-        return u'ID %s -> %s' % (self.old_object_id, self.new_object)
+    def __str__(self):
+        return 'ID %s -> %s' % (self.old_object_id, self.new_object)
 

@@ -16,7 +16,7 @@ framework.
 import os
 
 if 'staging' in os.path.dirname(__file__):
-    import wsgi_monitor
+    from . import wsgi_monitor
     wsgi_monitor.start(interval=1.0)
 
 # We defer to a DJANGO_SETTINGS_MODULE already in the environment. This breaks

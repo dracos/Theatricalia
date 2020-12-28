@@ -1,6 +1,6 @@
 from django import forms
-from models import Person
-from admin import PersonAdmin
+from .models import Person
+from .admin import PersonAdmin
 
 class PersonEditForm(forms.ModelForm):
     #last_modified = forms.DateTimeField(widget=forms.HiddenInput(), required=False)

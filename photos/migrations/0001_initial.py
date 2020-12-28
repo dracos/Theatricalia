@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('is_visible', models.BooleanField(default=True)),
                 ('title', models.CharField(max_length=255)),
-                ('photo', sorl.thumbnail.fields.ImageField(upload_to=photos.models.get_upload_to, max_length=255, verbose_name=b'Photograph')),
+                ('photo', sorl.thumbnail.fields.ImageField(upload_to=photos.models.get_upload_to, max_length=255, verbose_name='Photograph')),
                 ('object_id', models.PositiveIntegerField()),
                 ('content_type', models.ForeignKey(to='contenttypes.ContentType', on_delete=models.PROTECT)),
             ],

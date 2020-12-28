@@ -5,10 +5,10 @@ from sounds.jarowpy import jarow
 from sounds.levenshtein import damerau, qnum
 
 def compare(s1f, s1l, s2f, s2l):
-	s1f = unicode(s1f.lower())
-	s1l = unicode(s1l.lower())
-	s2f = unicode(s2f.lower())
-	s2l = unicode(s2l.lower())
+	s1f = str(s1f.lower())
+	s1l = str(s1l.lower())
+	s2f = str(s2f.lower())
+	s2l = str(s2l.lower())
 	s1 = "%s %s" % (s1f, s1l)
 	s2 = "%s %s" % (s2f, s2l)
 	soundex1 = soundex(s1)
@@ -38,12 +38,12 @@ def compare(s1f, s1l, s2f, s2l):
 	qnumN = qnum(s1, s2)
 	qnumNf = qnum(s1f, s2f)
 	qnumNl = qnum(s1l, s2l)
-	print "\n%s entered, %s wanted" % (s2, s1)
-	#print "Soundex\t\tFull:%s/%s %s\tFirst:%s/%s %s\tLast:%s/%s %s" % (soundex1, soundex2, soundexMatch, soundex1f, soundex2f, soundexFMatch, soundex1l, soundex2l, soundexLMatch)
-	print "Metaphone\tFull:%s/%s %s\tFirst:%s/%s %s\tLast:%s/%s %s" % (dm1, dm2, dmMatch, dm1f, dm2f, dmFMatch, dm1l, dm2l, dmLMatch)
-	print "Algorithm\tFull name\tFirst name\tLast name"
-	print "Jarow\t\t%.4f\t\t%.4f\t\t%.4f\nDamerau\t\t%.4f\t\t%.4f\t\t%.4f" % (jarowN, jarowNf, jarowNl, damerauN, damerauNf, damerauNl)
-	#print "Qnum\t\t%.4f\t\t%.4f\t\t%.4f" % (qnumN, qnumNf, qnumNl)
+	print("\n%s entered, %s wanted" % (s2, s1))
+	#print("Soundex\t\tFull:%s/%s %s\tFirst:%s/%s %s\tLast:%s/%s %s" % (soundex1, soundex2, soundexMatch, soundex1f, soundex2f, soundexFMatch, soundex1l, soundex2l, soundexLMatch))
+	print("Metaphone\tFull:%s/%s %s\tFirst:%s/%s %s\tLast:%s/%s %s" % (dm1, dm2, dmMatch, dm1f, dm2f, dmFMatch, dm1l, dm2l, dmLMatch))
+	print("Algorithm\tFull name\tFirst name\tLast name")
+	print("Jarow\t\t%.4f\t\t%.4f\t\t%.4f\nDamerau\t\t%.4f\t\t%.4f\t\t%.4f" % (jarowN, jarowNf, jarowNl, damerauN, damerauNf, damerauNl))
+	#print("Qnum\t\t%.4f\t\t%.4f\t\t%.4f" % (qnumN, qnumNf, qnumNl))
 
 def test():
     compare('Robert', 'Goodwill', 'Bob', 'Goodwell')

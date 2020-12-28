@@ -1,6 +1,6 @@
 from django.contrib import admin
 from reversion.admin import VersionAdmin
-from models import Photo
+from .models import Photo
 
 @admin.register(Photo)
 class PhotoAdmin(VersionAdmin):

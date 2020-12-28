@@ -29,7 +29,7 @@ def generate(request, date=None, testing=False):
         'production': production
     }
     response = render(request, 'lp/day.html', context)
-    response['ETag'] = '"%s"' % hashlib.sha224(str(production.id)).hexdigest()
+    response['ETag'] = '"%s"' % hashlib.sha224(bytes(production.id)).hexdigest()
     return response
 
 def edition(request):

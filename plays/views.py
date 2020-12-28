@@ -12,23 +12,23 @@ from django.shortcuts import render
 from mixins import ListMixin
 
 from shortcuts import check_url, UnmatchingSlugException
-from models import Play
+from .models import Play
 from people.models import Person
-from forms import PlayEditForm, PlayAuthorForm
+from .forms import PlayEditForm, PlayAuthorForm
 from productions.objshow import productions_list, productions_for
 from common.models import Alert
 
 def play_short_url(request, play_id):
     try:
         play = check_url(Play, play_id)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         play = e.args[0]
     return HttpResponsePermanentRedirect(play.get_absolute_url())
 
 def play_productions(request, play_id, play, type):
     try:
         play = check_url(Play, play_id, play)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         if type == 'future':
             url = e.args[0].get_future_url()
         elif type == 'past':
@@ -39,7 +39,7 @@ def play_productions(request, play_id, play, type):
 def play(request, play_id, play):
     try:
         play = check_url(Play, play_id, play)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     past, future = productions_for(play)
     alert = play.alerts.filter(user=request.user.pk)
@@ -56,14 +56,14 @@ def play(request, play_id, play):
 #def play_alert(request, play_id, play, type):
 #    try:
 #        play = check_url(Play, play_id, play)
-#    except UnmatchingSlugException, e:
+#    except UnmatchingSlugException as e:
 #        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 #
 #    if type == 'add':
 #        alert = Alert(user=request.user, content_object=play)
 #        try:
 #            alert.save()
-#        except IntegrityError, e:
+#        except IntegrityError as e:
 #            if e.args[0] != 1062: # Duplicate
 #                raise
 #        messages.success(request, u"Your alert has been added.")
@@ -77,7 +77,7 @@ def play(request, play_id, play):
 def play_edit(request, play_id, play):
     try:
         play = check_url(Play, play_id, play)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_edit_url())
 
     play.title = play.get_title_display()

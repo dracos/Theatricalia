@@ -1,6 +1,6 @@
 import json
 import re # , difflib
-import urllib
+import urllib.request, urllib.parse
 from django.apps import apps
 from django.urls import reverse
 from django.core.paginator import Paginator
@@ -17,7 +17,7 @@ from sounds.jarowpy import jarow
 from productions.objshow import productions_for, productions_list
 from common.models import AlertLocal
 from common.templatetags.prettify import prettify_list
-from forms import SearchForm
+from .forms import SearchForm
 
 distance = jarow
 threshold = 0.8
@@ -88,7 +88,7 @@ def search_autocomplete(request):
             q = q | Q(first_name__icontains=first, last_name__icontains=last)
 
         qs = model.objects.filter( q )[:20]
-    data = ''.join([u'%s|%s\n' % (f.__unicode__(), f.pk) for f in qs])
+    data = ''.join(['%s|%s\n' % (f.__str__(), f.pk) for f in qs])
     return HttpResponse(data)
 
 def search_people(search, force_similar=False, use_distance=True):
@@ -213,7 +213,7 @@ def search_places(name_q, search):
 def search_geonames(s):
     try:
         splurgle
-        r = urllib.urlopen('http://ws.geonames.org/searchJSON?isNameRequired=true&style=LONG&q=' + urllib.quote(s.encode('utf-8')) + '&maxRows=20').read()
+        r = urllib.request.urlopen('http://ws.geonames.org/searchJSON?isNameRequired=true&style=LONG&q=' + urllib.parse.quote(s.encode('utf-8')) + '&maxRows=20').read()
         r = json.loads(r)
     except:
         r = ''
@@ -233,7 +233,7 @@ def search_around(request, s, type=''):
         name = request.GET.get('name', '')
     elif validate_postcode(s):
         try:
-            r = urllib.urlopen('https://mapit.mysociety.org/postcode/%s' % urllib.quote(s)).read()
+            r = urllib.request.urlopen('https://mapit.mysociety.org/postcode/%s' % urllib.parse.quote(s)).read()
             loc = json.loads(r)
             pc, lat, lon = loc['postcode'], loc['wgs84_lat'], loc['wgs84_lon']
             name = re.sub('(\d[A-Z]{2})', r' \1', s.upper())
@@ -241,7 +241,7 @@ def search_around(request, s, type=''):
             return search(request, redirect_okay=False)
     elif validate_partial_postcode(s):
         try:
-            r = urllib.urlopen('https://mapit.mysociety.org/postcode/partial/' + urllib.quote(s)).read()
+            r = urllib.request.urlopen('https://mapit.mysociety.org/postcode/partial/' + urllib.parse.quote(s)).read()
             r = json.loads(r)
             lat, lon = r['wgs84_lat'], r['wgs84_lon']
         except:

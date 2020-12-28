@@ -27,7 +27,7 @@ def merge(request, url):
         if type == 'production' and slug == 'merge':
             slug = None
     except ValueError:
-        raise Exception, url
+        raise Exception(url)
 
     if type in type_dict:
         obj_type = type_dict[type]
@@ -36,7 +36,7 @@ def merge(request, url):
 
     try:
         object = check_url(obj_type, id, slug)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponseRedirect(e.args[0].get_absolute_url() + "/merge")
 
     if request.POST.get('stop'):
@@ -61,7 +61,7 @@ def merge(request, url):
 
     request.session['merging_' + type] = {
         'id': object.id,
-        'name': unicode(object),
+        'name': str(object),
     }
 
     return render(request, 'merged/start.html', {

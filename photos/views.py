@@ -8,8 +8,8 @@ from django.contrib.contenttypes.models import ContentType
 from utils import base32_to_int
 from django.contrib.auth.decorators import login_required
 from django.utils.html import escape 
-from models import Photo
-from forms import PhotoForm
+from .models import Photo
+from .forms import PhotoForm
 from productions.models import Production
 from plays.models import Play
 from places.models import Place
