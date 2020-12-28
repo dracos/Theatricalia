@@ -39,8 +39,9 @@ class ProductionForm(forms.ModelForm):
     play = AutoCompleteMultiValueField(
         Play, 'title',
         required = False, # It is required, but will be spotted in the clean function
-        fields = (forms.CharField(), forms.ModelChoiceField(Play.objects.all())),
-        widget = ForeignKeySearchInput(Production.play.field.remote_field, ('title',))
+        fields = (forms.CharField(max_length=255), forms.ModelChoiceField(Play.objects.all())),
+        widget = ForeignKeySearchInput(Production.play.field.remote_field, ('title',),
+            {'max_length': 255})
     )
     play_choice = forms.ChoiceField(label='Play', widget=forms.RadioSelect(), required=False)
     description = forms.CharField(required=False, widget=forms.Textarea(attrs={'cols': 40, 'rows':5}))
@@ -123,8 +124,9 @@ class CompanyInlineForm(forms.ModelForm):
     productioncompany = AutoCompleteMultiValueField(
         ProductionCompany, 'name',
         required = False, label='Company',
-        fields = (forms.CharField(), forms.ModelChoiceField(ProductionCompany.objects.all())),
-        widget = ForeignKeySearchInput(Production_Companies.productioncompany.field.remote_field, ('name',))
+        fields = (forms.CharField(max_length=100), forms.ModelChoiceField(ProductionCompany.objects.all())),
+        widget = ForeignKeySearchInput(Production_Companies.productioncompany.field.remote_field, ('name',),
+            {'max_length': 100})
     )
 
     class Meta:
@@ -152,8 +154,9 @@ class PlaceForm(forms.ModelForm):
     place = AutoCompleteMultiValueField(
         PlacePlace, 'name',
         required = False, # It is required, but will be spotted in the clean function
-        fields = (forms.CharField(), forms.ModelChoiceField(PlacePlace.objects.all())),
-        widget = ForeignKeySearchInput(Place.place.field.remote_field, ('name',))
+        fields = (forms.CharField(max_length=100), forms.ModelChoiceField(PlacePlace.objects.all())),
+        widget = ForeignKeySearchInput(Place.place.field.remote_field, ('name',),
+            {'max_length': 100})
     )
     start_date = ApproximateDateFormField(required=False, label='It was/is on from')
     press_date = PrettyDateField(required=False, label='Press night')
@@ -188,7 +191,7 @@ class PlaceForm(forms.ModelForm):
 # person is the text box where someone enters a name, and always will be
 # person_choice is the selection of someone from that, or the creation of a new person
 class PartForm(forms.ModelForm):
-    person = forms.CharField(error_messages = {'required':'You have to specify a person.'})
+    person = forms.CharField(max_length=101, error_messages = {'required':'You have to specify a person.'})
     person_choice = forms.ChoiceField(label='Person', widget=forms.RadioSelect(), required=False)
     start_date = ApproximateDateFormField(required=False, help_text='if they were only in this production for part of its run')
     end_date = ApproximateDateFormField(required=False)

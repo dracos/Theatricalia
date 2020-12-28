@@ -45,7 +45,8 @@ class ForeignKeySearchInput(forms.MultiWidget):
 	def __init__(self, rel, search_fields, attrs=None):
 		self.rel = rel
 		self.search_fields = search_fields
-		widgets = (forms.TextInput(attrs={'size':40}), forms.HiddenInput())
+		max_length = attrs.pop('max_length', None) if attrs else None
+		widgets = (forms.TextInput(attrs={'size':40, 'maxlength': max_length}), forms.HiddenInput())
 		super(ForeignKeySearchInput, self).__init__(widgets, attrs)
 
 	def decompress(self, value):
