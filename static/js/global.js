@@ -178,11 +178,11 @@ $(function() {
 
     //var cloudmade = new CM.Tiles.CloudMade.Web({key: '28fad93380975f22a60c0f855ce380ca', styleId:5950});
     var os_map = new CM.Tiles.OpenStreetMap.Mapnik({
-        title: 'OS StreetView (GB)',
-        tileUrlTemplate: 'https://#{subdomain}.os.openstreetmap.org/sv/#{zoom}/#{x}/#{y}.png',
-        copyright: 'Ordnance Survey data &copy; Crown<br>copyright and database right 2010.',
+        title: 'OS OpenMap Local (GB)',
+        tileUrlTemplate: 'https://#{subdomain}.os.openstreetmap.org/layer/gb_os_om_local_2020_04/#{zoom}/#{x}/#{y}.png',
+        copyright: 'Ordnance Survey data &copy; Crown<br>copyright and database right 2020.',
         minZoomLevel: 8,
-        maxZoomLevel: 16
+        maxZoomLevel: 18
     });
     var cloudmade = new CM.Tiles.OpenStreetMap.Mapnik({
         tileUrlTemplate: 'https://#{subdomain}.tile.openstreetmap.org/#{zoom}/#{x}/#{y}.png',
