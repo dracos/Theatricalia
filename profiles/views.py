@@ -18,7 +18,7 @@ from django.contrib.contenttypes.models import ContentType
 from django_comments.models import Comment
 from django.contrib import messages
 
-from forms import RegistrationForm, AuthenticationForm, ProfileForm
+from .forms import RegistrationForm, AuthenticationForm, ProfileForm
 from shortcuts import send_email
 from utils import int_to_base32, base32_to_int
 from common.models import Alert, AlertLocal

@@ -12,8 +12,8 @@ from django.shortcuts import render
 from mixins import ListMixin
 
 from common.models import Alert
-from forms import PlaceForm
-from models import Place
+from .forms import PlaceForm
+from .models import Place
 from shortcuts import check_url, UnmatchingSlugException
 from productions.objshow import productions_list, productions_for
 from productions.models import Production, Production_Companies, Place as ProductionPlace, Part
@@ -23,21 +23,21 @@ from photos.forms import PhotoForm
 def place_short_url(request, place_id):
     try:
         place = check_url(Place, place_id)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         place = e.args[0]
     return HttpResponsePermanentRedirect(place.get_absolute_url())
 
 def place_productions(request, place_id, place, type):
     try:
         place = check_url(Place, place_id, place)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     return productions_list(request, place, type, 'places/production_list.html')
 
 def productions(request, place_id, place):
     try:
         place = check_url(Place, place_id, place)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 
     productions = Production.objects.filter(places=place).order_by('play__title').select_related('play')
@@ -52,7 +52,7 @@ def productions(request, place_id, place):
 def people(request, place_id, place):
     try:
         place = check_url(Place, place_id, place)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 
     people = Person.objects.filter(productions__places=place).distinct().order_by('last_name', 'first_name')
@@ -72,7 +72,7 @@ def people(request, place_id, place):
 def place_edit(request, place_id, place):
     try:
         place = check_url(Place, place_id, place)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 
     place.name = place.get_name_display()
@@ -94,7 +94,7 @@ def place_edit(request, place_id, place):
 def place(request, place_id, place):
     try:
         place = check_url(Place, place_id, place)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     past, future = productions_for(place)
     photo_form = PhotoForm(place)
@@ -111,14 +111,14 @@ def place(request, place_id, place):
 #def place_alert(request, place_id, place, type):
 #    try:
 #        place = check_url(Place, place_id, place)
-#    except UnmatchingSlugException, e:
+#    except UnmatchingSlugException as e:
 #        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 #
 #    if type == 'add':
 #        alert = Alert(user=request.user, content_object=place)
 #        try:
 #            alert.save()
-#        except IntegrityError, e:
+#        except IntegrityError as e:
 #            if e.args[0] != 1062: # Duplicate
 #                raise
 #        messages.success(request, u"Your alert has been added.")

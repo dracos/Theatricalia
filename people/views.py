@@ -18,29 +18,29 @@ from mixins import ListMixin
 from shortcuts import check_url, UnmatchingSlugException
 from utils import int_to_base32
 from common.models import Alert
-from models import Person
-from forms import PersonEditForm
+from .models import Person
+from .forms import PersonEditForm
 from photos.forms import PhotoForm
 from productions.objshow import productions_list, productions_for, productions_past, productions_future
 
 def person_productions(request, person_id, person, type):
     try:
         person = check_url(Person, person_id, person)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     return productions_list(request, person, type, 'people/production_list.html')
 
 def person_short_url(request, person_id):
     try:
         person = check_url(Person, person_id)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         person = e.args[0]
     return HttpResponsePermanentRedirect(person.get_absolute_url())
 
 def person(request, person_id, person):
     try:
         person = check_url(Person, person_id, person)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 
     #if person.productions.count() == 0:
@@ -73,13 +73,13 @@ def person(request, person_id, person):
 def person_js(request, person_id, person):
     try:
         person = check_url(Person, person_id, person)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     plays = person.plays.all()
 
-    past   = [ {'id': int_to_base32(p.id), 'desc': unicode(p) } for p in productions_past(person, '') ]
-    future = [ {'id': int_to_base32(p.id), 'desc': unicode(p) } for p in productions_future(person, '') ]
-    plays  = [ {'id': int_to_base32(p.id), 'title': unicode(p) } for p in person.plays.all() ]
+    past   = [ {'id': int_to_base32(p.id), 'desc': str(p) } for p in productions_past(person, '') ]
+    future = [ {'id': int_to_base32(p.id), 'desc': str(p) } for p in productions_future(person, '') ]
+    plays  = [ {'id': int_to_base32(p.id), 'title': str(p) } for p in person.plays.all() ]
     person = {
         'id': int_to_base32(person.id),
         'first_name': person.first_name,
@@ -107,14 +107,14 @@ def person_js(request, person_id, person):
 #def person_alert(request, person_id, person, type):
 #    try:
 #        person = check_url(Person, person_id, person)
-#    except UnmatchingSlugException, e:
+#    except UnmatchingSlugException as e:
 #        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 #
 #    if type == 'add':
 #        alert = Alert(user=request.user, content_object=person)
 #        try:
 #            alert.save()
-#        except IntegrityError, e:
+#        except IntegrityError as e:
 #            if e.args[0] != 1062: # Duplicate
 #                raise
 #        messages.success(request, u"Your alert has been added.")
@@ -128,7 +128,7 @@ def person_js(request, person_id, person):
 def person_edit(request, person_id, person):
     try:
         person = check_url(Person, person_id, person)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 
     form = PersonEditForm(data=request.POST or None, instance=person)

@@ -8,11 +8,10 @@ from django.db import models
 
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.db.models.query import QuerySet
-from django.utils.encoding import smart_str
 
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
 from django.utils.translation import ugettext as _
-from django.utils.encoding import force_unicode 
+from django.utils.encoding import force_text
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.datastructures import MultiValueDict
@@ -263,22 +262,22 @@ class AutocompleteModelAdmin(admin.ModelAdmin):
 		opts = obj._meta
 		pk_value = obj._get_pk_val()
 		
-		msg = _('The %(name)s "%(obj)s" was added successfully.') % {'name': force_unicode(opts.verbose_name), 'obj': force_unicode(obj)}
+		msg = _('The %(name)s "%(obj)s" was added successfully.') % {'name': force_text(opts.verbose_name), 'obj': force_text(obj)}
 		# Here, we distinguish between different save types by checking for
 		# the presence of keys in request.POST.
-		if request.POST.has_key("_continue"):
+		if '_continue' in request.POST:
 			self.message_user(request, msg + ' ' + _("You may edit it again below."))
-			if request.POST.has_key("_popup"):
+			if '_popup' in request.POST:
 				post_url_continue += "?_popup=%s" % request.POST.get('_popup')
 			return HttpResponseRedirect(post_url_continue % pk_value)
 		
-		if request.POST.has_key("_popup"):
+		if '_popup' in request.POST:
 			#htturn response to Autocomplete PopUp
-			if request.POST.has_key("_popup"):
+			if '_popup' in request.POST:
 				return HttpResponse('<script type="text/javascript">opener.dismissAutocompletePopup(window, "%s", "%s");</script>' % (escape(pk_value), escape(obj)))
 						
-		elif request.POST.has_key("_addanother"):
-			self.message_user(request, msg + ' ' + (_("You may add another %s below.") % force_unicode(opts.verbose_name)))
+		elif '_addanother' in request.POST:
+			self.message_user(request, msg + ' ' + (_("You may add another %s below.") % force_text(opts.verbose_name)))
 			return HttpResponseRedirect(request.path)
 		else:
 			self.message_user(request, msg)

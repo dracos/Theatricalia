@@ -14,7 +14,7 @@ def check_url(type, id, slug=None):
     mistyped = False
     try:
         id = base32_to_int(id)
-    except MistypedIDException, e:
+    except MistypedIDException as e:
         mistyped = True
         id = e.args[0]
     except:

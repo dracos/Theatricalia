@@ -1,6 +1,6 @@
 import calendar
 from django.views.generic import dates
-from models import Article
+from .models import Article
 
 MONTHS = [ m.lower() for m in calendar.month_name ]
 

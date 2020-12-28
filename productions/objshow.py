@@ -4,7 +4,7 @@ from django.db.models import Q, Max
 from django.db.models.expressions import RawSQL
 from django.http import Http404
 from django.shortcuts import render
-from models import Production, Part, ProductionCompany
+from .models import Production, Part, ProductionCompany
 from plays.models import Play
 from places.models import Place
 from people.models import Person
@@ -29,7 +29,7 @@ def productions_filter(object, type, date_filter):
         annotate_extra = 'place__'
         filter_extra = True
     else:
-        raise Exception, 'Strange call to productions_filter'
+        raise Exception('Strange call to productions_filter')
 
     o = o.annotate(max_end_date=Max(annotate_extra + 'end_date'), max_press_date=Max(annotate_extra + 'press_date'), max_start_date=Max(annotate_extra + 'start_date'))
     filter = ( ~Q(max_end_date='') & Q(max_end_date__lt=now) ) | Q(max_end_date='', max_press_date__lt=now) | Q(max_end_date='', max_press_date__isnull=True, max_start_date__lt=now)

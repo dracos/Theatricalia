@@ -15,8 +15,8 @@ class Alert(models.Model):
     class Meta:
         unique_together = (('user', 'content_type', 'object_id'),)
     
-    def __unicode__(self):
-        return u"%s" % (self.content_object)
+    def __str__(self):
+        return "%s" % (self.content_object)
 
 class AlertLocal(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -29,8 +29,8 @@ class AlertLocal(models.Model):
     class Meta:
         unique_together = (('user', 'latitude', 'longitude'),)
     
-    def __unicode__(self):
-        return u"%s's alert around (%s,%s)" % (self.user, self.latitude, self.longitude)
+    def __str__(self):
+        return "%s's alert around (%s,%s)" % (self.user, self.latitude, self.longitude)
 
 class AlertSent(models.Model):
     alert = models.ForeignKey(Alert, on_delete=models.CASCADE)

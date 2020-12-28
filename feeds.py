@@ -21,7 +21,7 @@ class Feed(DjangoFeed):
     def __call__(self, request, *args, **kwargs):
         try:
             obj = self.get_object(request, *args, **kwargs)
-        except UnmatchingSlugException, e:
+        except UnmatchingSlugException as e:
             return HttpResponseRedirect(e.args[0].get_absolute_url() + '/feed')
         except ObjectDoesNotExist:
             raise Http404('Feed object does not exist.')

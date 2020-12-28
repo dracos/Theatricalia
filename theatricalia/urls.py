@@ -4,7 +4,8 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
-import views
+from . import views
+
 from profiles import views as profiles
 from plays import views as plays
 from productions import views as productions

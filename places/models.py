@@ -51,7 +51,7 @@ class Place(models.Model):
     class Meta:
         ordering = ['name']
 
-    def __unicode__(self):
+    def __str__(self):
         out = self.get_name_display()
         if self.town and self.town not in out: out += u", " + self.town
         return out

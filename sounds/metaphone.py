@@ -35,7 +35,7 @@ def dm(st) :
 		pos += 1
 	# main loop through chars in st
 	while pos <= last :
-		#print str(pos) + '\t' + st[pos]
+		#print(str(pos) + '\t' + st[pos])
 		ch = st[pos] # ch is short for character
 		# nxt (short for next characters in metaphone code) is set to  a tuple of the next characters in
 		# the primary and secondary codes and how many characters to move forward in the string.
@@ -405,7 +405,7 @@ def dm(st) :
 		# ----------------------------------
 		# --- end checking letters------
 		# ----------------------------------
-		#print str(nxt)
+		#print(str(nxt))
 		if len(nxt) == 2 :
 			if nxt[0] :
 				pri += nxt[0]
@@ -456,12 +456,12 @@ if __name__ == '__main__' :
 	line = 'foo'
 	while line:
 		line = sys.stdin.readline().strip()
-		print line, dm(line)
+		print(line, dm(line))
 		#sys.stdout.flush()
 	#names = {'maurice':'MRS','aubrey':'APR','cambrillo':'KMPR','heidi':'HT','katherine':'K0RN,KTRN',\
 	#	     'catherine':'K0RN,KTRN','richard':'RXRT,RKRT','bob':'PP','eric':'ARK','geoff':'JF,KF',\
 	#		 'dave':'TF','ray':'R','steven':'STFN','bryce':'PRS','randy':'RNT','bryan':'PRN',\
 	#		 'brian':'PRN','otto':'AT','auto':'AT', 'maisey':'MS, None', 'zhang':'JNK, None', 'solilijs':'SLLS, None'}
 	#for name in names.keys() :
-	#	print name + '\t-->\t' + str(dm(name)) + '\t(' +names[name] + ')'
+	#	print(name + '\t-->\t' + str(dm(name)) + '\t(' +names[name] + ')')
 

@@ -1,7 +1,7 @@
 import re
 from django import forms
 from django.utils.safestring import mark_safe
-from models import Play
+from .models import Play
 from people.models import Person
 from search.views import search_people
 from common.templatetags.prettify import prettify
@@ -44,10 +44,10 @@ class PlayAuthorForm(forms.Form):
                     last = 'author of %s' % last_play[0].get_title_display()
                 else:
                     last = 'nothing yet on this site'
-            choices.append( (p.id, prettify(mark_safe('<a target="_blank" href="' + p.get_absolute_url() + '">' + unicode(p) + '</a> <small>(new window)</small>, ' + unicode(last))) ) )
+            choices.append( (p.id, prettify(mark_safe('<a target="_blank" href="' + p.get_absolute_url() + '">' + str(p) + '</a> <small>(new window)</small>, ' + str(last))) ) )
         if len(choices) > 1:
             choices.append( ( 'new', prettify('None of these, a new person called \'' + s + '\'') ) )
-        elif unicode(p) == s:
+        elif str(p) == s:
             choices.append( ( 'new', prettify('A new person also called \'' + s + '\'') ) )
         else:
             choices.append( ( 'new', prettify('A new person called \'' + s + '\'') ) )

@@ -1,6 +1,5 @@
 import json
 import re
-import urllib
 
 from django.core import serializers
 from django.shortcuts import get_object_or_404, render
@@ -16,20 +15,20 @@ from django.conf import settings
 from django_comments.models import Comment
 from utils import base32_to_int
 from shortcuts import check_url, UnmatchingSlugException
-from models import Production, Part, Place as ProductionPlace, Visit, ProductionCompany, Production_Companies
-from forms import ProductionForm, PartForm, CompanyInlineForm, PlaceForm, ProductionCompanyForm
+from .models import Production, Part, Place as ProductionPlace, Visit, ProductionCompany, Production_Companies
+from .forms import ProductionForm, PartForm, CompanyInlineForm, PlaceForm, ProductionCompanyForm
 from common.models import Alert
 from plays.models import Play
 from places.models import Place
 from photos.forms import PhotoForm
 from people.models import Person
-from objshow import productions_list, productions_for
+from .objshow import productions_list, productions_for
 
 def check_parameters(play_id, play, production_id):
     production = check_url(Production, production_id)
     try:
         play = check_url(Play, play_id, play)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         raise UnmatchingSlugException(production)
     if play != production.play:
         raise Http404()
@@ -38,14 +37,14 @@ def check_parameters(play_id, play, production_id):
 def production_short_url(request, production_id):
     try:
         production = check_url(Production, production_id)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         production = e.args[0]
     return HttpResponsePermanentRedirect(production.get_absolute_url())
 
 def production_company_short_url(request, company_id):
     try:
         company = check_url(ProductionCompany, company_id)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         company = e.args[0]
     return HttpResponsePermanentRedirect(company.get_absolute_url())
 
@@ -56,7 +55,7 @@ def production_corrected(request, play_id, play, production_id):
 def production(request, play_id, play, production_id, okay=False, format='html'):
     try:
         production = check_parameters(play_id, play, production_id)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     photo_form = PhotoForm(production)
 #    production_form = ProductionForm(instance=production)
@@ -120,7 +119,7 @@ def production_seen(request, play_id, play, production_id, type):
         alert = Visit(user=request.user, production=production)
         try:
             alert.save()
-        except IntegrityError, e:
+        except IntegrityError as e:
             if e.args[0] != 1062: # Duplicate
                 raise
         messages.success(request, u"Your visit has been recorded.")
@@ -134,7 +133,7 @@ def production_seen(request, play_id, play, production_id, type):
 def company(request, company_id, company):
     try:
         company = check_url(ProductionCompany, company_id, company)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 
     alert = company.alerts.filter(user=request.user.pk)
@@ -149,7 +148,7 @@ def company(request, company_id, company):
 def company_productions(request, company_id, company, type):
     try:
         company = check_url(ProductionCompany, company_id, company)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     return productions_list(request, company, type, 'productions/company_production_list.html')
 
@@ -157,7 +156,7 @@ def company_productions(request, company_id, company, type):
 def company_edit(request, company_id, company):
     try:
         company = check_url(ProductionCompany, company_id, company)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 
     form = ProductionCompanyForm(request.POST or None, instance=company)
@@ -179,14 +178,14 @@ def company_edit(request, company_id, company):
 #def company_alert(request, company_id, company, type):
 #    try:
 #        company = check_url(ProductionCompany, company_id, company)
-#    except UnmatchingSlugException, e:
+#    except UnmatchingSlugException as e:
 #        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 #
 #    if type == 'add':
 #        alert = Alert(user=request.user, content_object=company)
 #        try:
 #            alert.save()
-#        except IntegrityError, e:
+#        except IntegrityError as e:
 #            if e.args[0] != 1062: # Duplicate
 #                raise
 #        messages.success(request, u"Your alert has been added.")
@@ -231,7 +230,7 @@ def part_edit(request, play_id, play, production_id, part_id):
 def production_edit(request, play_id, play, production_id):
     try:
         production = check_parameters(play_id, play, production_id)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_edit_url())
 
     production_form = ProductionForm(data=request.POST or None, instance=production)
@@ -274,7 +273,7 @@ def production_edit_cast(request, play_id, play, production_id):
     """For picking someone to edit, or adding a new Part"""
     try:
         production = check_parameters(play_id, play, production_id)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_edit_cast_url())
     initial = { 'production': production }
     if request.GET.get('person'):
@@ -361,7 +360,7 @@ def production_add(request, play=None, place=None, company=None):
 def add_from_play(request, play_id, play):
     try:
         play = check_url(Play, play_id, play)
-    except UnmatchingSlugException, e:
+    except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     return production_add(request, play=play)
 

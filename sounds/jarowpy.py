@@ -53,7 +53,7 @@
 def jarow(s1, s2, winkleradjust=1):
     if len(s1)==0 or len(s2)==0: return 0
     if s1==s2: return 1
-    halflen=min(len(s1)/2+1, len(s2)/2+1)
+    halflen=min(len(s1)//2+1, len(s2)//2+1)
 
     s1pos=0
     s1seenins2=[0]*len(s2)
@@ -67,7 +67,7 @@ def jarow(s1, s2, winkleradjust=1):
         s1char=None
         while s1pos<len(s1):
             c=s1[s1pos]
-            for i in xrange(max(0,s1pos-halflen), min(len(s2),s1pos+halflen)):
+            for i in range(max(0,s1pos-halflen), min(len(s2),s1pos+halflen)):
                 if s1seenins2[i]: continue
                 if c==s2[i]:
                     s1char=c
@@ -80,7 +80,7 @@ def jarow(s1, s2, winkleradjust=1):
         s2char=None
         while s2pos<len(s2):
             c=s2[s2pos]
-            for i in xrange(max(0,s2pos-halflen), min(len(s1),s2pos+halflen)):
+            for i in range(max(0,s2pos-halflen), min(len(s1),s2pos+halflen)):
                 if s2seenins1[i]: continue
                 if c==s1[i]:
                     s2char=c

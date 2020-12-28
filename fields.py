@@ -105,10 +105,10 @@ class ApproximateDateField(models.CharField):
         if not ansi_date_re.search(value):
             raise ValidationError('Enter a valid date in YYYY-MM-DD format.')
 
-        year, month, day = map(int, value.rsplit('-', 2))
+        year, month, day = list(map(int, value.rsplit('-', 2)))
         try:
             return ApproximateDate(year, month, day)
-        except ValueError, e:
+        except ValueError as e:
             msg = _('Invalid date: %s') % _(str(e))
             raise exceptions.ValidationError(msg)
 

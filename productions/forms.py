@@ -4,7 +4,7 @@ from django.utils.safestring import mark_safe
 from django.forms.formsets import BaseFormSet
 from django.db.models import Q
 
-from models import Production, Part, Place, ProductionCompany, Production_Companies
+from .models import Production, Part, Place, ProductionCompany, Production_Companies
 from plays.models import Play
 from places.models import Place as PlacePlace
 from people.models import Person
@@ -82,10 +82,10 @@ class ProductionForm(forms.ModelForm):
             q = Q(title__icontains=s)
 
         for p in Play.objects.filter(q):
-            choices.append( ( p.id, prettify(unicode(p)) ) )
+            choices.append( ( p.id, prettify(str(p)) ) )
         if len(choices) > 1:
             choices.append( ( 'new', prettify('None of these, a new play called \'' + s + '\'') ) )
-        elif unicode(p) == s:
+        elif str(p) == s:
             choices.append( ( 'new', prettify('A new play also called \'' + s + '\'') ) )
         else:
             choices.append( ( 'new', prettify('A new play called \'' + s + '\'') ) )
@@ -237,10 +237,10 @@ class PartForm(forms.ModelForm):
                     last = 'author of %s' % last_play[0].get_title_display()
                 else:
                     last = 'nothing yet on this site'
-            choices.append( (p.id, prettify(mark_safe('<a target="_blank" href="' + p.get_absolute_url() + '">' + unicode(p) + '</a> <small>(new window)</small>, ' + unicode(last))) ) )
+            choices.append( (p.id, prettify(mark_safe('<a target="_blank" href="' + p.get_absolute_url() + '">' + str(p) + '</a> <small>(new window)</small>, ' + str(last))) ) )
         if len(choices) > 1:
             choices.append( ( 'new', prettify('None of these, a new person called \'' + s + '\'') ) )
-        elif unicode(p) == s:
+        elif str(p) == s:
             choices.append( ( 'new', prettify('A new person also called \'' + s + '\'') ) )
         else:
             return []
