@@ -126,10 +126,9 @@ class PlayList(ListMixin, ListView):
             args = {'%s__regex' % self.field: r'^(\'|")[A-Za-z]'}
             objs = objs.exclude(**args)
         else:
-            self.model.objects.filter(
+            objs = self.model.objects.filter(
                 Q(title__istartswith=letter)
                 | Q(title__istartswith="'%s" % letter)
                 | Q(title__istartswith='"%s' % letter)
             )
-            letter = letter.upper()
         return objs
