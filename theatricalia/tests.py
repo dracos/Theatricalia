@@ -1,4 +1,6 @@
+import re
 from django.test import TestCase
+from django.core import mail
 
 from productions.models import Production, ProductionCompany
 from plays.models import Play
@@ -60,6 +62,10 @@ class TheatricaliaTest(TestCase):
         self.assertContains(resp, 'You are now signed out')
         resp = self.client.post('/tickets', {'username': 'test', 'password': 'test'}, follow=True)
         self.assertRedirects(resp, '/profile/test', status_code=302)
+        self.assertEqual(len(mail.outbox), 1)
+        m = re.search('/tickets/.*', mail.outbox[0].body)
+        resp = self.client.get(m.group())
+        self.assertContains(resp, 'you have successfully confirmed')
 
 
 class ProductionTest(TestCase):

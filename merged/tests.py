@@ -31,3 +31,6 @@ class MergeTest(TestCase):
         resp = self.client.post('/play/1/hamlet/production/1/merge', {'dupe': True})
         self.assertContains(resp, 'Thanks again for helping')
         self.assertEqual(len(mail.outbox), 1)
+
+        resp = self.client.post('/play/1/hamlet/production/1/merge', {'stop': True}, follow=True)
+        self.assertRedirects(resp, '/play/1/hamlet/production/1')
