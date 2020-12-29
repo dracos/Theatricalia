@@ -7,7 +7,6 @@ from django.core.validators import validate_email
 from django.urls import is_valid_path
 from django.shortcuts import render
 from django.utils.encoding import escape_uri_path, iri_to_uri
-from django.utils.http import urlquote
 
 from common.models import Prelaunch
 
@@ -28,8 +27,8 @@ class MyMiddleware(object):
 
 class RemoteAddrMiddleware(MyMiddleware):
     def process_request(self, request):
-       if 'REMOTE_ADDR' not in request.META or not request.META['REMOTE_ADDR']:
-           request.META['REMOTE_ADDR'] = request.META['HTTP_X_REAL_IP']
+        if 'REMOTE_ADDR' not in request.META or not request.META['REMOTE_ADDR']:
+            request.META['REMOTE_ADDR'] = request.META['HTTP_X_REAL_IP']
 
 
 class OnlyLowercaseUrls(MyMiddleware):
@@ -74,7 +73,7 @@ class RemoveSlashMiddleware(MyMiddleware):
             ('?' + iri_to_uri(request.META.get('QUERY_STRING', ''))) if request.META.get('QUERY_STRING', '') else ''
         )
         if settings.DEBUG and request.method in ('POST', 'PUT', 'PATCH'):
-            raise RuntimeError((""
+            raise RuntimeError((
                 "You called this URL via %(method)s, but the URL ends "
                 "in a slash and you don't have APPEND_SLASH set. Django can't "
                 "redirect to the non-slash URL while maintaining %(method)s data. "
@@ -90,21 +89,21 @@ class RemoveSlashMiddleware(MyMiddleware):
 class AlphaMiddleware(MyMiddleware, ratelimit):
     cookie_name = 'godot'
     form_field_name = 'godot'
-    
+
     def __init__(self, get_response):
         super(AlphaMiddleware, self).__init__(get_response, minutes=2, requests=10, expire_after=(2+1)*60)
 
     def get_password(self):
         return settings.ALPHA_PASSWORD
-    
+
     def process_request(self, request):
         # Process POST if our particular form has been submitted
         if request.method == 'POST' and self.form_field_name in request.POST:
             return self.login_screen(request)
-        
+
         if request.COOKIES.get(self.cookie_name, '') != self.get_password() and not re.match('/static', request.path):
             return self.login_screen(request)
-    
+
     def login_screen(self, request):
         vars = {
             'form_field_name': self.form_field_name,
@@ -131,13 +130,21 @@ class AlphaMiddleware(MyMiddleware, ratelimit):
             if email:
                 try:
                     validate_email(email)
-                    obj = Prelaunch(email = email)
+                    obj = Prelaunch(email=email)
                     obj.save()
                     vars['messages'] = ['Thank you; you will hopefully hear from us in the not too distant future.']
                 except ValidationError:
                     vars['error']['em'] = 'Please enter a valid email address.'
 
-        statuses = [ 'Painting scenery', 'Auditioning actors', 'Cutting out gobos', 'Rehearsing', 'Measuring for costumes', 'Learning lines', 'Stocking the ice-cream cabinet' ]
+        statuses = [
+            'Painting scenery',
+            'Auditioning actors',
+            'Cutting out gobos',
+            'Rehearsing',
+            'Measuring for costumes',
+            'Learning lines',
+            'Stocking the ice-cream cabinet'
+        ]
         rand_not = int(request.POST.get('not', 0))
         if rand_not >= 1 and rand_not <= 7:
             rand = random.randint(0, len(statuses)-2)
@@ -149,7 +156,6 @@ class AlphaMiddleware(MyMiddleware, ratelimit):
         vars['status'] = statuses[rand]
 
         return render(request, 'alpha_password.html', vars)
-    
+
     def set_cookie(self, response, password):
         response.set_cookie(self.cookie_name, password)
-

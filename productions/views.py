@@ -1,12 +1,10 @@
 import json
-import re
 
 from django.core import serializers
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
-from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
-from django.forms.models import modelformset_factory, inlineformset_factory
+from django.forms.models import inlineformset_factory
 from django.db import IntegrityError
 from django_comments.views.comments import post_comment
 from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
@@ -17,22 +15,24 @@ from utils import base32_to_int
 from shortcuts import check_url, UnmatchingSlugException
 from .models import Production, Part, Place as ProductionPlace, Visit, ProductionCompany, Production_Companies
 from .forms import ProductionForm, PartForm, CompanyInlineForm, PlaceForm, ProductionCompanyForm
-from common.models import Alert
+# from common.models import Alert
 from plays.models import Play
 from places.models import Place
 from photos.forms import PhotoForm
 from people.models import Person
 from .objshow import productions_list, productions_for
 
+
 def check_parameters(play_id, play, production_id):
     production = check_url(Production, production_id)
     try:
         play = check_url(Play, play_id, play)
-    except UnmatchingSlugException as e:
+    except UnmatchingSlugException:
         raise UnmatchingSlugException(production)
     if play != production.play:
         raise Http404()
     return production
+
 
 def production_short_url(request, production_id):
     try:
@@ -41,6 +41,7 @@ def production_short_url(request, production_id):
         production = e.args[0]
     return HttpResponsePermanentRedirect(production.get_absolute_url())
 
+
 def production_company_short_url(request, company_id):
     try:
         company = check_url(ProductionCompany, company_id)
@@ -48,9 +49,11 @@ def production_company_short_url(request, company_id):
         company = e.args[0]
     return HttpResponsePermanentRedirect(company.get_absolute_url())
 
+
 def production_corrected(request, play_id, play, production_id):
     return production_short_url(request, production_id)
-    #return production(request, play_id, play, production_id, okay=True)
+    # return production(request, play_id, play, production_id, okay=True)
+
 
 def production(request, play_id, play, production_id, okay=False, format='html'):
     try:
@@ -60,7 +63,7 @@ def production(request, play_id, play, production_id, okay=False, format='html')
     photo_form = PhotoForm(production)
 #    production_form = ProductionForm(instance=production)
 #
-#    ProductionPlaceFormSet = inlineformset_factory( Production, ProductionPlace, extra=1, form=PlaceForm )
+#    ProductionPlaceFormSet = inlineformset_factory(Production, ProductionPlace, extra=1, form=PlaceForm)
 #    formset = ProductionPlaceFormSet(
 #        data = request.POST or None,
 #        prefix = 'place',
@@ -80,13 +83,16 @@ def production(request, play_id, play, production_id, okay=False, format='html')
     except:
         seen = None
 
-    cast = production.part_set.filter(cast=True).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name')
-    crew = production.part_set.filter(cast=False).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name')
-    other = production.part_set.filter(cast__isnull=True).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name')
-        
+    cast = production.part_set.filter(
+        cast=True).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name')
+    crew = production.part_set.filter(
+        cast=False).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name')
+    other = production.part_set.filter(
+        cast__isnull=True).order_by('start_date', 'order', 'role', 'person__last_name', 'person__first_name')
+
     if format == 'json':
         py_serializer = serializers.get_serializer("python")()
-        json_serializer = serializers.get_serializer("json")()
+        # json_serializer = serializers.get_serializer("json")()
         out = {
             'production': py_serializer.serialize([production], ensure_ascii=False),
             'places': py_serializer.serialize(production.place_set_ordered(), ensure_ascii=False),
@@ -102,8 +108,8 @@ def production(request, play_id, play, production_id, okay=False, format='html')
     return render(request, 'production.html', {
         'production': production,
         'places': production.place_set_ordered(),
-#        'production_form': production_form,
-#        'production_formset': formset,
+        # 'production_form': production_form,
+        # 'production_formset': formset,
         'cast': cast,
         'crew': crew,
         'other': other,
@@ -111,6 +117,7 @@ def production(request, play_id, play, production_id, okay=False, format='html')
         'seen': seen,
         'flickr': flickr,
     })
+
 
 @login_required
 def production_seen(request, play_id, play, production_id, type):
@@ -120,7 +127,7 @@ def production_seen(request, play_id, play, production_id, type):
         try:
             alert.save()
         except IntegrityError as e:
-            if e.args[0] != 1062: # Duplicate
+            if e.args[0] != 1062:  # Duplicate
                 raise
         messages.success(request, u"Your visit has been recorded.")
     elif type == 'remove':
@@ -145,12 +152,14 @@ def company(request, company_id, company):
         'alert': alert,
     })
 
+
 def company_productions(request, company_id, company, type):
     try:
         company = check_url(ProductionCompany, company_id, company)
     except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     return productions_list(request, company, type, 'productions/company_production_list.html')
+
 
 @login_required
 def company_edit(request, company_id, company):
@@ -174,8 +183,9 @@ def company_edit(request, company_id, company):
         'form': form,
     })
 
-#@login_required
-#def company_alert(request, company_id, company, type):
+
+# @login_required
+# def company_alert(request, company_id, company, type):
 #    try:
 #        company = check_url(ProductionCompany, company_id, company)
 #    except UnmatchingSlugException as e:
@@ -186,7 +196,7 @@ def company_edit(request, company_id, company):
 #        try:
 #            alert.save()
 #        except IntegrityError as e:
-#            if e.args[0] != 1062: # Duplicate
+#            if e.args[0] != 1062:  # Duplicate
 #                raise
 #        messages.success(request, u"Your alert has been added.")
 #    elif type == 'remove':
@@ -194,6 +204,7 @@ def company_edit(request, company_id, company):
 #        messages.success(request, u"Your alert has been removed.")
 #
 #    return HttpResponseRedirect(company.get_absolute_url())
+
 
 @login_required
 def part_edit(request, play_id, play, production_id, part_id):
@@ -204,10 +215,10 @@ def part_edit(request, play_id, play, production_id, part_id):
         raise Http404()
 
     part_form = PartForm(
-        data = request.POST or None,
-        editing = True,
-        instance = part,
-        initial = { 'person': part.person.name() } # To make form have name rather than ID
+        data=request.POST or None,
+        editing=True,
+        instance=part,
+        initial={'person': part.person.name()}  # To make form have name rather than ID
     )
 
     if request.method == 'POST':
@@ -226,6 +237,7 @@ def part_edit(request, play_id, play, production_id, part_id):
         'places': production.place_set_ordered(),
     })
 
+
 @login_required
 def production_edit(request, play_id, play, production_id):
     try:
@@ -235,18 +247,19 @@ def production_edit(request, play_id, play, production_id):
 
     production_form = ProductionForm(data=request.POST or None, instance=production)
 
-    ProductionPlaceFormSet = inlineformset_factory( Production, ProductionPlace, extra=1, form=PlaceForm )
+    ProductionPlaceFormSet = inlineformset_factory(Production, ProductionPlace, extra=1, form=PlaceForm)
     place_formset = ProductionPlaceFormSet(
-        data = request.POST or None,
-        prefix = 'place',
-        instance = production,
+        data=request.POST or None,
+        prefix='place',
+        instance=production,
     )
 
-    ProductionCompanyFormSet = inlineformset_factory( Production, Production_Companies, extra=1, form=CompanyInlineForm )
+    ProductionCompanyFormSet = inlineformset_factory(
+        Production, Production_Companies, extra=1, form=CompanyInlineForm)
     companies_formset = ProductionCompanyFormSet(
-        data = request.POST or None,
-        prefix = 'company',
-        instance = production,
+        data=request.POST or None,
+        prefix='company',
+        instance=production,
     )
 
     if request.method == 'POST':
@@ -268,6 +281,7 @@ def production_edit(request, play_id, play, production_id):
         'places': production.place_set_ordered(),
     })
 
+
 @login_required
 def production_edit_cast(request, play_id, play, production_id):
     """For picking someone to edit, or adding a new Part"""
@@ -275,7 +289,7 @@ def production_edit_cast(request, play_id, play, production_id):
         production = check_parameters(play_id, play, production_id)
     except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_edit_cast_url())
-    initial = { 'production': production }
+    initial = {'production': production}
     if request.GET.get('person'):
         initial['person'] = Person.objects.get(id=base32_to_int(request.GET.get('person')))
     part_form = PartForm(data=request.POST or None, editing=False, initial=initial)
@@ -294,28 +308,31 @@ def production_edit_cast(request, play_id, play, production_id):
         'parts': production.part_set.order_by('-cast', 'order', 'role', 'person__last_name', 'person__first_name'),
     })
 
+
 @login_required
 def production_add(request, play=None, place=None, company=None):
 
     initial = {}
-    if play: initial['play'] = play.id
+    if play:
+        initial['play'] = play.id
 
     production_form = ProductionForm(data=request.POST or None, initial=initial)
 
     # Inline even though empty, because model validation means it can't assign null
     # to Place.production when calling construct_instance()
-    ProductionPlaceFormSet = inlineformset_factory( Production, ProductionPlace, extra=1, form=PlaceForm )
+    ProductionPlaceFormSet = inlineformset_factory(Production, ProductionPlace, extra=1, form=PlaceForm)
     place_formset = ProductionPlaceFormSet(
-        data = request.POST or None,
-        prefix = 'place',
-        queryset = ProductionPlace.objects.none()
+        data=request.POST or None,
+        prefix='place',
+        queryset=ProductionPlace.objects.none()
     )
 
-    ProductionCompanyFormSet = inlineformset_factory( Production, Production_Companies, extra=1, form=CompanyInlineForm )
+    ProductionCompanyFormSet = inlineformset_factory(
+        Production, Production_Companies, extra=1, form=CompanyInlineForm)
     companies_formset = ProductionCompanyFormSet(
-        data = request.POST or None,
-        prefix = 'company',
-        queryset = Production_Companies.objects.none()
+        data=request.POST or None,
+        prefix='company',
+        queryset=Production_Companies.objects.none()
     )
 
     # Yucky, but no way to pass initial to a model formset XXX
@@ -327,9 +344,12 @@ def production_add(request, play=None, place=None, company=None):
     if request.method == 'POST':
         if request.POST.get('disregard'):
             messages.success(request, u"All right, we\u2019ve ignored what you had done.")
-            if play: return HttpResponseRedirect(play.get_absolute_url())
-            if company: return HttpResponseRedirect(company.get_absolute_url())
-            if place: return HttpResponseRedirect(place.get_absolute_url())
+            if play:
+                return HttpResponseRedirect(play.get_absolute_url())
+            if company:
+                return HttpResponseRedirect(company.get_absolute_url())
+            if place:
+                return HttpResponseRedirect(place.get_absolute_url())
         if production_form.is_valid() and place_formset.is_valid() and companies_formset.is_valid():
             # Nasty things to set up the parent/child inline relations as it expects them to be.
             production = production_form.save()
@@ -341,7 +361,10 @@ def production_add(request, play=None, place=None, company=None):
                 form.instance.production = production
             place_formset.save()
             companies_formset.save()
-            messages.success(request, "Your addition has been stored; thank you. If you know members of the cast or crew, please feel free to add them now.")
+            messages.success(
+                request,
+                "Your addition has been stored; thank you."
+                " If you know members of the cast or crew, please feel free to add them now.")
             url = production.get_edit_cast_url()
             if request.POST.get('initial_person'):
                 url += '?person=' + request.POST.get('initial_person')
@@ -356,6 +379,7 @@ def production_add(request, play=None, place=None, company=None):
         'form': production_form,
     })
 
+
 @login_required
 def add_from_play(request, play_id, play):
     try:
@@ -364,20 +388,24 @@ def add_from_play(request, play_id, play):
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     return production_add(request, play=play)
 
+
 @login_required
 def add_from_place(request, place_id, place):
     place = check_url(Place, place_id, place)
     return production_add(request, place=place)
+
 
 @login_required
 def add_from_company(request, company_id, company):
     company = check_url(ProductionCompany, company_id, company)
     return production_add(request, company=company)
 
+
 def post_comment_wrapper(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/tickets')
     return post_comment(request)
+
 
 @login_required
 def hide_comment(request, comment_id):

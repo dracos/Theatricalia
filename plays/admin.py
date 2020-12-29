@@ -3,6 +3,7 @@ from reversion.admin import VersionAdmin
 from autocomplete.widgets import AutocompleteModelAdmin
 from .models import Play
 
+
 class PlayAdmin(VersionAdmin, AutocompleteModelAdmin):
     related_search_fields = {
         'parent': ('title',),
@@ -11,6 +12,7 @@ class PlayAdmin(VersionAdmin, AutocompleteModelAdmin):
     prepopulated_fields = {
         'slug': ('title',),
     }
-    search_fields = [ 'title', 'authors__first_name', 'authors__last_name' ]
+    search_fields = ['title', 'authors__first_name', 'authors__last_name']
+
 
 admin.site.register(Play, PlayAdmin)

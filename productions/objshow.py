@@ -10,6 +10,7 @@ from places.models import Place
 from people.models import Person
 from aggregates import Concatenate
 
+
 # object is Place, Person, Play, or ProductionCompany
 # type will be blank, or 'places' for multiple place search
 def productions_filter(object, type, date_filter):
@@ -24,15 +25,19 @@ def productions_filter(object, type, date_filter):
         o = object.productions
         annotate_extra = 'place__'
         filter_extra = False
-    elif type=='places':
+    elif type == 'places':
         o = Production.objects
         annotate_extra = 'place__'
         filter_extra = True
     else:
         raise Exception('Strange call to productions_filter')
 
-    o = o.annotate(max_end_date=Max(annotate_extra + 'end_date'), max_press_date=Max(annotate_extra + 'press_date'), max_start_date=Max(annotate_extra + 'start_date'))
-    filter = ( ~Q(max_end_date='') & Q(max_end_date__lt=now) ) | Q(max_end_date='', max_press_date__lt=now) | Q(max_end_date='', max_press_date__isnull=True, max_start_date__lt=now)
+    o = o.annotate(
+        max_end_date=Max(annotate_extra + 'end_date'),
+        max_press_date=Max(annotate_extra + 'press_date'),
+        max_start_date=Max(annotate_extra + 'start_date')
+    )
+    filter = (~Q(max_end_date='') & Q(max_end_date__lt=now)) | Q(max_end_date='', max_press_date__lt=now) | Q(max_end_date='', max_press_date__isnull=True, max_start_date__lt=now)
     if filter_extra:
         if date_filter == 'past':
             o = o.filter(filter, place__place__in=object)
@@ -52,18 +57,21 @@ def productions_filter(object, type, date_filter):
     else:
         return o.order_by(annotate_extra + 'start_date', annotate_extra + 'press_date')
 
+
 def productions_past(object, type):
     return productions_filter(object, type, 'past')
 
+
 def productions_future(object, type):
     return productions_filter(object, type, 'future')
+
 
 def productions_list(request, object, dir, template, context={}):
     """Given an object, such as a Person, Place, or Play, return a page of productions for it."""
 
     type = ''
     if not (isinstance(object, Place) or isinstance(object, Person) or isinstance(object, Play) or isinstance(object, ProductionCompany)):
-        type = 'places' # Assume it's around search at the mo
+        type = 'places'  # Assume it's around search at the mo
 
     if dir == 'future':
         paginator = Paginator(productions_future(object, type), 20, orphans=4)
@@ -93,6 +101,7 @@ def productions_list(request, object, dir, template, context={}):
     })
     return render(request, template, context)
 
+
 def productions_for(object, type=''):
     """Given an object, such as a Person, Place, or Play, return the closes
        past/future productions for that object. If it's a Person, also include
@@ -100,4 +109,3 @@ def productions_for(object, type=''):
     future_page = Paginator(productions_future(object, type), 20, orphans=4).page(1)
     past_page = Paginator(productions_past(object, type), 20, orphans=4).page(1)
     return past_page, future_page
-

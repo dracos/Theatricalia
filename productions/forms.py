@@ -1,7 +1,6 @@
-import re, sys
+import re
 from django import forms
 from django.utils.safestring import mark_safe
-from django.forms.formsets import BaseFormSet
 from django.db.models import Q
 
 from .models import Production, Part, Place, ProductionCompany, Production_Companies
@@ -9,15 +8,16 @@ from plays.models import Play
 from places.models import Place as PlacePlace
 from people.models import Person
 from fields import PrettyDateField, ApproximateDateFormField
-from widgets import PrettyDateInput
 from search.views import search_people
 from common.templatetags.prettify import prettify
 from autocomplete.widgets import ForeignKeySearchInput
+
 
 class CastCrewNullBooleanSelect(forms.widgets.NullBooleanSelect):
     def __init__(self, attrs=None):
         choices = ((u'1', 'Unknown'), (u'2', 'Cast'), (u'3', 'Crew'))
         super(forms.widgets.NullBooleanSelect, self).__init__(attrs, choices)
+
 
 # Auto-complete for those with JavaScript
 
@@ -34,17 +34,19 @@ class AutoCompleteMultiValueField(forms.MultiValueField):
             data_list[1] = self.model(**{self.column: data_list[0]})
         return data_list[1]
 
+
 class ProductionForm(forms.ModelForm):
-    #last_modified = forms.DateTimeField(widget=forms.HiddenInput(), required=False)
+    # last_modified = forms.DateTimeField(widget=forms.HiddenInput(), required=False)
     play = AutoCompleteMultiValueField(
         Play, 'title',
-        required = False, # It is required, but will be spotted in the clean function
-        fields = (forms.CharField(max_length=255), forms.ModelChoiceField(Play.objects.all())),
-        widget = ForeignKeySearchInput(Production.play.field.remote_field, ('title',),
+        required=False,  # It is required, but will be spotted in the clean function
+        fields=(forms.CharField(max_length=255), forms.ModelChoiceField(Play.objects.all())),
+        widget=ForeignKeySearchInput(
+            Production.play.field.remote_field, ('title',),
             {'max_length': 255})
     )
     play_choice = forms.ChoiceField(label='Play', widget=forms.RadioSelect(), required=False)
-    description = forms.CharField(required=False, widget=forms.Textarea(attrs={'cols': 40, 'rows':5}))
+    description = forms.CharField(required=False, widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}))
     url = forms.URLField(label='Web page', required=False, widget=forms.TextInput(attrs={'size': 40}))
     book_tickets = forms.URLField(label='Booking URL', required=False, widget=forms.TextInput(attrs={'size': 40}))
 
@@ -74,7 +76,7 @@ class ProductionForm(forms.ModelForm):
         p = ''
 
         # For database order of articles
-        m = re.match('^(A|An|The) (.*)$(?i)', s)
+        m = re.match('(?i)^(A|An|The) (.*)$', s)
         if m:
             article, rest = m.groups()
             q = Q(title__iendswith=' %s' % article, title__istartswith=rest)
@@ -82,14 +84,14 @@ class ProductionForm(forms.ModelForm):
             q = Q(title__icontains=s)
 
         for p in Play.objects.filter(q):
-            choices.append( ( p.id, prettify(str(p)) ) )
+            choices.append((p.id, prettify(str(p))))
         if len(choices) > 1:
-            choices.append( ( 'new', prettify('None of these, a new play called \'' + s + '\'') ) )
+            choices.append(('new', prettify('None of these, a new play called \'' + s + '\'')))
         elif str(p) == s:
-            choices.append( ( 'new', prettify('A new play also called \'' + s + '\'') ) )
+            choices.append(('new', prettify('A new play also called \'' + s + '\'')))
         else:
-            choices.append( ( 'new', prettify('A new play called \'' + s + '\'') ) )
-        choices.append( ( 'back', 'I misspelled, and will enter a new title below:' ) )
+            choices.append(('new', prettify('A new play called \'' + s + '\'')))
+        choices.append(('back', 'I misspelled, and will enter a new title below:'))
         return choices
 
     # play_choice is either blank, an ID, 'new' or 'back'
@@ -97,7 +99,7 @@ class ProductionForm(forms.ModelForm):
         play = self.cleaned_data['play_choice']
         if re.match('[0-9]+$', play):
             return Play.objects.get(id=play)
-        if play == 'new' or (play in ('','back') and 'play' in self.cleaned_data and self.cleaned_data['play'].id):
+        if play == 'new' or (play in ('', 'back') and 'play' in self.cleaned_data and self.cleaned_data['play'].id):
             return play
         raise forms.ValidationError('Please select one of the choices below:')
 
@@ -120,12 +122,14 @@ class ProductionForm(forms.ModelForm):
         self.instance.play = self.cleaned_data['play']
         return super(ProductionForm, self).save(**kwargs)
 
+
 class CompanyInlineForm(forms.ModelForm):
     productioncompany = AutoCompleteMultiValueField(
         ProductionCompany, 'name',
-        required = False, label='Company',
-        fields = (forms.CharField(max_length=100), forms.ModelChoiceField(ProductionCompany.objects.all())),
-        widget = ForeignKeySearchInput(Production_Companies.productioncompany.field.remote_field, ('name',),
+        required=False, label='Company',
+        fields=(forms.CharField(max_length=100), forms.ModelChoiceField(ProductionCompany.objects.all())),
+        widget=ForeignKeySearchInput(
+            Production_Companies.productioncompany.field.remote_field, ('name',),
             {'max_length': 100})
     )
 
@@ -150,12 +154,14 @@ class CompanyInlineForm(forms.ModelForm):
         self.instance.productioncompany = self.cleaned_data['productioncompany']
         return super(CompanyInlineForm, self).save(**kwargs)
 
+
 class PlaceForm(forms.ModelForm):
     place = AutoCompleteMultiValueField(
         PlacePlace, 'name',
-        required = False, # It is required, but will be spotted in the clean function
-        fields = (forms.CharField(max_length=100), forms.ModelChoiceField(PlacePlace.objects.all())),
-        widget = ForeignKeySearchInput(Place.place.field.remote_field, ('name',),
+        required=False,  # It is required, but will be spotted in the clean function
+        fields=(forms.CharField(max_length=100), forms.ModelChoiceField(PlacePlace.objects.all())),
+        widget=ForeignKeySearchInput(
+            Place.place.field.remote_field, ('name',),
             {'max_length': 100})
     )
     start_date = ApproximateDateFormField(required=False, label='It was/is on from')
@@ -188,12 +194,14 @@ class PlaceForm(forms.ModelForm):
         self.instance.place = self.cleaned_data['place']
         return super(PlaceForm, self).save(**kwargs)
 
+
 # person is the text box where someone enters a name, and always will be
 # person_choice is the selection of someone from that, or the creation of a new person
 class PartForm(forms.ModelForm):
-    person = forms.CharField(max_length=101, error_messages = {'required':'You have to specify a person.'})
+    person = forms.CharField(max_length=101, error_messages={'required': 'You have to specify a person.'})
     person_choice = forms.ChoiceField(label='Person', widget=forms.RadioSelect(), required=False)
-    start_date = ApproximateDateFormField(required=False, help_text='if they were only in this production for part of its run')
+    start_date = ApproximateDateFormField(
+        required=False, help_text='if they were only in this production for part of its run')
     end_date = ApproximateDateFormField(required=False)
 
     _flag_up_no_results = False
@@ -237,14 +245,14 @@ class PartForm(forms.ModelForm):
                     last = 'author of %s' % last_play[0].get_title_display()
                 else:
                     last = 'nothing yet on this site'
-            choices.append( (p.id, prettify(mark_safe('<a target="_blank" href="' + p.get_absolute_url() + '">' + str(p) + '</a> <small>(new window)</small>, ' + str(last))) ) )
+            choices.append((p.id, prettify(mark_safe('<a target="_blank" href="' + p.get_absolute_url() + '">' + str(p) + '</a> <small>(new window)</small>, ' + str(last)))))
         if len(choices) > 1:
-            choices.append( ( 'new', prettify('None of these, a new person called \'' + s + '\'') ) )
+            choices.append(('new', prettify('None of these, a new person called \'' + s + '\'')))
         elif str(p) == s:
-            choices.append( ( 'new', prettify('A new person also called \'' + s + '\'') ) )
+            choices.append(('new', prettify('A new person also called \'' + s + '\'')))
         else:
             return []
-        choices.append( ( 'back', 'I misspelled, and will enter a new name below:' ) )
+        choices.append(('back', 'I misspelled, and will enter a new name below:'))
         return choices
 
     def clean(self):
@@ -259,12 +267,12 @@ class PartForm(forms.ModelForm):
             return 'new'
         if re.match('[0-9]+$', person):
             return Person.objects.get(id=person)
-        if person == 'new' or (person == '' and 'person' not in self.changed_data and self.fields['production'].required == True):
+        if person == 'new' or (person == '' and 'person' not in self.changed_data and self.fields['production'].required):
             return person
         raise forms.ValidationError('Please select one of the choices below:')
 
     def clean_person(self):
-        if not 'person' in self.changed_data and self.fields['production'].required == True:
+        if 'person' not in self.changed_data and self.fields['production'].required:
             # The person hasn't altered, so use the Person object we already know about
             return self.instance.person
 
@@ -273,7 +281,7 @@ class PartForm(forms.ModelForm):
             # Okay, so we have a search string
             choices = self.radio_choices(person)
             if choices:
-                self.fields['person_choice'].choices = choices # = forms.ChoiceField( label='Person', choices=choices, widget = forms.RadioSelect() )
+                self.fields['person_choice'].choices = choices  # = forms.ChoiceField( label='Person', choices=choices, widget = forms.RadioSelect() )
             else:
                 self._flag_up_no_results = True
         return Person.objects.from_name(person)
@@ -285,8 +293,8 @@ class PartForm(forms.ModelForm):
         self.instance.person = self.cleaned_data['person']
         return super(PartForm, self).save(**kwargs)
 
+
 class ProductionCompanyForm(forms.ModelForm):
     class Meta:
         model = ProductionCompany
         exclude = ('slug',)
-

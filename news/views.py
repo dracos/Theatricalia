@@ -2,7 +2,8 @@ import calendar
 from django.views.generic import dates
 from .models import Article
 
-MONTHS = [ m.lower() for m in calendar.month_name ]
+MONTHS = [m.lower() for m in calendar.month_name]
+
 
 class NewsMixin(object):
     date_field = 'created'
@@ -19,11 +20,14 @@ class NewsMixin(object):
         context['all'] = self.get_queryset()
         return context
 
+
 class NewsMonth(NewsMixin, dates.MonthArchiveView):
     month_format = '%B'
 
+
 class NewsYear(NewsMixin, dates.YearArchiveView):
     make_object_list = True
+
 
 class NewsArticle(NewsMixin, dates.DateDetailView):
     month_format = '%B'
@@ -37,6 +41,7 @@ class NewsArticle(NewsMixin, dates.DateDetailView):
         })
         day = a.created.day
         return str(day)
+
 
 class NewsIndex(NewsMixin, dates.ArchiveIndexView):
     pass

@@ -7,6 +7,7 @@ from people.models import Person
 from profiles.models import User
 from merged.models import Redirect
 
+
 class PlayUnitTest(TestCase):
     def setUp(self):
         self.play = Play.objects.create(title='Hamlet')
@@ -23,9 +24,16 @@ class PlayUnitTest(TestCase):
         self.play.authors.add(person3)
         self.assertEqual('%s' % self.play, 'Hamlet, by Principal Author, Secondary Author, and Tertiary Author')
 
+
 class PlayTest(TestCase):
     def setUp(self):
-        self.prod = make_production('Hamlet', 'A tragedy', [ 'Shakespeare Productions' ], [ { 'name': 'Stirchley Theatre', 'start': '2013-01-01', 'end': '2013-01-14' } ], [ { 'first': u'Matthew', 'last': u'Somerville', 'role': 'Laertes' } ])
+        self.prod = make_production(
+            'Hamlet',
+            'A tragedy',
+            ['Shakespeare Productions'],
+            [{'name': 'Stirchley Theatre', 'start': '2013-01-01', 'end': '2013-01-14'}],
+            [{'first': u'Matthew', 'last': u'Somerville', 'role': 'Laertes'}]
+        )
         self.play_id = self.prod.play.id32
 
     def test_short_url(self):
@@ -75,7 +83,7 @@ class PlayTest(TestCase):
 
         resp = self.client.get('/play/%s/hamlet/edit' % self.play_id)
         self.assertContains(resp, 'Editing Hamlet')
-        resp = self.client.post('/play/%s/hamlet/edit' % self.play_id, { 'disregard': 'Disregard' }, follow=True)
+        resp = self.client.post('/play/%s/hamlet/edit' % self.play_id, {'disregard': 'Disregard'}, follow=True)
         self.assertRedirects(resp, '/play/%s/hamlet' % self.play_id)
         self.assertContains(resp, 'ignored any changes you made')
 

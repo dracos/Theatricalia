@@ -1,4 +1,3 @@
-import os
 from django.conf import settings
 
 from django.conf.urls import include, url
@@ -16,7 +15,6 @@ from photos import views as photos
 from common import views as common
 from merged import views as merged
 from news import views as news
-from news.models import Article
 
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
@@ -27,7 +25,7 @@ urlpatterns = [
     # Example:
     # (r'^theatricalia/', include('theatricalia.foo.urls')),
 
-    # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
+    # Uncomment the admin/doc line below and add 'django.contrib.admindocs'
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
@@ -79,8 +77,8 @@ urlpatterns = [
     url('^play/(?P<play_id>.*?)/(?P<play>.*?)/production/(?P<production_id>[0-9a-z]+)/corrected$', productions.production_corrected, name='production-corrected'),
     url('^play/(?P<play_id>.*?)/(?P<play>.*?)/production/(?P<production_id>[0-9a-z]+).(?P<format>json)$', productions.production, name='production-json'),
     url('^play/(?P<play_id>.*?)/(?P<play>.*?)/production/(?P<production_id>[0-9a-z]+)$', productions.production, name='production'),
-    url('^play/(?P<play_id>.*?)/(?P<play>.*)/future$', plays.play_productions, {'type':'future'}, name='play-productions-future'),
-    url('^play/(?P<play_id>.*?)/(?P<play>.*)/past$', plays.play_productions, {'type':'past'}, name='play-productions-past'),
+    url('^play/(?P<play_id>.*?)/(?P<play>.*)/future$', plays.play_productions, {'type': 'future'}, name='play-productions-future'),
+    url('^play/(?P<play_id>.*?)/(?P<play>.*)/past$', plays.play_productions, {'type': 'past'}, name='play-productions-past'),
     url('^play/(?P<play_id>.*?)/(?P<play>.*)/edit$', plays.play_edit, name='play-edit'),
     url('^play/(?P<play_id>.*?)/(?P<play>.*)/add$', productions.add_from_play, name='play-production-add'),
     url('^play/(?P<play_id>.*?)/(?P<play>.*)$', plays.play, name='play'),
@@ -90,17 +88,17 @@ urlpatterns = [
 
     url('^people$', people.PersonList.as_view(), name='people_all'),
     url('^people/(?P<letter>[a-z0*])$', people.PersonList.as_view(), name='people'),
-    url('^person/(?P<person_id>.*?)/(?P<person>.*)/future$', people.person_productions, {'type':'future'}, name='person-productions-future'),
-    url('^person/(?P<person_id>.*?)/(?P<person>.*)/past$', people.person_productions, {'type':'past'}, name='person-productions-past'),
+    url('^person/(?P<person_id>.*?)/(?P<person>.*)/future$', people.person_productions, {'type': 'future'}, name='person-productions-future'),
+    url('^person/(?P<person_id>.*?)/(?P<person>.*)/past$', people.person_productions, {'type': 'past'}, name='person-productions-past'),
     url('^person/(?P<person_id>.*?)/(?P<person>.*)/edit$', people.person_edit, name='person-edit'),
-    url('^person/(?P<person_id>.*?)/(?P<person>.*)\.js$', people.person_js, name='person-json'),
+    url(r'^person/(?P<person_id>.*?)/(?P<person>.*)\.js$', people.person_js, name='person-json'),
     url('^person/(?P<person_id>.*?)/(?P<person>.*)$', people.person, name='person'),
     url('^person/(?P<person_id>.+)$', people.person_short_url),
 
     url('^places$', places.PlaceList.as_view(), name='places_all'),
     url('^places/(?P<letter>[a-z0*])$', places.PlaceList.as_view(), name='places'),
-    url('^place/(?P<place_id>[^/]+)/(?P<place>.*)/future$', places.place_productions, {'type':'future'}, name='place-productions-future'),
-    url('^place/(?P<place_id>[^/]+)/(?P<place>.*)/past$', places.place_productions, {'type':'past'}, name='place-productions-past'),
+    url('^place/(?P<place_id>[^/]+)/(?P<place>.*)/future$', places.place_productions, {'type': 'future'}, name='place-productions-future'),
+    url('^place/(?P<place_id>[^/]+)/(?P<place>.*)/past$', places.place_productions, {'type': 'past'}, name='place-productions-past'),
     url('^place/(?P<place_id>[^/]+)/(?P<place>.*)/edit$', places.place_edit, name='place-edit'),
     url('^place/(?P<place_id>[^/]+)/(?P<place>.*)/add$', productions.add_from_place, name='place-production-add'),
     url('^place/(?P<place_id>[^/]+)/(?P<place>.*)/productions$', places.productions, name='place-productions'),
@@ -108,22 +106,22 @@ urlpatterns = [
     url('^place/(?P<place_id>[^/]+)/(?P<place>[^/]*)$', places.place, name='place'),
     url('^place/(?P<place_id>[^/]+)$', places.place_short_url),
 
-    url('^company/(?P<company_id>[^/]+)/(?P<company>.*)/future$', productions.company_productions, {'type':'future'}, name='company-productions-future'),
-    url('^company/(?P<company_id>[^/]+)/(?P<company>.*)/past$', productions.company_productions, {'type':'past'}, name='company-productions-past'),
+    url('^company/(?P<company_id>[^/]+)/(?P<company>.*)/future$', productions.company_productions, {'type': 'future'}, name='company-productions-future'),
+    url('^company/(?P<company_id>[^/]+)/(?P<company>.*)/past$', productions.company_productions, {'type': 'past'}, name='company-productions-past'),
     url('^company/(?P<company_id>[^/]+)/(?P<company>.*)/edit$', productions.company_edit, name='company-edit'),
     url('^company/(?P<company_id>[^/]+)/(?P<company>.*)/add$', productions.add_from_company, name='company-production-add'),
     url('^company/(?P<company_id>[^/]+)/(?P<company>[^/]*)$', productions.company, name='company'),
     url('^company/(?P<company_id>[^/]+)$', productions.production_company_short_url),
 
     url('^observations/post/', productions.post_comment_wrapper),
-    url('^observations/remove/(?P<comment_id>\d+)', productions.hide_comment, name='hide-comment'),
+    url(r'^observations/remove/(?P<comment_id>\d+)', productions.hide_comment, name='hide-comment'),
     url('^observations/', include('django_comments.urls')),
     url('^photograph/take/', photos.take_photo, name='take-photo'),
     url('^photograph/taken/', photos.photo_taken, name='photo-taken'),
     url('^photograph/view/(?P<photo_id>[0-9a-z]+)$', photos.view, name='photo-view'),
 
-    url('^search/around/(?P<s>.+)/future$', search.search_around, {'type':'future'}, name='search-around-future'),
-    url('^search/around/(?P<s>.+)/past$', search.search_around, {'type':'past'}, name='search-around-past'),
+    url('^search/around/(?P<s>.+)/future$', search.search_around, {'type': 'future'}, name='search-around-future'),
+    url('^search/around/(?P<s>.+)/past$', search.search_around, {'type': 'past'}, name='search-around-past'),
     url('^search/around/(?P<s>.+)$', search.search_around, name='search-around'),
     url('^search/parts/(?P<search>.+)$', search.search_parts, name='search-parts'),
     url('^search$', search.search, name='search'),
@@ -138,16 +136,16 @@ urlpatterns = [
 
     url('^(?P<url>publicity)/feed$', NewsFeed()),
     url('^publicity$', news.NewsIndex.as_view(), name='news-index'),
-    url('^publicity/(?P<year>\d{4})$', news.NewsYear.as_view(), name='news-year'),
-    url('^publicity/(?P<year>\d{4})/(?P<month>\w+)$', news.NewsMonth.as_view(), name='news-month'),
-    url('^publicity/(?P<year>\d{4})/(?P<month>\w+)/(?P<slug>[-\w]+)$',
+    url(r'^publicity/(?P<year>\d{4})$', news.NewsYear.as_view(), name='news-year'),
+    url(r'^publicity/(?P<year>\d{4})/(?P<month>\w+)$', news.NewsMonth.as_view(), name='news-month'),
+    url(r'^publicity/(?P<year>\d{4})/(?P<month>\w+)/(?P<slug>[-\w]+)$',
         news.NewsArticle.as_view(), name='news-entry'),
 
     url('^random$', views.random_production, name='random'),
-    #url('forums/forum/', include('forums.django-forum.forum.urls')),
-    #url('forums/simple/', include('forums.django-simpleforum.forum.urls')),
-    #url('forums/bb/', include('forums.djangobb.djangobb.urls')),
-    #url('forums/counterpoint/', include('forums.counterpoint.counterpoint.urls')),
+    # url('forums/forum/', include('forums.django-forum.forum.urls')),
+    # url('forums/simple/', include('forums.django-simpleforum.forum.urls')),
+    # url('forums/bb/', include('forums.djangobb.djangobb.urls')),
+    # url('forums/counterpoint/', include('forums.counterpoint.counterpoint.urls')),
 
     url('^lp/day/', include('lp.urls')),
 ]

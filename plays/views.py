@@ -1,11 +1,8 @@
-import string
-from datetime import datetime
 from django.views.generic import ListView
 from django.forms.formsets import formset_factory
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect 
+from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.db.models import Q
-from django.views.decorators.cache import cache_page
 from django.contrib import messages
 from django.shortcuts import render
 
@@ -16,7 +13,8 @@ from .models import Play
 from people.models import Person
 from .forms import PlayEditForm, PlayAuthorForm
 from productions.objshow import productions_list, productions_for
-from common.models import Alert
+# from common.models import Alert
+
 
 def play_short_url(request, play_id):
     try:
@@ -24,6 +22,7 @@ def play_short_url(request, play_id):
     except UnmatchingSlugException as e:
         play = e.args[0]
     return HttpResponsePermanentRedirect(play.get_absolute_url())
+
 
 def play_productions(request, play_id, play, type):
     try:
@@ -35,6 +34,7 @@ def play_productions(request, play_id, play, type):
             url = e.args[0].get_past_url()
         return HttpResponsePermanentRedirect(url)
     return productions_list(request, play, type, 'plays/production_list.html')
+
 
 def play(request, play_id, play):
     try:
@@ -52,8 +52,9 @@ def play(request, play_id, play):
         'same_name': same_name,
     })
 
-#@login_required
-#def play_alert(request, play_id, play, type):
+
+# @login_required
+# def play_alert(request, play_id, play, type):
 #    try:
 #        play = check_url(Play, play_id, play)
 #    except UnmatchingSlugException as e:
@@ -73,6 +74,7 @@ def play(request, play_id, play):
 #
 #    return HttpResponseRedirect(play.get_absolute_url())
 
+
 @login_required
 def play_edit(request, play_id, play):
     try:
@@ -83,7 +85,7 @@ def play_edit(request, play_id, play):
     play.title = play.get_title_display()
     form = PlayEditForm(request.POST or None, instance=play)
     PlayAuthorFormSet = formset_factory(PlayAuthorForm)
-    initial = [ { 'person': author.name() } for author in play.authors.all() ]
+    initial = [{'person': author.name()} for author in play.authors.all()]
     formset = PlayAuthorFormSet(request.POST or None, initial=initial)
     if request.method == 'POST':
         if request.POST.get('disregard'):
@@ -91,7 +93,7 @@ def play_edit(request, play_id, play):
             return HttpResponseRedirect(play.get_absolute_url())
         if form.is_valid() and formset.is_valid():
             authors = []
-            name_to_id = { author.name():author for author in play.authors.all() }
+            name_to_id = {author.name(): author for author in play.authors.all()}
             for author in formset.cleaned_data:
                 if author and author['person']:
                     if author.get('person_choice') == 'new':
@@ -110,6 +112,7 @@ def play_edit(request, play_id, play):
         'formset': formset,
     })
 
+
 class PlayList(ListMixin, ListView):
     model = Play
     field = 'title'
@@ -120,9 +123,13 @@ class PlayList(ListMixin, ListView):
         if letter == '0':
             pass
         elif letter == '*':
-            args = { '%s__regex' % self.field: r'^(\'|")[A-Za-z]' }
+            args = {'%s__regex' % self.field: r'^(\'|")[A-Za-z]'}
             objs = objs.exclude(**args)
         else:
-            plays = self.model.objects.filter( Q(title__istartswith=letter) | Q(title__istartswith="'%s" % letter) | Q(title__istartswith='"%s' % letter) )
+            self.model.objects.filter(
+                Q(title__istartswith=letter)
+                | Q(title__istartswith="'%s" % letter)
+                | Q(title__istartswith='"%s' % letter)
+            )
             letter = letter.upper()
         return objs

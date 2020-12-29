@@ -63,7 +63,7 @@ DATABASES = {
 SOUTH_TESTS_MIGRATE = False
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
-ALLOWED_HOSTS = [ 'theatricalia.com', 'theatricalia.com.', 'localhost', 'staging.theatricalia.com' ]
+ALLOWED_HOSTS = ['theatricalia.com', 'theatricalia.com.', 'localhost', 'staging.theatricalia.com']
 
 # Local time zone for this installation. Choices can be found here:
 # https://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -95,7 +95,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
 
@@ -130,7 +130,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    #'theatricalia.middleware.AlphaMiddleware',
+    # 'theatricalia.middleware.AlphaMiddleware',
     'theatricalia.middleware.OnlyLowercaseUrls',
     'theatricalia.middleware.RemoveSlashMiddleware',
     'reversion.middleware.RevisionMiddleware',
@@ -149,10 +149,10 @@ WSGI_APPLICATION = 'theatricalia.wsgi.application'
 
 INSTALLED_APPS = [
     'django.contrib.auth',
-    'django.contrib.contenttypes', # Attaching things to multiple models - comments, photos
+    'django.contrib.contenttypes',  # Attaching things to multiple models - comments, photos
     'django_comments',
     'django.contrib.sessions',
-    'django.contrib.humanize', # Ordinals
+    'django.contrib.humanize',  # Ordinals
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'django.contrib.messages',
@@ -176,6 +176,8 @@ if DEBUG:
     INSTALLED_APPS.append('debug_toolbar')
 
 from django.db.utils import OperationalError
+
+
 def skip_too_many_connections(record):
     if record.exc_info:
         exc_type, exc_value = record.exc_info[:2]
@@ -183,12 +185,14 @@ def skip_too_many_connections(record):
             return False
     return True
 
+
 def skip_new_content_types(record):
     if record.exc_info:
         exc_type, exc_value = record.exc_info[:2]
         if exc_type == RuntimeError and 'Error creating new content types' in exc_value.args[0]:
             return False
     return True
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -201,7 +205,7 @@ LOGGING = {
     'filters': {
         'not_too_many_connections': {
             '()': 'django.utils.log.CallbackFilter',
-            'callback': skip_too_many_connections, 
+            'callback': skip_too_many_connections,
         },
         'not_new_content_types': {
             '()': 'django.utils.log.CallbackFilter',
@@ -231,9 +235,12 @@ LOGGING = {
 
 # To have aria-required on required form fields
 from django.forms import fields
+
+
 def aria_widget_attrs(self, widget):
     if self.required:
-        return { 'aria-required': 'true' }
+        return {'aria-required': 'true'}
     return {}
-fields.Field.widget_attrs = aria_widget_attrs
 
+
+fields.Field.widget_attrs = aria_widget_attrs

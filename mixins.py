@@ -1,3 +1,4 @@
+import random
 import string
 
 from django.contrib.auth.decorators import login_required
@@ -6,6 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page, never_cache
 from django.views.decorators.csrf import csrf_exempt
 
+
 # Cacheing and the like
 
 class NeverCacheMixin(object):
@@ -13,15 +15,18 @@ class NeverCacheMixin(object):
     def dispatch(self, *args, **kwargs):
         return super(NeverCacheMixin, self).dispatch(*args, **kwargs)
 
+
 class LoginRequiredMixin(object):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
 
+
 class CSRFExemptMixin(object):
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(CSRFExemptMixin, self).dispatch(*args, **kwargs)
+
 
 class CacheMixin(object):
     cache_timeout = 60
@@ -31,6 +36,7 @@ class CacheMixin(object):
 
     def dispatch(self, *args, **kwargs):
         return cache_page(self.get_cache_timeout())(super(CacheMixin, self).dispatch)(*args, **kwargs)
+
 
 class CacheControlMixin(object):
     cache_timeout = 60
@@ -42,6 +48,7 @@ class CacheControlMixin(object):
         response = super(CacheControlMixin, self).dispatch(*args, **kwargs)
         patch_response_headers(response, self.get_cache_timeout())
         return response
+
 
 class JitterCacheMixin(CacheControlMixin):
     cache_range = [40, 80]
@@ -64,15 +71,15 @@ class ListMixin(CacheMixin):
     def get_queryset(self):
         letter = self.kwargs.get('letter', 'a')
         if letter == '0':
-            args = { '%s__regex' % self.field: r'^[0-9]' }
+            args = {'%s__regex' % self.field: r'^[0-9]'}
             objs = self.model.objects.filter(**args)
             letter = '0-9'
         elif letter == '*':
-            args = { '%s__regex' % self.field: r'^[A-Za-z0-9]' }
+            args = {'%s__regex' % self.field: r'^[A-Za-z0-9]'}
             objs = self.model.objects.exclude(**args)
             letter = 'Symbols'
         else:
-            args = { '%s__istartswith' % self.field: letter }
+            args = {'%s__istartswith' % self.field: letter}
             objs = self.model.objects.filter(**args)
             letter = letter.upper()
         self.letter = letter

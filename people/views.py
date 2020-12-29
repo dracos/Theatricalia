@@ -1,15 +1,9 @@
 import json
-import string
-from datetime import datetime
 
 from django.views.generic import ListView
-from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
-from django.db import IntegrityError
-from django.db.models import Q
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.contrib.auth.decorators import login_required
-from django.core import serializers
 from django.conf import settings
-from django.views.decorators.cache import cache_page
 from django.contrib import messages
 from django.shortcuts import render
 
@@ -17,11 +11,11 @@ from mixins import ListMixin
 
 from shortcuts import check_url, UnmatchingSlugException
 from utils import int_to_base32
-from common.models import Alert
 from .models import Person
 from .forms import PersonEditForm
 from photos.forms import PhotoForm
 from productions.objshow import productions_list, productions_for, productions_past, productions_future
+
 
 def person_productions(request, person_id, person, type):
     try:
@@ -30,6 +24,7 @@ def person_productions(request, person_id, person, type):
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     return productions_list(request, person, type, 'people/production_list.html')
 
+
 def person_short_url(request, person_id):
     try:
         person = check_url(Person, person_id)
@@ -37,14 +32,15 @@ def person_short_url(request, person_id):
         person = e.args[0]
     return HttpResponsePermanentRedirect(person.get_absolute_url())
 
+
 def person(request, person_id, person):
     try:
         person = check_url(Person, person_id, person)
     except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 
-    #if person.productions.count() == 0:
-    #    raise Http404()
+    # if person.productions.count() == 0:
+    #     raise Http404()
 
     try:
         fp = open(settings.OUR_ROOT + '/data/flickr/person/' + person_id)
@@ -70,6 +66,7 @@ def person(request, person_id, person):
         'same_name': same_name,
     })
 
+
 def person_js(request, person_id, person):
     try:
         person = check_url(Person, person_id, person)
@@ -77,9 +74,9 @@ def person_js(request, person_id, person):
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     plays = person.plays.all()
 
-    past   = [ {'id': int_to_base32(p.id), 'desc': str(p) } for p in productions_past(person, '') ]
-    future = [ {'id': int_to_base32(p.id), 'desc': str(p) } for p in productions_future(person, '') ]
-    plays  = [ {'id': int_to_base32(p.id), 'title': str(p) } for p in person.plays.all() ]
+    past = [{'id': int_to_base32(p.id), 'desc': str(p)} for p in productions_past(person, '')]
+    future = [{'id': int_to_base32(p.id), 'desc': str(p)} for p in productions_future(person, '')]
+    plays = [{'id': int_to_base32(p.id), 'title': str(p)} for p in person.plays.all()]
     person = {
         'id': int_to_base32(person.id),
         'first_name': person.first_name,
@@ -103,8 +100,9 @@ def person_js(request, person_id, person):
     json.dump(out, response, ensure_ascii=False)
     return response
 
-#@login_required
-#def person_alert(request, person_id, person, type):
+
+# @login_required
+# def person_alert(request, person_id, person, type):
 #    try:
 #        person = check_url(Person, person_id, person)
 #    except UnmatchingSlugException as e:
@@ -123,6 +121,7 @@ def person_js(request, person_id, person):
 #        messages.success(request, u"Your alert has been removed.")
 #
 #    return HttpResponseRedirect(person.get_absolute_url())
+
 
 @login_required
 def person_edit(request, person_id, person):
@@ -145,6 +144,7 @@ def person_edit(request, person_id, person):
         'person': person,
         'form': form,
     })
+
 
 class PersonList(ListMixin, ListView):
     model = Person

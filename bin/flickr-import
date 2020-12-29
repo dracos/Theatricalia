@@ -1,15 +1,19 @@
 #!/usr/bin/python
 
 import json
-import urllib.request, urllib.parse, time
-import os, errno
+import urllib.request
+import urllib.parse
+import time
+import os
+import errno
 
 DIR = os.path.dirname(__file__) + '/../data/flickr'
+
 
 def call_api(method, **params):
     eval = params.pop('eval', True)
     url = 'https://api.flickr.com/services/rest/?format=json&nojsoncallback=1&api_key=be8821cc6e82e0f36d04adee0450224e&method=' + method
-    for k,v in params.items():
+    for k, v in params.items():
         url += '&' + urllib.parse.quote(k) + '=' + urllib.parse.quote(v)
     out = urllib.request.urlopen(url).read()
     if eval:
@@ -17,12 +21,16 @@ def call_api(method, **params):
     time.sleep(1)
     return out
 
+
 def mkdir_p(path):
     try:
         os.makedirs(path)
     except OSError as exc:
-        if exc.errno == errno.EEXIST: pass
-        else: raise
+        if exc.errno == errno.EEXIST:
+            pass
+        else:
+            raise
+
 
 predicates = call_api('flickr.machinetags.getPredicates', namespace='theatricalia')
 for predicate in predicates['predicates']['predicate']:
@@ -35,4 +43,3 @@ for predicate in predicates['predicates']['predicate']:
         fp = open("%s/%s/%s" % (DIR, predicate, value), 'w')
         fp.write(photos)
         fp.close()
-

@@ -16,6 +16,7 @@ from shortcuts import check_url, UnmatchingSlugException
 from productions.objshow import productions_past
 from news.models import Article
 
+
 # Subclass of Feed overwriting __call__ to support URL redirects
 class Feed(DjangoFeed):
     def __call__(self, request, *args, **kwargs):
@@ -35,9 +36,10 @@ class Feed(DjangoFeed):
         feedgen.write(response, 'utf-8')
         return response
 
+
 class NearbyFeed(Feed):
     def get_object(self, request, coord):
-        m = re.match('\s*([-\d.]+)\s*,\s*([-\d.]+)\s*$', coord)
+        m = re.match(r'\s*([-\d.]+)\s*,\s*([-\d.]+)\s*$', coord)
         if not m:
             raise ObjectDoesNotExist
         self.point = (lat, lon) = m.groups()
@@ -55,6 +57,7 @@ class NearbyFeed(Feed):
 
     def items(self, places):
         return productions_past(places, 'places')[:20]
+
 
 class PlaceFeed(Feed):
     def get_object(self, request, id, slug):
@@ -78,6 +81,7 @@ class PlaceFeed(Feed):
     def items(self, obj):
         return obj.productions.order_by('-id')[:20]
 
+
 class PersonFeed(Feed):
     def get_object(self, request, id, slug):
         person = check_url(Person, id, slug)
@@ -100,6 +104,7 @@ class PersonFeed(Feed):
         productions = prod_with | prod_by
         return productions.order_by('-id')[:20]
 
+
 class PlayFeed(Feed):
     def get_object(self, request, id, slug):
         play = check_url(Play, id, slug)
@@ -118,6 +123,7 @@ class PlayFeed(Feed):
 
     def items(self, obj):
         return obj.productions.order_by('-id')[:20]
+
 
 class UserSeenFeed(Feed):
     def get_object(self, request, user):
@@ -138,6 +144,7 @@ class UserSeenFeed(Feed):
     def items(self, user):
         return user.visit_set.order_by('-id')[:20]
 
+
 class NewsFeed(Feed):
     title = 'Theatricalia: News articles'
     link = 'https://theatricalia.com/publicity'
@@ -145,4 +152,3 @@ class NewsFeed(Feed):
 
     def items(self):
         return Article.objects.visible().order_by('-created')[:20]
-

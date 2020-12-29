@@ -1,24 +1,20 @@
-import string
-from datetime import datetime
-
 from django.views.generic import ListView
-from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
-from django.views.decorators.cache import cache_page
 from django.contrib import messages
 from django.shortcuts import render
 
 from mixins import ListMixin
 
-from common.models import Alert
+# from common.models import Alert
 from .forms import PlaceForm
 from .models import Place
 from shortcuts import check_url, UnmatchingSlugException
 from productions.objshow import productions_list, productions_for
-from productions.models import Production, Production_Companies, Place as ProductionPlace, Part
+from productions.models import Production, Part
 from people.models import Person
 from photos.forms import PhotoForm
+
 
 def place_short_url(request, place_id):
     try:
@@ -27,12 +23,14 @@ def place_short_url(request, place_id):
         place = e.args[0]
     return HttpResponsePermanentRedirect(place.get_absolute_url())
 
+
 def place_productions(request, place_id, place, type):
     try:
         place = check_url(Place, place_id, place)
     except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     return productions_list(request, place, type, 'places/production_list.html')
+
 
 def productions(request, place_id, place):
     try:
@@ -49,6 +47,7 @@ def productions(request, place_id, place):
         'place': place,
     })
 
+
 def people(request, place_id, place):
     try:
         place = check_url(Place, place_id, place)
@@ -59,7 +58,7 @@ def people(request, place_id, place):
     productionsM2M = Part.objects.filter(production__places=place, person__in=people).select_related('production')
     m2m = {}
     for p in productionsM2M:
-        m2m.setdefault(p.person_id, []).append( p.production )
+        m2m.setdefault(p.person_id, []).append(p.production)
     for p in people:
         p._productions = m2m.get(p.id, [])
 
@@ -67,6 +66,7 @@ def people(request, place_id, place):
         'people': people,
         'place': place,
     })
+
 
 @login_required
 def place_edit(request, place_id, place):
@@ -91,6 +91,7 @@ def place_edit(request, place_id, place):
         'form': form,
     })
 
+
 def place(request, place_id, place):
     try:
         place = check_url(Place, place_id, place)
@@ -107,8 +108,9 @@ def place(request, place_id, place):
         'alert': alert,
     })
 
-#@login_required
-#def place_alert(request, place_id, place, type):
+
+# @login_required
+# def place_alert(request, place_id, place, type):
 #    try:
 #        place = check_url(Place, place_id, place)
 #    except UnmatchingSlugException as e:
@@ -127,6 +129,7 @@ def place(request, place_id, place):
 #        messages.success(request, u"Your alert has been removed.")
 #
 #    return HttpResponseRedirect(place.get_absolute_url())
+
 
 class PlaceList(ListMixin, ListView):
     model = Place

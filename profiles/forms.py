@@ -1,11 +1,9 @@
 from django.contrib.auth import authenticate
-from django.contrib.auth.tokens import default_token_generator
-from django.contrib.sites.models import Site
-from django.template import Context, loader
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm as DjangoAuthenticationForm
 
 from .models import Profile, User
+
 
 class ProfileForm(forms.ModelForm):
     class Meta:
@@ -14,18 +12,19 @@ class ProfileForm(forms.ModelForm):
 
 
 class RegistrationForm(forms.ModelForm):
-    name = forms.CharField(label="Name", max_length=100, error_messages = {'required':'Please provide your name.'})
-    unicorn = forms.EmailField(label="Email", error_messages = {'required': 'Please enter your email address.'} )
-    username = forms.RegexField(label="Username", max_length=30, regex=r'^\w+$',
-        #help_text = "Required. 30 characters or fewer. Alphanumeric characters only (letters, digits and underscores).",
-        error_messages = {'invalid': "Your username can only contain letters, numbers and underscores."})
-    password = forms.CharField( label = "Password", widget = forms.PasswordInput,
-        error_messages = {'required': 'Please enter a password.'} )
-    website = forms.CharField(label = "Website", required=False)
+    name = forms.CharField(label="Name", max_length=100, error_messages={'required': 'Please provide your name.'})
+    unicorn = forms.EmailField(label="Email", error_messages={'required': 'Please enter your email address.'})
+    username = forms.RegexField(
+        label="Username", max_length=30, regex=r'^\w+$',
+        # help_text="Required. 30 characters or fewer. Alphanumeric characters only (letters, digits and underscores).",
+        error_messages={'invalid': "Your username can only contain letters, numbers and underscores."})
+    password = forms.CharField(
+        label="Password", widget=forms.PasswordInput, error_messages={'required': 'Please enter a password.'})
+    website = forms.CharField(label="Website", required=False)
 
-    #def __init__(self, *args, **kwargs):
-    #    super(RegistrationForm, self).__init__(*args, **kwargs)
-    #    self.fields.keyOrder = self.Meta.fields
+    # def __init__(self, *args, **kwargs):
+    #     super(RegistrationForm, self).__init__(*args, **kwargs)
+    #     self.fields.keyOrder = self.Meta.fields
 
     class Meta:
         model = User
@@ -59,8 +58,10 @@ class RegistrationForm(forms.ModelForm):
         Profile.objects.create(user=user, url=self.cleaned_data['website'])
         return user
 
+
 class AuthenticationForm(DjangoAuthenticationForm):
     username = forms.CharField(label="Email or username", max_length=100)
+
     def clean(self):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
@@ -71,8 +72,7 @@ class AuthenticationForm(DjangoAuthenticationForm):
                 raise forms.ValidationError("Please enter a correct email address or username, and password.")
             elif not self.user_cache.is_active:
                 raise forms.ValidationError("This account is inactive.")
-            #if not self.user_cache.profile.email_validated:
-            #    raise forms.ValidationError("You must validate your email address before logging in. Check your email!")
+            # if not self.user_cache.profile.email_validated:
+            #     raise forms.ValidationError("You must validate your email address before logging in. Check your email!")
 
         return self.cleaned_data
-

@@ -18,6 +18,7 @@ from plays.models import Play
 from photos.models import Photo
 from fields import ApproximateDateField
 
+
 def pretty_date_range(start_date, press_date, end_date):
     if not start_date:
         if not press_date:
@@ -64,6 +65,7 @@ def pretty_date_range(start_date, press_date, end_date):
     return date
     return date.replace(' ', u'\xa0').replace(u'\xa0-\xa0', ' - ')
 
+
 class ProductionCompany(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100)
@@ -105,10 +107,11 @@ class ProductionCompany(models.Model):
     def get_future_url(self):
         return '%s/future' % self.get_absolute_url()
 
+
 class ProductionManager(models.Manager):
     def get_queryset(self):
         qs = super(ProductionManager, self).get_queryset()
-        qs = qs.exclude(source__startswith='<a href="http://wo') # National
+        qs = qs.exclude(source__startswith='<a href="http://wo')  # National
         qs = qs.exclude(source__startswith='HIDE')
         # qs = qs.exclude(source__endswith='University of Bristol Theatre Collection</a>')
         # qs = qs.exclude(source__endswith='AHDS Performing Arts</a>')
@@ -116,10 +119,11 @@ class ProductionManager(models.Manager):
         return qs
 
     def prefetch_companies(self, productions):
-        companiesM2M = Production_Companies.objects.filter(production__in=productions).select_related('productioncompany')
+        companiesM2M = Production_Companies.objects.filter(
+            production__in=productions).select_related('productioncompany')
         m2m = {}
         for c in companiesM2M:
-            m2m.setdefault(c.production_id, []).append( c.productioncompany )
+            m2m.setdefault(c.production_id, []).append(c.productioncompany)
         for p in productions:
             p._companies = m2m.get(p.id, [])
 
@@ -127,14 +131,16 @@ class ProductionManager(models.Manager):
         placeM2M = Place.objects.filter(production__in=productions).order_by('start_date', 'press_date', 'end_date')
         m2m = {}
         for p in placeM2M:
-            m2m.setdefault(p.production_id, []).append( p )
+            m2m.setdefault(p.production_id, []).append(p)
         for p in productions:
             p._place_set = m2m.get(p.id, [])
         return placeM2M
 
+
 class Production(models.Model):
     play = models.ForeignKey(Play, related_name='productions', on_delete=models.CASCADE)
-    companies = models.ManyToManyField(ProductionCompany, through='Production_Companies', related_name='productions', blank=True)
+    companies = models.ManyToManyField(
+        ProductionCompany, through='Production_Companies', related_name='productions', blank=True)
     places = models.ManyToManyField(PlacePlace, through='Place', related_name='productions', blank=True)
     parts = models.ManyToManyField(Person, through='Part', related_name='productions', blank=True)
     photos = GenericRelation(Photo)
@@ -179,7 +185,8 @@ class Production(models.Model):
         producer = places = ''
         if self.id:
             producer = self.get_companies_display(html=False)
-            if producer: producer += ' '
+            if producer:
+                producer += ' '
 
             places = self.place_summary()
             if places == 'Unknown location':
@@ -190,6 +197,7 @@ class Production(models.Model):
         return "%sproduction of %s, %s%s" % (producer, self.play, places, self.date_summary())
 
     _place_set = None
+
     def _get_place_set(self):
         if self._place_set is None:
             self._place_set = self.place_set.order_by('start_date', 'press_date', 'end_date')
@@ -204,8 +212,10 @@ class Production(models.Model):
         end_date = None
         press_date = None
         for place in self._get_place_set():
-            if not start_date: start_date = place.start_date
-            if not press_date: press_date = place.press_date
+            if not start_date:
+                start_date = place.start_date
+            if not press_date:
+                press_date = place.press_date
             end_date = place.end_date
         return start_date, press_date, end_date
 
@@ -227,17 +237,18 @@ class Production(models.Model):
         return False
 
     def place_summary(self):
-        if self.places.count()>2:
+        if self.places.count() > 2:
             place = u'%s, %s, and other locations' % (self.places.all()[0], self.places.all()[1])
-        elif self.places.count()==2:
+        elif self.places.count() == 2:
             place = u'%s and %s' % (self.places.all()[0], self.places.all()[1])
-        elif self.places.count()==1:
+        elif self.places.count() == 1:
             place = self.places.all()[0]
         else:
             place = u'Unknown location'
         return place
-        
+
     _companies = None
+
     def _get_companies(self):
         if self._companies is None:
             self._companies = self.companies.all()
@@ -249,7 +260,7 @@ class Production(models.Model):
         if html:
             companies = ['<span itemscope itemtype="http://schema.org/TheaterGroup"><a itemprop="url" href="%s">%s</a></span>' % (x.get_absolute_url(), prettify(x)) for x in companies]
         else:
-            companies = [ str(x) for x in companies ]
+            companies = [str(x) for x in companies]
         if num > 2:
             s = u', '.join(companies[:num-2]) + u', ' + u', and '.join(companies[num-2:])
         elif num == 2:
@@ -259,12 +270,13 @@ class Production(models.Model):
         else:
             s = u''
         return mark_safe(s)
-        
+
     def title(self):
         return self.get_companies_display() or ''
 
     def creator(self):
-        if self.source: return ''
+        if self.source:
+            return ''
         try:
             latest_version = Version.objects.get_for_object(self).order_by('revision__date_created')[0]
             return latest_version.revision.user
@@ -283,6 +295,7 @@ class Production(models.Model):
             return 'Birmingham Libraries'
         return 'Other'
 
+
 class Production_Companies(models.Model):
     production = models.ForeignKey(Production, on_delete=models.CASCADE)
     productioncompany = models.ForeignKey(ProductionCompany, verbose_name='company', on_delete=models.CASCADE)
@@ -293,7 +306,8 @@ class Production_Companies(models.Model):
     def __str__(self):
         return "%s's bit in %s" % (self.productioncompany, self.production)
 
-#class Performance(models.Model):
+
+# class Performance(models.Model):
 #    production = models.ForeignKey(Production, on_delete=models.CASCADE)
 #    date = models.DateField()
 #    time = models.TimeField(blank=True, null=True)
@@ -303,11 +317,13 @@ class Production_Companies(models.Model):
 #    def __str__(self):
 #        return '%s %s performance of %s at %s' % (self.date, self.time, self.production, self.place)
 
+
 class ProductionPlaceManager(models.Manager):
     def get_queryset(self):
         qs = super(ProductionPlaceManager, self).get_queryset()
         qs = qs.exclude(production__source__startswith='<a href="http://wo')
         return qs
+
 
 class Place(models.Model):
     production = models.ForeignKey(Production, on_delete=models.CASCADE)
@@ -324,21 +340,28 @@ class Place(models.Model):
     def date_summary(self):
         return pretty_date_range(self.start_date, self.press_date, self.end_date)
 
+
 class PartManager(models.Manager):
     def search(self, search):
         return self.get_queryset().filter(role__icontains=search).extra(select={'best_date': 'IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))'}).order_by('-best_date', 'production__place__press_date')
+
     def get_queryset(self):
         qs = super(PartManager, self).get_queryset()
         qs = qs.exclude(production__source__startswith='<a href="http://wo')
         return qs
 
+
 class Part(models.Model):
     production = models.ForeignKey(Production, on_delete=models.CASCADE)
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
-    role = models.CharField(u'R\u00f4le', max_length=200, blank=True, help_text=u'e.g. \u201cRomeo\u201d or \u201cDirector\u201d')
-    cast = models.NullBooleanField(null=True, blank=True, verbose_name='Cast/Crew',
+    role = models.CharField(
+        u'R\u00f4le', max_length=200, blank=True, help_text=u'e.g. \u201cRomeo\u201d or \u201cDirector\u201d')
+    cast = models.NullBooleanField(
+        null=True, blank=True, verbose_name='Cast/Crew',
         help_text=u'Crew includes all non-cast, from director to musicians to producers')
-    credited_as = models.CharField(max_length=100, blank=True, help_text=u'if they were credited differently to their name, or \u201cuncredited\u201d')
+    credited_as = models.CharField(
+        max_length=100, blank=True,
+        help_text=u'if they were credited differently to their name, or \u201cuncredited\u201d')
     order = models.IntegerField(blank=True, null=True)
     start_date = ApproximateDateField(blank=True)
     end_date = ApproximateDateField(blank=True)
@@ -346,8 +369,10 @@ class Part(models.Model):
     objects = PartManager()
 
     def role_or_unknown(self, lowercase=False):
-        if self.role: return self.role
-        if lowercase: return 'unknown'
+        if self.role:
+            return self.role
+        if lowercase:
+            return 'unknown'
         return 'Unknown'
 
     def __str__(self):
@@ -364,6 +389,7 @@ class Part(models.Model):
     def date_summary(self):
         return pretty_date_range(self.start_date, None, self.end_date)
 
+
 class Visit(models.Model):
     production = models.ForeignKey(Production, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -372,7 +398,7 @@ class Visit(models.Model):
 
     class Meta:
         unique_together = (('user', 'production'),)
-    
+
     def __str__(self):
         out = '%s saw %s' % (self.user, self.production)
         if self.recommend:
@@ -382,4 +408,3 @@ class Visit(models.Model):
     # Might as well just return the URL for the production for now
     def get_absolute_url(self):
         return self.production.get_absolute_url()
-

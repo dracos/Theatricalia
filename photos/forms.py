@@ -2,12 +2,14 @@ from django import forms
 from django.contrib.contenttypes.models import ContentType
 from .models import Photo
 
+
 class PhotoForm(forms.ModelForm):
-    content_type  = forms.CharField(widget=forms.HiddenInput)
-    object_id     = forms.CharField(widget=forms.HiddenInput)
+    content_type = forms.CharField(widget=forms.HiddenInput)
+    object_id = forms.CharField(widget=forms.HiddenInput)
 
     def __init__(self, target_object, initial=None, *args, **kwargs):
-        if initial is None: initial = {}
+        if initial is None:
+            initial = {}
         self.target_object = target_object
         initial.update({
             'content_type': target_object._meta,
@@ -36,4 +38,3 @@ class PhotoForm(forms.ModelForm):
 #            object_id    = self.target_object.pk,
 #            title      = self.cleaned_data["title"],
 #        )
-

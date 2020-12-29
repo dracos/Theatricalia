@@ -1,13 +1,13 @@
 import datetime
 import dateutil.parser
 import hashlib
-import random
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
-#from productions.models import Place
+# from productions.models import Place
 from photos.models import Photo
+
 
 def generate(request, date=None, testing=False):
     if testing:
@@ -32,23 +32,27 @@ def generate(request, date=None, testing=False):
     response['ETag'] = '"%s"' % hashlib.sha224(bytes(production.id)).hexdigest()
     return response
 
+
 def edition(request):
     if request.GET.get('test') == 'true':
         response = HttpResponse("Testing success " * 50)
         response['ETag'] = '"Testing"'
         return response
 
-    if not request.GET.get('local_delivery_time',False):
+    if not request.GET.get('local_delivery_time', False):
         return HttpResponse("Error: No local_delivery_time was provided", status=400)
-        
+
     date = dateutil.parser.parse(request.GET['local_delivery_time'])
     return generate(request, date=date)
+
 
 def sample(request):
     return generate(request, testing=True)
 
+
 def meta_json(request):
     return HttpResponseRedirect('/static/lp/meta.json')
+
 
 def icon(request):
     return HttpResponseRedirect('/static/lp/icon.png')

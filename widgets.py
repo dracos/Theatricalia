@@ -2,6 +2,7 @@ from datetime import date
 from django.utils import dateformat
 from django.forms import widgets
 
+
 class PrettyDateInput(widgets.Input):
     input_type = 'text'
 

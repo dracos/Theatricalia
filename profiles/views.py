@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.decorators import login_required
@@ -21,14 +21,14 @@ from django.contrib import messages
 from .forms import RegistrationForm, AuthenticationForm, ProfileForm
 from shortcuts import send_email
 from utils import int_to_base32, base32_to_int
-from common.models import Alert, AlertLocal
 from reversion.models import Revision
-from productions.models import Part
 from .models import User
+
 
 @login_required
 def profile_user(request):
     return HttpResponseRedirect(request.user.profile.get_absolute_url())
+
 
 def profile(request, username):
     user = get_object_or_404(User, username=username)
@@ -41,9 +41,9 @@ def profile(request, username):
         | Q(app_label='productions', model='production')
         | Q(app_label='places', model='place')
     )
-    for l in Revision.objects.filter(user=user, version__content_type__in=content_types).distinct().order_by('-date_created')[:10]:
+    for revision in Revision.objects.filter(user=user, version__content_type__in=content_types).distinct().order_by('-date_created')[:10]:
         versions = []
-        for v in l.version_set.filter(content_type__in=content_types):
+        for v in revision.version_set.filter(content_type__in=content_types):
             try:
                 obj = v.content_type.get_object_for_this_type(id=v.object_id)
                 url = obj.get_absolute_url()
@@ -59,9 +59,11 @@ def profile(request, username):
         'view': user,
         'profile': profile,
         'latest': latest,
-        'observations': Comment.objects.filter(user=user, is_public=True, is_removed=False).order_by('-submit_date')[:5],
+        'observations': Comment.objects.filter(
+            user=user, is_public=True, is_removed=False).order_by('-submit_date')[:5],
         'seen': seen,
     })
+
 
 def register(request):
     if request.user.is_authenticated:
@@ -74,7 +76,8 @@ def register(request):
             perform_login(request, user)
             send_confirmation_email(request, user)
             return render(request, 'registration/register-checkemail.html')
-    return render(request, 'registration/register.html', { 'form': form })
+    return render(request, 'registration/register.html', {'form': form})
+
 
 @sensitive_post_parameters()
 @csrf_protect
@@ -118,12 +121,13 @@ def login(request, template_name='registration/login.html',
     return TemplateResponse(request, template_name, context)
 
 
-#def registration_complete(request):
-#    return render(request, 'accounts/registration_complete.html', {})
+# def registration_complete(request):
+#     return render(request, 'accounts/registration_complete.html', {})
 
 def perform_login(request, user):
-    user.backend = 'profiles.backends.ModelBackend' # Needs backend to login?
+    user.backend = 'profiles.backends.ModelBackend'  # Needs backend to login?
     auth_login(request, user)
+
 
 def register_confirm(request, uidb32, token):
     try:
@@ -143,8 +147,10 @@ def register_confirm(request, uidb32, token):
         })
     return HttpResponseRedirect('/')
 
+
 def send_confirmation_email(request, user):
-    send_email(request, "Theatricalia account confirmation",
+    send_email(
+        request, "Theatricalia account confirmation",
         'registration/confirmation-email.txt',
         {
             'email': user.email,
@@ -154,6 +160,7 @@ def send_confirmation_email(request, user):
             'protocol': 'http',
         }, user.email
     )
+
 
 @login_required
 def profile_edit(request):
@@ -174,8 +181,9 @@ def profile_edit(request):
         'profile': profile,
     })
 
-#@login_required
-#def profile_alert(request, id):
+
+# @login_required
+# def profile_alert(request, id):
 #    profile = request.user.profile
 #    if id[0]=='l':
 #        alert = get_object_or_404(AlertLocal, id=id[1:])

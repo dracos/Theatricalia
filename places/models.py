@@ -9,14 +9,15 @@ from fields import ApproximateDateField
 from common.models import Alert
 from countries.models import Country
 
+
 class PlaceManager(models.Manager):
     # Crappy bounding box, need to do radial!
     def around(self, lat, lon):
         return self.get_queryset().filter(
-            longitude__gte = lon - 0.1,
-            longitude__lte = lon + 0.1,
-            latitude__gte = lat - 0.1,
-            latitude__lte = lat + 0.1
+            longitude__gte=lon - 0.1,
+            longitude__lte=lon + 0.1,
+            latitude__gte=lat - 0.1,
+            latitude__lte=lat + 0.1
         )
 
     def get(self, **kwargs):
@@ -24,6 +25,7 @@ class PlaceManager(models.Manager):
         if b32:
             kwargs['id'] = base32_to_int(b32)
         return super(PlaceManager, self).get(**kwargs)
+
 
 class Place(models.Model):
     name = models.CharField(max_length=100)
@@ -36,7 +38,14 @@ class Place(models.Model):
     country = models.ForeignKey(Country, blank=True, null=True, on_delete=models.SET_NULL)
     postcode = models.CharField(blank=True, max_length=10)
     telephone = models.CharField(blank=True, max_length=50)
-    type = models.CharField(blank=True, max_length=100, choices=(('proscenium', 'Proscenium Arch'), ('thrust', 'Thrust'), ('multiple', 'Multiple'), ('other', 'Other')))
+    type = models.CharField(
+        blank=True, max_length=100, choices=(
+            ('proscenium', 'Proscenium Arch'),
+            ('thrust', 'Thrust'),
+            ('multiple', 'Multiple'),
+            ('other', 'Other')
+        )
+    )
     size = models.CharField('Seats', blank=True, max_length=100)
     opening_date = ApproximateDateField(blank=True)
     closing_date = ApproximateDateField(blank=True, default='')
@@ -53,23 +62,24 @@ class Place(models.Model):
 
     def __str__(self):
         out = self.get_name_display()
-        if self.town and self.town not in out: out += u", " + self.town
+        if self.town and self.town not in out:
+            out += u", " + self.town
         return out
 
     def save(self, **kwargs):
-        name = re.sub('^(.*), (A|An|The)$(?i)', r'\2 \1', self.name.strip())
+        name = re.sub('(?i)^(.*), (A|An|The)$', r'\2 \1', self.name.strip())
         include_town = kwargs.pop('include_town', None)
         m = re.match('(.*), ([^,]*)$', name)
         if include_town and m:
             self.name = name = m.group(1)
             self.town = m.group(2)
         self.slug = slugify('%s %s' % (name, self.town))
-        self.name = re.sub('^(A|An|The) (.*)$(?i)', r'\2, \1', self.name.strip())
+        self.name = re.sub('(?i)^(A|An|The) (.*)$', r'\2, \1', self.name.strip())
         super(Place, self).save(**kwargs)
 
     def get_name_display(self):
         out = self.name
-        m = re.search('^(.*),\s+(A|An|The)$(?i)', out)
+        m = re.search(r'(?i)^(.*),\s+(A|An|The)$', out)
         if m:
             out = "%s %s" % (m.group(2), m.group(1))
         return out
@@ -102,9 +112,9 @@ class Place(models.Model):
     def get_productions_url(self):
         return self.make_url('place-productions')
 
+
 def first_letters():
     from django.db import connection
     cursor = connection.cursor()
     cursor.execute('SELECT DISTINCT SUBSTRING(name, 1, 1) FROM places_place')
     return cursor.fetchall()
-

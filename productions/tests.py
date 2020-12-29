@@ -5,6 +5,7 @@ from profiles.models import User
 
 from theatricalia.tests import make_production
 
+
 def play_form_defaults():
     return {
         'company-TOTAL_FORMS': '1',
@@ -18,8 +19,10 @@ def play_form_defaults():
         'place-0-end_date': '10th January 2004',
     }
 
+
 def play_form(kw):
     return dict(play_form_defaults(), **kw)
+
 
 class ProductionTest(TestCase):
     def test_adding_production(self):
@@ -34,10 +37,10 @@ class ProductionTest(TestCase):
         self.assertContains(resp, 'Adding production')
 
         # New play
-        resp = self.client.post('/add', play_form({ 'play_0': 'Hamlet' }))
+        resp = self.client.post('/add', play_form({'play_0': 'Hamlet'}))
         self.assertContains(resp, 'Please select one of the choices below:')
         self.assertContains(resp, 'A new play called &lsquo;Hamlet&rsquo;')
-        resp = self.client.post('/add', play_form({ 'play_choice': 'new', 'play_0': 'Hamlet' }), follow=True)
+        resp = self.client.post('/add', play_form({'play_choice': 'new', 'play_0': 'Hamlet'}), follow=True)
 
         prod = Production.objects.order_by('-id')[0]
         self.assertRedirects(resp, '/play/%s/hamlet/production/%s/edit/cast' % (prod.play.id32, prod.id32))
@@ -50,7 +53,7 @@ class ProductionTest(TestCase):
             'person': 'Matthew',
             'production': prod.id,
             'role': 'Director',
-            'cast': '3', # Crew
+            'cast': '3',  # Crew
         }, follow=True)
         self.assertRedirects(resp, '/play/%s/hamlet/production/%s/edit/cast' % (prod.play.id32, prod.id32))
         self.assertContains(resp, 'Your new part has been added; thank you.')
@@ -65,7 +68,7 @@ class ProductionTest(TestCase):
         # Edit it - need to hook up some mechanize thing
         resp = self.client.get('/play/%s/hamlet/production/%s/edit' % (prod.play.id32, prod.id32))
         resp = self.client.post('/play/%s/hamlet/production/%s/edit' % (prod.play.id32, prod.id32), {
-            'play_0': 'Hamlet', 'play_1': prod.play.id, # Keep existing
+            'play_0': 'Hamlet', 'play_1': prod.play.id,  # Keep existing
             'description': 'New description',
             'company-TOTAL_FORMS': '2', 'company-INITIAL_FORMS': '1',
             'company-0-productioncompany_0': 'Mars Company',
@@ -86,7 +89,7 @@ class ProductionTest(TestCase):
         self.assertContains(resp, 'Adding production')
 
         # If autocomplete used
-        resp = self.client.post('/add', play_form({ 'play_0': 'Hamlet', 'play_1': prod.play.id }), follow=True)
+        resp = self.client.post('/add', play_form({'play_0': 'Hamlet', 'play_1': prod.play.id}), follow=True)
         prod2 = Production.objects.order_by('-id')[0]
         self.assertRedirects(resp, '/play/%s/hamlet/production/%s/edit/cast' % (prod2.play.id32, prod2.id32))
         self.assertContains(resp, 'Editing production')
@@ -94,11 +97,11 @@ class ProductionTest(TestCase):
         self.assertContains(resp, 'Add new Part')
 
         # Similar title checking
-        resp = self.client.post('/add', play_form({ 'play_0': 'Ham' }))
+        resp = self.client.post('/add', play_form({'play_0': 'Ham'}))
         self.assertContains(resp, 'Please select one of the choices below:')
         self.assertContains(resp, 'Hamlet')
-        self.assertContains(resp, 'A new play called &lsquo;Ham&rsquo;');
-        resp = self.client.post('/add', play_form({ 'play_choice': prod.play.id, 'play_0': 'Ham' }), follow=True)
+        self.assertContains(resp, 'A new play called &lsquo;Ham&rsquo;')
+        resp = self.client.post('/add', play_form({'play_choice': prod.play.id, 'play_0': 'Ham'}), follow=True)
         prod3 = Production.objects.order_by('-id')[0]
         self.assertRedirects(resp, '/play/%s/hamlet/production/%s/edit/cast' % (prod3.play.id32, prod3.id32))
         self.assertContains(resp, 'Editing production')
@@ -110,7 +113,7 @@ class ProductionTest(TestCase):
             'person': 'Matthew',
             'production': prod3.id,
             'role': 'Director',
-            'cast': '3', # Crew
+            'cast': '3',  # Crew
         })
         self.assertContains(resp, '/person/%s/matthew' % prod.parts.all()[0].id32)
         self.assertContains(resp, 'A new person also called &lsquo;Matthew&rsquo;')
@@ -119,20 +122,33 @@ class ProductionTest(TestCase):
             'person': 'Matthew',
             'production': prod3.id,
             'role': 'Director',
-            'cast': '3', # Crew
+            'cast': '3',  # Crew
         }, follow=True)
         self.assertRedirects(resp, '/play/%s/hamlet/production/%s/edit/cast' % (prod3.play.id32, prod3.id32))
         self.assertContains(resp, 'Your new part has been added; thank you.')
         self.assertContains(resp, 'Matthew, Director <small>(Crew)</small>')
 
     def test_short_url(self):
-        prod = make_production('Hamlet', 'A tragedy', [ 'Shakespeare Productions' ], [ { 'name': 'Stirchley Theatre', 'start': '2013-01-01', 'end': '2013-01-14' } ], [ { 'first': u'Matthew', 'last': u'Somerville', 'role': 'Laertes' } ])
+        prod = make_production(
+            'Hamlet',
+            'A tragedy',
+            ['Shakespeare Productions'],
+            [{'name': 'Stirchley Theatre', 'start': '2013-01-01', 'end': '2013-01-14'}],
+            [{'first': u'Matthew', 'last': u'Somerville', 'role': 'Laertes'}]
+        )
         resp = self.client.get('/d/%s' % prod.id32)
         self.assertRedirects(resp, '/play/%s/hamlet/production/%s' % (prod.play.id32, prod.id32), status_code=301)
 
+
 class CompanyTest(TestCase):
     def setUp(self):
-        prod = make_production('Hamlet', 'A tragedy', [ 'Shakespeare Productions' ], [ { 'name': 'Stirchley Theatre', 'start': '2013-01-01', 'end': '2013-01-14' } ], [ { 'first': u'Matthew', 'last': u'Somerville', 'role': 'Laertes' } ])
+        prod = make_production(
+            'Hamlet',
+            'A tragedy',
+            ['Shakespeare Productions'],
+            [{'name': 'Stirchley Theatre', 'start': '2013-01-01', 'end': '2013-01-14'}],
+            [{'first': u'Matthew', 'last': u'Somerville', 'role': 'Laertes'}]
+        )
         self.company_id = prod.companies.all()[0].id32
 
     def test_short_url(self):

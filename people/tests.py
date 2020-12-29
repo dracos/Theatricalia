@@ -2,12 +2,18 @@ from django.test import TestCase
 
 from theatricalia.tests import make_production
 
-from .models import Person
 from profiles.models import User
+
 
 class PersonTest(TestCase):
     def setUp(self):
-        prod = make_production('Hamlet', 'A tragedy', [ 'Shakespeare Productions' ], [ { 'name': 'Stirchley Theatre', 'start': '2013-01-01', 'end': '2013-01-14' } ], [ { 'first': u'Matthew', 'last': u'Somerville', 'role': 'Laertes' } ])
+        prod = make_production(
+            'Hamlet',
+            'A tragedy',
+            ['Shakespeare Productions'],
+            [{'name': 'Stirchley Theatre', 'start': '2013-01-01', 'end': '2013-01-14'}],
+            [{'first': u'Matthew', 'last': u'Somerville', 'role': 'Laertes'}]
+        )
         self.person_id = prod.parts.all()[0].id32
 
     def test_short_url(self):

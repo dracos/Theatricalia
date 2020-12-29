@@ -1,5 +1,7 @@
-import time, re, datetime
 import copy
+import datetime
+import re
+import time
 from datetime import date
 from widgets import PrettyDateInput
 from django.db import models
@@ -18,13 +20,13 @@ class ApproximateDate(object):
             absyear = -year
             self.bc = True
         if year and month and day:
-            d = date(absyear, month, day)
+            date(absyear, month, day)
         elif year and month:
-            d = date(absyear, month, 1)
+            date(absyear, month, 1)
         elif year and day:
             raise ValueError("You cannot specify just a year and a day")
         elif year:
-            d = date(absyear, 1, 1)
+            date(absyear, 1, 1)
         else:
             raise ValueError("You must specify a year")
         self.year = year
@@ -76,7 +78,9 @@ class ApproximateDate(object):
             return False
         return True
 
+
 ansi_date_re = re.compile(r'^-?\d{4}-\d{1,2}-\d{1,2}$')
+
 
 class ApproximateDateField(models.CharField):
     def __init__(self, *args, **kwargs):
@@ -97,10 +101,10 @@ class ApproximateDateField(models.CharField):
     def from_db_value(self, value, expression=None, connection=None, context=None):
         if value in (None, ''):
             return None
-        #if isinstance(value, datetime.datetime):
-        #    value = value.date().isoformat()
-        #if isinstance(value, datetime.date):
-        #    value = value.isoformat()
+        # if isinstance(value, datetime.datetime):
+        #     value = value.date().isoformat()
+        # if isinstance(value, datetime.date):
+        #     value = value.isoformat()
 
         if not ansi_date_re.search(value):
             raise ValidationError('Enter a valid date in YYYY-MM-DD format.')
@@ -109,16 +113,16 @@ class ApproximateDateField(models.CharField):
         try:
             return ApproximateDate(year, month, day)
         except ValueError as e:
-            msg = _('Invalid date: %s') % _(str(e))
-            raise exceptions.ValidationError(msg)
+            msg = 'Invalid date: %s' % str(e)
+            raise ValidationError(msg)
 
     def get_prep_value(self, value):
         if value in (None, ''):
-                return ''
+            return ''
         if isinstance(value, ApproximateDate):
-                return repr(value)
+            return repr(value)
         if isinstance(value, date):
-                return dateformat.format(value, "Y-m-d")
+            return dateformat.format(value, "Y-m-d")
         if not ansi_date_re.search(value):
             raise ValidationError('Enter a valid date in YYYY-MM-DD format.')
         return value
@@ -128,17 +132,17 @@ class ApproximateDateField(models.CharField):
         return self.get_prep_value(value)
 
     def formfield(self, **kwargs):
-        defaults = { 'form_class': ApproximateDateFormField }
+        defaults = {'form_class': ApproximateDateFormField}
         defaults.update(kwargs)
         return super(ApproximateDateField, self).formfield(**defaults)
 
 
 DATE_INPUT_FORMATS = (
-    '%Y-%m-%d', '%d/%m/%Y', '%d/%m/%y', # '2006-10-25', '25/10/2006', '25/10/06'
-    '%b %d %Y', '%b %d, %Y',            # 'Oct 25 2006', 'Oct 25, 2006'
-    '%d %b %Y', '%d %b, %Y',            # '25 Oct 2006', '25 Oct, 2006'
-    '%B %d %Y', '%B %d, %Y',            # 'October 25 2006', 'October 25, 2006'
-    '%d %B %Y', '%d %B, %Y',            # '25 October 2006', '25 October, 2006'
+    '%Y-%m-%d', '%d/%m/%Y', '%d/%m/%y',  # '2006-10-25', '25/10/2006', '25/10/06'
+    '%b %d %Y', '%b %d, %Y',             # 'Oct 25 2006', 'Oct 25, 2006'
+    '%d %b %Y', '%d %b, %Y',             # '25 Oct 2006', '25 Oct, 2006'
+    '%B %d %Y', '%B %d, %Y',             # 'October 25 2006', 'October 25, 2006'
+    '%d %B %Y', '%d %B, %Y',             # '25 October 2006', '25 October, 2006'
 )
 MONTH_INPUT_FORMATS = (
     '%m/%Y',                         # '10/2006'
@@ -149,13 +153,14 @@ YEAR_INPUT_FORMATS = (
     '%Y',                               # '2006'
 )
 
-BC_DATE_INPUT_FORMATS =  [ i.replace('%Y', '%Y BC') for i in DATE_INPUT_FORMATS ]
-BC_MONTH_INPUT_FORMATS = [ i.replace('%Y', '%Y BC') for i in MONTH_INPUT_FORMATS ]
-BC_YEAR_INPUT_FORMATS =  [ i.replace('%Y', '%Y BC') for i in YEAR_INPUT_FORMATS ]
+BC_DATE_INPUT_FORMATS = [i.replace('%Y', '%Y BC') for i in DATE_INPUT_FORMATS]
+BC_MONTH_INPUT_FORMATS = [i.replace('%Y', '%Y BC') for i in MONTH_INPUT_FORMATS]
+BC_YEAR_INPUT_FORMATS = [i.replace('%Y', '%Y BC') for i in YEAR_INPUT_FORMATS]
 
-BC_DATE_INPUT_FORMATS.extend(  [ i.replace('%Y', '-%Y') for i in DATE_INPUT_FORMATS ] )
-BC_MONTH_INPUT_FORMATS.extend( [ i.replace('%Y', '-%Y') for i in MONTH_INPUT_FORMATS ] )
-BC_YEAR_INPUT_FORMATS.extend(  [ i.replace('%Y', '-%Y') for i in YEAR_INPUT_FORMATS ] )
+BC_DATE_INPUT_FORMATS.extend([i.replace('%Y', '-%Y') for i in DATE_INPUT_FORMATS])
+BC_MONTH_INPUT_FORMATS.extend([i.replace('%Y', '-%Y') for i in MONTH_INPUT_FORMATS])
+BC_YEAR_INPUT_FORMATS.extend([i.replace('%Y', '-%Y') for i in YEAR_INPUT_FORMATS])
+
 
 class ApproximateDateFormField(forms.fields.Field):
     def __init__(self, max_length=10, empty_value='', *args, **kwargs):
@@ -167,7 +172,7 @@ class ApproximateDateFormField(forms.fields.Field):
             return None
         if isinstance(value, ApproximateDate):
             return value
-        value = re.sub('(?<=\d)(st|nd|rd|th)', '', value.strip())
+        value = re.sub(r'(?<=\d)(st|nd|rd|th)', '', value.strip())
         for format in DATE_INPUT_FORMATS:
             try:
                 match = time.strptime(value, format)
@@ -206,9 +211,10 @@ class ApproximateDateFormField(forms.fields.Field):
                 continue
         raise ValidationError('Please enter a valid date.')
 
+
 # PrettyDateField - same as DateField but accepts more input, like ApproximateDateFormField above
 class PrettyDateField(forms.fields.Field):
-    widget = PrettyDateInput 
+    widget = PrettyDateInput
 
     def clean(self, value):
         """
@@ -222,7 +228,7 @@ class PrettyDateField(forms.fields.Field):
             return value.date()
         if isinstance(value, datetime.date):
             return value
-        value = re.sub('(?<=\d)(st|nd|rd|th)', '', value.strip())
+        value = re.sub(r'(?<=\d)(st|nd|rd|th)', '', value.strip())
         for format in DATE_INPUT_FORMATS:
             try:
                 return datetime.date(*time.strptime(value, format)[:3])

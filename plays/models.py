@@ -1,7 +1,7 @@
 import re
 from django.db import models
 from people.models import Person
-#from django.utils.html import escape
+# from django.utils.html import escape
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import slugify
@@ -9,6 +9,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from utils import int_to_base32
 from common.models import Alert
 from common.templatetags.prettify import prettify
+
 
 class Play(models.Model):
     title = models.CharField(max_length=255)
@@ -40,18 +41,18 @@ class Play(models.Model):
     def save(self, **kwargs):
         title = self.get_title_display()
         self.slug = slugify(title)
-        self.title = re.sub('^(A|An|The) (.*)$(?i)', r'\2, \1', self.title)
+        self.title = re.sub('(?i)^(A|An|The) (.*)$', r'\2, \1', self.title)
         super(Play, self).save(**kwargs)
 
     def get_title_display(self):
-        return re.sub('^(.*),\s+(A|An|The)$(?i)', r'\2 \1', self.title)
+        return re.sub(r'(?i)^(.*),\s+(A|An|The)$', r'\2 \1', self.title)
 
     def get_authors_display(self, html=True):
         num = self.authors.count()
         if html:
             authors = ['<span itemprop="author" itemscope itemtype="http://schema.org/Person"><a itemprop="url" href="%s">%s</a></span>' % (x.get_absolute_url(), prettify(x)) for x in self.authors.all()]
         else:
-            authors = [ str(x) for x in self.authors.all() ]
+            authors = [str(x) for x in self.authors.all()]
         if num > 2:
             s = u', '.join(authors[:num-2]) + u', ' + u', and '.join(authors[num-2:])
         elif num == 2:
@@ -61,7 +62,7 @@ class Play(models.Model):
         else:
             s = u''
         return mark_safe(s)
-            
+
     def construct_url(self, name, *args):
         return reverse(name, args=(int_to_base32(self.id), self.slug) + args)
 

@@ -1,20 +1,13 @@
-import re
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect, Http404, HttpResponse
-from django.urls import reverse
-from django.db import IntegrityError
-from django.contrib import messages
+from django.http import HttpResponsePermanentRedirect, Http404, HttpResponse
 
-from common.models import AlertLocal
 from places.models import Place
 from people.models import Person
 from productions.models import Production, ProductionCompany
 from plays.models import Play
 from shortcuts import check_url, UnmatchingSlugException
-from utils import base32_to_int
 
-#@login_required
-#def alert(request, latlon, type):
+# @login_required
+# def alert(request, latlon, type):
 #    m = re.match('\s*([-\d.]+)\s*,\s*([-\d.]+)\s*$', latlon)
 #    if not m:
 #        raise Http404
@@ -46,6 +39,7 @@ type_dict = {
     'company': ProductionCompany,
 }
 
+
 def api_flickr(request, type, id):
     if type in type_dict:
         obj_type = type_dict[type]
@@ -59,4 +53,3 @@ def api_flickr(request, type, id):
         return HttpResponsePermanentRedirect(url)
 
     return HttpResponse('%s' % object)
-

@@ -6,11 +6,11 @@ from django.shortcuts import render
 from productions.models import Production, Part
 from plays.models import Play
 from places.models import Place
-from places.models import Place
 from people.models import Person
 from news.models import Article
 from photos.models import Photo
 from profiles.models import User
+
 
 def random_production(request):
     count = Production.objects.aggregate(count=Count('id'))['count']
@@ -22,29 +22,31 @@ def random_production(request):
         url = '/'
     return HttpResponseRedirect(url)
 
+
 def home(request):
     try:
         matthew = User.objects.get(id=1)
-    except:
+    except User.DoesNotExist:
         matthew = User()
 
     try:
         latest_news = Article.objects.visible().latest()
-    except:
+    except Article.DoesNotExist:
         latest_news = {}
 
     try:
         latest = Production.objects.all().order_by('-id')[0]
-    except:
+    except IndexError:
         latest = {}
 
     try:
         latest_comment = Comment.objects.exclude(user=matthew).order_by('-id')[0]
-    except:
+    except IndexError:
         latest_comment = {}
 
     random_photo = Photo.objects.exclude(id__gte=149, id__lte=159).filter(content_type=22).order_by('?')[:1]
-    if random.randint(1, 10) == 1: random_photo = None
+    if random.randint(1, 10) == 1:
+        random_photo = None
 
     return render(request, 'home.html', {
         'latest_production': latest,
@@ -59,14 +61,22 @@ def home(request):
         'home': True,
     })
 
+
 def static_colophon(request):
-	return render(request, 'colophon.html')
+    return render(request, 'colophon.html')
+
+
 def static_about(request):
-	return render(request, 'about.html')
+    return render(request, 'about.html')
+
+
 def static_help(request):
-	return render(request, 'help.html')
+    return render(request, 'help.html')
+
+
 def static_contact(request):
-	return render(request, 'contact.html')
+    return render(request, 'contact.html')
+
 
 def static_moocards(request):
     cards_v = [
@@ -116,19 +126,18 @@ def static_moocards(request):
 
     rows = (
         v() + h() + h() + v(),
-              h() + v()      ,
-        h() + v()       + v(),
-        v()       + v()      ,
-              h()       + h(),
+              h() + v()      ,  # noqa: E221,E203,E131
+        h() + v()       + v(),  # noqa: E221
+        v()       + v()      ,  # noqa: E221,E203
+              h()       + h(),  # noqa: E221,E131
     )
 
     unused = (
         v() + h() + v(),
-              h(),
+              h(),        # noqa: E131
     )
 
     return render(request, 'moocards.html', {
         'rows': rows,
         'unused': unused,
     })
-

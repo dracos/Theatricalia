@@ -9,6 +9,7 @@ from sounds.metaphone import dm
 from common.models import Alert
 from reversion.models import Version
 
+
 class PersonManager(models.Manager):
     def get_queryset(self):
         qs = super(PersonManager, self).get_queryset()
@@ -27,6 +28,7 @@ class PersonManager(models.Manager):
         new_person = self.from_name(name)
         new_person.save()
         return new_person
+
 
 class Person(models.Model):
     first_name = models.CharField(max_length=50, blank=True, verbose_name='Forenames')
@@ -94,7 +96,7 @@ class Person(models.Model):
         verbose_name_plural = 'people'
 
     def save(self, **kwargs):
-        self.last_name = self.last_name.replace(u'\u2019', "'") # I know, but store it like this anyway.
+        self.last_name = self.last_name.replace(u'\u2019', "'")  # I know, but store it like this anyway.
         self.slug = slugify(self.name())
         first_name_metaphone = dm(self.first_name)
         last_name_metaphone = dm(self.last_name)
@@ -105,6 +107,7 @@ class Person(models.Model):
         super(Person, self).save(**kwargs)
 
     _creator = None
+
     @property
     def creator(self):
         if self._creator is None:
@@ -116,6 +119,7 @@ class Person(models.Model):
         return self._creator
 
     _last_modifier = None
+
     @property
     def last_modifier(self):
         if self._last_modifier is None:
@@ -126,9 +130,9 @@ class Person(models.Model):
                 self._last_modifier = ''
         return self._last_modifier
 
+
 def first_letters():
     from django.db import connection
     cursor = connection.cursor()
     cursor.execute('SELECT DISTINCT SUBSTRING(last_name, 1, 1) FROM people_person')
     return cursor.fetchall()
-

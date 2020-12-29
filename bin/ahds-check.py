@@ -5,7 +5,9 @@
 # outputting the ones that don't match (turns out all duplicates at the AHDS end)
 # Checks Production.Place entries too
 
-import re, os, sys
+import re
+import os
+import sys
 sys.path.append('../../')
 sys.path.append('../')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'theatricalia.settings'
@@ -13,8 +15,10 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'theatricalia.settings'
 from productions.models import Part, Place
 from reversion.models import Version
 
+
 def fix_dots(s):
     return s.title().replace('.', ' ').replace('  ', ' ').strip()
+
 
 # Manual list from some already existing Places
 theatre_lookup = {
@@ -47,7 +51,7 @@ for n in range(1, 67):
     table = m.group(1)
     rows = re.findall('<tr[^>]*>(.*?)</tr>(?s)', table)
     for play_row in rows:
-        play, author, director, designer, theatre, first, last = re.findall('<td[^>]*>\s*(.*?)\s*</td>(?s)', play_row)
+        play, author, director, designer, theatre, first, last = re.findall(r'<td[^>]*>\s*(.*?)\s*</td>(?s)', play_row)
         if play == '<b>Play</b>':
             continue
         if theatre in theatre_lookup:
@@ -55,40 +59,40 @@ for n in range(1, 67):
         data = {
             'play': play,
             'theatre': theatre,
-            'first': re.sub('^(\d\d)/(\d\d)/(\d+)$', r'19\3-\2-\1', re.sub('^(\d\d)/(\d)/(\d+)$', r'19\3-0\2-\1', re.sub('^(\d)/(\d\d)/(\d+)$', r'19\3-\2-0\1', re.sub('^(\d)/(\d)/(\d+)$', r'19\3-0\2-0\1', first)))),
-            'last':  re.sub('^(\d\d)/(\d\d)/(\d+)$', r'19\3-\2-\1', re.sub('^(\d\d)/(\d)/(\d+)$', r'19\3-0\2-\1', re.sub('^(\d)/(\d\d)/(\d+)$', r'19\3-\2-0\1', re.sub('^(\d)/(\d)/(\d+)$', r'19\3-0\2-0\1', last)))),
+            'first': re.sub(r'^(\d\d)/(\d\d)/(\d+)$', r'19\3-\2-\1', re.sub(r'^(\d\d)/(\d)/(\d+)$', r'19\3-0\2-\1', re.sub(r'^(\d)/(\d\d)/(\d+)$', r'19\3-\2-0\1', re.sub(r'^(\d)/(\d)/(\d+)$', r'19\3-0\2-0\1', first)))),
+            'last':  re.sub(r'^(\d\d)/(\d\d)/(\d+)$', r'19\3-\2-\1', re.sub(r'^(\d\d)/(\d)/(\d+)$', r'19\3-0\2-\1', re.sub(r'^(\d)/(\d\d)/(\d+)$', r'19\3-\2-0\1', re.sub(r'^(\d)/(\d)/(\d+)$', r'19\3-0\2-0\1', last)))),
         }
         if author:
-            data['author'] = [ fix_dots(x) for x in re.split(', ', author) ]
+            data['author'] = [fix_dots(x) for x in re.split(', ', author)]
         if director:
-            data['director'] = [ fix_dots(x) for x in re.split(', ', director) ]
+            data['director'] = [fix_dots(x) for x in re.split(', ', director)]
         if designer:
-            data['designer'] = [ fix_dots(x) for x in re.split(', ', designer) ]
-            if data['designer'][0]=='Voytek':
+            data['designer'] = [fix_dots(x) for x in re.split(', ', designer)]
+            if data['designer'][0] == 'Voytek':
                 data['designer'].append('')
 
-        m = re.match('<a href="birminghamrepdetails\.do\?id=(\d+)">(.*?)</a>$', data['play']) # Always will match
+        m = re.match(r'<a href="birminghamrepdetails\.do\?id=(\d+)">(.*?)</a>$', data['play'])  # Always will match
         data['id'], data['play'] = m.groups()
         details = open('../data/ahds/details/%s' % data['id']).read()
         m = re.search('<table width="600px" cellpadding="3" cellspacing="0" class="table01">(.*?)</table>(?s)', details)
         table = m.group(1)
-        detail_rows = re.findall("<tr class='(?:normal|alternate)Row01'>\s*<td class=\"column01\">(.*?)</td>\s*<td class=\"column02\">(.*?)</td>\s*</tr>(?s)", table)
+        detail_rows = re.findall(r"<tr class='(?:normal|alternate)Row01'>\s*<td class=\"column01\">(.*?)</td>\s*<td class=\"column02\">(.*?)</td>\s*</tr>(?s)", table)
         for row in detail_rows:
             key = re.sub(':$', '', row[0])
             value = re.sub('&#039;', "'", row[1].strip())
             value = re.sub('</?b>', '', value)
             if key == 'Cast':
-                data['cast'] = [ [ fix_dots(y) for y in re.split(', ', x)] for x in re.split('\s*<br>\s*', value) if x ]
+                data['cast'] = [[fix_dots(y) for y in re.split(', ', x)] for x in re.split(r'\s*<br>\s*', value) if x]
 
         places = Place.objects.filter(production__source__endswith='=%s">AHDS record</a>)' % data['id'])
-        if len(places)==1 and places[0].place.name == data['theatre']:
+        if len(places) == 1 and places[0].place.name == data['theatre']:
             continue
-        #if 'theatre' in data and data['theatre']:
-            #location = add_theatre(data['theatre'])
-            #ProductionPlace.objects.get_or_create(production=production, place=location, start_date=data['first'], end_date=data['last'])
-        #else:
-            #location, created = Place.objects.get_or_create(name='Unknown')
-            #ProductionPlace.objects.get_or_create(production=production, place=location, start_date=data['first'], end_date=data['last'])
+        # if 'theatre' in data and data['theatre']:
+            # location = add_theatre(data['theatre'])
+            # ProductionPlace.objects.get_or_create(production=production, place=location, start_date=data['first'], end_date=data['last'])
+        # else:
+            # location, created = Place.objects.get_or_create(name='Unknown')
+            # ProductionPlace.objects.get_or_create(production=production, place=location, start_date=data['first'], end_date=data['last'])
         print(places, data['theatre'])
         continue
 

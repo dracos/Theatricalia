@@ -6,13 +6,15 @@ from people.models import Person
 from search.views import search_people
 from common.templatetags.prettify import prettify
 
+
 class PlayEditForm(forms.ModelForm):
     authors = forms.CharField(widget=forms.HiddenInput)
-    #description = forms.CharField(widget=forms.Textarea(attrs={'cols':50, 'rows':10}))
+    # description = forms.CharField(widget=forms.Textarea(attrs={'cols':50, 'rows':10}))
 
     class Meta:
         model = Play
         exclude = ('slug', 'parent')
+
 
 class PlayAuthorForm(forms.Form):
     person = forms.CharField(label='Author', max_length=101, required=False)
@@ -44,14 +46,14 @@ class PlayAuthorForm(forms.Form):
                     last = 'author of %s' % last_play[0].get_title_display()
                 else:
                     last = 'nothing yet on this site'
-            choices.append( (p.id, prettify(mark_safe('<a target="_blank" href="' + p.get_absolute_url() + '">' + str(p) + '</a> <small>(new window)</small>, ' + str(last))) ) )
+            choices.append((p.id, prettify(mark_safe('<a target="_blank" href="' + p.get_absolute_url() + '">' + str(p) + '</a> <small>(new window)</small>, ' + str(last)))))
         if len(choices) > 1:
-            choices.append( ( 'new', prettify('None of these, a new person called \'' + s + '\'') ) )
+            choices.append(('new', prettify('None of these, a new person called \'' + s + '\'')))
         elif str(p) == s:
-            choices.append( ( 'new', prettify('A new person also called \'' + s + '\'') ) )
+            choices.append(('new', prettify('A new person also called \'' + s + '\'')))
         else:
-            choices.append( ( 'new', prettify('A new person called \'' + s + '\'') ) )
-        choices.append( ( 'back', 'I misspelled, and will enter a new name below:' ) )
+            choices.append(('new', prettify('A new person called \'' + s + '\'')))
+        choices.append(('back', 'I misspelled, and will enter a new name below:'))
         return choices
 
     def clean(self):
@@ -64,12 +66,12 @@ class PlayAuthorForm(forms.Form):
         person_choice = self.cleaned_data['person_choice']
         if re.match('[0-9]+$', person_choice):
             return Person.objects.get(id=person_choice)
-        if person_choice == 'new' or (person_choice == '' and 'person' not in self.changed_data) or (person_choice == '' and 'person' in self.changed_data and self.cleaned_data['person']==''):
+        if person_choice == 'new' or (person_choice == '' and 'person' not in self.changed_data) or (person_choice == '' and 'person' in self.changed_data and self.cleaned_data['person'] == ''):
             return person_choice
         raise forms.ValidationError('Please select one of the choices below:')
 
     def clean_person(self):
-        if not 'person' in self.changed_data:
+        if 'person' not in self.changed_data:
             # The person hasn't altered, so use the Person object we already know about
             return self.initial['person']
 
@@ -77,6 +79,5 @@ class PlayAuthorForm(forms.Form):
         if not self.fields['person_choice'].choices and person:
             # Okay, so we have a search string
             choices = self.radio_choices(person)
-            self.fields['person_choice'].choices = choices # = forms.ChoiceField( label='Person', choices=choices, widget = forms.RadioSelect() )
+            self.fields['person_choice'].choices = choices  # = forms.ChoiceField( label='Person', choices=choices, widget = forms.RadioSelect() )
         return person
-

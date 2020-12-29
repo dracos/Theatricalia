@@ -2,9 +2,11 @@ from django.db import models
 from django.conf import settings
 from django.urls import reverse
 
+
 class ArticleManager(models.Manager):
     def visible(self):
         return super(ArticleManager, self).get_queryset().filter(visible=True)
+
 
 class Article(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
@@ -30,7 +32,7 @@ class Article(models.Model):
 
     def get_absolute_url(self):
         return reverse('news-entry', kwargs={
-            'year': self.created.year, 
+            'year': self.created.year,
             'month': self.created.strftime('%B').lower(),
             'slug': self.slug,
         })

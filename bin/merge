@@ -2,7 +2,8 @@
 
 # Needs to move things such as reversions?
 
-import os, sys
+import os
+import sys
 sys.path.insert(0, '..')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'theatricalia.settings'
 import django
@@ -27,12 +28,12 @@ except:
     sys.exit()
 
 if thing == 'play':
-    main = Play.objects.get(id=base32_to_int(main)) 
+    main = Play.objects.get(id=base32_to_int(main))
     alt_id = base32_to_int(alt)
     alt = Play.objects.get(id=alt_id)
     print("Merging %s into %s" % (alt, main))
     confirm = input('Are you sure? ')
-    if confirm in ('Y','y','Yes','yes'):
+    if confirm in ('Y', 'y', 'Yes', 'yes'):
         ctype = ContentType.objects.get_for_model(alt)
         Alert.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
         Production.objects.filter(play=alt).update(play=main)
@@ -48,12 +49,12 @@ if thing == 'play':
         print("Done")
 
 elif thing == 'company':
-    main = ProductionCompany.objects.get(id=base32_to_int(main)) 
+    main = ProductionCompany.objects.get(id=base32_to_int(main))
     alt_id = base32_to_int(alt)
     alt = ProductionCompany.objects.get(id=alt_id)
     print("Merging %s into %s" % (alt, main))
     confirm = input('Are you sure? ')
-    if confirm in ('Y','y','Yes','yes'):
+    if confirm in ('Y', 'y', 'Yes', 'yes'):
         Production_Companies.objects.filter(productioncompany=alt).update(productioncompany=main)
         for attr in ('description',):
             if alt.__dict__[attr] and not main.__dict__[attr]:
@@ -66,12 +67,12 @@ elif thing == 'company':
         print("Done")
 
 elif thing == 'place':
-    main = Place.objects.get(id=base32_to_int(main)) 
+    main = Place.objects.get(id=base32_to_int(main))
     alt_id = base32_to_int(alt)
     alt = Place.objects.get(id=alt_id)
     print("Merging %s into %s" % (alt, main))
     confirm = input('Are you sure? ')
-    if confirm in ('Y','y','Yes','yes'):
+    if confirm in ('Y', 'y', 'Yes', 'yes'):
         ctype = ContentType.objects.get_for_model(alt)
         Alert.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
         Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
@@ -88,12 +89,12 @@ elif thing == 'place':
         print("Done")
 
 elif thing == 'person':
-    main = Person.objects.get(id=base32_to_int(main)) 
+    main = Person.objects.get(id=base32_to_int(main))
     alt_id = base32_to_int(alt)
     alt = Person.objects.get(id=alt_id)
     print("Merging %s into %s" % (alt, main))
     confirm = input('Are you sure? ')
-    if confirm in ('Y','y','Yes','yes'):
+    if confirm in ('Y', 'y', 'Yes', 'yes'):
         ctype = ContentType.objects.get_for_model(alt)
         Alert.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
         Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
@@ -111,7 +112,7 @@ elif thing == 'person':
         print("Done")
 
 elif thing == 'production':
-    main = Production.objects.get(id=base32_to_int(main)) 
+    main = Production.objects.get(id=base32_to_int(main))
     alt_id = base32_to_int(alt)
     alt = Production.objects.get(id=alt_id)
     print("Merging %s into %s" % (alt, main))
@@ -119,7 +120,7 @@ elif thing == 'production':
         raise Exception('Productions do not have the same play: %s vs %s' % (main.play, alt.play))
 
     confirm = input('Are you sure? ')
-    if confirm not in ('Y','y','Yes','yes'):
+    if confirm not in ('Y', 'y', 'Yes', 'yes'):
         sys.exit()
 
     ctype = ContentType.objects.get_for_model(alt)
@@ -142,7 +143,7 @@ elif thing == 'production':
     if alt.source:
         main.source += "\n\n" + alt.source
 
-    #ProductionPlace.objects.filter(production=alt).update(production=main)
+    # ProductionPlace.objects.filter(production=alt).update(production=main)
     for place in ProductionPlace.objects.filter(production=alt):
         if ProductionPlace.objects.filter(place=place.place, production=main, start_date=place.start_date or '', end_date=place.end_date or '', press_date=place.press_date):
             print("Going to delete %s" % place)
@@ -152,10 +153,10 @@ elif thing == 'production':
             print("Going to save %s" % place)
             place.save()
 
-    #main_place = main.place_set.all()[0]
-    #alt_place = alt.place_set.all()[0]
-    #Part.objects.filter(production=main, start_date='', end_date='').update(start_date=main_place.start_date, end_date=main_place.end_date)
-    #Part.objects.filter(production=alt, start_date='', end_date='').update(production=main, start_date=alt_place.start_date, end_date=alt_place.end_date)
+    # main_place = main.place_set.all()[0]
+    # alt_place = alt.place_set.all()[0]
+    # Part.objects.filter(production=main, start_date='', end_date='').update(start_date=main_place.start_date, end_date=main_place.end_date)
+    # Part.objects.filter(production=alt, start_date='', end_date='').update(production=main, start_date=alt_place.start_date, end_date=alt_place.end_date)
     for part in Part.objects.filter(production=alt):
         if Part.objects.filter(person=part.person, production=main, role=part.role, cast=part.cast, credited_as=part.credited_as, order=part.order, start_date=part.start_date or '', end_date=part.end_date or ''):
             print("Going to delete %s" % part)
@@ -179,4 +180,3 @@ elif thing == 'production':
     alt.delete()
     main.save()
     print("Done")
-
