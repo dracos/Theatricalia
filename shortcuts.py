@@ -38,7 +38,7 @@ def check_url(type, id, slug=None):
 def send_email(request, subject, template, context, to):
     t = loader.get_template(template)
     context.update({
-        'host': request.META['HTTP_HOST'],
+        'host': request.META.get('HTTP_HOST', ''),
     })
     mail = t.render(context)
     send_mail(subject, mail, settings.DEFAULT_FROM_EMAIL, [to])

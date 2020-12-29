@@ -6,6 +6,7 @@ from django.db.models import Aggregate, CharField
 class Concatenate(Aggregate):
     function = 'GROUP_CONCAT'
     template = '%(function)s(%(distinct)s%(expressions)s%(ordering)s%(separator)s)'
+    allow_distinct = True
 
     def __init__(self, expression, distinct=False, ordering=None, separator=' / ', **extra):
         super(Concatenate, self).__init__(
