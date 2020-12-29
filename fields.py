@@ -98,7 +98,7 @@ class ApproximateDateField(models.CharField):
 
         return self.from_db_value(value)
 
-    def from_db_value(self, value, expression=None, connection=None, context=None):
+    def from_db_value(self, value, *args, **kwargs):
         if value in (None, ''):
             return None
         # if isinstance(value, datetime.datetime):
