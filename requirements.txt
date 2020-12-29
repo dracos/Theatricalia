@@ -1,7 +1,2 @@
 Django==1.11.29
-mysqlclient==2.0.2
-Pillow==8.0.1
-django-contrib-comments==2.0.0
-django-nose==1.4.7
-django-reversion==2.0.13
-sorl-thumbnail==12.6.3
+-r requirements-base.txt

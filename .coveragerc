@@ -3,6 +3,7 @@ source =
     .
 omit =
     sounds/*
+    .tox/*
 
 [report]
 skip_covered = True

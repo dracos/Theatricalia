@@ -1,0 +1,7 @@
+mysqlclient==2.0.2
+Pillow==8.0.1
+django-contrib-comments==2.0.0
+django-nose==1.4.7
+django-reversion==2.0.13
+sorl-thumbnail==12.6.3
+python-dateutil==2.8.1
