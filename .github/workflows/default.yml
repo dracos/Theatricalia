@@ -1,0 +1,56 @@
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    name: Test Theatricalia
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.7]
+        thing-to-test: [flake8, django-v1, django-v2]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Set up database
+      uses: getong/mariadb-action@v1.1
+      with:
+        mariadb version: '10.3.27'
+        mysql database: 'theatricalia'
+        mysql root password: 'root'
+
+    - name: Install dependencies
+      run: pip install tox tox-gh-actions codecov
+
+    - name: Set up config
+      run: |
+        echo "
+        SECRET_KEY = '123456'
+        DATABASES = {
+          'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'CONN_MAX_AGE': None,
+            'NAME': 'theatricalia',
+            'HOST': '127.0.0.1',
+            'USER': 'root',
+            'PASSWORD': 'root'
+          }
+        }" > theatricalia/settings/config.py
+
+    - name: Run tests
+      run: tox
+      env:
+        THING_TO_TEST: ${{ matrix.thing-to-test }}
+
+    - name: Upload code coverage
+      if: matrix.thing-to-test != 'flake8'
+      run: codecov

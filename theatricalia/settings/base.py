@@ -1,6 +1,7 @@
 # Django settings for theatricalia project.
 
 import os
+import sys
 SETTINGS_DIR = os.path.realpath(os.path.dirname(__file__))
 OUR_ROOT = os.path.join(SETTINGS_DIR, '..', '..')
 
@@ -98,6 +99,8 @@ STATICFILES_FINDERS = (
     # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
+if 'test' in sys.argv:
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 TEMPLATES = [
     {
