@@ -178,6 +178,11 @@ INSTALLED_APPS = [
 if DEBUG:
     INSTALLED_APPS.append('debug_toolbar')
 
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'profiles.hashers.PBKDF2WrappedSHA1PasswordHasher',
+]
+
 from django.db.utils import OperationalError
 
 
