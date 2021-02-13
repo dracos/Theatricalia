@@ -385,19 +385,25 @@ def add_from_play(request, play_id, play):
     try:
         play = check_url(Play, play_id, play)
     except UnmatchingSlugException as e:
-        return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
+        return HttpResponsePermanentRedirect(e.args[0].get_add_url())
     return production_add(request, play=play)
 
 
 @login_required
 def add_from_place(request, place_id, place):
-    place = check_url(Place, place_id, place)
+    try:
+        place = check_url(Place, place_id, place)
+    except UnmatchingSlugException as e:
+        return HttpResponsePermanentRedirect(e.args[0].get_add_production_url())
     return production_add(request, place=place)
 
 
 @login_required
 def add_from_company(request, company_id, company):
-    company = check_url(ProductionCompany, company_id, company)
+    try:
+        company = check_url(ProductionCompany, company_id, company)
+    except UnmatchingSlugException as e:
+        return HttpResponsePermanentRedirect(e.args[0].get_add_production_url())
     return production_add(request, company=company)
 
 
