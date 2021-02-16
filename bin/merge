@@ -158,19 +158,28 @@ elif thing == 'production':
     # Part.objects.filter(production=main, start_date='', end_date='').update(start_date=main_place.start_date, end_date=main_place.end_date)
     # Part.objects.filter(production=alt, start_date='', end_date='').update(production=main, start_date=alt_place.start_date, end_date=alt_place.end_date)
     for part in Part.objects.filter(production=alt):
-        if Part.objects.filter(person=part.person, production=main, role=part.role, cast=part.cast, credited_as=part.credited_as, order=part.order, start_date=part.start_date or '', end_date=part.end_date or ''):
+        match = {
+            'person': part.person,
+            'production': main,
+            'cast': part.cast,
+            'credited_as': part.credited_as,
+            'order': part.order,
+            'start_date': part.start_date or '',
+            'end_date': part.end_date or '',
+        }
+        if Part.objects.filter(role=part.role, **match):  # Exact match
             print("Going to delete %s" % part)
             part.delete()
-        elif not part.role and Part.objects.filter(person=part.person, production=main, cast=part.cast, credited_as=part.credited_as, order=part.order, start_date=part.start_date or '', end_date=part.end_date or ''):
+        elif not part.role and Part.objects.filter(**match):  # alt part does not have a role, main does
             print("Going to delete %s" % part)
             part.delete()
-        elif Part.objects.filter(person=part.person, production=main, cast=part.cast, credited_as=part.credited_as, order=part.order, start_date=part.start_date or '', end_date=part.end_date or '', role=None):
-            ppp = Part.objects.filter(person=part.person, production=main, cast=part.cast, credited_as=part.credited_as, order=part.order, start_date=part.start_date or '', end_date=part.end_date or '', role=None).first()
+        elif Part.objects.filter(role='', **match):  # main part does not have a role, alt does
+            ppp = Part.objects.filter(role='', **match).first()
             ppp.role = part.role
             ppp.save()
             print("Going to move %s to main" % part)
             part.delete()
-        else:
+        else:  # No match
             part.production = main
             print("Going to save %s" % part)
             part.save()
