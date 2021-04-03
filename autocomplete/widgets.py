@@ -121,7 +121,7 @@ class ManyToManySearchInput(forms.MultipleHiddenInput):
         #     print self.rel.model.objects.get(pk=id)
         return res
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         if attrs is None:
             attrs = {}
 
@@ -216,7 +216,7 @@ class AutocompleteModelAdmin(admin.ModelAdmin):
         # For ForeignKey use a special Autocomplete widget.
         if isinstance(db_field, models.ForeignKey) and db_field.name in self.related_search_fields:
             kwargs['widget'] = ForeignKeySearchInput(
-                db_field.rel, self.related_search_fields[db_field.name])
+                db_field.remote_field, self.related_search_fields[db_field.name])
 
             # extra HTML to the end of the rendered output.
             if 'request' in kwargs.keys():
@@ -228,13 +228,13 @@ class AutocompleteModelAdmin(admin.ModelAdmin):
                 # formfield can be None if it came from a OneToOneField with
                 # parent_link=True
                 if formfield is not None:
-                    formfield.widget = AutocompleteWidgetWrapper(formfield.widget, db_field.rel, self.admin_site)
+                    formfield.widget = AutocompleteWidgetWrapper(formfield.widget, db_field.remote_field, self.admin_site)
             return formfield
 
         # For ManyToManyField use a special Autocomplete widget.
         if isinstance(db_field, models.ManyToManyField) and db_field.name in self.related_search_fields:
             kwargs['widget'] = ManyToManySearchInput(
-                db_field.rel, self.related_search_fields[db_field.name])
+                db_field.remote_field, self.related_search_fields[db_field.name])
             db_field.help_text = ''
 
             # extra HTML to the end of the rendered output.
@@ -247,7 +247,7 @@ class AutocompleteModelAdmin(admin.ModelAdmin):
                 # formfield can be None if it came from a OneToOneField with
                 # parent_link=True
                 if formfield is not None:
-                    formfield.widget = AutocompleteWidgetWrapper(formfield.widget, db_field.rel, self.admin_site)
+                    formfield.widget = AutocompleteWidgetWrapper(formfield.widget, db_field.remote_field, self.admin_site)
             return formfield
 
         return super(AutocompleteModelAdmin, self).formfield_for_dbfield(db_field, **kwargs)
@@ -301,5 +301,5 @@ class AutocompleteWidgetWrapper(RelatedFieldWidgetWrapper):
             output.append(
                 u'<a href="%sadd/" class="add-another" id="add_id_%s" onclick="return showAutocompletePopup(this);"> ' %
                 (related_url, name))
-            output.append(u'<img src="%simg/admin/icon_addlink.gif" width="10" height="10" alt="%s"/></a>' % (settings.ADMIN_MEDIA_PREFIX, _('Add Another')))
+            output.append(u'<img src="%simg/admin/icon_addlink.gif" width="10" height="10" alt="%s"/></a>' % (settings.STATIC_URL, _('Add Another')))
         return mark_safe(u''.join(output))
