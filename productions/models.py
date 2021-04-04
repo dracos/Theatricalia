@@ -3,7 +3,6 @@ from datetime import date
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
-from django.utils import dateformat
 from django.utils.safestring import mark_safe
 from django.contrib.contenttypes.fields import GenericRelation
 from django.template.defaultfilters import slugify
@@ -11,59 +10,12 @@ from reversion.models import Version
 
 from common.models import Alert
 from common.templatetags.prettify import prettify
-from utils import int_to_base32
+from utils import int_to_base32, pretty_date_range
 from places.models import Place as PlacePlace
 from people.models import Person
 from plays.models import Play
 from photos.models import Photo
 from fields import ApproximateDateField
-
-
-def pretty_date_range(start_date, press_date, end_date):
-    if not start_date:
-        if not press_date:
-            if not end_date:
-                return 'dates unknown'
-            else:
-                return u'ended %s' % end_date
-        elif not end_date:
-            return '%s (press night)' % dateformat.format(press_date, 'jS F Y')
-
-    if not end_date:
-        return u'started %s' % start_date
-
-    press = ''
-    if not start_date and press_date:
-        press = ' (press night)'
-        start_date = press_date
-
-    if dateformat.format(start_date, 'dmY') == dateformat.format(end_date, 'dmY'):
-        date = end_date
-
-    elif dateformat.format(start_date, 'mY') == dateformat.format(end_date, 'mY') and start_date.day and end_date.day:
-        date = u'%s%s - %s' % (dateformat.format(start_date, 'jS'), press, end_date)
-    elif dateformat.format(start_date, 'mY') == dateformat.format(end_date, 'mY') and start_date.day:
-        date = u'%s%s - ? %s' % (dateformat.format(start_date, 'jS'), press, end_date)
-    elif dateformat.format(start_date, 'mY') == dateformat.format(end_date, 'mY'):
-        date = u'?%s - %s' % (press, end_date)
-
-    elif start_date.year == end_date.year and start_date.day and end_date.month:
-        date = u'%s%s - %s' % (dateformat.format(start_date, 'jS F'), press, end_date)
-    elif start_date.year == end_date.year and start_date.day:
-        date = u'%s%s - ? %s' % (dateformat.format(start_date, 'jS F'), press, end_date)
-    elif start_date.year == end_date.year and start_date.month and end_date.month:
-        date = u'%s%s - %s' % (dateformat.format(start_date, 'F'), press, end_date)
-    elif start_date.year == end_date.year and start_date.month:
-        date = u'%s%s - ? %s' % (dateformat.format(start_date, 'F'), press, end_date)
-    elif start_date.year == end_date.year:
-        date = u'?%s - %s' % (press, end_date)
-
-    elif start_date.day:
-        date = u'%s%s - %s' % (dateformat.format(start_date, 'jS F Y'), press, end_date)
-    else:
-        date = u'%s%s - %s' % (start_date, press, end_date)
-    return date
-    return date.replace(' ', u'\xa0').replace(u'\xa0-\xa0', ' - ')
 
 
 class ProductionCompany(models.Model):
