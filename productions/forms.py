@@ -161,7 +161,7 @@ class PlaceForm(forms.ModelForm):
         required=False,  # It is required, but will be spotted in the clean function
         fields=(forms.CharField(max_length=100), forms.ModelChoiceField(PlacePlace.objects.all())),
         widget=ForeignKeySearchInput(
-            Place.place.field.remote_field, ('name',),
+            Place.place.field.remote_field, ('name', 'parent__name'),
             {'max_length': 100})
     )
     start_date = ApproximateDateFormField(required=False, label='It was/is on from')

@@ -29,6 +29,7 @@ class PlaceManager(models.Manager):
 
 class Place(models.Model):
     name = models.CharField(max_length=100)
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.PROTECT, related_name='children')
     slug = models.SlugField(max_length=150)
     description = models.TextField(blank=True)
     latitude = models.FloatField(blank=True, null=True)
@@ -62,6 +63,8 @@ class Place(models.Model):
 
     def __str__(self):
         out = self.get_name_display()
+        if self.parent:
+            out = '%s, %s' % (out, self.parent.get_name_display())
         if self.town and self.town not in out:
             out += u", " + self.town
         return out

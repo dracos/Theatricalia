@@ -77,7 +77,8 @@ elif thing == 'place':
         Alert.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
         Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
         ProductionPlace.objects.filter(place=alt).update(place=main)
-        for attr in ('description', 'latitude', 'longitude', 'address', 'town', 'country_id', 'postcode', 'telephone', 'type', 'size', 'opening_date', 'closing_date', 'url', 'wikipedia'):
+        Place.objects.filter(parent=alt).update(parent=main)
+        for attr in ('parent_id', 'description', 'latitude', 'longitude', 'address', 'town', 'country_id', 'postcode', 'telephone', 'type', 'size', 'opening_date', 'closing_date', 'url', 'wikipedia'):
             if alt.__dict__[attr] and not main.__dict__[attr]:
                 main.__dict__[attr] = alt.__dict__[attr]
                 main.save()

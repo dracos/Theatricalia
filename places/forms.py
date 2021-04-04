@@ -1,8 +1,19 @@
 from django import forms
 from .models import Place
+from productions.forms import AutoCompleteMultiValueField
+from autocomplete.widgets import ForeignKeySearchInput
 
 
 class PlaceForm(forms.ModelForm):
+    parent = AutoCompleteMultiValueField(
+        Place, 'name',
+        required=False,
+        fields=(forms.CharField(max_length=100), forms.ModelChoiceField(Place.objects.all())),
+        widget=ForeignKeySearchInput(
+            Place.parent.field.remote_field, ('name', 'parent__name'),
+            {'max_length': 100})
+    )
+
     class Meta:
         model = Place
         exclude = ('slug',)

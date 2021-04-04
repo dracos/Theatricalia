@@ -25,6 +25,10 @@
 
 <div class="primary">
 
+{% if place.parent %}
+<p>Part of <a href="{{ place.parent.get_absolute_url }} ">{{ place.parent }}</a></p>
+{% endif %}
+
 {% if place.description %}
 <div itemprop="description">{{ place.description|prettify|urlize|linebreaks }}</div>
 {% endif %}
@@ -108,9 +112,14 @@ $(function(){
 <p id="map-nojs"><img src="https://maps.google.com/staticmap?zoom=14&size=300x300&maptype=roadmap&markers={{ place.latitude }},{{ place.longitude }},smallred&sensor=false&key=ABQIAAAAr0jEilTj74QAOSQ54V3GrxQi7pH9eW_TVT-JV0JhoiD8D-2d8BSEfMWhkhrn96EYsa3PDcwO_RNspQ"></p>
 {% endif %}
 
-<div style="float: right">
-<a href="https://twitter.com/share" class="twitter-share-button" data-count="none" data-via="theatricalia" data-related="dracos">Tweet</a><script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>
-</div>
+{% if place.children.all %}
+<h2>Incorporating</h2>
+<ul style="margin-bottom:2em">
+  {% for child in place.children.all %}
+    <li><a href="{{ child.get_absolute_url }}">{{ child }}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}
 
 <ul class="clear">
 <li><a rel="nofollow" href="{{ place.get_edit_url }}">Edit this place&rsquo;s information</a></li>
@@ -121,9 +130,10 @@ $(function(){
 <li><a href="{{ place.get_productions_url }}">A&ndash;Z of all productions at this place</a></li>
 </ul>
 
+<div id="photographs">
+    <h2>Photographs</h2>
+
 {% if place.photos.all %}
-    <div id="photographs">
-<h2>Photographs</h2>
     <ul>
     {% for photo in place.photos.all %}
     {% thumbnail photo.photo "80x80" crop="center" as im %}
@@ -131,7 +141,6 @@ $(function(){
     {% endthumbnail %}
     {% endfor %}
     </ul>
-    </div>
 {% endif %}
 
 {% if user.is_authenticated %}
@@ -145,6 +154,8 @@ $(function(){
     add it to <a href="https://flickr.com/">Flickr</a> and tag it with
     <input type="text" value="theatricalia:place={{ place.id32 }}" onclick="this.focus();this.select();" readonly size=25>.</p>
 {% endif %}
+
+</div>
 
 </div>
 
