@@ -7,6 +7,11 @@
 
 <h1>{{ object.name|prettify }}</h1>
 
+<div class="secondary">
+<p>{{ type }} featuring <a href="{{ object.get_absolute_url }}">{{ object.name|prettify }}</a>.</p>
+{% include "pagination.html" %}
+</div>
+
 <div class="primary">
 
 <h2>{{ type }}</h2>
@@ -33,11 +38,6 @@
 
 {% include "pagination.html" %}
 
-</div>
-
-<div class="secondary">
-<p>{{ type }} featuring <a href="{{ object.get_absolute_url }}">{{ object.name|prettify }}</a>.</p>
-{% include "pagination.html" %}
 </div>
 
 {% endblock %}

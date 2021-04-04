@@ -7,6 +7,11 @@
 
 <h1>{{ object.get_name_display|prettify }}</h1>
 
+<div class="secondary">
+<p>{{ type }} at <a href="{{ object.get_absolute_url }}">{{ object|prettify }}</a>.</p>
+{% include "pagination.html" %}
+</div>
+
 <div class="primary">
 
 <h2>{{ type }}</h2>
@@ -21,15 +26,8 @@
 <p>There are no results to display.</p>
 {% endif %}
 
-</div>
-
-<div class="secondary">
-<p>{{ type }} at <a href="{{ object.get_absolute_url }}">{{ object|prettify }}</a>.</p>
 {% include "pagination.html" %}
-</div>
 
-<div class="primary">
-{% include "pagination.html" %}
 </div>
 
 {% endblock %}
