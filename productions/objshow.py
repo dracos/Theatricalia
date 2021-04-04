@@ -74,13 +74,13 @@ def productions_list(request, object, dir, template, context={}):
         type = 'places'  # Assume it's around search at the mo
 
     if dir == 'future':
-        paginator = Paginator(productions_future(object, type), 20, orphans=4)
+        paginator = Paginator(productions_future(object, type), 50, orphans=4)
         dir_str = 'Current & Upcoming productions'
     elif dir == 'past':
-        paginator = Paginator(productions_past(object, type), 20, orphans=4)
+        paginator = Paginator(productions_past(object, type), 50, orphans=4)
         dir_str = 'Past productions'
     elif dir == 'parts':
-        paginator = Paginator(Part.objects.search(object), 20, orphans=4)
+        paginator = Paginator(Part.objects.search(object), 50, orphans=4)
         dir_str = u'Parts containing \u201c%s\u201d' % object
 
     page = request.GET.get('page', 1)
@@ -106,6 +106,6 @@ def productions_for(object, type=''):
     """Given an object, such as a Person, Place, or Play, return the closes
        past/future productions for that object. If it's a Person, also include
        the Part(s) they played."""
-    future_page = Paginator(productions_future(object, type), 20, orphans=4).page(1)
-    past_page = Paginator(productions_past(object, type), 20, orphans=4).page(1)
+    future_page = Paginator(productions_future(object, type), 50, orphans=4).page(1)
+    past_page = Paginator(productions_past(object, type), 50, orphans=4).page(1)
     return past_page, future_page
