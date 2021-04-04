@@ -333,7 +333,7 @@ function autocomplete_add(params) {
         },
         matchContains:1,
         matchSubset:false,
-        max:20,
+        max:100,
         multipleSeparator: '|',
         selectFirst:0
     }).result(function(event, data, formatted) {

@@ -42,6 +42,10 @@ def search_autocomplete(request):
        result as a simple string to be used by the jQuery Autocomplete plugin"""
 
     query = request.GET.get('q', None)
+    try:
+        limit = int(request.GET.get('limit', 100))
+    except ValueError:
+        limit = 100
 
     app_label = request.GET.get('app_label', None)
     model_name = request.GET.get('model_name', None)
@@ -81,7 +85,7 @@ def search_autocomplete(request):
 
     if app_label == 'people' and model_name == 'person':
         people, dummy = search_people(query, False, False)
-        qs = people[:20]
+        qs = people[:limit]
     else:
         model = apps.get_model(app_label=app_label, model_name=model_name)
         for field_name in search_fields.split(','):
@@ -94,15 +98,15 @@ def search_autocomplete(request):
             first, last = query.split(' ')
             q = q | Q(first_name__icontains=first, last_name__icontains=last)
 
-        qs = model.objects.filter(q)[:20]
+        qs = model.objects.filter(q)[:limit]
 
     data = ''.join(['%s|%s\n' % (f.__str__(), f.pk) for f in qs])
 
     if app_label == 'places':
         query_without_brackets = re.sub(r' \(.*?\)$', '', query)
         q = Q(name__icontains=query) | Q(name__icontains=query_without_brackets)
-        qs = Name.objects.filter(q)[:20]
-        data += ''.join(['%s|%s\n' % (f.__str__(), f.place.pk) for f in qs])
+        qs = Name.objects.filter(q)[:limit]
+        data = ''.join(['%s|%s\n' % (f.__str__(), f.place.pk) for f in qs]) + data
 
     return HttpResponse(data)
 
