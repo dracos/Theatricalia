@@ -29,6 +29,7 @@ class PlaceManager(models.Manager):
 
 class Place(models.Model):
     name = models.CharField(max_length=100)
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.PROTECT, related_name='children')
     slug = models.SlugField(max_length=150)
     description = models.TextField(blank=True)
     latitude = models.FloatField(blank=True, null=True)
@@ -82,6 +83,8 @@ class Place(models.Model):
         m = re.search(r'(?i)^(.*),\s+(A|An|The)$', out)
         if m:
             out = "%s %s" % (m.group(2), m.group(1))
+        if self.parent:
+            out = '%s, %s' % (out, self.parent.get_name_display())
         return out
 
     @property
