@@ -10,7 +10,7 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.db.models import Q
 from django.shortcuts import render
 from people.models import Person
-from places.models import Place
+from places.models import Place, Name
 from plays.models import Play
 from productions.models import Part, Production, ProductionCompany
 from sounds.metaphone import dm
@@ -95,7 +95,15 @@ def search_autocomplete(request):
             q = q | Q(first_name__icontains=first, last_name__icontains=last)
 
         qs = model.objects.filter(q)[:20]
+
     data = ''.join(['%s|%s\n' % (f.__str__(), f.pk) for f in qs])
+
+    if app_label == 'places':
+        query_without_brackets = re.sub(r' \(.*?\)$', '', query)
+        q = Q(name__icontains=query) | Q(name__icontains=query_without_brackets)
+        qs = Name.objects.filter(q)[:20]
+        data += ''.join(['%s|%s\n' % (f.__str__(), f.place.pk) for f in qs])
+
     return HttpResponse(data)
 
 

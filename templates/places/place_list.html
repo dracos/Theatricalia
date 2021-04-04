@@ -31,7 +31,7 @@
 
 <ul id="places_list">
 {% for place in object_list %}
-    {% if place.productions.count %}
+    {% if place.productions.count or place.place.productions.count %}
         <li><a href="{{ place.get_absolute_url }}">{{ place|prettify }}</a></li>
     {% endif %}
 {% empty %}

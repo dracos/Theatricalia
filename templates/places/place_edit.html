@@ -29,6 +29,27 @@
     {% endif %}
 {% endfor %}
 
+<h2>Other names</h2>
+{% for err in name_formset.errors %}
+{{ err }}
+{% endfor %}
+{{ name_formset.management_form }}
+{% for f in name_formset.forms %}
+<div class="name">
+    <p>{{ f.name.label_tag }} {{ f.name }}</p>
+    <p>{{ f.start_date.label_tag }} {{ f.start_date }}
+    <span class="m">
+    {{ f.end_date.label_tag }}&nbsp;{{ f.end_date }}
+    </span></p>
+    <p class="help_text"><small>If you don&rsquo;t know the precise start and end dates, feel free to give just month and year, or just year (e.g. &ldquo;October 1974&rdquo;, &ldquo;2003&rdquo;, or &ldquo;17/3/1935&rdquo;)</small></p>
+    {% if f.DELETE and not forloop.last %}
+    <p>{{ f.DELETE.label_tag }} {{ f.DELETE }} <small>&ndash; select this if this name should be removed.</small></p>
+    {% endif %}
+    {{ f.production }}
+    {{ f.id }}
+</div>
+{% endfor %}
+
 <p><input id="submit" type="submit" value="Record changes">
 <input type="submit" name="disregard" id="cancel" value="Disregard"></p>
 

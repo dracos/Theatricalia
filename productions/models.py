@@ -189,12 +189,14 @@ class Production(models.Model):
         return False
 
     def place_summary(self):
-        if self.places.count() > 2:
-            place = u'%s, %s, and other locations' % (self.places.all()[0], self.places.all()[1])
-        elif self.places.count() == 2:
-            place = u'%s and %s' % (self.places.all()[0], self.places.all()[1])
-        elif self.places.count() == 1:
-            place = self.places.all()[0]
+        places = self.place_set.all()
+        count = places.count()
+        if count > 2:
+            place = u'%s, %s, and other locations' % (places[0].name_for_date(), places[1].name_for_date())
+        elif count == 2:
+            place = u'%s and %s' % (places[0].name_for_date(), places[1].name_for_date())
+        elif count == 1:
+            place = places[0].name_for_date()
         else:
             place = u'Unknown location'
         return place
@@ -291,6 +293,10 @@ class Place(models.Model):
 
     def date_summary(self):
         return pretty_date_range(self.start_date, self.press_date, self.end_date)
+
+    def name_for_date(self):
+        a_date = self.start_date or self.press_date or self.end_date
+        return self.place.name_for_date(a_date)
 
 
 class PartManager(models.Manager):

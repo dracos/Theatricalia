@@ -1,6 +1,11 @@
 from django.contrib import admin
 from reversion.admin import VersionAdmin
-from .models import Place
+from .models import Place, Name
+
+
+class NameInline(admin.TabularInline):
+    model = Name
+    extra = 1
 
 
 class PlaceAdmin(VersionAdmin):
@@ -9,6 +14,9 @@ class PlaceAdmin(VersionAdmin):
     prepopulated_fields = {
         'slug': ('name', 'town'),
     }
+    inlines = [
+        NameInline,
+    ]
 
 
 admin.site.register(Place, PlaceAdmin)

@@ -4,7 +4,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from photos.models import Photo
-from utils import int_to_base32, base32_to_int
+from utils import int_to_base32, base32_to_int, pretty_date_range
 from fields import ApproximateDateField
 from common.models import Alert
 from countries.models import Country
@@ -62,12 +62,7 @@ class Place(models.Model):
         ordering = ['name']
 
     def __str__(self):
-        out = self.get_name_display()
-        if self.parent:
-            out = '%s, %s' % (out, self.parent.get_name_display())
-        if self.town and self.town not in out:
-            out += u", " + self.town
-        return out
+        return self._str_with_name()
 
     def save(self, **kwargs):
         name = re.sub('(?i)^(.*), (A|An|The)$', r'\2 \1', self.name.strip())
@@ -86,6 +81,22 @@ class Place(models.Model):
         if m:
             out = "%s %s" % (m.group(2), m.group(1))
         return out
+
+    def _str_with_name(self, name=None):
+        out = name if name else self.get_name_display()
+        if self.parent:
+            out = '%s, %s' % (out, self.parent.get_name_display())
+        if self.town and self.town not in out:
+            out += u", " + self.town
+        return out
+
+    def name_for_date(self, date):
+        if not date:
+            return self._str_with_name()
+        name = self.other_names.filter(start_date__lte=date, end_date__gte=date).first()
+        if name:
+            name = '%s (now %s)' % (name.get_name_display(), self.get_name_display())
+        return self._str_with_name(name)
 
     @property
     def id32(self):
@@ -114,6 +125,36 @@ class Place(models.Model):
 
     def get_productions_url(self):
         return self.make_url('place-productions')
+
+
+class Name(models.Model):
+    place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name='other_names')
+    name = models.CharField(max_length=100)
+    start_date = ApproximateDateField(blank=True)
+    end_date = ApproximateDateField(blank=True)
+
+    class Meta:
+        ordering = ['-end_date', '-start_date', 'name']
+
+    def __str__(self):
+        name = self.get_name_display()
+        date_range = pretty_date_range(self.start_date, None, self.end_date)
+        out = '%s (%s)' % (name, date_range)
+        return out
+
+    def save(self, **kwargs):
+        self.name = re.sub('(?i)^(A|An|The) (.*)$', r'\2, \1', self.name.strip())
+        super(Name, self).save(**kwargs)
+
+    def get_name_display(self):
+        out = self.name
+        m = re.search(r'(?i)^(.*),\s+(A|An|The)$', out)
+        if m:
+            out = "%s %s" % (m.group(2), m.group(1))
+        return out
+
+    def get_absolute_url(self):
+        return self.place.get_absolute_url()
 
 
 def first_letters():

@@ -112,6 +112,15 @@ $(function(){
 <p id="map-nojs"><img src="https://maps.google.com/staticmap?zoom=14&size=300x300&maptype=roadmap&markers={{ place.latitude }},{{ place.longitude }},smallred&sensor=false&key=ABQIAAAAr0jEilTj74QAOSQ54V3GrxQi7pH9eW_TVT-JV0JhoiD8D-2d8BSEfMWhkhrn96EYsa3PDcwO_RNspQ"></p>
 {% endif %}
 
+{% if place.other_names.all %}
+<h2>Also called</h2>
+<ul style="margin-bottom:2em">
+  {% for name in place.other_names.all %}
+    <li>{{ name | prettify }}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
 {% if place.children.all %}
 <h2>Incorporating</h2>
 <ul style="margin-bottom:2em">

@@ -1,5 +1,6 @@
 from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
+from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.contrib import messages
 from django.shortcuts import render
@@ -7,8 +8,8 @@ from django.shortcuts import render
 from mixins import ListMixin
 
 # from common.models import Alert
-from .forms import PlaceForm
-from .models import Place
+from .forms import PlaceForm, NameForm
+from .models import Place, Name
 from shortcuts import check_url, UnmatchingSlugException
 from productions.objshow import productions_list, productions_for
 from productions.models import Production, Part
@@ -76,19 +77,30 @@ def place_edit(request, place_id, place):
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
 
     place.name = place.get_name_display()
+
     form = PlaceForm(request.POST or None, instance=place)
+
+    NameFormSet = inlineformset_factory(Place, Name, extra=1, form=NameForm)
+    name_formset = NameFormSet(
+        data=request.POST or None,
+        prefix='name',
+        instance=place,
+    )
+
     if request.method == 'POST':
         if request.POST.get('disregard'):
             messages.success(request, u"All right, we\u2019ve ignored any changes you made.")
             return HttpResponseRedirect(place.get_absolute_url())
-        if form.is_valid():
+        if form.is_valid() and name_formset.is_valid():
             form.save()
+            name_formset.save()
             messages.success(request, "Your changes have been stored; thank you.")
             return HttpResponseRedirect(place.get_absolute_url())
 
     return render(request, 'places/place_edit.html', {
         'place': place,
         'form': form,
+        'name_formset': name_formset,
     })
 
 
@@ -134,3 +146,25 @@ def place(request, place_id, place):
 class PlaceList(ListMixin, ListView):
     model = Place
     field = 'name'
+    template_name = 'places/place_list.html'
+
+    def get_queryset(self):
+        letter = self.kwargs.get('letter', 'a')
+        if letter == '0':
+            args = {'%s__regex' % self.field: r'^[0-9]'}
+            objs1 = Place.objects.filter(**args)
+            objs2 = Name.objects.filter(**args)
+            letter = '0-9'
+        elif letter == '*':
+            args = {'%s__regex' % self.field: r'^[A-Za-z0-9]'}
+            objs1 = Place.objects.exclude(**args)
+            objs2 = Name.objects.exclude(**args)
+            letter = 'Symbols'
+        else:
+            args = {'%s__istartswith' % self.field: letter}
+            objs1 = Place.objects.filter(**args)
+            objs2 = Name.objects.filter(**args)
+            letter = letter.upper()
+        self.letter = letter
+        objs = list(objs1) + list(objs2)
+        return objs

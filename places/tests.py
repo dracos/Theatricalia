@@ -53,6 +53,8 @@ class PlaceTest(TestCase):
             'description': 'Performs in the Co-op car park',
             'town': 'Birmingham',
             'opening_date': 'May 2008',
+            'name-TOTAL_FORMS': '1',
+            'name-INITIAL_FORMS': '0',
         }, follow=True)
         self.assertRedirects(resp, '/place/%s/stirchley-theatre-birmingham' % self.place_id)
         self.assertContains(resp, 'Your changes have been stored; thank you.')
