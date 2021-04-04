@@ -55,9 +55,9 @@ def merge(request, url):
         other = obj_type.objects.get(id=other_id)
         mail_admins(
             'Merge request',
-            u'%s\nand\n%s\n\n%s : https://theatricalia.com%s\n%s : https://theatricalia.com%s\n\nRequest made by: %s\n\nATB,\nMatthew' % (
+            u'%s\nand\n%s\n\n%s : https://theatricalia.com%s\n%s : https://theatricalia.com%s\n\nRequest made by: %s %s\n\nATB,\nMatthew' % (
                 other, object, int_to_base32(other.id), other.get_absolute_url(),
-                int_to_base32(object.id), object.get_absolute_url(), request.user),
+                int_to_base32(object.id), object.get_absolute_url(), request.user, getattr(request.user, 'email', '')),
             fail_silently=True
         )
         del request.session['merging_' + type]
