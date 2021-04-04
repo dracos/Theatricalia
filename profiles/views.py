@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect, Http404
-from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
@@ -129,6 +129,14 @@ def perform_login(request, user):
     auth_login(request, user)
 
 
+class AccountActivationTokenGenerator(PasswordResetTokenGenerator):
+    def _make_hash_value(self, user, timestamp):
+        return str(user.pk) + str(timestamp) + str(user.profile.email_validated)
+
+
+account_activation_token = AccountActivationTokenGenerator()
+
+
 def register_confirm(request, uidb32, token):
     try:
         uid_int = base32_to_int(uidb32)
@@ -136,7 +144,7 @@ def register_confirm(request, uidb32, token):
         raise Http404
 
     user = get_object_or_404(User, id=uid_int)
-    if default_token_generator.check_token(user, token):
+    if account_activation_token.check_token(user, token):
         p = user.profile
         p.email_validated = True
         p.save()
@@ -156,7 +164,7 @@ def send_confirmation_email(request, user):
             'email': user.email,
             'uid': int_to_base32(user.id),
             'user': user,
-            'token': default_token_generator.make_token(user),
+            'token': account_activation_token.make_token(user),
             'protocol': 'http',
         }, user.email
     )
