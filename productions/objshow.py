@@ -1,4 +1,5 @@
 from datetime import datetime
+from functools import partial
 from django.core.paginator import Paginator, InvalidPage
 from django.db.models import Q, Max
 from django.db.models.expressions import RawSQL
@@ -58,22 +59,25 @@ def productions_filter(object, type, date_filter):
         return o.order_by(annotate_extra + 'start_date', annotate_extra + 'press_date')
 
 
-def productions_past(object, type):
-    qs = productions_filter(object, type, 'past')
+def _prods_one_way(fltr, object, sort_order):
+    qs = fltr(object)
     if isinstance(object, Place):
+        # Loop through the children and include their productions also with UNION
         for child in object.children.all():
-            qs = qs.union(productions_filter(child, type, 'past'))
-        qs = qs.order_by('-best_date')
+            qs = qs.union(fltr(child))
+        # Need to do the sort again at the end after doing this
+        qs = qs.order_by(*sort_order)
     return qs
+
+
+def productions_past(object, type):
+    fltr = partial(productions_filter, type=type, date_filter='past')
+    return _prods_one_way(fltr, object, ('-best_date',))
 
 
 def productions_future(object, type):
-    qs = productions_filter(object, type, 'future')
-    if isinstance(object, Place):
-        for child in object.children.all():
-            qs = qs.union(productions_filter(child, type, 'future'))
-        qs = qs.order_by('start_date', 'press_date')
-    return qs
+    fltr = partial(productions_filter, type=type, date_filter='future')
+    return _prods_one_way(fltr, object, ('start_date', 'press_date'))
 
 
 def productions_list(request, object, dir, template, context={}):
