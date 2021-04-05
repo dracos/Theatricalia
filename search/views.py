@@ -64,12 +64,12 @@ def search_autocomplete(request):
     if app_label == 'places' and ',' in query:
         name, town = query.rsplit(',', 1)
         parent = town.strip()
-        q = Q(name__icontains=name.strip(), town__icontains=town.strip())
+        q = Q(name__icontains=name.strip(), locations__town__icontains=town.strip())
         q = q | Q(name__icontains=name.strip(), parent__name__icontains=parent)
         m = re.match('(?i)(A|An|The) (.*)$', name)
         if m:
             article, rest = m.groups()
-            q = q | Q(name__iendswith=' %s' % article, name__istartswith=rest, town__icontains=town.strip())
+            q = q | Q(name__iendswith=' %s' % article, name__istartswith=rest, locations__town__icontains=town.strip())
             q = q | Q(name__iendswith=' %s' % article, name__istartswith=rest, parent__name__icontains=parent)
 
     # For database order of articles
@@ -225,10 +225,10 @@ def search_people(search, force_similar=False, use_distance=True):
 
 def search_places(name_q, search):
     query = name_q
-    query = query | Q(town__icontains=search) | Q(parent__name__icontains=search)
+    query = query | Q(locations__town__icontains=search) | Q(parent__name__icontains=search)
     words = search.rsplit(None, 1)
     if len(words) == 2:
-        query = query | Q(name__icontains=words[0], town__icontains=words[1])
+        query = query | Q(name__icontains=words[0], locations__town__icontains=words[1])
     return Place.objects.filter(query)
 
 

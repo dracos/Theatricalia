@@ -14,10 +14,10 @@ class PlaceManager(models.Manager):
     # Crappy bounding box, need to do radial!
     def around(self, lat, lon):
         return self.get_queryset().filter(
-            longitude__gte=lon - 0.1,
-            longitude__lte=lon + 0.1,
-            latitude__gte=lat - 0.1,
-            latitude__lte=lat + 0.1
+            location__longitude__gte=lon - 0.1,
+            location__longitude__lte=lon + 0.1,
+            location__latitude__gte=lat - 0.1,
+            location__latitude__lte=lat + 0.1
         )
 
     def get(self, **kwargs):
@@ -32,24 +32,6 @@ class Place(models.Model):
     parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.PROTECT, related_name='children')
     slug = models.SlugField(max_length=150)
     description = models.TextField(blank=True)
-    latitude = models.FloatField(blank=True, null=True)
-    longitude = models.FloatField(blank=True, null=True)
-    address = models.CharField(blank=True, max_length=200)
-    town = models.CharField(blank=True, max_length=50)
-    country = models.ForeignKey(Country, blank=True, null=True, on_delete=models.SET_NULL)
-    postcode = models.CharField(blank=True, max_length=10)
-    telephone = models.CharField(blank=True, max_length=50)
-    type = models.CharField(
-        blank=True, max_length=100, choices=(
-            ('proscenium', 'Proscenium Arch'),
-            ('thrust', 'Thrust'),
-            ('multiple', 'Multiple'),
-            ('other', 'Other')
-        )
-    )
-    size = models.CharField('Seats', blank=True, max_length=100)
-    opening_date = ApproximateDateField(blank=True)
-    closing_date = ApproximateDateField(blank=True, default='')
     url = models.URLField('URL', blank=True)
     wikipedia = models.URLField(blank=True)
     photos = GenericRelation(Photo)
@@ -66,12 +48,11 @@ class Place(models.Model):
 
     def save(self, **kwargs):
         name = re.sub('(?i)^(.*), (A|An|The)$', r'\2 \1', self.name.strip())
-        include_town = kwargs.pop('include_town', None)
-        m = re.match('(.*), ([^,]*)$', name)
-        if include_town and m:
-            self.name = name = m.group(1)
-            self.town = m.group(2)
-        self.slug = slugify('%s %s' % (name, self.town))
+        loc = self.locations.first()
+        if loc:
+            self.slug = slugify('%s %s' % (name, loc.town))
+        else:
+            self.slug = slugify(name)
         self.name = re.sub('(?i)^(A|An|The) (.*)$', r'\2, \1', self.name.strip())
         super(Place, self).save(**kwargs)
 
@@ -86,8 +67,9 @@ class Place(models.Model):
         out = name if name else self.get_name_display()
         if self.parent:
             out = '%s, %s' % (out, self.parent.get_name_display())
-        if self.town and self.town not in out:
-            out += u", " + self.town
+        loc = self.locations.first()
+        if loc and loc.town and loc.town not in out:
+            out += u", " + loc.town
         return out
 
     def name_for_date(self, date):
@@ -125,6 +107,49 @@ class Place(models.Model):
 
     def get_productions_url(self):
         return self.make_url('place-productions')
+
+
+class LocationManager(models.Manager):
+    # Crappy bounding box, need to do radial!
+    def around(self, lat, lon):
+        return self.get_queryset().filter(
+            longitude__gte=lon - 0.1,
+            longitude__lte=lon + 0.1,
+            latitude__gte=lat - 0.1,
+            latitude__lte=lat + 0.1
+        )
+
+
+class Location(models.Model):
+    place = models.ForeignKey(Place, on_delete=models.CASCADE, related_name='locations')
+    latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
+    address = models.CharField(blank=True, max_length=200)
+    town = models.CharField(blank=True, max_length=50)
+    country = models.ForeignKey(Country, blank=True, null=True, on_delete=models.SET_NULL)
+    postcode = models.CharField(blank=True, max_length=10)
+    telephone = models.CharField(blank=True, max_length=50)
+    type = models.CharField(
+        blank=True, max_length=100, choices=(
+            ('proscenium', 'Proscenium Arch'),
+            ('thrust', 'Thrust'),
+            ('multiple', 'Multiple'),
+            ('other', 'Other')
+        )
+    )
+    size = models.CharField('Seats', blank=True, max_length=100)
+    opening_date = ApproximateDateField(blank=True)
+    closing_date = ApproximateDateField(blank=True, default='')
+
+    objects = LocationManager()
+
+    class Meta:
+        ordering = ['-opening_date']
+
+    def __str__(self):
+        place = str(self.place)
+        date_range = pretty_date_range(self.opening_date, None, self.closing_date)
+        return '%s (%s)' % (place, date_range)
 
 
 class Name(models.Model):

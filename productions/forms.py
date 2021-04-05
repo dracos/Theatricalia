@@ -189,7 +189,7 @@ class PlaceForm(forms.ModelForm):
 
     def save(self, **kwargs):
         if not self.cleaned_data['place'].id:
-            self.cleaned_data['place'].save(include_town=True)
+            self.cleaned_data['place'].save()
         # Must reattach the now-saved object to the instance to pass in the ID
         self.instance.place = self.cleaned_data['place']
         return super(PlaceForm, self).save(**kwargs)

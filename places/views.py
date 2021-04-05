@@ -8,8 +8,8 @@ from django.shortcuts import render
 from mixins import ListMixin
 
 # from common.models import Alert
-from .forms import PlaceForm, NameForm
-from .models import Place, Name
+from .forms import PlaceForm, NameForm, LocationForm
+from .models import Place, Name, Location
 from shortcuts import check_url, UnmatchingSlugException
 from productions.objshow import productions_list, productions_for
 from productions.models import Production, Part
@@ -87,13 +87,21 @@ def place_edit(request, place_id, place):
         instance=place,
     )
 
+    LocationFormSet = inlineformset_factory(Place, Location, extra=1, form=LocationForm)
+    location_formset = LocationFormSet(
+        data=request.POST or None,
+        prefix='location',
+        instance=place,
+    )
+
     if request.method == 'POST':
         if request.POST.get('disregard'):
             messages.success(request, u"All right, we\u2019ve ignored any changes you made.")
             return HttpResponseRedirect(place.get_absolute_url())
-        if form.is_valid() and name_formset.is_valid():
+        if form.is_valid() and name_formset.is_valid() and location_formset.is_valid():
             form.save()
             name_formset.save()
+            location_formset.save()
             messages.success(request, "Your changes have been stored; thank you.")
             return HttpResponseRedirect(place.get_absolute_url())
 
@@ -101,6 +109,7 @@ def place_edit(request, place_id, place):
         'place': place,
         'form': form,
         'name_formset': name_formset,
+        'location_formset': location_formset,
     })
 
 
@@ -111,13 +120,15 @@ def place(request, place_id, place):
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
     past, future = productions_for(place)
     photo_form = PhotoForm(place)
-    alert = place.alerts.filter(user=request.user.pk)
+    # alert = place.alerts.filter(user=request.user.pk)
     return render(request, 'place.html', {
         'place': place,
+        'location': place.locations.first(),
+        'other_locations': place.locations.all()[1:],
         'past': past,
         'future': future,
         'photo_form': photo_form,
-        'alert': alert,
+        # 'alert': alert,
     })
 
 

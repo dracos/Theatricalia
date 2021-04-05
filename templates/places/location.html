@@ -1,0 +1,39 @@
+{% load prettify %}
+<ul itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+
+{% if location.address or location.town or location.postcode %}
+<li>
+<address><span itemprop="streetAddress">{{ location.address|prettify }}</span>{% if location.address and location.town %}, {% endif %}<span itemprop="addressLocality">{{ location.town|prettify }}</span>{% if location.address or location.town %}{% if location.postcode %}, {% endif %}{% endif %}<span itemprop="postalCode">{{ location.postcode|prettify }}</span>
+</address>
+</li>
+{% endif %}
+
+{% if location.telephone %}
+<li>Telephone: <span itemprop="telephone">{{ location.telephone|prettify }}</span></li>
+{% endif %}
+
+{% if location.type or location.size %}
+    <li>
+    {% if location.type %}{% ifequal location.type "multiple" %}An adaptable theatre{% else %}A {{ location.type }} theatre{% endifequal %}{% endif %}{% if location.size and location.type %},
+    s{% else %}{% if location.size %}S{% endif %}{% endif %}{%if location.size %}eats {{ location.size }}{% endif %}.
+{% endif %}
+{% if location.opening_date %}<li>Opened {{ location.opening_date|prettify }}{% endif %}
+{% if location.closing_date %}<li>Closed {{ location.closing_date|prettify }}{% endif %}
+</ul>
+
+{% if location.latitude and location.longitude %}
+
+<div itemprop="geo" itemscope itemtype="http://schema.org/GeoCoordinates">
+    <meta itemprop="latitude" content="{{ location.latitude }}"> <meta itemprop="longitude" content="{{ location.longitude }}">
+</div>
+
+<script type="text/javascript">
+$(function(){
+    var map = maps['map-{{ location.id }}'];
+    map.setCenter(new CM.LatLng({{ location.latitude }}, {{ location.longitude }}), 14);
+    marker = new CM.Marker(new CM.LatLng({{ location.latitude }}, {{ location.longitude }}), { icon: tinyIcon });
+    map.addOverlay(marker);
+});
+</script>
+<div class="clear map" id="map-{{ location.id }}"></div>
+{% endif %}

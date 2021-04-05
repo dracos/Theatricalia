@@ -71,46 +71,14 @@
     {% endwith %}
 {% endif %}
 
-<ul itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
-
-{% if place.address or place.town or place.postcode %}
-<li>
-<address><span itemprop="streetAddress">{{ place.address|prettify }}</span>{% if place.address and place.town %}, {% endif %}<span itemprop="addressLocality">{{ place.town|prettify }}</span>{% if place.address or place.town %}{% if place.postcode %}, {% endif %}{% endif %}<span itemprop="postalCode">{{ place.postcode|prettify }}</span>
-</address>
-</li>
-{% endif %}
-
-{% if place.telephone %}
-<li>Telephone: <span itemprop="telephone">{{ place.telephone|prettify }}</span></li>
-{% endif %}
-
-{% if place.type or place.size %}
-    <li>
-    {% if place.type %}{% ifequal place.type "multiple" %}An adaptable theatre{% else %}A {{ place.type }} theatre{% endifequal %}{% endif %}{% if place.size and place.type %},
-    s{% else %}{% if place.size %}S{% endif %}{% endif %}{%if place.size %}eats {{ place.size }}{% endif %}.
-{% endif %}
-{% if place.opening_date %}<li>Opened {{ place.opening_date|prettify }}{% endif %}
-{% if place.closing_date %}<li>Closed {{ place.closing_date|prettify }}{% endif %}
+{% if place.url or place.wikipedia %}
+<ul>
 {% if place.url %}<li><a href="{{ place.url }}">Official website</a>{% endif %}
 {% if place.wikipedia %}<li><a href="{{ place.wikipedia }}">Wikipedia</a>{% endif %}
 </ul>
-
-{% if place.latitude and place.longitude %}
-
-<div itemprop="geo" itemscope itemtype="http://schema.org/GeoCoordinates">
-    <meta itemprop="latitude" content="{{ place.latitude }}"> <meta itemprop="longitude" content="{{ place.longitude }}">
-</div>
-
-<script type="text/javascript">
-$(function(){
-    map.setCenter(new CM.LatLng({{ place.latitude }}, {{ place.longitude }}), 14);
-    marker = new CM.Marker(new CM.LatLng({{ place.latitude }}, {{ place.longitude }}), { icon: tinyIcon });
-    map.addOverlay(marker);
-});
-</script>
-<div class="clear" id="map"></div>
-<p id="map-nojs"><img src="https://maps.google.com/staticmap?zoom=14&size=300x300&maptype=roadmap&markers={{ place.latitude }},{{ place.longitude }},smallred&sensor=false&key=ABQIAAAAr0jEilTj74QAOSQ54V3GrxQi7pH9eW_TVT-JV0JhoiD8D-2d8BSEfMWhkhrn96EYsa3PDcwO_RNspQ"></p>
 {% endif %}
+
+{% include 'places/location.html' %}
 
 {% if place.other_names.all %}
 <h2>Also called</h2>
@@ -138,6 +106,13 @@ $(function(){
 {% endif %}
 <li><a href="{{ place.get_productions_url }}">A&ndash;Z of all productions at this place</a></li>
 </ul>
+
+{% if other_locations %}
+<h2>Other locations</h2>
+{% for location in other_locations %}
+    {% include 'places/location.html' %}
+{% endfor %}
+{% endif %}
 
 <div id="photographs">
     <h2>Photographs</h2>

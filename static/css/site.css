@@ -612,21 +612,13 @@ p#photo {
 
 /* Place page */
 
-#map-nojs img {
-    border: solid 0.0625em #666666;
-}
-
-#map {
+#map, .map {
     display: none;
     margin: 2.1818em auto 2.1818em;
     height: 26em;
     width: 99%;
     border: solid 0.0625em #666666;
     font-size: 0.6875em;
-}
-
-#map_location {
-    font-style: italic;
 }
 
 /* select multiples */
@@ -670,7 +662,7 @@ form#edit .help_text {
     position: relative;
     top: -0.3em;
 }
-form#edit .place, form#edit .name {
+form#edit .place, form#edit .name, form#edit .location {
     margin-bottom: 1.5em;
 }
 form#edit span.m label {

@@ -29,6 +29,46 @@
     {% endif %}
 {% endfor %}
 
+<h2>Locations</h2>
+{% for err in location_formset.errors %}
+{{ err }}
+{% endfor %}
+
+</div>
+
+{{ location_formset.management_form }}
+{% for f in location_formset.forms %}
+
+<div class="primary clear">
+
+<div class="location">
+    {% for field in f %}
+        {% if not field.is_hidden and field.label != 'Latitude' and field.label != 'Longitude' and field.label != 'Delete' %}
+        <p>{{ field.label_tag }} {{ field }}</p>
+        {% if field.help_text %}<p class="help_text"><small>{{ field.help_text }}</small></p>{% endif %}
+        {% endif %}
+    {% endfor %}
+    {% if f.DELETE and not forloop.last %}
+    <p>{{ f.DELETE.label_tag }} {{ f.DELETE }} <small>&ndash; select this if this location should be removed.</small></p>
+    {% endif %}
+    {{ f.production }}
+    {{ f.id }}
+</div>
+</div>
+<div class="secondary">
+
+<div class="form_latlon">
+<p>{{ f.latitude.label_tag }} {{ f.latitude }}</p>
+<p>{{ f.longitude.label_tag }} {{ f.longitude }}</p>
+</div>
+<div id="{{ f.prefix }}-map" class="map"></div>
+
+</div>
+
+{% endfor %}
+
+<div class="primary">
+
 <h2>Other names</h2>
 {% for err in name_formset.errors %}
 {{ err }}
@@ -52,16 +92,6 @@
 
 <p><input id="submit" type="submit" value="Record changes">
 <input type="submit" name="disregard" id="cancel" value="Disregard"></p>
-
-</div>
-
-<div class="secondary">
-
-<div id="form_latlon">
-<p>{{ form.latitude.label_tag }} {{ form.latitude }}</p>
-<p>{{ form.longitude.label_tag }} {{ form.longitude }}</p>
-</div>
-<div id="map"></div>
 
 </div>
 

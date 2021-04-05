@@ -135,6 +135,29 @@ $(function() {
         })
     );
 
+    $('form#edit .location:last').after(
+        $('<p>If this place had another location, <a href="">add another location</a>.</p>').click(function(){
+            var last_form = $('form#edit .location:last');
+            var newRow = last_form.clone().insertAfter(last_form);
+            var total = $('#id_location-TOTAL_FORMS').val();
+            var old_id = '-' + (total-1) + '-';
+            var new_id = '-' + total + '-';
+            newRow.find(':input').each(function(){
+                var name = $(this).attr('name').replace(old_id, new_id);
+                var id = 'id_' + name;
+                $(this).attr({'name': name, 'id': id}).val('');
+            });
+            newRow.find('label').each(function(){
+                var newFor = $(this).attr('for').replace(old_id, new_id);
+                $(this).attr('for', newFor);
+            });
+            total++;
+            $('#id_location-TOTAL_FORMS').val(total);
+
+            return false;
+        })
+    );
+
     $('form#edit .company:last').after(
         $('<p style="margin-left:8.5em"><small><a href="">Add another company</a></small></p>').click(function(){
             var last_form = $('form#edit .company:last');
@@ -192,12 +215,11 @@ $(function() {
 });
 
 /* Map code */
-var map, tinyIcon;
+var map, tinyIcon, maps = {};
 $(function() {
-    if (!document.getElementById('map')) return;
+    if (!document.getElementById('map') && !document.querySelector('.map')) return;
 
-    $('#map').show();
-    $('#map-nojs').hide();
+    $('#map,.map').show();
 
     //var cloudmade = new CM.Tiles.CloudMade.Web({key: '28fad93380975f22a60c0f855ce380ca', styleId:5950});
     var os_map = new CM.Tiles.OpenStreetMap.Mapnik({
@@ -211,15 +233,6 @@ $(function() {
         tileUrlTemplate: 'https://#{subdomain}.tile.openstreetmap.org/#{zoom}/#{x}/#{y}.png',
         title: 'OpenStreetMap'
     });
-    map = new CM.Map('map', [ cloudmade, os_map ]);
-    map.setCenter(new CM.LatLng(53.5, -1.7), 8);
-    map.enableScrollWheelZoom();
-    map.enableDoubleClickZoom();
-    map.enableShiftDragZoom();
-    var topRight = new CM.ControlPosition(CM.TOP_RIGHT, new CM.Size(2, 40));
-    map.addControl(new CM.LargeMapControl(), topRight);
-    map.addControl(new CM.ScaleControl());
-    map.addControl(new CM.TileLayerControl());
 
     tinyIcon = new CM.Icon();
     tinyIcon.image = '/static/i/pin-red.png';
@@ -229,23 +242,41 @@ $(function() {
     tinyIcon.iconAnchor = new CM.Point(6, 20);
     tinyIcon.infoWindowAnchor = new CM.Point(5, 1);
 
+    if ($('#map').length) {
+        create_map(0, 'map');
+    }
+    $('.map').each(function(idx, map) {
+        create_map(idx, map.id);
+    });
+
+function create_map(idx, map_id) {
+    map = maps[map_id] = new CM.Map(map_id, [ cloudmade, os_map ]);
+    map.setCenter(new CM.LatLng(53.5, -1.7), 8);
+    map.enableScrollWheelZoom();
+    map.enableDoubleClickZoom();
+    map.enableShiftDragZoom();
+    var topRight = new CM.ControlPosition(CM.TOP_RIGHT, new CM.Size(2, 40));
+    map.addControl(new CM.LargeMapControl(), topRight);
+    map.addControl(new CM.ScaleControl());
+    map.addControl(new CM.TileLayerControl());
+
     /* Unless we're on an editing page, we're done */
-    if (!document.getElementById('id_latitude')) return;
+    if (!document.getElementById('id_location-' + idx + '-latitude')) return;
     
-    $('#form_latlon').hide();
-    var lat = $('#id_latitude')[0].value || 0;
-    var lon = $('#id_longitude')[0].value || 0;
+    $('.form_latlon').hide();
+    var lat = $('#id_location-' + idx + '-latitude')[0].value || 0;
+    var lon = $('#id_location-' + idx + '-longitude')[0].value || 0;
     var opts = { icon: tinyIcon, draggable: true };
     marker = new CM.Marker(new CM.LatLng(lat, lon), opts);
     map.addOverlay(marker);
     if (!lat && !lon) {
         marker.hide();
-        $('#map').before('<p style="margin-top:0">Please locate this theatre by positioning the map, then drag the pin from the corner to the right location. You can reposition the pin.</p>');
+        $('#' + map_id).before('<p style="margin-top:0">Please locate this theatre by positioning the map, then drag the pin from the corner to the right location. You can reposition the pin.</p>');
     } else {
-        $('#map').before('<p style="margin-top:0">Please locate the theatre by dragging the pin.</p>');
+        $('#' + map_id).before('<p style="margin-top:0">Please locate the theatre by dragging the pin.</p>');
         map.setCenter(new CM.LatLng(lat, lon), 13);
     }
-    $('#map').after('<p style="margin-top:0"><small>You can zoom by using the controls, double-clicking, using your scroll wheel, or shift-dragging an area.</small></p>');
+    $('#' + map_id).after('<p style="margin-top:0"><small>You can zoom by using the controls, double-clicking, using your scroll wheel, or shift-dragging an area.</small></p>');
 
     var pinControl = function(){};
     pinControl.prototype = {
@@ -269,7 +300,7 @@ $(function() {
     };
     map.addControl(new pinControl());
 
-    $('#map').droppable({
+    $('#' + map_id).droppable({
         drop: function(event, ui) {
             var latlng = map.fromContainerPixelToLatLng(new CM.Point(ui.position.left + 6, ui.position.top + 20));
             marker.setLatLng(latlng);
@@ -279,14 +310,16 @@ $(function() {
     });
 
     function updateInputs(point) {
-        $('#id_latitude').val(point.lat());
-        $('#id_longitude').val(point.lng());
+        $('#id_location-' + idx + '-latitude').val(point.lat());
+        $('#id_location-' + idx + '-longitude').val(point.lng());
     }
 
     CM.Event.addListener(marker, "dragend", function() {
         var point = this.getLatLng();
         updateInputs(point);
     });
+}
+
 });
 
 

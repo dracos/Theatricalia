@@ -51,12 +51,14 @@ class PlaceTest(TestCase):
         resp = self.client.post('/place/%s/stirchley-theatre/edit' % self.place_id, {
             'name': 'Stirchley Theatre',
             'description': 'Performs in the Co-op car park',
-            'town': 'Birmingham',
-            'opening_date': 'May 2008',
+            'location-0-town': 'Birmingham',
+            'location-0-opening_date': 'May 2008',
             'name-TOTAL_FORMS': '1',
             'name-INITIAL_FORMS': '0',
+            'location-TOTAL_FORMS': '1',
+            'location-INITIAL_FORMS': '0',
         }, follow=True)
-        self.assertRedirects(resp, '/place/%s/stirchley-theatre-birmingham' % self.place_id)
+        self.assertRedirects(resp, '/place/%s/stirchley-theatre' % self.place_id)
         self.assertContains(resp, 'Your changes have been stored; thank you.')
         self.assertContains(resp, 'Performs in the Co-op car park')
         self.assertContains(resp, 'May 2008')

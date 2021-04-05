@@ -1,5 +1,5 @@
 from django import forms
-from .models import Place, Name
+from .models import Place, Name, Location
 from productions.forms import AutoCompleteMultiValueField
 from autocomplete.widgets import ForeignKeySearchInput
 from fields import ApproximateDateFormField
@@ -23,6 +23,15 @@ class PlaceForm(forms.ModelForm):
         super(PlaceForm, self).__init__(*args, **kwargs)
         self.fields['name'].widget.attrs = {'size': 40}
         self.fields['description'].widget.attrs = {'cols': 40, 'rows': 5}
+
+
+class LocationForm(forms.ModelForm):
+    class Meta:
+        model = Location
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.fields['closing_date'].help_text = \
             'The opening and closing dates may simply be month and year, or just year, if that is all that is known.'
 
