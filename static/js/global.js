@@ -278,47 +278,15 @@ $(function() {
         }
     });
 
-    $('#id_town').change(function(){
-        $.getJSON('http://ws.geonames.org/searchJSON?q=' + $('#id_town').val() + '&maxRows=1&callback=?', function(data) {
-            if (data.geonames.length) {
-                var lat = data.geonames[0].lat;
-                var lng = data.geonames[0].lng;
-                map.setCenter(new CM.LatLng(lat, lng), 13);
-            }
-        });
-    });
-
     function updateInputs(point) {
         $('#id_latitude').val(point.lat());
         $('#id_longitude').val(point.lng());
-        if ($('#id_town').val()) return;
-        // If no town, pre-populate with one from geonames
-        $.getJSON('http://ws.geonames.org/findNearbyPlaceNameJSON?lat=' + point.lat() + '&lng=' + point.lng() + '&style=full&radius=5&callback=?', function(data) {
-            var pop_max = 0;
-            var pop_item;
-            $.each(data.geonames, function(i, item) {
-                if (item.population && item.population > pop_max) {
-                    pop_max = item.population;
-                    pop_item = item;
-                }
-            });
-            if (pop_item) {
-                $('#id_town').val(pop_item.name);
-            } else {
-                $('#id_town').val(data.geonames[0].name);
-            }
-        });
     }
 
     CM.Event.addListener(marker, "dragend", function() {
         var point = this.getLatLng();
         updateInputs(point);
     });
-    //CM.Event.addListener(map, 'click', function(point) {
-    //    marker.setLatLng(point);
-    //    marker.show();
-    //    updateInputs(point);
-    //});
 });
 
 

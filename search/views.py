@@ -232,18 +232,6 @@ def search_places(name_q, search):
     return Place.objects.filter(query)
 
 
-def search_geonames(s):
-    return ''
-    try:
-        r = urllib.request.urlopen(
-            'http://ws.geonames.org/searchJSON?isNameRequired=true&style=LONG&q=' +
-            urllib.parse.quote(s.encode('utf-8')) + '&maxRows=20').read()
-        r = json.loads(r)
-    except:
-        r = ''
-    return r
-
-
 # For pagination of parts search
 def search_parts(request, search):
     return productions_list(request, search, 'parts', 'search-parts.html')
@@ -445,17 +433,12 @@ def search(request, redirect_okay=True):
             title_q = title_q | Q(title__iendswith=' %s' % article, title__istartswith=rest)
             name_q = name_q | Q(name__iendswith=' %s' % article, name__istartswith=rest)
         people, sounds_people = search_people(search, force_similar=request.GET.get('similar'), use_distance=False)
-        near = search_geonames(search)
         places = search_places(name_q, search)
         companies = ProductionCompany.objects.filter(name_q | Q(description__icontains=search))
         plays = Play.objects.filter(title_q)
         parts = Paginator(Part.objects.search(search), 20, orphans=4)
 
-        try:
-            near_length = len(near.geonames)
-        except:
-            near_length = 0
-        if parts.count + companies.count() + plays.count() + places.count() + people.count() + near_length == 1:
+        if parts.count + companies.count() + plays.count() + places.count() + people.count() == 1:
             if companies.count():
                 return HttpResponseRedirect(companies[0].get_absolute_url())
             if plays.count():
@@ -464,9 +447,6 @@ def search(request, redirect_okay=True):
                 return HttpResponseRedirect(places[0].get_absolute_url())
             if people.count():
                 return HttpResponseRedirect(people[0].get_absolute_url())
-            if near_length:
-                place = near.geonames[0]
-                return HttpResponseRedirect('/search/around/%s,%s?name=%s' % (place.lat, place.lng, place.name))
             if parts.count:
                 return HttpResponseRedirect(parts.page(1).object_list[0].production.get_absolute_url())
 
@@ -478,7 +458,6 @@ def search(request, redirect_okay=True):
             'places': places,
             'companies': companies,
             'parts': parts,
-            'near': near,
             'sounds_people': sounds_people,
             'search': search,
         })
