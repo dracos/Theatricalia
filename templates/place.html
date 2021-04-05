@@ -125,7 +125,7 @@ $(function(){
 <h2>Incorporating</h2>
 <ul style="margin-bottom:2em">
   {% for child in place.children.all %}
-    <li><a href="{{ child.get_absolute_url }}">{{ child }}</a></li>
+    <li><a href="{{ child.get_absolute_url }}">{{ child.get_name_display }}</a></li>
   {% endfor %}
 </ul>
 {% endif %}
