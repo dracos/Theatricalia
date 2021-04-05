@@ -59,11 +59,21 @@ def productions_filter(object, type, date_filter):
 
 
 def productions_past(object, type):
-    return productions_filter(object, type, 'past')
+    qs = productions_filter(object, type, 'past')
+    if isinstance(object, Place):
+        for child in object.children.all():
+            qs = qs.union(productions_filter(child, type, 'past'))
+        qs = qs.order_by('-best_date')
+    return qs
 
 
 def productions_future(object, type):
-    return productions_filter(object, type, 'future')
+    qs = productions_filter(object, type, 'future')
+    if isinstance(object, Place):
+        for child in object.children.all():
+            qs = qs.union(productions_filter(child, type, 'future'))
+        qs = qs.order_by('start_date', 'press_date')
+    return qs
 
 
 def productions_list(request, object, dir, template, context={}):

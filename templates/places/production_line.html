@@ -1,3 +1,8 @@
 {% load prettify %}
 <li itemprop="events" itemscope itemtype="http://schema.org/TheaterEvent"><a itemprop="url" href="{{ production_part.production.get_absolute_url }}">{{ production_part.production.play.get_title_display|prettify }}</a>{% if production_part.production.get_companies_display %}, {{ production_part.production.get_companies_display }}{% endif %}
-<span class="meta">{{ production_part.date_summary|prettify }}.</span>
+<span class="meta">
+  {% if  production_part.place.parent %}
+    {{ production_part.place.get_name_display }};
+  {% endif %}
+    {{ production_part.date_summary|prettify }}.
+</span>
