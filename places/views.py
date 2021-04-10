@@ -166,5 +166,5 @@ class PlaceList(ListMixin, ListView):
             objs2 = Name.objects.filter(**args)
             letter = letter.upper()
         self.letter = letter
-        objs = list(objs1) + list(objs2)
+        objs = sorted(list(objs1) + list(objs2), key=lambda p: p.name)
         return objs
