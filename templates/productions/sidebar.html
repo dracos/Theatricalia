@@ -2,8 +2,16 @@
 
 <div id="sidebar_tulip" class="secondary"><div id="sidebar_tulip_r">
 
-<p>This is a <a href="{{ production.get_absolute_url }}">production</a> of the play
-<a href="{{ production.play.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% if production.get_companies_display %}
+<p>This is a
+{% if production.play.id %}
+<a href="{{ production.get_absolute_url }}">production</a>
+{% else %}
+production
+{% endif %}
+of the play
+{% if production.play.id %}
+<a href="{{ production.play.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>{% else %}
+{{ production.play.get_title_display|prettify }}{% endif %}{% if production.get_companies_display %}
 by {{ production.get_companies_display }}{% endif %},
 
 {% include 'productions/sidebar_bit.html' %}

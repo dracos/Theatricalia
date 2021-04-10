@@ -65,6 +65,13 @@ class ProductionTest(TestCase):
         self.assertEqual(resp.context['production'], production)
         self.assertListEqual(list(resp.context['crew']), list(production.part_set.filter(cast=False)))
 
+        # Regression bug for editing to new play name
+        resp = self.client.post('/play/%s/hamlet/production/%s/edit' % (prod.play.id32, prod.id32), {
+            'play_0': 'Something new', 'play_1': "",  # New play
+            'company-TOTAL_FORMS': '1', 'company-INITIAL_FORMS': '0',
+            'place-TOTAL_FORMS': '1', 'place-INITIAL_FORMS': '0',
+        }, follow=True)
+
         # Edit it - need to hook up some mechanize thing
         resp = self.client.get('/play/%s/hamlet/production/%s/edit' % (prod.play.id32, prod.id32))
         resp = self.client.post('/play/%s/hamlet/production/%s/edit' % (prod.play.id32, prod.id32), {
