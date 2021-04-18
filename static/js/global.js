@@ -67,7 +67,7 @@ $(function() {
         'transitionOut': 'elastic',
         'titlePosition': 'over',
         'titleFormat': function(title, currentArray, currentIndex, currentOpts) {
-            if (currentOpts.href.substring(0, 7) == 'http://') {
+            if (currentOpts.href.substring(0, 8) == 'https://') {
                 var orig = $(currentArray[currentIndex]).data('orighref');
                 title += ' <a href="' + orig + '">View on Flickr</a>';
             }
