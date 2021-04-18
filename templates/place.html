@@ -158,6 +158,8 @@ $(function(){
     <input type="text" value="theatricalia:place={{ place.id32 }}" onclick="this.focus();this.select();" readonly size=25>.</p>
 {% endif %}
 
+{% include 'includes/photo-credits.html' with photos=place.photos %}
+
 </div>
 
 </div>

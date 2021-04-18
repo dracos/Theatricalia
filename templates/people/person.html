@@ -160,6 +160,8 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 </ul>
 {% endif %}
 
+{% include 'includes/photo-credits.html' with photos=person.photos %}
+
 </div>
 
 </div>

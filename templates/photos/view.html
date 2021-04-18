@@ -21,6 +21,14 @@
 
 <p>A photograph or picture of <a href="{{ photo.content_object.get_absolute_url }}">{{ photo.content_object|prettify }}</a>.</p>
 
+{% if photo.source or photo.author or photo.license %}
+<ul>
+{% if photo.source %}<li><a href="{{ photo.source }}">{{ photo.source }}</a></li>{% endif %}
+{% if photo.author %}<li>By {{ photo.author }}</li>{% endif %}
+{% if photo.license %}<li>{{ photo.get_license_display }}</li>{% endif %}
+</ul>
+{% endif %}
+
 <p class="pagination">
 {% if previous_photo %}
 <a href="{{ previous_photo.get_absolute_url }}">&larr; Previous</a>

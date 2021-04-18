@@ -235,6 +235,8 @@
 {{ production.play.description|prettify|linebreaks }}
 {% endif %}
 
+{% include 'includes/photo-credits.html' with photos=production.photos %}
+
 </div>
 
 <div class="primary">
