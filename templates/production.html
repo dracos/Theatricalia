@@ -210,34 +210,7 @@
 </ul>
 {% endif %}
 
-<div id="photographs">
-<h2>Photographs</h2>
-
-{% if production.photos.all or flickr.photos.photo %}
-<ul>
-{% for photo in production.photos.all %}
-{% thumbnail photo.photo "80x80" crop="center" as im %}
-<li><a rel="gallery" href="{{ MEDIA_URL }}{{ photo.photo }}" title="{{ photo.title }}"><img src="{{ im.url }}" width={{ im.width }} height={{ im.height }}></a>
-{% endthumbnail %}
-{% endfor %}
-{% for photo in flickr.photos.photo %}
-<li><a rel="gallery" href="https://www.flickr.com/photos/{{ photo.owner }}/{{ photo.id }}/" title="{{ photo.title }}"><img src="https://farm{{ photo.farm }}.staticflickr.com/{{ photo.server }}/{{ photo.id }}_{{ photo.secret }}_s.jpg" alt="{{ photo.title }}"></a>
-{% endfor %}
-</ul>
-{% endif %}
-</div>
-
-{% if user.is_authenticated %}
-    <p class="clear before_form">If you have a photograph or picture that illustrates this production,
-    please either upload it here, or add it to <a href="https://flickr.com/">Flickr</a> and tag it with
-    <input type="text" value="theatricalia:production={{ production.id32 }}" onclick="this.focus();this.select();" readonly size=25>.</p>
-    {% include 'includes/photo-form.html' %}
-{% else %}
-    <p class="clear">If you have a photograph or picture that illustrates this production,
-    please <a href="{% url "login" %}?next={{ request.path }}">sign in</a> to upload it, or
-    add it to <a href="https://flickr.com/">Flickr</a> and tag it with
-    <input type="text" value="theatricalia:production={{ production.id32 }}" onclick="this.focus();this.select();" readonly size=25>.</p>
-{% endif %}
+{% include 'includes/photo-thumb.html' with photos=production.photos tag='production' object=production desc='or picture that illustrates this production' %}
 
 {% if production.description and production.play.description %}
 <h2 class="no-descenders">Play description</h2>
