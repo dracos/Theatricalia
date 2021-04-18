@@ -67,15 +67,26 @@ $(function() {
         'transitionOut': 'elastic',
         'titlePosition': 'over',
         'titleFormat': function(title, currentArray, currentIndex, currentOpts) {
+            var $img = $(currentArray[currentIndex]);
+
             if (currentOpts.href.substring(0, 8) == 'https://') {
-                var orig = $(currentArray[currentIndex]).data('orighref');
+                var orig = $img.data('orighref');
                 title += ' <a href="' + orig + '">View on Flickr</a>';
             }
+
+            var author = $img.data('author');
+            var source = $img.data('source');
+            var license = $img.data('license');
+            if (source) { title = '<a href="' + source + '">' + title + '</a>'; }
+            if (author) { title += ' by ' + author; }
+            if (license) { title += ', ' + license; }
+
             var image_idx = '';
             if (currentArray.length > 1) {
                 if (title.length) title = ' &nbsp; ' + title;
                 image_idx = 'Image ' + (currentIndex + 1) + ' / ' + currentArray.length;
             }
+
             return '<span id="fancybox-title-over">' + image_idx + title + '</span>';
         }
     });

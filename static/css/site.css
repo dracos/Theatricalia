@@ -23,7 +23,7 @@
     padding: 0;
 }
 
-body, input, select {
+body, input, select, optgroup {
     /* Hmm, whether to include Optima-clones such as Optane, Opulent, Ottawa, "CG Omega", Eterna, "URW Classico" */
     font-family: Optima, "Zapf Humanist", "MgOpen Cosmetica", Candara, Myriad, "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Frutiger, "Trebuchet MS", sans-serif;
 }
@@ -581,8 +581,14 @@ td {
     padding: 0.25em;
 }
 
+#photo_form {
+    margin-top: 1.5em;
+}
 #photo_form p {
-    margin: 0.75em 0;
+    margin: 0;
+}
+#photo_form input[type="file"] {
+    width: 70%;
 }
 
 p#photo {

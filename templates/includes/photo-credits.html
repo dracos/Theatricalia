@@ -1,0 +1,12 @@
+{% if photos.all %}
+<h2 class="no-descenders">Photo credits</h2>
+<ul>
+{% for photo in photos.all %}
+{% if photo.source or photo.author or photo.license %}
+<li>
+{% if photo.source %}<a href="{{ photo.source }}">{{ photo.title }}</a>{% else %}{{ photo.title }}{% endif %}{% if photo.author %} by {{ photo.author }}{% endif %}{% if photo.license %}, {{ photo.get_license_display }} {% endif %}
+</li>
+{% endif %}
+{% endfor %}
+</ul>
+{% endif %}

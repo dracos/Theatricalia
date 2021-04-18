@@ -7,7 +7,7 @@
 <ul>
 {% for photo in photos.all %}
     {% thumbnail photo.photo "80x80" crop="center" as im %}
-    <li><a rel="gallery" href="{{ MEDIA_URL }}{{ photo.photo }}" title="{{ photo.title }}"><img src="{{ im.url }}" width={{ im.width }} height={{ im.height }}></a>
+    <li><a data-source="{{ photo.source }}" data-author="{{ photo.author }}" data-license="{{ photo.get_license_display }}" rel="gallery" href="{{ MEDIA_URL }}{{ photo.photo }}" title="{{ photo.title }}"><img src="{{ im.url }}" width={{ im.width }} height={{ im.height }}></a>
     {% endthumbnail %}
 {% endfor %}
 {% for photo in flickr.photos.photo %}
