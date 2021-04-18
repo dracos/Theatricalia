@@ -1,4 +1,6 @@
+import json
 from django.views.generic import ListView
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
@@ -109,6 +111,15 @@ def place(request, place_id, place):
         place = check_url(Place, place_id, place)
     except UnmatchingSlugException as e:
         return HttpResponsePermanentRedirect(e.args[0].get_absolute_url())
+
+    try:
+        fp = open(settings.OUR_ROOT + '/data/flickr/place/' + place_id)
+        flickr = fp.read()
+        fp.close()
+        flickr = json.loads(flickr)
+    except:
+        flickr = ''
+
     past, future = productions_for(place)
     photo_form = PhotoForm(place)
     alert = place.alerts.filter(user=request.user.pk)
@@ -117,6 +128,7 @@ def place(request, place_id, place):
         'past': past,
         'future': future,
         'photo_form': photo_form,
+        'flickr': flickr,
         'alert': alert,
     })
 
