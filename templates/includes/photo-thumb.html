@@ -1,0 +1,12 @@
+{% load thumbnail %}
+
+<ul>
+{% for photo in photos.all %}
+    {% thumbnail photo.photo "80x80" crop="center" as im %}
+    <li><a rel="gallery" href="{{ MEDIA_URL }}{{ photo.photo }}" title="{{ photo.title }}"><img src="{{ im.url }}" width={{ im.width }} height={{ im.height }}></a>
+    {% endthumbnail %}
+{% endfor %}
+{% for photo in flickr.photos.photo %}
+    <li><a rel="gallery" href="https://www.flickr.com/photos/{{ photo.owner }}/{{ photo.id }}/" title="{{ photo.title }}"><img src="https://farm{{ photo.farm }}.staticflickr.com/{{ photo.server }}/{{ photo.id }}_{{ photo.secret }}_s.jpg" alt="{{ photo.title }}"></a>
+{% endfor %}
+</ul>

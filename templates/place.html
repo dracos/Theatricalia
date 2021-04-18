@@ -142,14 +142,8 @@ $(function(){
 <div id="photographs">
     <h2>Photographs</h2>
 
-{% if place.photos.all %}
-    <ul>
-    {% for photo in place.photos.all %}
-    {% thumbnail photo.photo "80x80" crop="center" as im %}
-    <li><a rel="gallery" href="{{ MEDIA_URL }}{{ photo.photo }}" title="{{ photo.title }}"><img src="{{ im.url }}" width={{ im.width }} height={{ im.height }}></a>
-    {% endthumbnail %}
-    {% endfor %}
-    </ul>
+{% if place.photos.all or flickr.photos.photo %}
+    {% include 'includes/photo-thumb.html' with photos=place.photos %}
 {% endif %}
 
 {% if user.is_authenticated %}

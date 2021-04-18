@@ -131,21 +131,11 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 {% endif %}
 </ul>
 
+<div id="photographs">
 <h2>Photographs</h2>
 
-<div id="photographs">
-
 {% if person.photos.all or flickr.photos.photo %}
-<ul>
-{% for photo in person.photos.all %}
-{% thumbnail photo.photo "80x80" crop="center" as im %}
-<li><a rel="gallery" href="{{ MEDIA_URL }}{{ photo.photo }}" title="{{ photo.title }}"><img src="{{ im.url }}" width={{ im.width }} height={{ im.height }}></a>
-{% endthumbnail %}
-{% endfor %}
-{% for photo in flickr.photos.photo %}
-<li><a rel="gallery" href="https://www.flickr.com/photos/{{ photo.owner }}/{{ photo.id }}/" title="{{ photo.title }}"><img src="https://farm{{ photo.farm }}.staticflickr.com/{{ photo.server }}/{{ photo.id }}_{{ photo.secret }}_s.jpg" alt="{{ photo.title }}"></a>
-{% endfor %}
-</ul>
+    {% include 'includes/photo-thumb.html' with photos=person.photos %}
 {% endif %}
 </div>
 
