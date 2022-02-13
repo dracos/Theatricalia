@@ -84,6 +84,8 @@ def prettify(str):
 
     str = re.sub(r'\(press night\)', '<small>(press night)</small>', str)
 
+    str = re.sub('/media/audio/[^ ]*', r'<a href="https://theatricalia.com\g<0>">\g<0></a>', str)
+
     return mark_safe(str)
 
 
