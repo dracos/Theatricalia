@@ -27,6 +27,22 @@ except:
     print("Usage:\n  merge (play|production|place|person|company) <main ID> <alt ID>")
     sys.exit()
 
+alt_name = None
+try:
+    alt_name = sys.argv[4]
+except IndexError:
+    pass
+
+
+def update_attr(main, alt, attrs):
+    for attr in attrs:
+        if alt.__dict__[attr] and not main.__dict__[attr]:
+            main.__dict__[attr] = alt.__dict__[attr]
+            main.save()
+        elif alt.__dict__[attr] and main.__dict__[attr] and alt.__dict__[attr] != main.__dict__[attr]:
+            print("%s: 1: %s, 2: %s" % (attr, main.__dict__[attr], alt.__dict__[attr]))
+
+
 if thing == 'play':
     main = Play.objects.get(id=base32_to_int(main))
     alt_id = base32_to_int(alt)
@@ -37,10 +53,7 @@ if thing == 'play':
         ctype = ContentType.objects.get_for_model(alt)
         Alert.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
         Production.objects.filter(play=alt).update(play=main)
-        for attr in ('url', 'wikipedia', 'description'):
-            if alt.__dict__[attr] and not main.__dict__[attr]:
-                main.__dict__[attr] = alt.__dict__[attr]
-                main.save()
+        update_attr(main, alt, ('url', 'wikipedia', 'description'))
         for author in alt.authors.all():
             main.authors.add(author)
         Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
@@ -56,10 +69,7 @@ elif thing == 'company':
     confirm = input('Are you sure? ')
     if confirm in ('Y', 'y', 'Yes', 'yes'):
         Production_Companies.objects.filter(productioncompany=alt).update(productioncompany=main)
-        for attr in ('description',):
-            if alt.__dict__[attr] and not main.__dict__[attr]:
-                main.__dict__[attr] = alt.__dict__[attr]
-                main.save()
+        update_attr(main, alt, ('description',))
         ctype = ContentType.objects.get_for_model(alt)
         Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
         Redirect.objects.create(old_object_id=alt_id, new_object=main)
@@ -78,12 +88,7 @@ elif thing == 'place':
         Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
         ProductionPlace.objects.filter(place=alt).update(place=main)
         Place.objects.filter(parent=alt).update(parent=main)
-        for attr in ('parent_id', 'description', 'latitude', 'longitude', 'address', 'town', 'country_id', 'postcode', 'telephone', 'type', 'size', 'opening_date', 'closing_date', 'url', 'wikipedia'):
-            if alt.__dict__[attr] and not main.__dict__[attr]:
-                main.__dict__[attr] = alt.__dict__[attr]
-                main.save()
-            elif alt.__dict__[attr] and main.__dict__[attr] and alt.__dict__[attr] != main.__dict__[attr]:
-                print("%s: 1: %s, 2: %s" % (attr, main.__dict__[attr], alt.__dict__[attr]))
+        update_attr(main, alt, ('parent_id', 'description', 'latitude', 'longitude', 'address', 'town', 'country_id', 'postcode', 'telephone', 'type', 'size', 'opening_date', 'closing_date', 'url', 'wikipedia'))
         Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
         Redirect.objects.create(old_object_id=alt_id, new_object=main)
         alt.delete()
@@ -100,10 +105,7 @@ elif thing == 'person':
         Alert.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
         Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
         Part.objects.filter(person=alt).update(person=main)
-        for attr in ('bio', 'dob', 'died', 'imdb', 'musicbrainz', 'web', 'wikipedia', 'openplaques'):
-            if alt.__dict__[attr] and not main.__dict__[attr]:
-                main.__dict__[attr] = alt.__dict__[attr]
-                main.save()
+        update_attr(main, alt, ('bio', 'dob', 'died', 'imdb', 'musicbrainz', 'web', 'wikipedia', 'openplaques'))
         for play in alt.plays.all():
             main.plays.add(play)
         Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
