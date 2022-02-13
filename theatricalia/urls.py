@@ -47,6 +47,7 @@ urlpatterns = [
     url('^about$', views.static_about, name='about'),
     url('^assistance$', views.static_help, name='help'),
     url('^criticism$', views.static_contact, name='criticism'),
+    url('^read-only$', views.static_read_only, name='read-only'),
     url('^colophon$', views.static_colophon, name='colophon'),
     url('^moo$', views.static_moocards, name='moo'),
 

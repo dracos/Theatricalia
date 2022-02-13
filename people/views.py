@@ -125,6 +125,9 @@ def person_js(request, person_id, person):
 
 @login_required
 def person_edit(request, person_id, person):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     try:
         person = check_url(Person, person_id, person)
     except UnmatchingSlugException as e:

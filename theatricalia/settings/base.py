@@ -1,5 +1,7 @@
 # Django settings for theatricalia project.
 
+READ_ONLY = True
+
 import os
 import sys
 SETTINGS_DIR = os.path.realpath(os.path.dirname(__file__))

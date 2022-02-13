@@ -1,4 +1,5 @@
 from django.http import Http404, HttpResponseRedirect
+from django.conf import settings
 from django.core.mail import mail_admins
 from django.contrib import messages
 from django.shortcuts import render
@@ -20,6 +21,9 @@ type_dict = {
 
 
 def merge(request, url):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     try:
         splits = url.split('/', 2)
         if len(splits) == 2:

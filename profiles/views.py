@@ -66,6 +66,9 @@ def profile(request, username):
 
 
 def register(request):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     if request.user.is_authenticated:
         return HttpResponseRedirect('/')
 
@@ -89,6 +92,9 @@ def login(request, template_name='registration/login.html',
     """
     Displays the login form and handles the login action.
     """
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     redirect_to = request.POST.get(redirect_field_name,
                                    request.GET.get(redirect_field_name, ''))
 
@@ -125,6 +131,9 @@ def login(request, template_name='registration/login.html',
 #     return render(request, 'accounts/registration_complete.html', {})
 
 def perform_login(request, user):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     user.backend = 'profiles.backends.ModelBackend'  # Needs backend to login?
     auth_login(request, user)
 
@@ -138,6 +147,9 @@ account_activation_token = AccountActivationTokenGenerator()
 
 
 def register_confirm(request, uidb32, token):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     try:
         uid_int = base32_to_int(uidb32)
     except ValueError:
@@ -172,6 +184,9 @@ def send_confirmation_email(request, user):
 
 @login_required
 def profile_edit(request):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     profile = request.user.profile
     form = ProfileForm(request.POST or None, instance=profile)
 

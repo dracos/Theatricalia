@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.core.exceptions import ObjectDoesNotExist
@@ -15,6 +16,9 @@ from people.models import Person
 
 @login_required
 def take_photo(request):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     data = request.POST.copy()
     if not request.user.is_authenticated:
         return HttpResponseBadRequest('Only signed in users can upload photographs.')

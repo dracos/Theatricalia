@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.views.generic import ListView
 from django.forms.formsets import formset_factory
 from django.contrib.auth.decorators import login_required
@@ -77,6 +78,9 @@ def play(request, play_id, play):
 
 @login_required
 def play_edit(request, play_id, play):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     try:
         play = check_url(Play, play_id, play)
     except UnmatchingSlugException as e:

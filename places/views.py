@@ -73,6 +73,9 @@ def people(request, place_id, place):
 
 @login_required
 def place_edit(request, place_id, place):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     try:
         place = check_url(Place, place_id, place)
     except UnmatchingSlugException as e:

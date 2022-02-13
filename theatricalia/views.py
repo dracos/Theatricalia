@@ -72,6 +72,10 @@ def static_contact(request):
     return render(request, 'contact.html')
 
 
+def static_read_only(request):
+    return render(request, 'read_only.html')
+
+
 def static_moocards(request):
     cards_v = [
         "1881_Patience.jpg",

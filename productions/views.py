@@ -121,6 +121,9 @@ def production(request, play_id, play, production_id, okay=False, format='html')
 
 @login_required
 def production_seen(request, play_id, play, production_id, type):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     production = check_parameters(play_id, play, production_id)
     if type == 'add':
         alert = Visit(user=request.user, production=production)
@@ -163,6 +166,9 @@ def company_productions(request, company_id, company, type):
 
 @login_required
 def company_edit(request, company_id, company):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     try:
         company = check_url(ProductionCompany, company_id, company)
     except UnmatchingSlugException as e:
@@ -208,6 +214,9 @@ def company_edit(request, company_id, company):
 
 @login_required
 def part_edit(request, play_id, play, production_id, part_id):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     production = check_parameters(play_id, play, production_id)
 
     part = get_object_or_404(Part, id=part_id)
@@ -240,6 +249,9 @@ def part_edit(request, play_id, play, production_id, part_id):
 
 @login_required
 def production_edit(request, play_id, play, production_id):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     try:
         production = check_parameters(play_id, play, production_id)
     except UnmatchingSlugException as e:
@@ -285,6 +297,9 @@ def production_edit(request, play_id, play, production_id):
 @login_required
 def production_edit_cast(request, play_id, play, production_id):
     """For picking someone to edit, or adding a new Part"""
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     try:
         production = check_parameters(play_id, play, production_id)
     except UnmatchingSlugException as e:
@@ -311,6 +326,9 @@ def production_edit_cast(request, play_id, play, production_id):
 
 @login_required
 def production_add(request, play=None, place=None, company=None):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
 
     initial = {}
     if play:
@@ -382,6 +400,9 @@ def production_add(request, play=None, place=None, company=None):
 
 @login_required
 def add_from_play(request, play_id, play):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     try:
         play = check_url(Play, play_id, play)
     except UnmatchingSlugException as e:
@@ -391,6 +412,9 @@ def add_from_play(request, play_id, play):
 
 @login_required
 def add_from_place(request, place_id, place):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     try:
         place = check_url(Place, place_id, place)
     except UnmatchingSlugException as e:
@@ -400,6 +424,9 @@ def add_from_place(request, place_id, place):
 
 @login_required
 def add_from_company(request, company_id, company):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     try:
         company = check_url(ProductionCompany, company_id, company)
     except UnmatchingSlugException as e:
@@ -408,6 +435,9 @@ def add_from_company(request, company_id, company):
 
 
 def post_comment_wrapper(request):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/tickets')
     return post_comment(request)
@@ -415,6 +445,9 @@ def post_comment_wrapper(request):
 
 @login_required
 def hide_comment(request, comment_id):
+    if settings.READ_ONLY:
+        return HttpResponseRedirect('/read-only')
+
     comment = get_object_or_404(Comment, id=comment_id)
     comment.is_removed = True
     comment.save()
