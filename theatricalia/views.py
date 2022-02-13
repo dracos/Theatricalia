@@ -9,7 +9,6 @@ from places.models import Place
 from people.models import Person
 from news.models import Article
 from photos.models import Photo
-from profiles.models import User
 
 
 def random_production(request):
@@ -25,11 +24,6 @@ def random_production(request):
 
 def home(request):
     try:
-        matthew = User.objects.get(id=1)
-    except User.DoesNotExist:
-        matthew = User()
-
-    try:
         latest_news = Article.objects.visible().latest()
     except Article.DoesNotExist:
         latest_news = {}
@@ -40,7 +34,7 @@ def home(request):
         latest = {}
 
     try:
-        latest_comment = Comment.objects.exclude(user=matthew).order_by('-id')[0]
+        latest_comment = Comment.objects.filter(is_removed=False).order_by('-id')[0]
     except IndexError:
         latest_comment = {}
 
