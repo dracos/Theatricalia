@@ -174,6 +174,7 @@ INSTALLED_APPS = [
     'news',
     'merged',
     'lp',
+    'django_cleanup.apps.CleanupConfig',
 ]
 if DEBUG:
     INSTALLED_APPS.append('debug_toolbar')
