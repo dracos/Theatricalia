@@ -225,7 +225,7 @@ def search_people(search, force_similar=False, use_distance=True):
 
 def search_places(name_q, search):
     query = name_q
-    query = query | Q(town__icontains=search) | Q(parent__name__icontains=search)
+    query = query | Q(town__icontains=search) | Q(parent__name__icontains=search) | Q(other_names__name__icontains=search)
     words = search.rsplit(None, 1)
     if len(words) == 2:
         query = query | Q(name__icontains=words[0], town__icontains=words[1])
