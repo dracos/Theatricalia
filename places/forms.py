@@ -26,6 +26,11 @@ class PlaceForm(forms.ModelForm):
         self.fields['closing_date'].help_text = \
             'The opening and closing dates may simply be month and year, or just year, if that is all that is known.'
 
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data['parent'] and not cleaned_data['parent'].id:
+            cleaned_data['parent'] = None
+
 
 class NameForm(forms.ModelForm):
     start_date = ApproximateDateFormField(required=False, label='Called this from')
