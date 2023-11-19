@@ -25,13 +25,13 @@
     </div>
     {% endthumbnail %}
     {% endwith %}
-{% else %}{% if flickr.photos.photo %}
+{% elif flickr.photos.photo %}
     {% with flickr.photos.photo|random as photo %}
     <div id="photograph-feature">
     <a href="https://www.flickr.com/photos/{{ photo.owner }}/{{ photo.id }}/" title="{{ photo.title }}"><img src="https://farm{{ photo.farm }}.staticflickr.com/{{ photo.server }}/{{ photo.id }}_{{ photo.secret }}_s.jpg" alt="{{ photo.title }}"></a>
     </div>
     {% endwith %}
-{% endif %}{% endif %}
+{% endif %}
 
 {% if production.book_tickets and not production.finished %}
 <div class="secondary">
@@ -83,7 +83,7 @@
 {% for part in cast %}
 <tr><th>{{ part.role_or_unknown|prettify }}</th>
 <td itemprop="performers" itemscope itemtype="http://schema.org/Person"><a itemprop="url" href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>
-{% if part.credited_as %}<br>&nbsp;&nbsp;<small>({% ifnotequal part.credited_as "uncredited" %}credited as {% endifnotequal %}{{ part.credited_as|prettify }})</small>{% endif %}
+{% if part.credited_as %}<br>&nbsp;&nbsp;<small>({% if part.credited_as != "uncredited" %}credited as {% endif %}{{ part.credited_as|prettify }})</small>{% endif %}
 {% if part.start_date or part.end_date %}<br>&nbsp;&nbsp;<small>({{ part.date_summary|prettify }})</small>{% endif %}
 </td></tr>
 {% endfor %}
@@ -135,7 +135,7 @@
     <li>Source: {{ production.source|safe }}</li>
 {% endif %}
 
-{% ifnotequal production.last_modifier production.creator %}
+{% if production.last_modifier != production.creator %}
     {% if production.creator.name %}
         <li>Added by <a href="{{ production.creator.profile.get_absolute_url }}">{{ production.creator.name }}</a>, last modified by <a href="{{ production.last_modifier.profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</li>
     {% else %}
@@ -149,7 +149,7 @@
             <li>Last modified by <a href="{{ production.last_modifier.profile.get_absolute_url }}">{{ production.last_modifier.name }}</a>.</li>
         {% endif %}
     {% endif %}
-{% endifnotequal %}
+{% endif %}
 
 </ul>
 

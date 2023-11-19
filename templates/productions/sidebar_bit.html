@@ -1,20 +1,17 @@
 {% load prettify %}
 
-{% ifequal production.places.count 1 %}
+{% if production.places.count == 1 %}
     {{ production.date_summary|prettify }},
     at <span itemprop="location" itemscope itemtype="http://schema.org/PerformingArtsTheater"><a itemprop="url" href="{{ production.places.all.0.get_absolute_url }}">{{ production.place_set.all.0.name_for_date|prettify }}</a></span>.</p>
     {% if production.place_set.all.0.press_date and production.place_set.all.0.start_date %}
         <p>Press night was {{ production.place_set.all.0.press_date|date:"jS F Y"|prettify }}.</p>
     {% endif %}
-{% else %}
-{% ifequal production.places.count 0 %}
+{% elif production.places.count == 0 %}
     at an unknown location.
 {% else %}
     at
     {% for place in places %}
         {% if forloop.last and not forloop.first %} and {% endif %}
         <span itemprop="location" itemscope itemtype="http://schema.org/PerformingArtsTheater"><a itemprop="url" href="{{ place.place.get_absolute_url }}">{{ place.name_for_date|prettify }}</a></span>
-        <small>({{ place.date_summary|prettify }})</small>{% ifequal forloop.revcounter0 0 %}{% else %}{% ifequal forloop.revcounter0 1 %}{% ifnotequal forloop.counter0 0 %},{% endifnotequal %}{% else %},{% endifequal %}{% endifequal %}{% endfor %}.
-{% endifequal %}
-{% endifequal %}
-
+        <small>({{ place.date_summary|prettify }})</small>{% if forloop.revcounter0 == 0 %}{% elif forloop.revcounter0 == 1 %}{% if forloop.counter0 != 0 %},{% endif %}{% else %},{% endif %}{% endfor %}.
+{% endif %}

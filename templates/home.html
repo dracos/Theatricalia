@@ -49,20 +49,20 @@ or search for a location to find things near you.
 by {{ production.get_companies_display }}{% endif %},
     {% endthumbnail %}
 
-{% ifequal production.places.count 1 %}
+{% if production.places.count == 1 %}
     {{ production.date_summary|prettify }},
     at <a href="{{ production.places.all.0.get_absolute_url }}">{{ production.places.all.0.get_name_display|prettify }}</a>.</p>
 {% else %}
-    {% ifequal production.places.count 0 %}
+    {% if production.places.count == 0 %}
                 at an unknown location.
     {% else %}
                        at
         {% for place in production.place_set.all %}
             {% if forloop.last and not forloop.first %} and {% endif %}
             <a href="{{ place.place.get_absolute_url }}">{{ place.place.get_name_display|prettify }}</a>
-            <small>({{ place.date_summary|prettify }})</small>{% ifequal forloop.revcounter0 0 %}{% else %}{% ifequal forloop.revcounter0 1 %}{% ifnotequal forloop.counter0 0 %},{% endifnotequal %}{% else %},{% endifequal %}{% endifequal %}{% endfor %}.
-    {% endifequal %}
-{% endifequal %}
+            <small>({{ place.date_summary|prettify }})</small>{% if forloop.revcounter0 == 0 %}{% elif forloop.revcounter0 == 1 %}{% if forloop.counter0 != 0 %},{% endif %}{% else %},{% endif %}{% endfor %}.
+    {% endif %}
+{% endif %}
 
 <p align="right"><a href="{{ production.get_absolute_url }}">More &rarr;</a></p>
 
@@ -106,14 +106,13 @@ at the <a href="/place/46/courtyard-theatre-stratford-upon-avon">Courtyard Theat
 <li><strong>&hellip;addition:</strong>
 {% if latest_production %}
 <a href="{{ latest_production.get_absolute_url }}">{{ latest_production.play.get_title_display|prettify }}</a>,
-{% ifequal latest_production.places.count 1 %}
+{% if latest_production.places.count == 1 %}
     at <a href="{{ latest_production.places.all.0.get_absolute_url }}">{{ latest_production.places.all.0|prettify }}</a>,
     {{ latest_production.date_summary|prettify }}.
     {% if latest_production.place_set.all.0.press_date and latest_production.place_set.all.0.start_date %}
         Press night was {{ latest_production.place_set.all.0.press_date|date:"jS F Y"|prettify }}.
     {% endif %}
-{% else %}
-{% ifequal latest_production.places.count 0 %}
+{% elif latest_production.places.count == 0 %}
     at an unknown location.
 {% else %}
     {% firstof latest_production.place_set_ordered|length as places %}
@@ -121,16 +120,13 @@ at the <a href="/place/46/courtyard-theatre-stratford-upon-avon">Courtyard Theat
     {% for place in latest_production.place_set_ordered|slice:":5" %}
         {% if forloop.last and not forloop.first and places|add:0 <= 5 %} and {% endif %}
         <a href="{{ place.place.get_absolute_url }}">{{ place.place|prettify }}</a>
-        <small>({{ place.date_summary|prettify }})</small>{% ifequal forloop.revcounter0 0 %}{% else %}{% ifequal forloop.revcounter0 1 %}{% ifnotequal forloop.counter0 0 %},{% endifnotequal %}{% else %},{% endifequal %}{% endifequal %}{% endfor %}{% if places|add:0 > 5 %} and other locations{% endif %}.
-{% endifequal %}
-{% endifequal %}
-{% ifnotequal latest_production.last_modifier latest_production.creator %}
+        <small>({{ place.date_summary|prettify }})</small>{% if forloop.revcounter0 == 0 %}{% elif forloop.revcounter0 == 1 %}{% if forloop.counter0 != 0 %},{% endif %}{% else %},{% endif %}{% endfor %}{% if places|add:0 > 5 %} and other locations{% endif %}.
+{% endif %}
+{% if latest_production.last_modifier != latest_production.creator %}
 Added by <a href="{{ latest_production.creator.profile.get_absolute_url }}">{{ latest_production.creator.name }}</a>, last modified by <a href="{{ latest_production.last_modifier.profile.get_absolute_url }}">{{ latest_production.last_modifier.name }}</a>.
-{% else %}
-{% if latest_production.creator.name %}
+{% elif latest_production.creator.name %}
 Added by <a href="{{ latest_production.creator.profile.get_absolute_url }}">{{ latest_production.creator.name }}</a>.
 {% endif %}
-{% endifnotequal %}
 {% else %}
 Nothing in the system yet!
 {% endif %}

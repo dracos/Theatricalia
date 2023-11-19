@@ -1,10 +1,10 @@
-from django.conf.urls import url
+from django.urls import path
 from lp import views
 
 
 urlpatterns = [
-    url(r'^edition/$', views.edition),
-    url(r'^sample/$', views.sample),
-    url(r'^meta.json$', views.meta_json),
-    url(r'^icon.png$', views.icon),
+    path('edition/', views.edition),
+    path('sample/', views.sample),
+    path('meta.json', views.meta_json),
+    path('icon.png', views.icon),
 ]

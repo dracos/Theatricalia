@@ -19,13 +19,9 @@
 <div class="primary">
 
 {% for field in form %}
-    {% if not field.is_hidden %}
-    {% ifnotequal field.label 'Latitude' %}
-    {% ifnotequal field.label 'Longitude' %}
+    {% if not field.is_hidden and field.label != 'Latitude' and field.label != 'Longitude' %}
     <p>{{ field.label_tag }} {{ field }}</p>
     {% if field.help_text %}<p class="help_text"><small>{{ field.help_text }}</small></p>{% endif %}
-    {% endifnotequal %}
-    {% endifnotequal %}
     {% endif %}
 {% endfor %}
 

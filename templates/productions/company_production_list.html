@@ -15,11 +15,11 @@
 <ul class="production_list">
 {% for production in page_obj.object_list %}
 <li><a href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>,
-{% ifequal production.places.count 1 %}
+{% if production.places.count == 1 %}
 <a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
 {% else %}
 {{ production.place_summary|prettify }}.
-{% endifequal %}
+{% endif %}
 <span class="meta">{{ production.date_summary|prettify }}.</span>
 {% endfor %}
 </ul>

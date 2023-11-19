@@ -18,11 +18,11 @@
 {{ production.searched_people|prettify_list }}
 {% endif %}
 <span class="meta">{{ production.date_summary|prettify }},
-{% ifequal production.places.count 1 %}
+{% if production.places.count == 1 %}
 <a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
 {% else %}
 {{ production.place_summary|prettify }}.
-{% endifequal %}
+{% endif %}
 </span>
 {% endfor %}
 </ul>

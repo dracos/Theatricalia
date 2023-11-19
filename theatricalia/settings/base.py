@@ -61,8 +61,7 @@ DATABASES = {
     }
 }
 
-SOUTH_TESTS_MIGRATE = False
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 ALLOWED_HOSTS = ['theatricalia.com', 'theatricalia.com.', 'localhost', 'staging.theatricalia.com']
 
@@ -98,7 +97,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 if 'test' in sys.argv:
     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
@@ -141,7 +140,7 @@ MIDDLEWARE = [
 if DEBUG:
     MIDDLEWARE.insert(5, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
-if 'staging' not in OUR_ROOT:
+if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
@@ -163,7 +162,6 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
     'reversion',
     'countries',
-    'django_nose',
     'common',
     'places',
     'plays',

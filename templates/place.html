@@ -86,8 +86,8 @@
 
 {% if place.type or place.size %}
     <li>
-    {% if place.type %}{% ifequal place.type "multiple" %}An adaptable theatre{% else %}A {{ place.type }} theatre{% endifequal %}{% endif %}{% if place.size and place.type %},
-    s{% else %}{% if place.size %}S{% endif %}{% endif %}{%if place.size %}eats {{ place.size }}{% endif %}.
+    {% if place.type %}{% if place.type == "multiple" %}An adaptable theatre{% else %}A {{ place.type }} theatre{% endif %}{% endif %}{% if place.size and place.type %},
+    s{% elif place.size %}S{% endif %}{%if place.size %}eats {{ place.size }}{% endif %}.
 {% endif %}
 {% if place.opening_date %}<li>Opened {{ place.opening_date|prettify }}{% endif %}
 {% if place.closing_date %}<li>Closed {{ place.closing_date|prettify }}{% endif %}

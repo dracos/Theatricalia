@@ -9,8 +9,8 @@ from django.db import models
 from django.http import HttpResponse, HttpResponseRedirect
 
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
-from django.utils.translation import ugettext as _
-from django.utils.encoding import force_text
+from django.utils.translation import gettext as _
+from django.utils.encoding import force_str
 from django.utils.html import escape
 from django.utils.datastructures import MultiValueDict
 
@@ -259,7 +259,7 @@ class AutocompleteModelAdmin(admin.ModelAdmin):
         opts = obj._meta
         pk_value = obj._get_pk_val()
 
-        msg = _('The %(name)s "%(obj)s" was added successfully.') % {'name': force_text(opts.verbose_name), 'obj': force_text(obj)}
+        msg = _('The %(name)s "%(obj)s" was added successfully.') % {'name': force_str(opts.verbose_name), 'obj': force_str(obj)}
         # Here, we distinguish between different save types by checking for
         # the presence of keys in request.POST.
         if '_continue' in request.POST:
@@ -274,7 +274,7 @@ class AutocompleteModelAdmin(admin.ModelAdmin):
                 return HttpResponse('<script type="text/javascript">opener.dismissAutocompletePopup(window, "%s", "%s");</script>' % (escape(pk_value), escape(obj)))
 
         elif '_addanother' in request.POST:
-            self.message_user(request, msg + ' ' + (_("You may add another %s below.") % force_text(opts.verbose_name)))
+            self.message_user(request, msg + ' ' + (_("You may add another %s below.") % force_str(opts.verbose_name)))
             return HttpResponseRedirect(request.path)
         else:
             self.message_user(request, msg)

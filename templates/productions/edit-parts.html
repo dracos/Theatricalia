@@ -37,7 +37,7 @@ played another smaller part).
 <p>{{ form.person.label_tag }} {{ form.person }}</p>
 
 {% for field in form %}
-{% ifnotequal field.label 'Person' %}
+{% if field.label != 'Person' %}
 {% if field.is_hidden %}
 {{ field }}
 {% else %}
@@ -46,7 +46,7 @@ played another smaller part).
 {% if field.help_text %}<small>({{ field.help_text }})</small>{% endif %}
 </p>
 {% endif %}
-{% endifnotequal %}
+{% endif %}
 {% endfor %}
 
 <p><input type="submit" value="Record addition"></p>

@@ -314,7 +314,7 @@ class Part(models.Model):
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
     role = models.CharField(
         u'R\u00f4le', max_length=200, blank=True, help_text=u'e.g. \u201cRomeo\u201d or \u201cDirector\u201d')
-    cast = models.NullBooleanField(
+    cast = models.BooleanField(
         null=True, blank=True, verbose_name='Cast/Crew',
         help_text=u'Crew includes all non-cast, from director to musicians to producers')
     credited_as = models.CharField(

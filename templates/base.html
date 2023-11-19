@@ -146,7 +146,7 @@
 <a href="{% url "profile" user %}">Your profile</a>
 | <a href="{% url "logout" %}">Sign out</a>
 {% else %}
-<a href="{% url "login" %}{% ifnotequal request.path '/tickets/returns' %}?next={{ request.path }}{% endifnotequal %}">Sign in</a>
+<a href="{% url "login" %}{% if request.path != '/tickets/returns' %}?next={{ request.path }}{% endif %}">Sign in</a>
 {% endif %}
 </p>
 {% endblock %}
@@ -160,9 +160,9 @@ Please email first.
 </p>
 {% endif %}
 
-{% ifequal request.META.HTTP_HOST "staging.theatricalia.com" %}
+{% if request.META.HTTP_HOST == "staging.theatricalia.com" %}
 <div id="banner_big">Staging site (behind the scenes)</div>
 {% else %}
-{% endifequal %}
+{% endif %}
 </body>
 </html>

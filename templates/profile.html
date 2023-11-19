@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load prettify %}
 
-{% block title %}{{ view.name|prettify|striptags }}&rsquo;{% ifnotequal view.name|last 's' %}s{% endifnotequal %} profile{% endblock %}
+{% block title %}{{ view.name|prettify|striptags }}&rsquo;{% if view.name|last != 's' %}s{% endif %} profile{% endblock %}
 
 {% block extra_head %}
 <link href="{{ profile.get_absolute_url }}/feed/seen" title="Feed of seen productions" type="application/rss+xml" rel="alternate">
@@ -9,7 +9,7 @@
 
 {% block content %}
 
-<h1>{{ view.name|prettify }}&rsquo;{% ifnotequal view.name|last 's' %}s{% endifnotequal %} profile</h1>
+<h1>{{ view.name|prettify }}&rsquo;{% if view.name|last != 's' %}s{% endif %} profile</h1>
 
 {% include 'includes/messages.html' %}
 
@@ -41,22 +41,22 @@
 <ul>
     {% if not view.is_active %} <li>Inactive. {% endif %}
     {% if view.is_superuser %}
-        {% ifequal view.username 'matthew' %}
+        {% if view.username == 'matthew' %}
             <li><em>Principal.</em>
         {% else %}
             <li>Administrator.
-        {% endifequal %}
-    {% else %}{% ifequal view.username "Deborah" %} <li>Wardrobe mistress.
-    {% else %}{% if view.is_staff %} <li>Stagehand. {% endif %}{% endifequal %}{% endif %}
+        {% endif %}
+    {% elif view.username == "Deborah" %} <li>Wardrobe mistress.
+    {% elif view.is_staff %} <li>Stagehand. {% endif %}
     {% if profile.url %}
     <li><a rel="nofollow" href="{{ profile.url }}">Personal website</a>.
     {% endif %}
     <li>Joined {{ view.date_joined|date:"jS F Y" }}.
     <li>Last logged in on {{ view.last_login|date:"jS F Y" }}.
-{% ifequal user view %}
+{% if user == view %}
     <li><a href="{{ profile.get_edit_url }}">Edit your profile<!-- and alerts --></a>
     <li><a href="{% url "password_change" %}">Change your password</a>
-{% endifequal %}
+{% endif %}
     </ul>
 
 <h2>Last five observations</h2>

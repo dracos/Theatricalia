@@ -1,15 +1,15 @@
 {% load humanize %}
 {% if page_obj.has_other_pages %}
 <p class="pagination">
-        {% if page_obj.has_previous %}
-		{% ifequal page_obj.previous_page_number 1 %}
+    {% if page_obj.has_previous %}
+		{% if page_obj.previous_page_number == 1 %}
             <a href="{{ request.path }}">&larr; Previous</a>
 		{% else %}
             <a href="?page={{ page_obj.previous_page_number }}">&larr; Previous</a>
-		{% endifequal %}
-        {% else %}
-            <span class="greyed">&larr; Previous</span>
-        {% endif %}
+		{% endif %}
+    {% else %}
+        <span class="greyed">&larr; Previous</span>
+    {% endif %}
         &middot;
         <span class="current">
             {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ paginator.count|intcomma }}

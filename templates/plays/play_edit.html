@@ -27,14 +27,14 @@
 {{ form.person.label_tag }} {{ form.person }}
 
 {% for field in form %}
-{% ifnotequal field.label 'Author' %}
+{% if field.label != 'Author' %}
 {% if field.is_hidden %}
 {{ field }}
 {% else %}
 {{ field.errors }}
 {{ field.label_tag }} {{ field }}
 {% endif %}
-{% endifnotequal %}
+{% endif %}
 {% endfor %}
 </div>
 {% endfor %}

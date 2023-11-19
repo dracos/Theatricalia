@@ -5,12 +5,12 @@
 
 {% block content %}
 
-<h1>Search{% if search %} for {% ifequal sounds_people 2 %}similar to {% endifequal %}
+<h1>Search{% if search %} for {% if sounds_people == 2 %}similar to {% endif %}
 &ldquo;{{ search }}&rdquo;{% endif %}</h1>
 
 <script type="text/javascript">
 if (!window.location.hash)
-    start_tab = {% ifequal sounds_people 2 %}2{% else %}{% if plays %}0{% else %}{% if people %}1{% else %}{% if places %}2{% else %}{% if parts.object_list %}3{% else %}{% if companies %}4{% else %}-1{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}{% endifequal %};
+    start_tab = {% if sounds_people == 2 %}2{% elif plays %}0{% elif people %}1{% elif places %}2{% elif parts.object_list %}3{% elif companies %}4{% else %}-1{% endif %};
 </script>
 <div id="search_tabs">
 <ul>
@@ -35,23 +35,23 @@ if (!window.location.hash)
 <div id="search_people">
 {% if people %}
 <h2>People</h2>
-{% ifequal sounds_people 1 %}
+{% if sounds_people == 1 %}
     <p>We couldn&rsquo;t find any results for &ldquo;{{ search }}&rdquo;. Here are some results that are, or sound, similar:
-{% endifequal %}
-{% ifequal sounds_people 2 %}
+{% endif %}
+{% if sounds_people == 2 %}
 <p>Here are results that are, or sound, similar to &ldquo;{{ search }}&rdquo;:
-{% endifequal %}
+{% endif %}
 <ul class="person_list">
 {% for person in people %}
 <li><a href="{{ person.get_absolute_url }}">{{ person|prettify }}</a>
 {% endfor %}
 </ul>
 {% if not request.GET.similar and not sounds_people %}
-    {% ifequal people.count 1 %}
+    {% if people.count == 1 %}
         <p>If this isn&rsquo;t whom you&rsquo;re looking for, <a href="{% url "search" %}?q={{ search }};similar=1">see if we have any similar sounding results</a>.
     {% else %}
         <p>If none of these is whom you&rsquo;re looking for, <a href="{% url "search" %}?q={{ search }};similar=1">see if we have any similar sounding results</a>.
-    {% endifequal %}
+    {% endif %}
 {% endif %}
 {% else %}
     {% if search %}
@@ -91,11 +91,11 @@ if (!window.location.hash)
 <a href="{{ part.person.get_absolute_url }}">{{ part.person|prettify }}</a>, in
 <a href="{{ part.production.get_absolute_url }}">{{ part.production.play.get_title_display|prettify }}</a>{% if part.production.get_companies_display %}, {{ part.production.get_companies_display }}{% endif %}
 <span class="meta">{{ part.production.date_summary|prettify }},
-{% ifequal part.production.places.count 1 %}
+{% if part.production.places.count == 1 %}
 <a href="{{ part.production.place_summary.get_absolute_url }}">{{ part.production.place_summary|prettify }}</a>.
 {% else %}
 {{ part.production.place_summary|prettify }}.
-{% endifequal %}
+{% endif %}
 </span>
 {% endfor %}
 </ul>
@@ -117,10 +117,9 @@ if (!window.location.hash)
 {% endif %}
 </div>
 
-{% ifequal error 'Length' %}
+{% if error == 'Length' %}
 <p>The minimum search length is three characters, as anything else returns too many results.</p>
-{% else %}
-{% if plays or places or people or parts.object_list or companies %}
+{% elif plays or places or people or parts.object_list or companies %}
 {% else %}
     <p>I&rsquo;m afraid we couldn&rsquo;t find any results. If you&rsquo;re searching for someone, try
     just their first or last name.</p>
@@ -129,7 +128,6 @@ if (!window.location.hash)
     <a href="/add">add a production</a> to the site, involving the play, person, or place you searched
     for, so that future users of the site can benefit. They thank you in advance!
 {% endif %}
-{% endifequal %}
 
 </div>
 {% endblock %}

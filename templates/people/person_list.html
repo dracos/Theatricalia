@@ -9,22 +9,22 @@
 
 <ul id="atoz">
 {% for l in letters %}
-<li>{% ifequal l letter %}
+<li>{% if l == letter %}
 <strong>{{ l|upper }}</strong>
 {% else %}
 <a href="{% url "people" l|lower %}">{{ l }}</a>
-{% endifequal %}
+{% endif %}
 {% endfor %}
-<li>{% ifequal "0-9" letter %}
+<li>{% if "0-9" == letter %}
 <strong>0&ndash;9</strong>
 {% else %}
 <a href="{% url "people" "0" %}">0&ndash;9</a>
-{% endifequal %}
-<li>{% ifequal "Symbols" letter %}
+{% endif %}
+<li>{% if "Symbols" == letter %}
 <strong>Symbols</strong>
 {% else %}
 <a href="{% url "people" "*" %}">Symbols</a>
-{% endifequal %}
+{% endif %}
 </ul>
 
 <h1>People &ndash; {{ letter }}</h1>
