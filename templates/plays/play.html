@@ -58,10 +58,6 @@
 
 <p>A play by {{ play.get_authors_display|default:"unknown" }}</p>
 
-<div style="float: right">
-<a href="https://twitter.com/share" class="twitter-share-button" data-count="none" data-via="theatricalia" data-related="dracos">Tweet</a><script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>
-</div>
-
 <ul>
 {% if play.url %}<li><a href="{{ play.url }}">Official website</a>{% endif %}
 {% if play.wikipedia %}<li><a href="{{ play.wikipedia }}">Wikipedia</a>{% endif %}
