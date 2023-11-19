@@ -35,6 +35,14 @@ class AutoCompleteMultiValueField(forms.MultiValueField):
         return data_list[1]
 
 
+# In Django 4, exclusions are a set, not a list
+def add_to_set_or_list(bag, thing):
+    if isinstance(bag, list):
+        bag.append(thing)
+    else:
+        bag.add(thing)
+
+
 class ProductionForm(forms.ModelForm):
     # last_modified = forms.DateTimeField(widget=forms.HiddenInput(), required=False)
     play = AutoCompleteMultiValueField(
@@ -52,7 +60,7 @@ class ProductionForm(forms.ModelForm):
 
     def _get_validation_exclusions(self):
         exclusions = super(ProductionForm, self)._get_validation_exclusions()
-        exclusions.append('play')
+        add_to_set_or_list(exclusions, 'play')
         return exclusions
 
     class Meta:
@@ -144,7 +152,7 @@ class CompanyInlineForm(forms.ModelForm):
 
     def _get_validation_exclusions(self):
         exclusions = super(CompanyInlineForm, self)._get_validation_exclusions()
-        exclusions.append('productioncompany')
+        add_to_set_or_list(exclusions, 'productioncompany')
         return exclusions
 
     def save(self, **kwargs):
@@ -179,7 +187,7 @@ class PlaceForm(forms.ModelForm):
 
     def _get_validation_exclusions(self):
         exclusions = super(PlaceForm, self)._get_validation_exclusions()
-        exclusions.append('place')
+        add_to_set_or_list(exclusions, 'place')
         return exclusions
 
     def clean_place(self):
@@ -212,7 +220,7 @@ class PartForm(forms.ModelForm):
 
     def _get_validation_exclusions(self):
         exclusions = super(PartForm, self)._get_validation_exclusions()
-        exclusions.append('person')
+        add_to_set_or_list(exclusions, 'person')
         return exclusions
 
     def __init__(self, editing=True, *args, **kwargs):
