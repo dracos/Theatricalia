@@ -9,6 +9,7 @@ from places.models import Place
 from people.models import Person
 from news.models import Article
 from photos.models import Photo
+from django.views.decorators.cache import cache_page
 
 
 def random_production(request):
@@ -22,6 +23,7 @@ def random_production(request):
     return HttpResponseRedirect(url)
 
 
+@cache_page(15)
 def home(request):
     try:
         latest_news = Article.objects.visible().latest()
