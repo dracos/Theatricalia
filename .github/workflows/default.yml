@@ -24,7 +24,7 @@ jobs:
     - name: Set up database
       uses: getong/mariadb-action@v1.1
       with:
-        mariadb version: '10.3.27'
+        mariadb version: '10.11'
         mysql database: 'theatricalia'
         mysql root password: 'root'
 
