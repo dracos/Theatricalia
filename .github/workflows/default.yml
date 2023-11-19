@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [3.9]
-        thing-to-test: [flake8, django-v3, django-v4]
+        thing-to-test: [flake8, django-v3, django-v41, django-v42]
 
     steps:
     - uses: actions/checkout@v2
