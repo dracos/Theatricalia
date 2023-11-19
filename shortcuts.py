@@ -25,7 +25,7 @@ def check_url(type, id, slug=None):
     except type.DoesNotExist:
         content_type = ContentType.objects.get_for_model(type)
         try:
-            redir = Redirect.objects.get(old_object_id=id, content_type=content_type)
+            redir = Redirect.objects.get(old_object_id=id, content_type=content_type, approved=True)
             obj = redir.new_object
             mistyped = True
         except Redirect.DoesNotExist:

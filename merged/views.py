@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.shortcuts import render
 
 from shortcuts import check_url, UnmatchingSlugException
+from merged.models import Redirect
 from places.models import Place
 from people.models import Person
 from productions.models import ProductionCompany, Production
@@ -53,6 +54,9 @@ def merge(request, url):
         # Send email
         other_id = request.session['merging_' + type]['id']
         other = obj_type.objects.get(id=other_id)
+
+        Redirect.objects.create(old_object_id=other.id, new_object=object)
+
         mail_admins(
             'Merge request',
             u'%s\nand\n%s\n\n%s : https://theatricalia.com%s\n%s : https://theatricalia.com%s\n\nRequest made by: %s %s\n\nATB,\nMatthew' % (
@@ -60,6 +64,7 @@ def merge(request, url):
                 int_to_base32(object.id), object.get_absolute_url(), request.user, getattr(request.user, 'email', '')),
             fail_silently=True
         )
+
         del request.session['merging_' + type]
         return render(request, 'merged/thanks.html', {
             'object': object,

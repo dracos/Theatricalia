@@ -9,17 +9,12 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'theatricalia.settings'
 import django
 django.setup()
 
-from django.contrib.contenttypes.models import ContentType
-from django_comments.models import Comment
-
 from utils import base32_to_int
 from plays.models import Play
-from productions.models import Production, Visit, Part, Place as ProductionPlace, ProductionCompany, Production_Companies
-from photos.models import Photo
+from productions.models import Production, ProductionCompany
 from places.models import Place
 from people.models import Person
-from merged.models import Redirect
-from common.models import Alert
+from merged.utils import merge_thing
 
 try:
     thing, main, alt = sys.argv[1:4]
@@ -27,168 +22,23 @@ except:
     print("Usage:\n  merge (play|production|place|person|company) <main ID> <alt ID>")
     sys.exit()
 
-alt_name = None
-try:
-    alt_name = sys.argv[4]
-except IndexError:
-    pass
+lookup = {
+    'play': Play,
+    'company': ProductionCompany,
+    'place': Place,
+    'person': Person,
+    'production': Production,
+}
 
+cls = lookup[thing]
+main = cls.objects.get(id=base32_to_int(main))
+alt = cls.objects.get(id=base32_to_int(alt))
+print("Merging %s into %s" % (alt, main))
 
-def update_attr(main, alt, attrs):
-    for attr in attrs:
-        if alt.__dict__[attr] and not main.__dict__[attr]:
-            main.__dict__[attr] = alt.__dict__[attr]
-            main.save()
-        elif alt.__dict__[attr] and main.__dict__[attr] and alt.__dict__[attr] != main.__dict__[attr]:
-            print("%s: 1: %s, 2: %s" % (attr, main.__dict__[attr], alt.__dict__[attr]))
+if thing == 'production' and main.play != alt.play:
+    raise Exception('Productions do not have the same play: %s vs %s' % (main.play, alt.play))
 
-
-if thing == 'play':
-    main = Play.objects.get(id=base32_to_int(main))
-    alt_id = base32_to_int(alt)
-    alt = Play.objects.get(id=alt_id)
-    print("Merging %s into %s" % (alt, main))
-    confirm = input('Are you sure? ')
-    if confirm in ('Y', 'y', 'Yes', 'yes'):
-        ctype = ContentType.objects.get_for_model(alt)
-        Alert.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
-        Production.objects.filter(play=alt).update(play=main)
-        update_attr(main, alt, ('url', 'wikipedia', 'description'))
-        for author in alt.authors.all():
-            main.authors.add(author)
-        Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
-        Redirect.objects.create(old_object_id=alt_id, new_object=main)
-        alt.delete()
-        print("Done")
-
-elif thing == 'company':
-    main = ProductionCompany.objects.get(id=base32_to_int(main))
-    alt_id = base32_to_int(alt)
-    alt = ProductionCompany.objects.get(id=alt_id)
-    print("Merging %s into %s" % (alt, main))
-    confirm = input('Are you sure? ')
-    if confirm in ('Y', 'y', 'Yes', 'yes'):
-        Production_Companies.objects.filter(productioncompany=alt).update(productioncompany=main)
-        update_attr(main, alt, ('description',))
-        ctype = ContentType.objects.get_for_model(alt)
-        Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
-        Redirect.objects.create(old_object_id=alt_id, new_object=main)
-        alt.delete()
-        print("Done")
-
-elif thing == 'place':
-    main = Place.objects.get(id=base32_to_int(main))
-    alt_id = base32_to_int(alt)
-    alt = Place.objects.get(id=alt_id)
-    print("Merging %s into %s" % (alt, main))
-    confirm = input('Are you sure? ')
-    if confirm in ('Y', 'y', 'Yes', 'yes'):
-        ctype = ContentType.objects.get_for_model(alt)
-        Alert.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
-        Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
-        ProductionPlace.objects.filter(place=alt).update(place=main)
-        Place.objects.filter(parent=alt).update(parent=main)
-        update_attr(main, alt, ('parent_id', 'description', 'latitude', 'longitude', 'address', 'town', 'country_id', 'postcode', 'telephone', 'type', 'size', 'opening_date', 'closing_date', 'url', 'wikipedia'))
-        Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
-        Redirect.objects.create(old_object_id=alt_id, new_object=main)
-        alt.delete()
-        print("Done")
-
-elif thing == 'person':
-    main = Person.objects.get(id=base32_to_int(main))
-    alt_id = base32_to_int(alt)
-    alt = Person.objects.get(id=alt_id)
-    print("Merging %s into %s" % (alt, main))
-    confirm = input('Are you sure? ')
-    if confirm in ('Y', 'y', 'Yes', 'yes'):
-        ctype = ContentType.objects.get_for_model(alt)
-        Alert.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
-        Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
-        Part.objects.filter(person=alt).update(person=main)
-        update_attr(main, alt, ('bio', 'dob', 'died', 'imdb', 'musicbrainz', 'web', 'wikipedia', 'openplaques'))
-        for play in alt.plays.all():
-            main.plays.add(play)
-        Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
-        Redirect.objects.create(old_object_id=alt_id, new_object=main)
-        alt.deleted = True
-        alt.save()
-        print("Done")
-
-elif thing == 'production':
-    main = Production.objects.get(id=base32_to_int(main))
-    alt_id = base32_to_int(alt)
-    alt = Production.objects.get(id=alt_id)
-    print("Merging %s into %s" % (alt, main))
-    if main.play != alt.play:
-        raise Exception('Productions do not have the same play: %s vs %s' % (main.play, alt.play))
-
-    confirm = input('Are you sure? ')
-    if confirm not in ('Y', 'y', 'Yes', 'yes'):
-        sys.exit()
-
-    ctype = ContentType.objects.get_for_model(alt)
-    Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
-    for visit in Visit.objects.filter(production=alt):
-        visit.production = main
-        try:
-            visit.save()
-        except django.db.utils.IntegrityError:
-            visit.delete()
-    Comment.objects.filter(content_type=ctype, object_pk=alt.id).update(object_pk=main.id)
-    for company in Production_Companies.objects.filter(production=alt):
-        company.production = main
-        try:
-            company.save()
-        except:
-            company.delete()
-    if alt.description != main.description:
-        main.description += "\n\n" + alt.description
-    if alt.source:
-        main.source += "\n\n" + alt.source
-
-    # ProductionPlace.objects.filter(production=alt).update(production=main)
-    for place in ProductionPlace.objects.filter(production=alt):
-        if ProductionPlace.objects.filter(place=place.place, production=main, start_date=place.start_date or '', end_date=place.end_date or '', press_date=place.press_date):
-            print("Going to delete %s" % place)
-            place.delete()
-        else:
-            place.production = main
-            print("Going to save %s" % place)
-            place.save()
-
-    # main_place = main.place_set.all()[0]
-    # alt_place = alt.place_set.all()[0]
-    # Part.objects.filter(production=main, start_date='', end_date='').update(start_date=main_place.start_date, end_date=main_place.end_date)
-    # Part.objects.filter(production=alt, start_date='', end_date='').update(production=main, start_date=alt_place.start_date, end_date=alt_place.end_date)
-    for part in Part.objects.filter(production=alt):
-        match = {
-            'person': part.person,
-            'production': main,
-            'cast': part.cast,
-            'credited_as': part.credited_as,
-            'order': part.order,
-            'start_date': part.start_date or '',
-            'end_date': part.end_date or '',
-        }
-        if Part.objects.filter(role=part.role, **match):  # Exact match
-            print("Going to delete %s" % part)
-            part.delete()
-        elif not part.role and Part.objects.filter(**match):  # alt part does not have a role, main does
-            print("Going to delete %s" % part)
-            part.delete()
-        elif Part.objects.filter(role='', **match):  # main part does not have a role, alt does
-            ppp = Part.objects.filter(role='', **match).first()
-            ppp.role = part.role
-            ppp.save()
-            print("Going to move %s to main" % part)
-            part.delete()
-        else:  # No match
-            part.production = main
-            print("Going to save %s" % part)
-            part.save()
-
-    Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
-    Redirect.objects.create(old_object_id=alt_id, new_object=main)
-    alt.delete()
-    main.save()
+confirm = input('Are you sure? ')
+if confirm in ('Y', 'y', 'Yes', 'yes'):
+    merge_thing(main, alt)
     print("Done")

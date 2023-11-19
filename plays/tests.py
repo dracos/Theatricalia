@@ -45,7 +45,7 @@ class PlayTest(TestCase):
         copy_id = play_copy.id
         copy_id32 = play_copy.id32
         play_copy.delete()
-        Redirect.objects.create(old_object_id=copy_id, new_object=self.prod.play)
+        Redirect.objects.create(old_object_id=copy_id, new_object=self.prod.play, approved=True)
         resp = self.client.get('/p/%s' % copy_id32)
         self.assertRedirects(resp, self.prod.play.get_absolute_url(), status_code=301)
         resp = self.client.get('/play/%s/whatever' % copy_id32)

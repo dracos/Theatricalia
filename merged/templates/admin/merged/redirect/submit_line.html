@@ -1,0 +1,7 @@
+{% extends "admin/submit_line.html" %}
+
+{% block submit-row %}
+{{ block.super }}
+<input type="submit" value="Approve (old to new)"  name="_approve">
+<input type="submit" value="Approve (new to old)"  name="_approveBack">
+{% endblock %}
