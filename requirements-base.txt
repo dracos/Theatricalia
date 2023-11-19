@@ -1,10 +1,7 @@
 mysqlclient==2.0.2
 Pillow==10.1.0
-# Upgrade to 8.0.0 when DJ3
-django-cleanup==6.0.0
+django-cleanup==8.0.0
 django-contrib-comments==2.2.0
-# Upgrade to 5.0.8 when DJ3
-django-reversion==4.0.2
-# Upgrade to 12.10.0 when running on DJ3
-sorl-thumbnail==12.8.0
+django-reversion==5.0.8
+sorl-thumbnail==12.10.0
 python-dateutil==2.8.2
