@@ -6,8 +6,9 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth.views import LoginView as DjangoLoginView
 from django.shortcuts import render
 
-from django.db.models import Q, Min
-from django.db.models.expressions import RawSQL
+from django.db.models import Q, Min, Case, When, F
+from django.db.models.functions import Coalesce
+# from django.db.models.expressions import RawSQL
 from django.contrib.contenttypes.models import ContentType
 from django_comments.models import Comment
 from django.contrib import messages
@@ -17,6 +18,7 @@ from shortcuts import send_email
 from utils import int_to_base32, base32_to_int
 from reversion.models import Revision
 from .models import User
+from fields import ApproximateDateField
 
 
 @login_required
@@ -47,7 +49,8 @@ def profile(request, username):
         latest.append(versions)
 
     # Min bit isn't needed except to make sure the GROUP BY gets added
-    seen = user.visit_set.annotate(min_press_date=Min('production__place__press_date')).annotate(best_date=RawSQL('MIN(IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date)))', ())).order_by('-best_date')
+    seen = user.visit_set.annotate(min_press_date=Min('production__place__press_date')).annotate(best_date=Min(Coalesce("production__place__press_date", Case(When(production__place__end_date="", then=F("production__place__start_date")), default=F("production__place__end_date")), output_field=ApproximateDateField()))).order_by('-best_date')
+    # seen = user.visit_set.annotate(min_press_date=Min('production__place__press_date')).annotate(best_date=Min(RawSQL('IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))', ()))).order_by('-best_date')
 
     return render(request, 'profile.html', {
         'view': user,

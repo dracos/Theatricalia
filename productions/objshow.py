@@ -1,8 +1,9 @@
 from datetime import datetime
 from functools import partial
 from django.core.paginator import Paginator, InvalidPage
-from django.db.models import Q, Max
-from django.db.models.expressions import RawSQL
+from django.db.models import Q, Max, Min, Case, When, F
+from django.db.models.functions import Coalesce
+# from django.db.models.expressions import RawSQL
 from django.http import Http404
 from django.shortcuts import render
 from .models import Production, Part, ProductionCompany
@@ -10,6 +11,7 @@ from plays.models import Play
 from places.models import Place
 from people.models import Person
 from aggregates import Concatenate
+from fields import ApproximateDateField
 
 
 # object is Place, Person, Play, or ProductionCompany
@@ -33,10 +35,13 @@ def productions_filter(object, type, date_filter):
     else:
         raise Exception('Strange call to productions_filter')
 
+    end_date_field = f"{annotate_extra}end_date"
+    press_date_field = f"{annotate_extra}press_date"
+    start_date_field = f"{annotate_extra}start_date"
     o = o.annotate(
-        max_end_date=Max(annotate_extra + 'end_date'),
-        max_press_date=Max(annotate_extra + 'press_date'),
-        max_start_date=Max(annotate_extra + 'start_date')
+        max_end_date=Max(end_date_field),
+        max_press_date=Max(press_date_field),
+        max_start_date=Max(start_date_field)
     )
     filter = (~Q(max_end_date='') & Q(max_end_date__lt=now)) | Q(max_end_date='', max_press_date__lt=now) | Q(max_end_date='', max_press_date__isnull=True, max_start_date__lt=now)
     if filter_extra:
@@ -54,9 +59,10 @@ def productions_filter(object, type, date_filter):
         o = o.annotate(part__role__concatenate=Concatenate('part__role', distinct=True))
 
     if date_filter == 'past':
-        return o.annotate(best_date=RawSQL('MIN(IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date)))', ())).order_by('-best_date')
+        return o.annotate(best_date=Min(Coalesce(press_date_field, Case(When(**{end_date_field: ""}, then=F(start_date_field)), default=F(end_date_field)), output_field=ApproximateDateField()))).order_by('-best_date')
+        # return o.annotate(best_date=Min(RawSQL('IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))', ()))).order_by('-best_date')
     else:
-        return o.order_by(annotate_extra + 'start_date', annotate_extra + 'press_date')
+        return o.order_by(start_date_field, press_date_field)
 
 
 def _prods_one_way(fltr, object, sort_order):
