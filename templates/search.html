@@ -92,7 +92,7 @@ if (!window.location.hash)
 <a href="{{ part.production.get_absolute_url }}">{{ part.production.play.get_title_display|prettify }}</a>{% if part.production.get_companies_display %}, {{ part.production.get_companies_display }}{% endif %}
 <span class="meta">{{ part.production.date_summary|prettify }},
 {% if part.production.places.count == 1 %}
-<a href="{{ part.production.place_summary.get_absolute_url }}">{{ part.production.place_summary|prettify }}</a>.
+<a href="{{ part.production.places.all.0.get_absolute_url }}">{{ part.production.place_summary|prettify }}</a>.
 {% else %}
 {{ part.production.place_summary|prettify }}.
 {% endif %}

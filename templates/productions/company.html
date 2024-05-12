@@ -23,7 +23,7 @@
 {% for production in future.object_list %}
 <li itemprop="events" itemscope itemtype="http://schema.org/TheaterEvent"><a itemprop="url" href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>,
 {% if production.places.count == 1 %}
-<a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
+<a href="{{ production.places.all.0.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
 {% else %}
 {{ production.place_summary|prettify }}.
 {% endif %}
@@ -41,7 +41,7 @@
 {% for production in past.object_list %}
 <li itemprop="events" itemscope itemtype="http://schema.org/TheaterEvent"><a itemprop="url" href="{{ production.get_absolute_url }}">{{ production.play.get_title_display|prettify }}</a>,
 {% if production.places.count == 1 %}
-<a href="{{ production.place_summary.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
+<a href="{{ production.places.all.0.get_absolute_url }}">{{ production.place_summary|prettify }}</a>.
 {% else %}
 {{ production.place_summary|prettify }}.
 {% endif %}
