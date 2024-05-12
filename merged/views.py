@@ -20,17 +20,11 @@ type_dict = {
 }
 
 
-def merge(request, url):
-    try:
-        splits = url.split('/', 2)
-        if len(splits) == 2:
-            splits.append(None)
-        type, id, slug = splits
-        if type == 'production' and slug == 'merge':
-            slug = None
-    except ValueError:
-        raise Exception(url)
+def production_merge(request, play_id, play, id):
+    return merge(request, 'production', id)
 
+
+def merge(request, type, id, slug=None):
     if type in type_dict:
         obj_type = type_dict[type]
     else:

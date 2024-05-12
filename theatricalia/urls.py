@@ -1,7 +1,7 @@
 from django.conf import settings
 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.urls import include, path, re_path, register_converter
+from django.urls import include, path, register_converter
 
 from . import views
 
@@ -38,8 +38,13 @@ class LetterConverter(StringConverter):
     regex = '[a-z0*]'
 
 
+class EmptySlugConverter(StringConverter):
+    regex = '[-a-zA-Z0-9_]*'
+
+
 register_converter(Base32Converter, 'b32')
 register_converter(LetterConverter, 'letter')
+register_converter(EmptySlugConverter, 'emptyslug')
 
 urlpatterns = [
     # Example:
@@ -76,8 +81,9 @@ urlpatterns = [
     path('around/<slug:coord>/feed', NearbyFeed()),
     path('profile/<slug:user>/feed/seen', UserSeenFeed()),
 
-    re_path('^play/.*?/(?P<url>production/.*/merge)$', merged.merge),
-    re_path('^(?P<url>(play|person|place|company)/.*)/merge$', merged.merge),
+    path('play/<b32:play_id>/<slug:play>/production/<b32:id>/merge', merged.production_merge),
+    path('<type>/<b32:id>/<slug:slug>/merge', merged.merge),
+    path('<type>/<b32:id>/merge', merged.merge),
 
     path('d/<b32:production_id>', productions.production_short_url),
     path('production/<b32:production_id>', productions.production_short_url),
@@ -86,16 +92,16 @@ urlpatterns = [
     path('t/<b32:place_id>', places.place_short_url),
     path('a/<b32:person_id>', people.person_short_url),
 
-    re_path('^api/(?P<type>production|play|place|company|person)/(?P<id>[^/]+)/flickr$', common.api_flickr),
+    path('api/<type>/<b32:id>/flickr', common.api_flickr),
 
     path('plays', plays.PlayList.as_view(), name='plays_all'),
     path('plays/<letter:letter>', plays.PlayList.as_view(), name='plays'),
-    re_path('^play/(?P<play_id>.*?)/(?P<play>.*?)/production/(?P<production_id>[0-9a-z]+)/seen/(?P<type>add|remove)$', productions.production_seen, name='production-seen'),
+    path('play/<b32:play_id>/<slug:play>/production/<b32:production_id>/seen/<type>', productions.production_seen, name='production-seen'),
     path('play/<b32:play_id>/<slug:play>/production/<b32:production_id>/edit', productions.production_edit, name='production-edit'),
     path('play/<b32:play_id>/<slug:play>/production/<b32:production_id>/edit/cast', productions.production_edit_cast, name='production-edit-cast'),
     path('play/<b32:play_id>/<slug:play>/production/<b32:production_id>/edit/<int:part_id>', productions.part_edit, name='part-edit'),
     path('play/<b32:play_id>/<slug:play>/production/<b32:production_id>/corrected', productions.production_corrected, name='production-corrected'),
-    re_path(r'^play/(?P<play_id>.*?)/(?P<play>.*?)/production/(?P<production_id>[0-9a-z]+)\.(?P<format>json)$', productions.production, name='production-json'),
+    path('play/<b32:play_id>/<slug:play>/production/<b32:production_id>.json', productions.production, {'format': 'json'}, name='production-json'),
     path('play/<b32:play_id>/<slug:play>/production/<b32:production_id>', productions.production, name='production'),
     path('play/<b32:play_id>/<slug:play>/future', plays.play_productions, {'type': 'future'}, name='play-productions-future'),
     path('play/<b32:play_id>/<slug:play>/past', plays.play_productions, {'type': 'past'}, name='play-productions-past'),
@@ -108,42 +114,42 @@ urlpatterns = [
 
     path('people', people.PersonList.as_view(), name='people_all'),
     path('people/<letter:letter>', people.PersonList.as_view(), name='people'),
-    re_path('^person/(?P<person_id>.*?)/(?P<person>.*)/future$', people.person_productions, {'type': 'future'}, name='person-productions-future'),
-    re_path('^person/(?P<person_id>.*?)/(?P<person>.*)/past$', people.person_productions, {'type': 'past'}, name='person-productions-past'),
-    re_path('^person/(?P<person_id>.*?)/(?P<person>.*)/edit$', people.person_edit, name='person-edit'),
-    re_path(r'^person/(?P<person_id>.*?)/(?P<person>.*)\.js$', people.person_js, name='person-json'),
-    re_path('^person/(?P<person_id>.*?)/(?P<person>.*)$', people.person, name='person'),
-    re_path('^person/(?P<person_id>.+)$', people.person_short_url),
+    path('person/<b32:person_id>/<emptyslug:person>/future', people.person_productions, {'type': 'future'}, name='person-productions-future'),
+    path('person/<b32:person_id>/<emptyslug:person>/past', people.person_productions, {'type': 'past'}, name='person-productions-past'),
+    path('person/<b32:person_id>/<emptyslug:person>/edit', people.person_edit, name='person-edit'),
+    path('person/<b32:person_id>/<emptyslug:person>.js', people.person_js, name='person-json'),
+    path('person/<b32:person_id>/<emptyslug:person>', people.person, name='person'),
+    path('person/<b32:person_id>', people.person_short_url),
 
     path('places', places.PlaceList.as_view(), name='places_all'),
     path('places/<letter:letter>', places.PlaceList.as_view(), name='places'),
-    re_path('^place/(?P<place_id>[^/]+)/(?P<place>.*)/future$', places.place_productions, {'type': 'future'}, name='place-productions-future'),
-    re_path('^place/(?P<place_id>[^/]+)/(?P<place>.*)/past$', places.place_productions, {'type': 'past'}, name='place-productions-past'),
-    re_path('^place/(?P<place_id>[^/]+)/(?P<place>.*)/edit$', places.place_edit, name='place-edit'),
-    re_path('^place/(?P<place_id>[^/]+)/(?P<place>.*)/add$', productions.add_from_place, name='place-production-add'),
-    re_path('^place/(?P<place_id>[^/]+)/(?P<place>.*)/productions$', places.productions, name='place-productions'),
+    path('place/<b32:place_id>/<slug:place>/future', places.place_productions, {'type': 'future'}, name='place-productions-future'),
+    path('place/<b32:place_id>/<slug:place>/past', places.place_productions, {'type': 'past'}, name='place-productions-past'),
+    path('place/<b32:place_id>/<slug:place>/edit', places.place_edit, name='place-edit'),
+    path('place/<b32:place_id>/<slug:place>/add', productions.add_from_place, name='place-production-add'),
+    path('place/<b32:place_id>/<slug:place>/productions', places.productions, name='place-productions'),
     path('place/<b32:place_id>/<slug:place>/people', places.people, name='place-people'),
     path('place/<b32:place_id>/<slug:place>', places.place, name='place'),
     path('place/<b32:place_id>', places.place_short_url),
 
-    re_path('^company/(?P<company_id>[^/]+)/(?P<company>.*)/future$', productions.company_productions, {'type': 'future'}, name='company-productions-future'),
-    re_path('^company/(?P<company_id>[^/]+)/(?P<company>.*)/past$', productions.company_productions, {'type': 'past'}, name='company-productions-past'),
-    re_path('^company/(?P<company_id>[^/]+)/(?P<company>.*)/edit$', productions.company_edit, name='company-edit'),
-    re_path('^company/(?P<company_id>[^/]+)/(?P<company>.*)/add$', productions.add_from_company, name='company-production-add'),
-    re_path('^company/(?P<company_id>[^/]+)/(?P<company>[^/]*)$', productions.company, name='company'),
-    re_path('^company/(?P<company_id>[^/]+)$', productions.production_company_short_url),
+    path('company/<b32:company_id>/<emptyslug:company>/future', productions.company_productions, {'type': 'future'}, name='company-productions-future'),
+    path('company/<b32:company_id>/<emptyslug:company>/past', productions.company_productions, {'type': 'past'}, name='company-productions-past'),
+    path('company/<b32:company_id>/<emptyslug:company>/edit', productions.company_edit, name='company-edit'),
+    path('company/<b32:company_id>/<emptyslug:company>/add', productions.add_from_company, name='company-production-add'),
+    path('company/<b32:company_id>/<emptyslug:company>', productions.company, name='company'),
+    path('company/<b32:company_id>', productions.production_company_short_url),
 
     path('observations/post/', productions.post_comment_wrapper),
-    re_path(r'^observations/remove/(?P<comment_id>\d+)', productions.hide_comment, name='hide-comment'),
+    path('observations/remove/<int:comment_id>', productions.hide_comment, name='hide-comment'),
     path('observations/', include('django_comments.urls')),
     path('photograph/take/', photos.take_photo, name='take-photo'),
     path('photograph/taken/', photos.photo_taken, name='photo-taken'),
-    re_path('^photograph/view/(?P<photo_id>[0-9a-z]+)$', photos.view, name='photo-view'),
+    path('photograph/view/<slug:photo_id>', photos.view, name='photo-view'),
 
-    re_path('^search/around/(?P<s>.+)/future$', search.search_around, {'type': 'future'}, name='search-around-future'),
-    re_path('^search/around/(?P<s>.+)/past$', search.search_around, {'type': 'past'}, name='search-around-past'),
-    re_path('^search/around/(?P<s>.+)$', search.search_around, name='search-around'),
-    re_path('^search/parts/(?P<search>.+)$', search.search_parts, name='search-parts'),
+    path('search/around/<path:s>/future', search.search_around, {'type': 'future'}, name='search-around-future'),
+    path('search/around/<path:s>/past', search.search_around, {'type': 'past'}, name='search-around-past'),
+    path('search/around/<path:s>', search.search_around, name='search-around'),
+    path('search/parts/<path:search>', search.search_parts, name='search-parts'),
     path('search', search.search, name='search'),
 
     path('ajax/autocomplete', search.search_autocomplete, name='search-autocomplete'),
