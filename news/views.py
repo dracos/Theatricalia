@@ -1,4 +1,5 @@
 import calendar
+from django.http import Http404
 from django.views.generic import dates
 from .models import Article
 
@@ -34,11 +35,14 @@ class NewsArticle(NewsMixin, dates.DateDetailView):
 
     def get_day(self):
         """"No day in URL, easiest just to fake it from a quick lookup."""
-        a = Article.objects.get(**{
-            '%s__year' % self.date_field: self.get_year(),
-            '%s__month' % self.date_field: MONTHS.index(self.get_month()),
-            self.get_slug_field(): self.kwargs.get(self.slug_url_kwarg),
-        })
+        try:
+            a = Article.objects.get(**{
+                '%s__year' % self.date_field: self.get_year(),
+                '%s__month' % self.date_field: MONTHS.index(self.get_month()),
+                self.get_slug_field(): self.kwargs.get(self.slug_url_kwarg),
+            })
+        except (Article.DoesNotExist, ValueError, OverflowError):
+            raise Http404
         day = a.created.day
         return str(day)
 

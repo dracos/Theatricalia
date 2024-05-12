@@ -28,7 +28,7 @@ class PlaceForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        if cleaned_data['parent'] and not cleaned_data['parent'].id:
+        if 'parent' in cleaned_data and cleaned_data['parent'] and not cleaned_data['parent'].id:
             cleaned_data['parent'] = None
 
 

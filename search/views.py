@@ -6,6 +6,7 @@ import urllib.parse
 from django.apps import apps
 from django.urls import reverse
 from django.core.paginator import Paginator
+from django.core.exceptions import FieldError
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect, Http404
 from django.db.models import Q
 from django.shortcuts import render
@@ -87,7 +88,10 @@ def search_autocomplete(request):
         people, dummy = search_people(query, False, False)
         qs = people[:limit]
     else:
-        model = apps.get_model(app_label=app_label, model_name=model_name)
+        try:
+            model = apps.get_model(app_label=app_label, model_name=model_name)
+        except LookupError:
+            raise Http404
         for field_name in search_fields.split(','):
             name = autocomplete_construct_search(field_name)
             if q:
@@ -98,7 +102,10 @@ def search_autocomplete(request):
             first, last = query.split(' ')
             q = q | Q(first_name__icontains=first, last_name__icontains=last)
 
-        qs = model.objects.filter(q)[:limit]
+        try:
+            qs = model.objects.filter(q)[:limit]
+        except FieldError:
+            raise Http404
 
     data = ''.join(['%s|%s\n' % (f.__str__(), f.pk) for f in qs])
 

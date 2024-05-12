@@ -26,7 +26,7 @@ def take_photo(request):
     try:
         model = apps.get_model(ctype)
         target = model._default_manager.get(id=object_id)
-    except TypeError:
+    except (TypeError, ValueError):
         return HttpResponseBadRequest("Invalid content_type value: %r" % escape(ctype))
     except AttributeError:
         return HttpResponseBadRequest("The given content-type %r does not resolve to a valid model." % escape(ctype))

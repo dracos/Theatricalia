@@ -336,9 +336,9 @@ def production_add(request, play=None, place=None, company=None):
     )
 
     # Yucky, but no way to pass initial to a model formset XXX
-    if place:
+    if place and len(place_formset.forms):
         place_formset.forms[0].initial['place'] = place.id
-    if company:
+    if company and len(companies_formset.forms):
         companies_formset.forms[0].initial['productioncompany'] = company.id
 
     if request.method == 'POST':
