@@ -402,6 +402,17 @@ li#nav-plays a {
     padding-top: 1.5em;
 }
 
+#logout-form {
+  display: inline;
+}
+#logout-form button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
 .primary {
     margin-bottom: 1.5em;
 }

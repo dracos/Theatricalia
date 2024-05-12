@@ -144,7 +144,8 @@
 | <a href="{% url "criticism" %}">Contact</a>
 | {% if user.is_authenticated %}
 <a href="{% url "profile" user %}">Your profile</a>
-| <a href="{% url "logout" %}">Sign out</a>
+|
+<form id="logout-form" method="post" action="{% url 'admin:logout' %}"> {% csrf_token %} <button type="submit">Sign out</button> </form>
 {% else %}
 <a href="{% url "login" %}{% if request.path != '/tickets/returns' %}?next={{ request.path }}{% endif %}">Sign in</a>
 {% endif %}

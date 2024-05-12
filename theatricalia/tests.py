@@ -58,7 +58,7 @@ class TheatricaliaTest(TestCase):
         resp = self.client.post('/tickets/boxoffice', {
             'name': 'Test', 'unicorn': 'test@example.org', 'username': 'test', 'password': 'test'})
         self.assertContains(resp, 'You are now registered and logged in')
-        resp = self.client.get('/tickets/returns')
+        resp = self.client.post('/tickets/returns')
         self.assertContains(resp, 'You are now signed out')
         resp = self.client.post('/tickets', {'username': 'test', 'password': 'test'}, follow=True)
         self.assertRedirects(resp, '/profile/test', status_code=302)
