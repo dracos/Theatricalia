@@ -75,6 +75,11 @@ if (!window.location.hash)
         <li><a href="{{ place.get_absolute_url }}">{{ place|prettify }}</a></li>
     {% endif %}
 {% endfor %}
+{% for place in other_place_names %}
+    {% if place.productions.count %}
+        <li><a href="{{ place.get_absolute_url }}">{{ place.other_name|prettify }}</a></li>
+    {% endif %}
+{% endfor %}
 </ul>
 {% endif %}
 

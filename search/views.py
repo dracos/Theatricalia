@@ -234,11 +234,24 @@ def search_people(search, force_similar=False, use_distance=True):
 
 def search_places(name_q, search):
     query = name_q
-    query = query | Q(town__icontains=search) | Q(parent__name__icontains=search) | Q(other_names__name__icontains=search)
+    query = query | Q(town__icontains=search) | Q(parent__name__icontains=search)
     words = search.rsplit(None, 1)
     if len(words) == 2:
         query = query | Q(name__icontains=words[0], town__icontains=words[1])
     return Place.objects.filter(query)
+
+
+def search_other_place_names(search):
+    query = Q(name__icontains=search)
+    words = search.rsplit(None, 1)
+    if len(words) == 2:
+        query = query | Q(name__icontains=words[0], place__town__icontains=words[1])
+    out = []
+    for n in Name.objects.filter(query):
+        p = n.place
+        p.other_name = str(n)
+        out.append(p)
+    return out
 
 
 # For pagination of parts search
@@ -443,6 +456,7 @@ def search(request, redirect_okay=True):
             name_q = name_q | Q(name__iendswith=' %s' % article, name__istartswith=rest)
         people, sounds_people = search_people(search, force_similar=request.GET.get('similar'), use_distance=False)
         places = search_places(name_q, search)
+        other_place_names = search_other_place_names(search)
         companies = ProductionCompany.objects.filter(name_q | Q(description__icontains=search))
         plays = Play.objects.filter(title_q)
         parts = Paginator(Part.objects.search(search), 20, orphans=4)
@@ -465,6 +479,7 @@ def search(request, redirect_okay=True):
             'people': people,
             'plays': plays,
             'places': places,
+            'other_place_names': other_place_names,
             'companies': companies,
             'parts': parts,
             'sounds_people': sounds_people,
