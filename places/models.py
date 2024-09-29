@@ -87,7 +87,7 @@ class Place(models.Model):
         if self.parent:
             out = '%s, %s' % (out, self.parent.get_name_display())
         if self.town and self.town not in out:
-            out += u", " + self.town
+            out += ", " + self.town
         return out
 
     def name_for_date(self, date):
@@ -137,9 +137,11 @@ class Name(models.Model):
         ordering = ['-end_date', '-start_date', 'name']
 
     def __str__(self):
-        name = self.get_name_display()
+        out = self.get_name_display()
+        if self.place.town and self.place.town not in out:
+            out += f", {self.place.town}"
         date_range = pretty_date_range(self.start_date, None, self.end_date)
-        out = '%s (%s)' % (name, date_range)
+        out += f' ({date_range})'
         return out
 
     def save(self, **kwargs):
