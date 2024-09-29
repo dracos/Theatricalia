@@ -107,14 +107,16 @@ def search_autocomplete(request):
         except FieldError:
             raise Http404
 
-    data = ''.join(['%s|%s\n' % (f.__str__(), f.pk) for f in qs])
+    results = [(f.__str__(), f.pk) for f in qs]
 
     if app_label == 'places':
         query_without_brackets = re.sub(r' \(.*?\)$', '', query)
         q = Q(name__icontains=query) | Q(name__icontains=query_without_brackets)
         qs = Name.objects.filter(q)[:limit]
-        data = ''.join(['%s|%s\n' % (f.__str__(), f.place.pk) for f in qs]) + data
+        results = [(f.__str__(), f.place.pk) for f in qs] + results
+        results = sorted(results, key=lambda f: f[0])
 
+    data = ''.join(['%s|%s\n' % (f[0], f[1]) for f in results])
     return HttpResponse(data)
 
 
