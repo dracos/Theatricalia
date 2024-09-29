@@ -11,6 +11,15 @@ from merged.models import Redirect
 from common.models import Alert
 
 
+def check_old_exists(row):
+    ct = row.content_type
+    id = row.old_object_id
+    try:
+        return ct.get_object_for_this_type(id=id)
+    except ct.model_class().DoesNotExist:
+        return ''
+
+
 def update_attr(main, alt, attrs):
     for attr in attrs:
         if alt.__dict__[attr] and not main.__dict__[attr]:
@@ -20,7 +29,23 @@ def update_attr(main, alt, attrs):
             print("%s: 1: %s, 2: %s" % (attr, main.__dict__[attr], alt.__dict__[attr]))
 
 
-def redirect(redirect_obj, main, alt):
+def merge_thing(main, alt, redirect_obj=None):
+    cls = type(main)
+    if cls is Play:
+        merge_play(main, alt)
+    elif cls is ProductionCompany:
+        merge_company(main, alt)
+    elif cls is Place:
+        merge_place(main, alt)
+    elif cls is Person:
+        merge_person(main, alt)
+    elif cls is Production:
+        merge_production(main, alt)
+
+    ctype = ContentType.objects.get_for_model(alt)
+    Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
+    Redirect.objects.filter(content_type=ctype, old_object_id=alt.id).update(old_object_id=main.id)
+
     if redirect_obj:
         # Reassign in case reverse-merged
         redirect_obj.old_object_id = alt.id
@@ -30,43 +55,34 @@ def redirect(redirect_obj, main, alt):
     else:
         Redirect.objects.create(old_object_id=alt.id, new_object=main, approved=True)
 
-
-def merge_thing(main, alt, redirect_obj=None):
-    cls = type(main)
-    if cls is Play:
-        merge_play(main, alt, redirect_obj)
-    elif cls is ProductionCompany:
-        merge_company(main, alt, redirect_obj)
-    elif cls is Place:
-        merge_place(main, alt, redirect_obj)
-    elif cls is Person:
-        merge_person(main, alt, redirect_obj)
-    elif cls is Production:
-        merge_production(main, alt, redirect_obj)
+    if cls is Person:
+        alt.deleted = True
+        alt.save()
+    else:
+        alt.delete()
 
 
-def merge_play(main, alt, redirect_obj):
+def merge_play(main, alt):
     ctype = ContentType.objects.get_for_model(alt)
     Alert.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
     Production.objects.filter(play=alt).update(play=main)
     update_attr(main, alt, ('url', 'wikipedia', 'description'))
     for author in alt.authors.all():
         main.authors.add(author)
-    Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
-    redirect(redirect_obj, main, alt)
-    alt.delete()
 
 
-def merge_company(main, alt, redirect_obj):
-    Production_Companies.objects.filter(productioncompany=alt).update(productioncompany=main)
+def merge_company(main, alt):
+    for company in Production_Companies.objects.filter(productioncompany=alt):
+        if Production_Companies.objects.filter(productioncompany=main, production=company.production).exists():
+            company.delete()
+        else:
+            company.productioncompany = main
+            company.save()
+
     update_attr(main, alt, ('description',))
-    ctype = ContentType.objects.get_for_model(alt)
-    Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
-    redirect(redirect_obj, main, alt)
-    alt.delete()
 
 
-def merge_place(main, alt, redirect_obj):
+def merge_place(main, alt):
     ctype = ContentType.objects.get_for_model(alt)
     Alert.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
     Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
@@ -74,12 +90,9 @@ def merge_place(main, alt, redirect_obj):
     Place.objects.filter(parent=alt).update(parent=main)
     Name.objects.filter(place=alt).update(place=main)
     update_attr(main, alt, ('parent_id', 'description', 'latitude', 'longitude', 'address', 'town', 'country_id', 'postcode', 'telephone', 'type', 'size', 'opening_date', 'closing_date', 'url', 'wikipedia'))
-    Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
-    redirect(redirect_obj, main, alt)
-    alt.delete()
 
 
-def merge_person(main, alt, redirect_obj):
+def merge_person(main, alt):
     ctype = ContentType.objects.get_for_model(alt)
     Alert.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
     Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
@@ -87,13 +100,9 @@ def merge_person(main, alt, redirect_obj):
     update_attr(main, alt, ('bio', 'dob', 'died', 'imdb', 'musicbrainz', 'web', 'wikipedia', 'openplaques'))
     for play in alt.plays.all():
         main.plays.add(play)
-    Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
-    redirect(redirect_obj, main, alt)
-    alt.deleted = True
-    alt.save()
 
 
-def merge_production(main, alt, redirect_obj):
+def merge_production(main, alt):
     ctype = ContentType.objects.get_for_model(alt)
 
     Photo.objects.filter(content_type=ctype, object_id=alt.id).update(object_id=main.id)
@@ -160,7 +169,4 @@ def merge_production(main, alt, redirect_obj):
             print("Going to save %s" % part)
             part.save()
 
-    Redirect.objects.filter(content_type=ctype, new_object_id=alt.id).update(new_object_id=main.id)
-    redirect(redirect_obj, main, alt)
-    alt.delete()
     main.save()

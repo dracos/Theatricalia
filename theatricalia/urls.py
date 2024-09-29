@@ -84,6 +84,7 @@ urlpatterns = [
     path('play/<b32:play_id>/<slug:play>/production/<b32:id>/merge', merged.production_merge),
     path('<type>/<b32:id>/<slug:slug>/merge', merged.merge),
     path('<type>/<b32:id>/merge', merged.merge),
+    path('merge/<b32:uidb32>/<path:token>/<type>', merged.approve, name='merge_approve'),
 
     path('d/<b32:production_id>', productions.production_short_url),
     path('production/<b32:production_id>', productions.production_short_url),

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.utils.html import format_html
-from merged.utils import merge_thing
+from merged.utils import merge_thing, check_old_exists
 from .models import Redirect
 
 
@@ -11,12 +11,7 @@ class RedirectAdmin(admin.ModelAdmin):
     actions = ['bulk_merge', 'bulk_merge_reverse']
 
     def old_if_possible(self, row):
-        ct = row.content_type
-        id = row.old_object_id
-        try:
-            return ct.get_object_for_this_type(id=id)
-        except ct.model_class().DoesNotExist:
-            return ''
+        return check_old_exists(row)
 
     def old_link(self, row):
         old = self.old_if_possible(row)
