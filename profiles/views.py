@@ -70,7 +70,6 @@ def register(request):
     if request.method == 'POST':
         if form.is_valid():
             user = form.save()
-            perform_login(request, user)
             send_confirmation_email(request, user)
             return render(request, 'registration/register-checkemail.html')
     return render(request, 'registration/register.html', {'form': form})
