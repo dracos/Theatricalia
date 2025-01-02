@@ -4,7 +4,14 @@
     {{ production.date_summary|prettify }},
     at <span itemprop="location" itemscope itemtype="http://schema.org/PerformingArtsTheater"><a itemprop="url" href="{{ production.places.all.0.get_absolute_url }}">{{ production.place_set.all.0.name_for_date|prettify }}</a></span>.</p>
     {% if production.place_set.all.0.press_date and production.place_set.all.0.start_date %}
-        <p>Press night was {{ production.place_set.all.0.press_date|date:"jS F Y"|prettify }}.</p>
+        <p>Press night
+        {% now "Y-m-d" as todays_date %}
+        {% if production.place_set.all.0.press_date|date:"Y-m-d" >= todays_date %}
+        is
+        {% else %}
+        was
+        {% endif %}
+        {{ production.place_set.all.0.press_date|date:"jS F Y"|prettify }}.</p>
     {% endif %}
 {% elif production.places.count == 0 %}
     at an unknown location.
