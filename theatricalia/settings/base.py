@@ -58,6 +58,13 @@ DATABASES = {
         'PASSWORD': '',
         'HOST': '',
         'PORT': '',
+        "OPTIONS": {
+            "charset": "utf8mb4",
+        },
+        "TEST": {
+            "CHARSET": "utf8mb4",
+            "COLLATION": "utf8mb4_unicode_ci",
+        },
     }
 }
 
