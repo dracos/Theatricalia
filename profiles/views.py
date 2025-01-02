@@ -15,7 +15,7 @@ from django.contrib import messages
 
 from .forms import RegistrationForm, AuthenticationForm, ProfileForm
 from shortcuts import send_email
-from utils import int_to_base32, base32_to_int
+from utils import int_to_base32, base32_to_int, MistypedIDException
 from reversion.models import Revision
 from .models import User
 from fields import ApproximateDateField
@@ -99,6 +99,8 @@ account_activation_token = AccountActivationTokenGenerator()
 def register_confirm(request, uidb32, token):
     try:
         uid_int = base32_to_int(uidb32)
+    except MistypedIDException as e:
+        uid_int = e.args[0]
     except ValueError:
         raise Http404
 
