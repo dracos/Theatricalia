@@ -170,3 +170,4 @@ def merge_production(main, alt):
             part.save()
 
     main.save()
+    update_attr(main, alt, ('url', 'book_tickets'))
