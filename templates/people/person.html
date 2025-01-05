@@ -123,7 +123,10 @@ Why not <a href="{{ person.get_edit_url }}">add one</a>?
 <li><a href="{{ person.get_edit_url }}">Edit this person</a>
 <li><a rel="nofollow" href="/add?person={{ person.id32 }}">Add a new production involving this person</a></li>
 {% if not request.session.merging_person %}
-<li><a rel="nofollow" href="{{ person.get_absolute_url }}/merge">This is a duplicate of another person</a>
+<li>
+<form action="{{ person.get_absolute_url }}/merge" method="post">{% csrf_token %}
+<button class="button-as-link">This is a duplicate of another person</button>
+</form>
 {% endif %}
 </ul>
 

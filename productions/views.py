@@ -122,6 +122,9 @@ def production(request, play_id, play, production_id, okay=False, format='html')
 @login_required
 def production_seen(request, play_id, play, production_id, type):
     production = check_parameters(play_id, play, production_id)
+    if request.method != 'POST':
+        return HttpResponseRedirect(production.get_absolute_url())
+
     if type == 'add':
         alert = Visit(user=request.user, production=production)
         try:

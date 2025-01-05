@@ -64,7 +64,10 @@
 <li><a rel="nofollow" href="{{ play.get_add_url }}">Add a production of this play</a></li>
 <li><a rel="nofollow" href="{{ play.get_edit_url }}">Edit this play</a>
 {% if not request.session.merging_play %}
-<li><a rel="nofollow" href="{{ play.get_absolute_url }}/merge">This is a duplicate of another play</a>
+<li>
+<form action="{{ play.get_absolute_url }}/merge" method="post">{% csrf_token %}
+<button class="button-as-link">This is a duplicate of another play</button>
+</form>
 {% endif %}
 </ul>
 

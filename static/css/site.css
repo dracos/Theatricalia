@@ -402,7 +402,7 @@ li#nav-plays a {
     padding-top: 1.5em;
 }
 
-#logout-form button {
+#logout-form button, .button-as-link {
   background: none;
   border: none;
   cursor: pointer;
@@ -411,7 +411,8 @@ li#nav-plays a {
   color: #0000ff;
 }
 
-#logout-form button:active, #logout-form button:hover {
+#logout-form button:active, #logout-form button:hover,
+.button-as-link:active, .button-as-link:hover {
   text-decoration: none;
 }
 

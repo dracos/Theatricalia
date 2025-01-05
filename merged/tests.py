@@ -22,7 +22,7 @@ class MergeTest(TestCase):
         self.assertContains(resp, 'Hamlet')
         resp = self.client.get(hamlet2.get_absolute_url())
         self.assertContains(resp, 'Hamlet')
-        resp = self.client.get(hamlet2.get_absolute_url() + '/merge')
+        resp = self.client.post(hamlet2.get_absolute_url() + '/merge')
         self.assertContains(resp, 'Thanks for helping improve the accuracy of the site.')
         resp = self.client.get(hamlet2.get_absolute_url())
         self.assertNotContains(resp, 'This is a duplicate')

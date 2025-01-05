@@ -84,6 +84,9 @@ def merge(request, type, id, slug=None):
             'other': other,
         })
 
+    if request.method != 'POST':
+        return HttpResponseRedirect(object.get_absolute_url())
+
     request.session['merging_' + type] = {
         'id': object.id,
         'name': str(object),
