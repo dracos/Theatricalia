@@ -57,15 +57,15 @@ class TheatricaliaTest(TestCase):
     def test_user_flow(self):
         resp = self.client.post('/tickets/boxoffice', {
             'name': 'Test', 'unicorn': 'test@example.org', 'username': 'test', 'password': 'test'})
-        self.assertContains(resp, 'You are now registered and logged in')
+        self.assertContains(resp, 'You should now check your email')
+        self.assertEqual(len(mail.outbox), 1)
+        m = re.search('/tickets/.*', mail.outbox[0].body)
+        resp = self.client.get(m.group())
+        self.assertContains(resp, 'you have successfully registered')
         resp = self.client.post('/tickets/returns')
         self.assertContains(resp, 'You are now signed out')
         resp = self.client.post('/tickets', {'username': 'test', 'password': 'test'}, follow=True)
         self.assertRedirects(resp, '/profile/test', status_code=302)
-        self.assertEqual(len(mail.outbox), 1)
-        m = re.search('/tickets/.*', mail.outbox[0].body)
-        resp = self.client.get(m.group())
-        self.assertContains(resp, 'you have successfully confirmed')
 
 
 class ProductionTest(TestCase):
