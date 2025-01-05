@@ -86,6 +86,10 @@ def prettify(str):
 
     str = re.sub('/media/audio/[^ ]*', r'<a href="https://theatricalia.com\g<0>">\g<0></a>', str)
 
+    str = re.sub('https://(?:www.)?instagram.com/p/(.*?)/', r'''\g<0>
+<iframe src="//www.instagram.com/p/\1/embed/?cr=1&amp;v=14&amp;wp=1080" allowtransparency="true" allowfullscreen="true" frameborder="0" height="639" scrolling="no" style="background: white; max-width: 540px; width: calc(100% - 2px); border-radius: 3px; border: 1px solid rgb(219, 219, 219); box-shadow: none; display: block; margin: 0px 0px 12px; min-width: 326px; padding: 0px;"></iframe>
+''', str)
+
     return mark_safe(str)
 
 
