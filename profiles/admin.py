@@ -20,7 +20,8 @@ class MyUserAdmin(UserAdmin):
     fieldsets = (("Personal data", {'fields': ('name',)}),) + UserAdmin.fieldsets
 
     inlines = [ProfileInline]
-    list_display = ('username', 'email', 'name', 'is_staff', 'email_validated')
+    list_display = ('username', 'email', 'name', 'email_validated')
+    list_filter = ('profile__email_validated', 'is_staff')
 
     def email_validated(self, obj):
         return obj.profile.email_validated
