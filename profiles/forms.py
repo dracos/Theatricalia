@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm as DjangoAuthenticationForm
 
-from .models import Profile, User
+from .models import Profile, User, send_confirmation_email
 
 
 class ProfileForm(forms.ModelForm):
@@ -73,6 +73,7 @@ class AuthenticationForm(DjangoAuthenticationForm):
             elif not self.user_cache.is_active:
                 raise forms.ValidationError("This account is inactive.")
             if not self.user_cache.profile.email_validated:
-                raise forms.ValidationError("You must validate your email address before logging in. Check your email!")
+                send_confirmation_email(self.request, self.user_cache)
+                raise forms.ValidationError("You must validate your email address before logging in. Please check your email.")
 
         return self.cleaned_data

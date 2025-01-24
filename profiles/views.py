@@ -1,5 +1,4 @@
 from django.http import HttpResponseRedirect, Http404
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import login as auth_login
@@ -14,10 +13,9 @@ from django_comments.models import Comment
 from django.contrib import messages
 
 from .forms import RegistrationForm, AuthenticationForm, ProfileForm
-from shortcuts import send_email
-from utils import int_to_base32, base32_to_int, MistypedIDException
+from utils import base32_to_int, MistypedIDException
 from reversion.models import Revision
-from .models import User
+from .models import User, send_confirmation_email, account_activation_token
 from fields import ApproximateDateField
 
 
@@ -87,14 +85,6 @@ def perform_login(request, user):
     auth_login(request, user)
 
 
-class AccountActivationTokenGenerator(PasswordResetTokenGenerator):
-    def _make_hash_value(self, user, timestamp):
-        return str(user.pk) + str(timestamp) + str(user.profile.email_validated)
-
-
-account_activation_token = AccountActivationTokenGenerator()
-
-
 def register_confirm(request, uidb32, token):
     try:
         uid_int = base32_to_int(uidb32)
@@ -114,20 +104,6 @@ def register_confirm(request, uidb32, token):
             'user': user,
         })
     return HttpResponseRedirect('/')
-
-
-def send_confirmation_email(request, user):
-    send_email(
-        request, "Theatricalia account confirmation",
-        'registration/confirmation-email.txt',
-        {
-            'email': user.email,
-            'uid': int_to_base32(user.id),
-            'user': user,
-            'token': account_activation_token.make_token(user),
-            'protocol': 'http',
-        }, user.email
-    )
 
 
 @login_required
