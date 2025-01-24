@@ -1,5 +1,8 @@
 {% if photos.all %}
-<h2 class="no-descenders">Photo credits</h2>
+<style>
+h2#photo-credits:not(:has(+ ul li)) { display: none; }
+</style>
+<h2 id="photo-credits" class="no-descenders">Photo credits</h2>
 <ul>
 {% for photo in photos.all %}
 {% if photo.source or photo.author or photo.license %}
