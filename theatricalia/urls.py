@@ -71,6 +71,7 @@ urlpatterns = [
 
     path('about', views.static_about, name='about'),
     path('assistance', views.static_help, name='help'),
+    path('flag', views.static_flag, name='flag'),
     path('criticism', views.static_contact, name='criticism'),
     path('colophon', views.static_colophon, name='colophon'),
     path('moo', views.static_moocards, name='moo'),

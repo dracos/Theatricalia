@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Flag{% endblock %}
+
+{% block content %}
+
+<h1>Flag</h1>
+
+<blockquote class="verse"><pre>
+&ldquo;A fire broke out backstage in a theatre. The clown came out to warn the public;
+they thought it was a joke and applauded. He repeated it; the acclaim was even
+greater. I think that's just how the world will come to an end: to general
+applause from wits who believe it's a joke.&rdquo;
+<div>― Soren Kierkegaard, Either/Or, Part I</div>
+</pre></blockquote>
+
+<p><big>If you&rsquo;ve found a mistake on the site, please do <em>not</em> get
+in touch &ndash; create an account and correct the mistake yourself!
+Similarly, if you have an observation about a production, or a photograph
+concerning something on the site, please do add it to the site directly to
+benefit everyone.</big></p>
+
+<style>
+span#aatt span { display: none; }
+span#aatt::before { content: "@"; }
+</style>
+<p>If there is something harmful, illegal, or otherwise unsuitable on the site,
+please <em>do</em> get in touch, at
+principal<span id="aatt"><span>-at-</span></span>theatricalia.com.
+
+{% endblock %}
