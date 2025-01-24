@@ -138,7 +138,7 @@
 <div id="footer" role="navigation">
 {% block alpha_block_footer %}
 	<p>A Matthew Somerville production &mdash; <a href="{% url "colophon" %}">Colophon &amp; Acknowledgements</a></p>
-<form id="logout-form" method="post" action="{% url 'admin:logout' %}"> {% csrf_token %}
+<form id="logout-form" method="post" action="{% url "logout" %}"> {% csrf_token %}
 <p><a href="{% url "about" %}">About</a>
 | <a href="{% url "help" %}">Assistance</a>
 | <a href="{% url "production-add" %}"><strong>Add production</strong></a>
