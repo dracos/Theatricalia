@@ -70,6 +70,10 @@ def static_help(request):
     return render(request, 'help.html')
 
 
+def static_flag(request):
+    return render(request, 'flag.html')
+
+
 def static_contact(request):
     return render(request, 'contact.html')
 
