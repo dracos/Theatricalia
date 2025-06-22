@@ -1,5 +1,6 @@
-from django.contrib import admin
+from theatricalia import admin
 from django import forms
+from django_comments.models import Comment
 from reversion.admin import VersionAdmin
 from .models import Production, ProductionCompany, Part, Place, Production_Companies, Visit
 from .forms import AutoCompleteMultiValueField
@@ -87,3 +88,4 @@ admin.site.register(ProductionCompany, CompanyAdmin)
 admin.site.register(Part, PartAdmin)
 admin.site.register(Production_Companies, Production_CompaniesAdmin)
 admin.site.register(Place, PlaceAdmin)
+admin.site.register(Comment)

@@ -1,10 +1,9 @@
-from django.contrib import admin
+from theatricalia import admin
 from django.utils.html import mark_safe
 from reversion.admin import VersionAdmin
 from .models import Photo
 
 
-@admin.register(Photo)
 class PhotoAdmin(VersionAdmin):
     search_fields = ('title', 'author', 'source', 'license')
     list_filter = ('is_visible', 'content_type', 'license')
@@ -17,3 +16,6 @@ class PhotoAdmin(VersionAdmin):
         if request.user.is_superuser:
             return Photo.all_objects.all()
         return super(PhotoAdmin, self).get_queryset(request)
+
+
+admin.site.register(Photo, PhotoAdmin)

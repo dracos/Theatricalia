@@ -16,7 +16,7 @@ from common import views as common
 from merged import views as merged
 from news import views as news
 
-from django.contrib import admin
+from theatricalia import admin
 from django.contrib.auth import views as auth_views
 
 from feeds import PersonFeed, PlayFeed, PlaceFeed, NearbyFeed, UserSeenFeed, NewsFeed

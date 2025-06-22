@@ -1,4 +1,4 @@
-from django.contrib import admin
+from theatricalia import admin
 from .models import Article
 
 

@@ -1,4 +1,4 @@
-from django.contrib import admin
+from theatricalia import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm
 from .models import Profile, User
@@ -22,6 +22,7 @@ class MyUserAdmin(UserAdmin):
     inlines = [ProfileInline]
     list_display = ('username', 'email', 'name', 'email_validated')
     list_filter = ('profile__email_validated', 'is_staff')
+    search_fields = ('username', 'name', 'email')
 
     def email_validated(self, obj):
         return obj.profile.email_validated

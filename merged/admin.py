@@ -1,4 +1,4 @@
-from django.contrib import admin
+from theatricalia import admin
 from django.http import HttpResponseRedirect
 from django.utils.html import format_html
 from merged.utils import merge_thing, check_old_exists
