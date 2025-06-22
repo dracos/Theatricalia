@@ -89,7 +89,8 @@ SITE_ID = 1
 # to load the internationalization machinery.
 USE_I18N = True
 
-USE_L10N = True
+FORMS_URLFIELD_ASSUME_HTTPS = True
+
 USE_TZ = False
 
 MEDIA_ROOT = os.path.join(OUR_ROOT, '..', 'media')
