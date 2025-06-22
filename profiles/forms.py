@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm as DjangoAuthenticationForm
+from confusable_homoglyphs import confusables
 
 from .models import Profile, User, send_confirmation_email
 
@@ -40,6 +41,10 @@ class RegistrationForm(forms.ModelForm):
 
     def clean_username(self):
         username = self.cleaned_data["username"]
+
+        if confusables.is_dangerous(username):
+            raise forms.ValidationError("This name cannot be registered. Please choose a different name.", code="invalid")
+
         try:
             User.objects.get(username=username)
         except User.DoesNotExist:
