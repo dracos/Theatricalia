@@ -1,0 +1,126 @@
+#!/usr/bin/env python3
+
+import argparse
+from datetime import datetime, timedelta
+import re
+import mimetypes
+import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+os.environ['DJANGO_SETTINGS_MODULE'] = 'theatricalia.settings'
+import django
+django.setup()
+
+from django.template.loader import get_template
+from django_comments.models import Comment
+from productions.models import Production
+from polybot import Bot, Image
+from atproto import client_utils
+
+
+class LatestProductionBot(Bot):
+    path = '/srv/theatricalia.com/config/'
+    choices = ['productions', 'observations']
+
+    def __init__(self, name):
+        super().__init__(name)
+        p = argparse.ArgumentParser()
+        p.add_argument('action', choices=self.choices,
+                       help='Action to perform; one of %s' % ', '.join(self.choices))
+        self.scheduler_args, left = p.parse_known_args()
+        sys.argv[1:] = left
+
+    def construct_post(self, intro, text, end_text, url, p):
+        if len(intro)+len(text)+len(end_text)+len(url) > 300:
+            text = text[0:300-len(intro)-len(end_text)-len(url)-1] + '…'
+
+        image = p.photos.order_by('?').first()
+        if image:
+            image = Image(data=image.photo.read(), mime_type=mimetypes.guess_type(image.photo.name), description=image.title)
+
+        tb = client_utils.TextBuilder()
+        tb.text(intro)
+        tb.text(text)
+        tb.text(end_text)
+        tb.link(url, url)
+        if not self.args.live:
+            print(tb.build_text())
+        done = self.post(tb, images=[image] if image else [])
+        return done
+
+    def main(self):
+        if self.scheduler_args.action == 'productions':
+            self.productions()
+        if self.scheduler_args.action == 'observations':
+            self.observations()
+
+    def productions(self):
+        latest = self.state.get('latest_production')
+        if not latest:
+            prod_id = Production.objects.order_by('-id').first().id
+            latest = self.state['latest_production'] = prod_id
+
+        cutoff = datetime.now() - timedelta(hours=3)
+        productions = Production.objects.filter(id__gt=latest, created__lt=cutoff).order_by('id')
+        for p in productions:
+            intro = "New production added: "
+            text = prettify(render_info(p))
+            end_text = "\n"
+            url = f"https://theatricalia.com{p.get_absolute_url()}"
+            if 'Niggers' in text:
+                done = True
+            else:
+                done = self.construct_post(intro, text, end_text, url, p)
+            if self.args.live and done:
+                self.state['latest_production'] = p.id
+
+    def observations(self):
+        latest = self.state.get('latest_comment')
+        if not latest:
+            comment_id = Comment.objects.filter(is_removed=False).order_by('-id').first().id
+            latest = self.state['latest_comment'] = comment_id
+
+        comments = Comment.objects.filter(is_removed=False, id__gt=latest).order_by('id')
+        for c in comments:
+            text = c.comment
+            if not re.match('https://[^ ]*$', text):
+                p = c.content_object
+                intro = prettify(f"New observation – {c.user_name} noted, about a production of {p.play.get_title_display()}:\n“")
+                text = prettify(text)
+                end_text = f"”\n"
+                url = f"https://theatricalia.com{p.get_absolute_url()}#o{c.id}"
+                done = self.construct_post(intro, text, end_text, url, p)
+                if self.args.live and done:
+                    self.state['latest_comment'] = c.id
+
+
+def render_info(p):
+    companies = p.get_companies_display(False)
+    p.get_companies_display = companies
+
+    template = get_template('production_text.html')
+    t = template.render({'production': p})
+    return t
+
+
+def prettify(t):
+    # Nice dashes and ellipses
+    t = re.sub(r'(?:(?<=\A)|(?<=[([{"\-]|\s))\'', '‘', t)
+    t = re.sub(r'(?<!\s)\'(?!\Z|[.,:;!?"\'(){}[\]\-]|\s)', '’', t)
+    t = re.sub('"([^"]*)"', r'“\1”', t)
+    t = t.replace("'", '’')
+    t = re.sub(r'\s-\s', ' – ', t)
+    t = re.sub(r'(\d)-(\d)', r'\1–\2', t)
+    t = t.replace('--', '–').replace('---', '—')
+    t = re.sub(r'\. ?\. ?\.', '…', t)
+
+    # Nice quotes
+    t = t.replace('``', '“').replace("''", '”')
+    cockney = ["'tain't", "'twere", "'twas", "'tis", "'twill", "'til", "'bout", "'nuff", "'round", "'cause", "'em"]
+    t = re.sub('(?i)' + '|'.join(cockney), lambda x: x.group(0).replace("'", '’'), t)
+
+    t = re.sub(r'\s+', ' ', t)
+    return t
+
+
+LatestProductionBot('latest_production').run()

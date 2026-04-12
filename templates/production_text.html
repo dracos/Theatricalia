@@ -1,0 +1,24 @@
+{{ production.play.get_title_display|safe }}{% if production.get_companies_display %} by {{ production.get_companies_display|safe }}{% endif %},
+
+{% if production.places.count == 1 %}
+    {{ production.date_summary }},
+    at {{ production.place_set.all.0.name_for_date|safe }}.
+    {% if production.place_set.all.0.press_date and production.place_set.all.0.start_date %}
+        Press night
+        {% now "Y-m-d" as todays_date %}
+        {% if production.place_set.all.0.press_date|date:"Y-m-d" >= todays_date %}
+        is
+        {% else %}
+        was
+        {% endif %}
+        {{ production.place_set.all.0.press_date|date:"jS F Y" }}.
+    {% endif %}
+{% elif production.places.count == 0 %}
+    at an unknown location.
+{% else %}
+    at
+    {% for place in production.place_set_ordered %}
+        {% if forloop.last and not forloop.first %} and {% endif %}
+        {{ place.name_for_date|safe }}
+        ({{ place.date_summary }}){% if forloop.revcounter0 == 0 %}{% elif forloop.revcounter0 == 1 %}{% if forloop.counter0 != 0 %},{% endif %}{% else %},{% endif %}{% endfor %}.
+{% endif %}
