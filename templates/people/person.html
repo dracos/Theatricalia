@@ -6,7 +6,7 @@
 
 {% block extra_head %}
 <link href="{{ person.get_absolute_url }}/feed" type="application/rss+xml" rel="alternate">
-<link rev="canonical" type="text/html" href="https://theatricalia.com/a/{{ person.id32 }}">
+<link rel="canonical" type="text/html" href="https://theatricalia.com/a/{{ person.id32 }}">
 {% endblock %}
 
 {% block content %}
