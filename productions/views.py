@@ -30,7 +30,7 @@ def check_parameters(play_id, play, production_id):
     except UnmatchingSlugException:
         raise UnmatchingSlugException(production)
     if play != production.play:
-        raise Http404()
+        raise UnmatchingSlugException(production)
     return production
 
 
