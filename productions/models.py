@@ -283,6 +283,7 @@ class ProductionPlaceManager(models.Manager):
     def get_queryset(self):
         qs = super(ProductionPlaceManager, self).get_queryset()
         qs = qs.exclude(production__source__startswith='<a href="http://wo')
+        qs = qs.exclude(production__source__startswith='HIDE')
         return qs
 
 
@@ -313,6 +314,7 @@ class PartManager(models.Manager):
     def get_queryset(self):
         qs = super(PartManager, self).get_queryset()
         qs = qs.exclude(production__source__startswith='<a href="http://wo')
+        qs = qs.exclude(production__source__startswith='HIDE')
         return qs
 
 
@@ -355,11 +357,21 @@ class Part(models.Model):
         return pretty_date_range(self.start_date, None, self.end_date)
 
 
+class VisitManager(models.Manager):
+    def get_queryset(self):
+        qs = super(VisitManager, self).get_queryset()
+        qs = qs.exclude(production__source__startswith='<a href="http://wo')
+        qs = qs.exclude(production__source__startswith='HIDE')
+        return qs
+
+
 class Visit(models.Model):
     production = models.ForeignKey(Production, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     recommend = models.BooleanField(default=False)
     date = ApproximateDateField(blank=True, default='')
+
+    objects = VisitManager()
 
     class Meta:
         unique_together = (('user', 'production'),)

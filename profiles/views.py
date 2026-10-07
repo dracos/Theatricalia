@@ -40,6 +40,8 @@ def profile(request, username):
         for v in revision.version_set.filter(content_type__in=content_types):
             try:
                 obj = v.content_type.get_object_for_this_type(id=v.object_id)
+                if getattr(obj, 'source', '')[0:4] == 'HIDE':
+                    raise
                 url = obj.get_absolute_url()
                 versions.append((obj, url))
             except:
@@ -50,12 +52,15 @@ def profile(request, username):
     seen = user.visit_set.annotate(min_press_date=Min('production__place__press_date')).annotate(best_date=Min(Coalesce("production__place__press_date", Case(When(production__place__end_date="", then=F("production__place__start_date")), default=F("production__place__end_date")), output_field=ApproximateDateField()))).order_by('-best_date')
     # seen = user.visit_set.annotate(min_press_date=Min('production__place__press_date')).annotate(best_date=Min(RawSQL('IFNULL(productions_place.press_date, IF(productions_place.end_date!="", productions_place.end_date, productions_place.start_date))', ()))).order_by('-best_date')
 
+    obvs = Comment.objects.filter(
+            user=user, is_public=True, is_removed=False).order_by('-submit_date')[:5]
+    obvs = [o for o in obvs if not o.content_object.source[0:4] == 'HIDE']
+
     return render(request, 'profile.html', {
         'view': user,
         'profile': profile,
         'latest': latest,
-        'observations': Comment.objects.filter(
-            user=user, is_public=True, is_removed=False).order_by('-submit_date')[:5],
+        'observations': obvs,
         'seen': seen,
     })
 
