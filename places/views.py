@@ -180,3 +180,27 @@ class PlaceList(ListMixin, ListView):
         self.letter = letter
         objs = sorted(list(objs1) + list(objs2), key=lambda p: p.name)
         return objs
+
+
+class LocationList(ListMixin, ListView):
+    model = Place
+    field = 'town'
+    template_name = 'places/location_list.html'
+
+    def get_queryset(self):
+        letter = self.kwargs.get('letter', 'a')
+        if letter == '0':
+            args = {'%s__regex' % self.field: r'^[0-9]'}
+            objs = Place.objects.filter(**args)
+            letter = '0-9'
+        elif letter == '*':
+            args = {'%s__regex' % self.field: r'^[A-Za-z0-9]'}
+            objs = Place.objects.exclude(**args)
+            letter = 'Symbols'
+        else:
+            args = {'%s__istartswith' % self.field: letter}
+            objs = Place.objects.filter(**args)
+            letter = letter.upper()
+        self.letter = letter
+        objs = objs.order_by('town', 'name')
+        return objs

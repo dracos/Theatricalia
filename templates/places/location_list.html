@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load prettify %}
+
+{% block title %}Locations beginning with {{ letter }} | All Places{% endblock %}
+
+{% block content %}
+
+<style>
+#locations_list_type {
+    text-align: center;
+    font-style: italic;
+    margin: 0;
+    font-size: 87.5%;
+    line-height: 1.715;
+}
+#locations_list { column-count: 2; }
+#locations_list div { break-inside: avoid; }
+#locations_list h2 { margin-top: 0; }
+#locations_list h2:has(+ ul:empty) { display: none; }
+</style>
+
+<p id="locations_list_type">
+    By 
+    {% if "0-9" == letter %}<a href="{% url "places" "0" %}">name</a>
+    {% elif "Symbols" == letter %}<a href="{% url "places" "*" %}">name</a>
+    {% else %}<a href="{% url "places" letter|lower %}">name</a>
+    {% endif %}
+    or <strong>location</strong>
+</p>
+
+<ul id="atoz">
+    {% for l in letters %}
+        <li>{% if l == letter %}
+            <strong>{{ l|upper }}</strong>
+        {% else %}
+            <a href="{% url "locations" l|lower %}">{{ l }}</a>
+        {% endif %}
+    {% endfor %}
+    <li>{% if "0-9" == letter %}
+        <strong>0&ndash;9</strong>
+    {% else %}
+        <a href="{% url "locations" "0" %}">0&ndash;9</a>
+    {% endif %}
+<!--
+    <li>{% if "Symbols" == letter %}
+        <strong>Symbols</strong>
+    {% else %}
+        <a href="{% url "locations" "*" %}">Symbols</a>
+    {% endif %}
+-->
+</ul>
+
+{% regroup object_list by town as town_list %}
+
+<h1>Places by location &ndash; {{ letter }}</h1>
+
+<div id="locations_list">
+{% for town in town_list %}
+    <div>
+    <h2>{{ town.grouper }}</h2>
+    <ul>{% for place in town.list %}{% if place.productions.count or place.place.productions.count %}
+        <li><a href="{{ place.get_absolute_url }}">{{ place|prettify }}</a></li>
+    {% endif %}{% endfor %}</ul>
+    </div>
+{% empty %}
+    <p>No results.</p>
+{% endfor %}
+</div>
+
+{% endblock %}

@@ -125,6 +125,7 @@ urlpatterns = [
 
     path('places', places.PlaceList.as_view(), name='places_all'),
     path('places/<letter:letter>', places.PlaceList.as_view(), name='places'),
+    path('places/location/<letter:letter>', places.LocationList.as_view(), name='locations'),
     path('place/<b32:place_id>/<slug:place>/future', places.place_productions, {'type': 'future'}, name='place-productions-future'),
     path('place/<b32:place_id>/<slug:place>/past', places.place_productions, {'type': 'past'}, name='place-productions-past'),
     path('place/<b32:place_id>/<slug:place>/edit', places.place_edit, name='place-edit'),

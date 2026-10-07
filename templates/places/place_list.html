@@ -5,6 +5,26 @@
 
 {% block content %}
 
+<style>
+#locations_list_type {
+    text-align: center;
+    font-style: italic;
+    margin: 0;
+    font-size: 87.5%;
+    line-height: 1.715;
+}
+</style>
+
+<p id="locations_list_type">
+    By 
+    <strong>name</strong>
+    or
+    {% if "0-9" == letter %}<a href="{% url "locations" "0" %}">location</a>
+    {% elif "Symbols" == letter %}<a href="{% url "locations" "*" %}">location</a>
+    {% else %}<a href="{% url "locations" letter|lower %}">location</a>
+    {% endif %}
+</p>
+
 <ul id="atoz">
     {% for l in letters %}
         <li>{% if l == letter %}
