@@ -112,6 +112,9 @@ def search_autocomplete(request):
     if app_label == 'places':
         query_without_brackets = re.sub(r' \(.*?\)$', '', query)
         q = Q(name__icontains=query) | Q(name__icontains=query_without_brackets)
+        if ',' in query_without_brackets:
+            name, town = query_without_brackets.rsplit(',', 1)
+            q = q | Q(name__icontains=name.strip())
         qs = Name.objects.filter(q)[:limit]
         results = [(f.__str__(), f.place.pk) for f in qs] + results
         results = sorted(results, key=lambda f: f[0])

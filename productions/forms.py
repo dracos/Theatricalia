@@ -202,8 +202,17 @@ class PlaceForm(forms.ModelForm):
         return exclusions
 
     def clean_place(self):
-        if not self.cleaned_data['place']:
+        p = self.cleaned_data['place']
+        if not p:
             raise forms.ValidationError('You must specify a place.')
+
+        name = re.sub('(?i)^(.*), (A|An|The)$', r'\2 \1', p.name.strip())
+        if m := re.match('(.*), ([^,]*)$', name):
+            name = m.group(1)
+            town = m.group(2)
+            if len(town) > 50:
+                raise forms.ValidationError('Name/location too long')
+
         return self.cleaned_data['place']
 
     def save(self, **kwargs):
