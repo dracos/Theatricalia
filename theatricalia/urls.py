@@ -103,7 +103,7 @@ urlpatterns = [
     path('play/<b32:play_id>/<slug:play>/production/<b32:production_id>/edit/cast', productions.production_edit_cast, name='production-edit-cast'),
     path('play/<b32:play_id>/<slug:play>/production/<b32:production_id>/edit/<int:part_id>', productions.part_edit, name='part-edit'),
     path('play/<b32:play_id>/<slug:play>/production/<b32:production_id>/corrected', productions.production_corrected, name='production-corrected'),
-    path('play/<b32:play_id>/<slug:play>/production/<b32:production_id>.json', productions.production, {'format': 'json'}, name='production-json'),
+    # path('play/<b32:play_id>/<slug:play>/production/<b32:production_id>.json', productions.production, {'format': 'json'}, name='production-json'),
     path('play/<b32:play_id>/<slug:play>/production/<b32:production_id>', productions.production, name='production'),
     path('play/<b32:play_id>/<slug:play>/future', plays.play_productions, {'type': 'future'}, name='play-productions-future'),
     path('play/<b32:play_id>/<slug:play>/past', plays.play_productions, {'type': 'past'}, name='play-productions-past'),
@@ -119,7 +119,7 @@ urlpatterns = [
     path('person/<b32:person_id>/<emptyslug:person>/future', people.person_productions, {'type': 'future'}, name='person-productions-future'),
     path('person/<b32:person_id>/<emptyslug:person>/past', people.person_productions, {'type': 'past'}, name='person-productions-past'),
     path('person/<b32:person_id>/<emptyslug:person>/edit', people.person_edit, name='person-edit'),
-    path('person/<b32:person_id>/<emptyslug:person>.js', people.person_js, name='person-json'),
+    # path('person/<b32:person_id>/<emptyslug:person>.js', people.person_js, name='person-json'),
     path('person/<b32:person_id>/<emptyslug:person>', people.person, name='person'),
     path('person/<b32:person_id>', people.person_short_url),
 
